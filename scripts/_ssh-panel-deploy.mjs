@@ -20,8 +20,9 @@
  */
 import { randomBytes } from 'node:crypto';
 import { appendFileSync, existsSync, mkdirSync, readFileSync, unlinkSync } from 'node:fs';
-import { join, resolve } from 'node:path';
-import { execFileSync, execSync } from 'node:child_process';
+import { join, relative, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { execFileSync } from 'node:child_process';
 import { Client } from 'ssh2';
 import { getOfficeSshConfig, readRootEnv, repoRoot } from './_ssh-office-config.mjs';
 
@@ -31,6 +32,19 @@ const cacheDir = join(repoRoot, 'scripts', 'cache');
 mkdirSync(cacheDir, { recursive: true });
 const tarPath = join(cacheDir, `panel-dist-${Date.now()}.tgz`);
 const remoteTar = '/tmp/panel-dist.tgz';
+
+export function tarArgsForDirectory({ archivePath, sourceDir }) {
+  const archiveArg = relative(sourceDir, archivePath).replace(/\\/gu, '/');
+  if (!archiveArg || /^[A-Za-z]:/u.test(archiveArg) || archiveArg.startsWith('/')) {
+    throw new Error(`panel deploy tar: archive path must be relative for tar, got ${archivePath}`);
+  }
+  return { cwd: sourceDir, args: ['-czf', archiveArg, '.'] };
+}
+
+function packDirectoryAsTar(archivePath, sourceDir) {
+  const { cwd, args } = tarArgsForDirectory({ archivePath, sourceDir });
+  execFileSync('tar', args, { cwd, stdio: 'inherit' });
+}
 
 /**
  * `--audio <dir>` — залить wav-бандл борда detector-compare (#452) из локального
@@ -123,6 +137,7 @@ function execBash(conn, script) {
   });
 }
 
+export async function main() {
 if (!existsSync(join(DIST_DIR, 'index.html'))) {
   console.error('[fail] apps/panel/dist пуст — сначала yarn turbo run build --filter=@membrana/panel');
   process.exit(1);
@@ -137,24 +152,21 @@ console.log(
 
 // Архив в scripts/cache (не tmpdir): Windows bsdtar не знает --force-local.
 console.log('Packing panel dist...');
-execFileSync('tar', ['-czf', tarPath, '-C', DIST_DIR, '.'], { cwd: repoRoot, stdio: 'inherit' });
+packDirectoryAsTar(tarPath, DIST_DIR);
 
 if (audioDir) {
   console.log(`Packing compare-audio from ${audioDir}...`);
-  execFileSync('tar', ['-czf', audioTarPath, '-C', audioDir, '.'], { cwd: repoRoot, stdio: 'inherit' });
+  packDirectoryAsTar(audioTarPath, resolve(audioDir));
 }
 
 if (graphifyDir) {
   console.log(`Packing graphify static from ${graphifyDir}...`);
-  execFileSync('tar', ['-czf', graphifyTarPath, '-C', graphifyDir, '.'], {
-    cwd: repoRoot,
-    stdio: 'inherit',
-  });
+  packDirectoryAsTar(graphifyTarPath, resolve(graphifyDir));
 }
 
 if (rtreeDir) {
   console.log(`Packing research-tree static from ${rtreeDir}...`);
-  execFileSync('tar', ['-czf', rtreeTarPath, '-C', rtreeDir, '.'], { cwd: repoRoot, stdio: 'inherit' });
+  packDirectoryAsTar(rtreeTarPath, resolve(rtreeDir));
 }
 
 const caddyfile = renderPanelCaddyfile();
@@ -325,4 +337,9 @@ try {
       /* ignore */
     }
   }
+}
+}
+
+if (pathToFileURL(process.argv[1] ?? '').href === import.meta.url) {
+  await main();
 }
