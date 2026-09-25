@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14337/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 385 (причины в op-log) -->
+Записей: 50 · бюджет 14398/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 386 (причины в op-log) -->
+
+### 2026-09-25 · позиция · team-evening-feedback
+
+> Tarasov **Оценка артефактов:** Стендап и MAIN_DAY_ISSUE согласованы между собой и честно указывают на `sources[0]`-расхождение дат — это правильная фиксация нормы У1. `DAILY_CODE_REVIEW` точечный, поймал P1 «пересекающиеся `sequence`» прямо в свежем trail-файле 25.09 (два […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-25.md#reply-1`
 
 ### 2026-09-24 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/hunt-and-canon-m1-silence-guard-2026-08-27.md#reply-1`
 
-### 2026-08-27 · позиция · hunt-and-canon-m2-false-evidence
+### 2026-08-13 · позиция · network-container-m4-owner-rhythm
 
-> Положение: ритуал каждый вечер штампует ложный вещдок — это не «запах», это красный прогон ценности. Планка: архив = свидетельство, не декорация цепочки. Связка на вердикт: Математик — предикат F, Структурщик — контракт исхода шага, Архитектор — граница носителя/исполнителя. […] _(реплик в сеансе: 6)_
+> Открываю комнату по существу. Три вопроса: кто держит такт, ритм, куда падает находка. Напоминаю: комната предлагает кандидата — назначение остаётся за владельцем. Голосования нет: нужно обоснование по природе предмета. Поехали. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/hunt-and-canon-m2-false-evidence-2026-08-27.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m3-access
-
-> Объекты политики образуют цепочку container → collection → lineage. Lineage определяется `canonicalRef`, а не URL Affine и не адресом байтов. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
+— источник: `docs/seanses/network-container-m4-owner-rhythm-2026-08-13.md#reply-1`

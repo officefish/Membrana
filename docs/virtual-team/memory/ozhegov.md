@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14322/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 379 (причины в op-log) -->
+Записей: 49 · бюджет 14289/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 380 (причины в op-log) -->
+
+### 2026-09-25 · позиция · team-evening-feedback
+
+> Ozhegov **Оценка артефактов:** Стендап точно называет два S-разблокирующих (`sequence`-контракт и paths `office-image-smoke.yml`) — оба формально не сделаны, но paths частично закрыт через #2372 (Night Hunt на контракт-дрейф). `CURRENT_TASK.md` третий день указывает на […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-25.md#reply-1`
 
 ### 2026-09-24 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Леммы. **Вещдок** ≠ **копия**. Вещдок — артефакт, привязанный к ожидаемому событию ночи (исход e в смысле M1). Копия — байты, перенесённые без доказательства свежести источника. `manifest.archivedAt` — лемма «когда скопировали»; имя папки `YYYY-MM-DD` сейчас врёт, что это исход […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/hunt-and-canon-m2-false-evidence-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m3-design-canon
-
-> Леммы. «Канон цвета» ≠ «библиотека DaisyUI» ≠ «файл DESIGN.md как README». Словарно: канон — нормативный набор токенов продукта; тема DaisyUI — адаптер презентации; `DESIGN.md` — носитель нормы, если мы так решим. Слабая связанность: UI-дома не должны каждый тащить свою палитру. […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m3-design-canon-2026-08-27.md#reply-1`

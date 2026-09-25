@@ -7,10 +7,11 @@
   "frozenDigest": "767b838f7599e3d9bda3bf7c522a584ab1b1eaf1ad53fcd39e2596f036cffcdf",
   "magistral": "night-schedule-vs-morning",
   "swallow": {
-    "draftDigest": "0e619075ca9f53c60fc6489760ed014ef0d43b119c1477a95ed4e2534381b299",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-09-25.md",
+    "draftDigest": "bfec226a602fd5555b48c3409e364becf9c33887b35c968a03aca34aaf7062d2",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-25.md",
     "ownerAck": true,
-    "day": "2026-09-25"
+    "day": "2026-09-25",
+    "gate": "evening:partner-swallow"
   },
   "day": "2026-09-25",
   "magistralChosenAt": "2026-09-25",
