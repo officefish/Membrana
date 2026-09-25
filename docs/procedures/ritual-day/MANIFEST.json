@@ -54,7 +54,7 @@
         {
           "path": "scripts/lib/night-report-gate.mjs",
           "anchor": { "kind": "marker", "ref": "night-report-reader" },
-          "segmentHash": "bd1f1ec92801c7fd3d326e83e8c6c0a3ca59688d"
+          "segmentHash": "e3e7478b1d969ca392b0a66e3476fe1caece26e7"
         }
       ]
     },

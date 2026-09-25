@@ -11,23 +11,84 @@ export const NIGHT_WORKFLOWS = Object.freeze([
     title: 'Network probes nightly',
     workflow: 'network-probes-nightly.yml',
     required: true,
+    cron: '0 20 * * *',
   },
   {
     id: 'vitest-nightly',
     title: 'Vitest nightly',
     workflow: 'vitest-nightly.yml',
     required: true,
+    cron: '0 21 * * *',
   },
   {
     id: 'tests-nightly-full',
     title: 'Tests nightly full',
     workflow: 'tests-nightly-full.yml',
     required: true,
+    cron: '0 22 * * *',
   },
 ]);
 
+/**
+ * Опоздание расписания: сколько прошло от ОБЪЯВЛЕННОГО часа до фактического старта.
+ *
+ * GitHub отдаёт scheduled-прогоны не в объявленное время, а когда дойдут руки, и
+ * 25.09 это стоило нам утра: ночь приходила через ~5 ч, то есть после ритуала,
+ * и гейт краснел по устройству. Сдвиг расписания лечит сегодня; это число лечит
+ * завтра — если задержка поплывёт, мы увидим её величину, а не будем гадать.
+ *
+ * Берём ближайшее объявленное срабатывание НЕ ПОЗЖЕ факта: cron ежесуточный, и
+ * старт в 01:30 при объявленных 22:00 — это опоздание 3.5 ч со вчерашнего срока,
+ * а не «за 20.5 ч до сегодняшнего».
+ *
+ * @param {string|null} cron — пятиполевой cron; поддержан суточный вид «M H * * *»
+ * @param {string|null} startedAtIso
+ * @returns {{ cron: string, declaredAt: string, latenessMs: number } | null}
+ */
+export function scheduleLateness(cron, startedAtIso) {
+  if (typeof cron !== 'string' || typeof startedAtIso !== 'string') return null;
+  const m = cron.trim().match(/^(\d{1,2})\s+(\d{1,2})\s+\*\s+\*\s+\*$/u);
+  if (!m) return null;
+  const minute = Number(m[1]);
+  const hour = Number(m[2]);
+  if (!(minute >= 0 && minute < 60 && hour >= 0 && hour < 24)) return null;
+  const started = new Date(startedAtIso);
+  if (Number.isNaN(started.getTime())) return null;
+  let declared = new Date(
+    Date.UTC(
+      started.getUTCFullYear(),
+      started.getUTCMonth(),
+      started.getUTCDate(),
+      hour,
+      minute,
+      0,
+      0,
+    ),
+  );
+  if (declared.getTime() > started.getTime()) {
+    declared = new Date(declared.getTime() - 86_400_000);
+  }
+  return {
+    cron: cron.trim(),
+    declaredAt: declared.toISOString(),
+    latenessMs: started.getTime() - declared.getTime(),
+  };
+}
+
+/** Опоздание словами: «+5 ч 07 мин». Ноль и отрицательное — «вовремя». */
+export function formatLateness(latenessMs) {
+  if (!Number.isFinite(latenessMs) || latenessMs <= 0) return 'вовремя';
+  const totalMinutes = Math.round(latenessMs / 60_000);
+  const h = Math.floor(totalMinutes / 60);
+  const min = totalMinutes % 60;
+  if (h === 0) return `+${min} мин`;
+  return `+${h} ч ${String(min).padStart(2, '0')} мин`;
+}
+
 function normalizeRevision(value) {
-  const s = String(value ?? '').trim().toLowerCase();
+  const s = String(value ?? '')
+    .trim()
+    .toLowerCase();
   return /^[0-9a-f]{12,40}$/u.test(s) ? s : null;
 }
 
@@ -87,6 +148,12 @@ export function classifyNightWorkflowRun({ workflow, run, expectedRevision }) {
       createdAt: run.createdAt ?? null,
       updatedAt: run.updatedAt ?? null,
       headSha,
+      // Только для scheduled: у workflow_dispatch объявленного срока нет, и
+      // «опоздание» там было бы выдумкой.
+      schedule:
+        run.event === 'schedule'
+          ? scheduleLateness(workflow.cron ?? null, run.createdAt ?? null)
+          : null,
     },
   };
   if (!headSha) {
@@ -100,7 +167,11 @@ export function classifyNightWorkflowRun({ workflow, run, expectedRevision }) {
     };
   }
   if (run.status !== 'completed') {
-    return { ...base, status: 'pending', reason: `запуск ещё не завершён: ${run.status ?? 'unknown'}` };
+    return {
+      ...base,
+      status: 'pending',
+      reason: `запуск ещё не завершён: ${run.status ?? 'unknown'}`,
+    };
   }
   if (run.conclusion !== 'success') {
     return {
@@ -152,7 +223,9 @@ export function renderNightSummaryMarkdown(summary) {
   ];
   for (const check of summary.workflows ?? []) {
     const runId = check.run?.databaseId ? `#${check.run.databaseId}` : '-';
-    lines.push(`| ${check.title ?? check.id} | ${check.status} | ${runId} | ${String(check.reason ?? '').replace(/\|/gu, '\\|')} |`);
+    lines.push(
+      `| ${check.title ?? check.id} | ${check.status} | ${runId} | ${String(check.reason ?? '').replace(/\|/gu, '\\|')} |`,
+    );
   }
   if ((summary.problems ?? []).length > 0) {
     lines.push('', '## Problems', '');
@@ -192,7 +265,13 @@ export function latestRunByWorkflow(cwd, workflow, exec = execFileSync, branch =
   return runs[0];
 }
 
-export function buildNightSummaryFromGithub({ cwd, expectedRevision, generatedAt, exec = execFileSync, branch = 'main' } = {}) {
+export function buildNightSummaryFromGithub({
+  cwd,
+  expectedRevision,
+  generatedAt,
+  exec = execFileSync,
+  branch = 'main',
+} = {}) {
   const runsByWorkflow = {};
   const ghErrors = new Map();
   for (const workflow of NIGHT_WORKFLOWS) {
@@ -200,7 +279,10 @@ export function buildNightSummaryFromGithub({ cwd, expectedRevision, generatedAt
       runsByWorkflow[workflow.workflow] = latestRunByWorkflow(cwd, workflow, exec, branch);
     } catch (e) {
       runsByWorkflow[workflow.workflow] = null;
-      ghErrors.set(workflow.title, `gh run list не отработал — ${e instanceof Error ? e.message : e}`);
+      ghErrors.set(
+        workflow.title,
+        `gh run list не отработал — ${e instanceof Error ? e.message : e}`,
+      );
     }
   }
   const summary = buildNightSummary({ generatedAt, expectedRevision, runsByWorkflow });

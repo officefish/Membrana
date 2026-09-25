@@ -5,10 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { loadRagConfig, RAG_CONFIG_DEFAULTS } from './config.js';
 import { keywordSearch } from './operative/keyword-search.js';
-import { findMonorepoRoot } from './repo-root.js';
 import { formatFragmentsForPrompt, RagService, retrieveContext } from './service.js';
-
-const REPO_ROOT = findMonorepoRoot();
 
 describe('loadRagConfig', () => {
   it('uses documented defaults when env is empty', () => {
@@ -30,10 +27,32 @@ describe('loadRagConfig', () => {
 });
 
 describe('retrieveContext (R1 archive)', () => {
+  // Корпус-фикстура вместо живого репозитория — та же болезнь и то же лечение, что
+  // у соседнего describe 19.08: retrieveContext идёт в operative-контур, а тот стоит
+  // git log за 30 дней плюс обход дерева. На живом репозитории это росло вместе с
+  // репозиторием и 25.09 пробило testTimeout 30 с — ночь на стволе стала красной,
+  // причём тест не сказал «не сошлось», а замолчал на полминуты и умер по таймеру.
+  // Здесь проверяется ПОВЕДЕНИЕ retrieveContext без индекса, а не скорость диска.
+  let fixtureRoot = '';
+
+  beforeAll(async () => {
+    fixtureRoot = await mkdtemp(join(tmpdir(), 'rag-archive-'));
+    await mkdir(join(fixtureRoot, 'docs'), { recursive: true });
+    await writeFile(
+      join(fixtureRoot, 'docs', 'MAIN_DAY_ISSUE.md'),
+      '# Main day issue\n\nMembrana — магистраль дня: Membrana plugin host, Membrana collections.\n',
+      'utf8',
+    );
+  });
+
+  afterAll(async () => {
+    await rm(fixtureRoot, { recursive: true, force: true });
+  });
+
   it('returns operative hits when index is missing', async () => {
     const service = new RagService({
       config: loadRagConfig({}),
-      repoRoot: REPO_ROOT,
+      repoRoot: fixtureRoot,
     });
     const result = await service.retrieveContext('Membrana');
     expect(result.query).toBe('Membrana');
@@ -47,7 +66,7 @@ describe('retrieveContext (R1 archive)', () => {
   it('returns empty archive flag when index is missing', async () => {
     const service = new RagService({
       config: loadRagConfig({}),
-      repoRoot: REPO_ROOT,
+      repoRoot: fixtureRoot,
     });
     const result = await service.retrieveContext('background-office port');
     expect(result.query).toBe('background-office port');
@@ -76,7 +95,11 @@ describe('keywordSearch (R2 operative)', () => {
       '# Main day issue\n\nMembrana — магистраль дня: Membrana plugin host, Membrana collections.\n',
       'utf8',
     );
-    await writeFile(join(fixtureRoot, 'docs', 'DAILY_CODE_REVIEW.md'), '# Review\n\nMembrana review of the day.\n', 'utf8');
+    await writeFile(
+      join(fixtureRoot, 'docs', 'DAILY_CODE_REVIEW.md'),
+      '# Review\n\nMembrana review of the day.\n',
+      'utf8',
+    );
   });
 
   afterAll(async () => {
@@ -90,7 +113,9 @@ describe('keywordSearch (R2 operative)', () => {
     });
     expect(fragments.length).toBeGreaterThan(0);
     expect(fragments.every((fragment) => fragment.circuit === 'operative')).toBe(true);
-    expect(fragments.map((fragment) => fragment.metadata.source)).toContain('docs/MAIN_DAY_ISSUE.md');
+    expect(fragments.map((fragment) => fragment.metadata.source)).toContain(
+      'docs/MAIN_DAY_ISSUE.md',
+    );
   });
 });
 
