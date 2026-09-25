@@ -26,8 +26,8 @@ function taskTexts(src: string): string[] {
 }
 
 describe('жанр заданий ночной охоты', () => {
-  it('задания вообще есть — предмет зуба не исчез', () => {
-    expect(taskTexts(serviceSource()).length).toBeGreaterThanOrEqual(2);
+  it('задание есть у КАЖДОГО из трёх дел — предмет зуба не исчез', () => {
+    expect(taskTexts(serviceSource()).length).toBeGreaterThanOrEqual(3);
   });
 
   it('ни одно задание не просит «типичных» нарушений', () => {
@@ -48,9 +48,12 @@ describe('жанр заданий ночной охоты', () => {
     }
   });
 
-  it('оба заземлённых дела отказываются без предмета, а не сочиняют', () => {
+  it('ВСЕ ТРИ дела отказываются без предмета, а не сочиняют', () => {
     const src = serviceSource();
     expect(src).toContain('design-token-drift: предмета нет');
     expect(src).toContain('monorepo-dependency-graph: предмета нет');
+    // Третье дело было здоровым по предмету, но при непрочитанных файлах
+    // отправляло модели пустой контекст — мина той же породы, снята до взрыва.
+    expect(src).toContain('services-api-contract-drift: предмета нет');
   });
 });

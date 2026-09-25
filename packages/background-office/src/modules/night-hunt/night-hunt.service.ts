@@ -179,7 +179,15 @@ export class NightHuntService {
       const designMd = (await this.github.fetchTextFile('docs/DESIGN.md')) ?? '';
       const themeConfig = (await this.github.fetchTextFile(THEME_CONFIG_PATH)) ?? '';
       const files = await this.fetchSourceFiles(DESIGN_SOURCE_DIR, DESIGN_SOURCE_LIMIT);
-      const subject = { themeConfigPath: THEME_CONFIG_PATH, themeConfig, designMd, files };
+      const subject = {
+        themeConfigPath: THEME_CONFIG_PATH,
+        themeConfig,
+        designMd,
+        files,
+        scope:
+          `файлы каталога \`${DESIGN_SOURCE_DIR}\` без вложенных подкаталогов, ` +
+          `не более ${DESIGN_SOURCE_LIMIT}, тесты исключены`,
+      };
 
       // Нет предмета — отказ, а не проза. Дело обязано молчать громко: пустой отчёт
       // никто не разбирает, а отказ с причиной виден в логе и в состоянии прогона.
@@ -206,9 +214,29 @@ export class NightHuntService {
       const fft = await this.github.fetchTextFile(
         'packages/services/fft-analyzer/src/index.ts',
       );
-      if (services) parts.push('## SERVICES.md\n\n', truncate(services, 8_000));
-      if (audio) parts.push('\n## audio-engine index.ts\n\n', truncate(audio, 3_000));
-      if (fft) parts.push('\n## fft-analyzer index.ts\n\n', truncate(fft, 3_000));
+
+      // Дело здоровое — оно единственное тянуло настоящие исходники. Но отказа без
+      // предмета у него не было: не прочитались файлы — модель получала пустой
+      // контекст и отвечала прозой. Мина той же породы, снимается до взрыва.
+      const missing: string[] = [];
+      if (!services?.trim()) missing.push('docs/SERVICES.md');
+      if (!audio?.trim()) missing.push('packages/services/audio-engine/src/index.ts');
+      if (!fft?.trim()) missing.push('packages/services/fft-analyzer/src/index.ts');
+      if (missing.length > 0) {
+        throw new Error(
+          `services-api-contract-drift: предмета нет — не прочитано: ${missing.join(', ')}`,
+        );
+      }
+
+      parts.push('## SERVICES.md\n\n', truncate(services!, 8_000));
+      parts.push('\n## audio-engine index.ts\n\n', truncate(audio!, 3_000));
+      parts.push('\n## fft-analyzer index.ts\n\n', truncate(fft!, 3_000));
+      parts.push(
+        '\n## Задача\n\nСравни объявленный контракт из SERVICES.md с тем, что пакеты ' +
+          'действительно экспортируют выше. Каждая находка обязана нести адрес: имя экспорта ' +
+          'и файл, где он объявлен или где его недостаёт. Утверждение без адреса — не находка, ' +
+          'его не писать. Того, чего нет в приведённых исходниках, не домысливать.',
+      );
     }
 
     if (jobId === 'monorepo-dependency-graph') {

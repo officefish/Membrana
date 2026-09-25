@@ -54,6 +54,7 @@ const COMPONENT: DesignSubject['files'][number] = {
 
 const subjectOf = (over: Partial<DesignSubject> = {}): DesignSubject => ({
   themeConfigPath: 'apps/client/tailwind.config.js',
+  scope: 'файлы каталога apps/client/src/components без вложенных подкаталогов, не более 25, тесты исключены',
   themeConfig: THEME_CONFIG,
   designMd: DESIGN_MD,
   files: [COMPONENT],
@@ -152,12 +153,33 @@ describe('замер для модели', () => {
   it('несёт числа и адреса, а не предложение проверить руками', () => {
     const subject = renderDesignSubject(subjectOf());
 
-    expect(subject).toContain('Файлов компонентов прочитано: 1');
-    expect(subject).toContain('токенов в DESIGN.md: 3');
-    expect(subject).toContain('не объявлено в конфиге темы: 3');
-    expect(subject).toContain('прямых значений цвета в коде: 0');
+    expect(subject).toContain('В прочитанной выборке — файлов: 1');
+    expect(subject).toContain('токенов в DESIGN.md — 3');
+    expect(subject).toContain('не объявлено в конфиге темы — 3');
+    expect(subject).toContain('прямых значений цвета: 0');
     expect(subject).toContain('apps/client/src/components/Panel.tsx:3');
     expect(subject).not.toMatch(/чеклист|типичн/i);
+  });
+
+  /**
+   * Число без своей границы читается как число обо всём приложении. Ровно эту тихую
+   * ложь дело и лечит, поэтому граница выборки обязана стоять рядом с числами, а не
+   * подразумеваться.
+   */
+  it('каждое число несёт свою границу: выборка названа словами и рядом с числами', () => {
+    const subject = renderDesignSubject(subjectOf());
+
+    expect(subject).toContain('Граница замера:');
+    expect(subject).toContain('без вложенных подкаталогов');
+    expect(subject).toContain('не более 25');
+    expect(subject).toContain('читать их как утверждение обо всём приложении нельзя');
+  });
+
+  it('измеренный ноль тоже назван выборкой, а не приложением', () => {
+    const subject = renderDesignSubject(subjectOf());
+
+    expect(subject).toContain('Прямых значений цвета не найдено в прочитанной выборке');
+    expect(subject).toContain('Про файлы вне выборки замер не говорит ничего');
   });
 
   it('прямое значение цвета попадает в таблицу с файлом и строкой', () => {
