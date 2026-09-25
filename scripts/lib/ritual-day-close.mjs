@@ -27,6 +27,14 @@ export const DAY_CLOSE_EVIDENCE = 'docs/MAIN_DAY_ISSUE.md';
  * - `fail` + gap `chain-aborted` — цепочка оборвалась исключением: запись всё равно
  *   закрывается, потому что «сирота» лжёт следующему прогону.
  *
+ * #2413: КАЖДЫЙ неуспешный исход родит и трение, не только gap. `gap` — дыра в
+ * покрытии прогона (утверждение о прогоне), `friction` — наблюдение о мире с
+ * известным симптомом и неназванным корнем (утверждение, живущее дольше прогона).
+ * Упавший шаг — и то, и другое; до 25.09 записывалось только первое, и дайджест,
+ * считающий непогашенные трения по `friction[]`, показывал ноль трений за утро
+ * 23.09, закрытое `gaps:["daily-standup"]`, `friction:[]`. Корень дозапишет
+ * амандмент — создать запись он не умеет, поэтому рождение здесь.
+ *
  * @param {{ outcome: 'pass'|'pending-ci'|'failed'|'aborted', stepId?: string|null, tail?: string|null }} p
  * @returns {string[]}
  */
@@ -35,17 +43,24 @@ export function dayCloseArgs({ outcome, stepId, tail }) {
   const args = ['close', '--procedure', DAY_PROCEDURE_ID, '--status', status, '--evidence', DAY_CLOSE_EVIDENCE];
   if (outcome === 'pending-ci') {
     args.push('--gap', 'deliver-to-main:pending-ci');
-    if (tail) args.push('--friction', tail);
+    // Симптом начинается с ПРЕДМЕТА (#2413): читатель ленты сводит трение с дырой по
+    // первому сегменту до двоеточия. Голый хвост «жду CI» дыру `deliver-to-main` не
+    // называет, и предикат молчащих отказов считал бы её незаявленной.
+    args.push('--friction', `deliver-to-main: ${tail || 'доставка ждёт CI'}`);
     return args;
   }
   if (outcome === 'failed') {
-    args.push('--gap', stepId ?? 'unknown-step');
+    const id = stepId ?? 'unknown-step';
+    args.push('--gap', id);
+    args.push('--friction', `${id}: отказ шага утренней цепочки (корень не назван)`);
     return args;
   }
   if (outcome === 'aborted') {
     // Обрыв — не «успех» и не «шаг упал»: у провала есть имя, и это имя обрыва.
     args.push('--gap', 'chain-aborted');
-    if (tail) args.push('--friction', tail);
+    // `tail` необязателен, трение — обязательно (#2413): «обрыв без хвоста» — всё равно
+    // наблюдение, и молчание о нём ничем не отличается от молчания об удачном прогоне.
+    args.push('--friction', `chain-aborted: ${tail || 'цепочка оборвана без хвоста (корень не назван)'}`);
   }
   return args;
 }

@@ -30,7 +30,7 @@ test('персона без записей — ВИДИМАЯ строка «с�
   assert.match(md, /### farrell\n- сегодня без записей/u);
 });
 
-test('гейт #569: нет протокола показа → gated=true + problems-строка; слой только декларирует', () => {
+test('гейт #569: нет протокола показа → gated=true; слой только декларирует', () => {
   const files = { 'docs/virtual-team/memory/angelina.md': '- 2026-07-28 · решение дня' };
   for (const p of PERSONAS) files[`docs/virtual-team/memory/${p}.md`] ??= '# пусто';
   const r = buildPersonaTraceLayer('/repo', '2026-07-28', {
@@ -38,8 +38,43 @@ test('гейт #569: нет протокола показа → gated=true + pro
     exists: (p) => p in files,
   });
   assert.equal(r.stats.gated, true);
-  assert.ok(r.problems.some((x) => x.includes('#569') && x.includes('НЕ публиковать')));
   assert.equal(r.stats.withEntries, 1);
+});
+
+// ── #2418: находка, которая срабатывает КАЖДЫЙ вечер, — не находка ────────────────
+//
+// КРАСНЫЙ ВХОД: `day-memo` стоит в вечерней цепочке раньше, чем `team-evening-feedback`
+// рождает сегодняшний протокол. Значит `gated=true` на момент шага — ВСЕГДА. Через
+// `problems` это давало exit 3, и журнал 17, 18, 21, 22.09 получил по непогашенному
+// трению за то, что цепочка идёт в своём порядке (12 непогашенных из 16, амандментов 0).
+test('#2418 gated=true НЕ попадает в problems — по построению порядка, а не по случаю', () => {
+  // Вход чист по всему, кроме гейта: носители на месте, отчёт памяти приложен
+  // (шаг team-memory-report стоит в цепочке раньше day-memo, так и бывает вечером).
+  const files = { 'docs/seanses/team-memory-report-2026-07-28.md': 'отчёт' };
+  for (const p of PERSONAS) files[`docs/virtual-team/memory/${p}.md`] = '# пусто';
+  const r = buildPersonaTraceLayer('/repo', '2026-07-28', {
+    readFile: (p) => files[p],
+    exists: (p) => p in files,
+  });
+  assert.equal(r.stats.gated, true, 'состояние обязано остаться видимым');
+  assert.deepEqual(
+    r.problems.filter((x) => x.includes('#569')),
+    [],
+    'ожидаемое по построению состояние объявлено находкой — вечер краснеет каждый вечер',
+  );
+  assert.deepEqual(r.problems, [], 'кроме гейта у чистого входа проблем нет');
+});
+
+test('#2418 настоящая проблема слоя — отсутствие носителя памяти — в problems остаётся', () => {
+  const files = { 'docs/virtual-team/memory/angelina.md': '# пусто' };
+  const r = buildPersonaTraceLayer('/repo', '2026-07-28', {
+    readFile: (p) => files[p],
+    exists: (p) => p in files,
+  });
+  assert.ok(
+    r.problems.some((x) => x.includes('без носителя памяти')),
+    'глушить гейт — не значит глушить слой целиком',
+  );
 });
 
 test('протокол показа есть → gated=false; восемь блоков всегда на месте', () => {

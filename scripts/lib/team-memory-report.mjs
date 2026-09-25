@@ -187,3 +187,31 @@ export function renderMemoryReport(byPersona, opts = {}) {
   lines.push('');
   return { markdown: lines.join('\n'), totals: { added, evicted }, regression };
 }
+
+/**
+ * НАХОДКА шага `team-memory-report` — предикат, а не строка в `main()` (#2418).
+ *
+ * Было: `evicted > 0 → exit 3`. Вытеснение — штатная ротация оперативки: у памяти есть
+ * объём, и всё, что в него не влезло, вытесняется КАЖДЫЙ день, когда команда вообще
+ * что-то записывает. Находка, которая срабатывает всегда, ничего не отличает; в ленте
+ * 17, 18, 21, 22.09 она осела четырьмя непогашенными трениями подряд, и ни одно из них
+ * никто не разобрал — потому что разбирать было нечего.
+ *
+ * Стало: находка ⟺ РЕГРЕССИЯ, `evicted > added` — память команды за день сжалась. Это
+ * уже отличает день от дня, а значит стоит трения в журнале. Поимённый список
+ * вытесненных из отчёта никуда не делся: молчит код возврата, а не отчёт.
+ *
+ * @param {{added: number, evicted: number}} totals
+ * @returns {{ code: 0|3, reason: string }}
+ */
+export function memoryReportFinding(totals) {
+  const added = Number(totals?.added) || 0;
+  const evicted = Number(totals?.evicted) || 0;
+  if (evicted > added) {
+    return {
+      code: 3,
+      reason: `регрессия памяти: вытеснено ${evicted} при записанных ${added} — оперативка команды сжалась`,
+    };
+  }
+  return { code: 0, reason: `ротация в норме: записано ${added} · вытеснено ${evicted}` };
+}

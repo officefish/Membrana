@@ -186,6 +186,20 @@ export function gitFsIo(repoRoot, deps) {
         return null;
       }
     },
+    // #2438: ВОЗРАСТ версии. `version` говорит, ЧТО прочитано; `versionAt` — КОГДА это
+    // что-то в последний раз менялось. Гарантия readAt доказывала первое и молчала о
+    // втором, и вечерний протокол 24.09 честно пересказал утренний срез как итог дня.
+    versionAt(relPath) {
+      try {
+        const out = execFileSync('git', ['log', '-1', '--format=%cI', '--', relPath], {
+          cwd: repoRoot,
+          encoding: 'utf8',
+        }).trim();
+        return out || null;
+      } catch {
+        return null;
+      }
+    },
     content(relPath) {
       const abs = join(repoRoot, relPath);
       if (!existsSync(abs)) return null;
@@ -220,5 +234,12 @@ export function provenanceHeader(p) {
  */
 export function readEntry(io, relPath) {
   const content = io.content(relPath);
-  return { version: io.version(relPath), digest: content == null ? null : contentDigest(content) };
+  const entry = { version: io.version(relPath), digest: content == null ? null : contentDigest(content) };
+  // `versionAt` необязателен: io без него (фикстуры, старые вызовы) остаются законными,
+  // а поле просто не появляется. Судить возраст по его отсутствию — забота читателя.
+  if (typeof io.versionAt === 'function') {
+    const at = io.versionAt(relPath);
+    if (at) entry.versionAt = at;
+  }
+  return entry;
 }

@@ -18,7 +18,7 @@ import { appendFileSync, existsSync, readdirSync, readFileSync, writeFileSync } 
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { parseMemoryDiff, renderMemoryReport } from './lib/team-memory-report.mjs';
+import { memoryReportFinding, parseMemoryDiff, renderMemoryReport } from './lib/team-memory-report.mjs';
 import { opLogRel, parseOpLog } from './persona-memory/lib/op-log.mjs';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -122,7 +122,11 @@ function main() {
     writeFileSync(outPath, `<!-- канал: код — yarn team-memory:report (детерминированный, без LLM); база: ${base.slice(0, 12)} -->\n\n${markdown}`, 'utf8');
   }
   console.error(`→ отчёт: docs/seanses/team-memory-report-${date}.md (записано ${totals.added} · вытеснено ${totals.evicted})`);
-  if (totals.evicted > 0) process.exitCode = 3; // находка, не отказ
+  // #2418: находкой объявляется РЕГРЕССИЯ, а не всякое вытеснение — предикат в lib,
+  // чтобы его судил зуб, а не глаз. Ротация без сжатия — норма и молчит.
+  const finding = memoryReportFinding(totals);
+  console.error(`  ${finding.reason}`);
+  if (finding.code !== 0) process.exitCode = finding.code; // находка, не отказ
   if (regression) console.error('⚠ регрессия: вытеснено больше, чем записано.');
 }
 

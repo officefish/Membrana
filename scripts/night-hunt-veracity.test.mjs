@@ -194,3 +194,96 @@ test('ЖИВОЙ ПРОГОН · --mark-tainted метит старые папк
   );
   assert.equal(readdirSync(oldDir).length, 2, 'папка не вычищена — она улика класса');
 });
+
+// ── #2418: окно суток отказывало каждый вечер ─────────────────────────────────────
+//
+// КРАСНЫЙ ВХОД (живая мера на стволе 25.09): в docs/seanses/night-hunt лежат 10 отчётов
+// с рождениями от 12.07 до 21.09; classifySources с окном суток возвращает
+// «вещдоков: 0 | отказано: 10» ЛЮБЫМ днём, кроме тех трёх-четырёх, когда охота ходила.
+// Последняя папка архива — 2026-08-26 при живых отчётах от 14, 16 и 21.09.
+
+test('#2418 окно суток: охота ходила позавчера — вечер отказывает', () => {
+  const sources = [{ name: 'a.md', content: report('2026-09-21T14:05:13.247Z') }];
+  const { exhibits, refused } = classifySources(sources, { day: '2026-09-23' });
+  assert.equal(exhibits.length, 0, 'ровно тот отказ, что краснел 17, 18, 21 и 22.09');
+  assert.equal(refused[0].verity.reason, 'refused_stale');
+});
+
+test('#2418 окно «с прошлого архива» берёт всё, что родилось после последней папки', () => {
+  const sources = [
+    { name: 'stale.md', content: report('2026-07-12T12:47:56.410Z') },
+    { name: 'a.md', content: report('2026-09-14T11:00:33.135Z') },
+    { name: 'b.md', content: report('2026-09-16T07:00:44.945Z') },
+    { name: 'c.md', content: report('2026-09-21T14:05:13.247Z') },
+  ];
+  const { exhibits, refused } = classifySources(sources, { day: '2026-09-23', sinceDay: '2026-08-26' });
+  assert.deepEqual(exhibits.map((e) => e.name).sort(), ['a.md', 'b.md', 'c.md']);
+  assert.deepEqual(refused.map((e) => e.name), ['stale.md'], 'июльская копия вещдоком не становится');
+});
+
+test('#2418 граница нижняя ИСКЛЮЧЕНА: зачеканенный день второй раз не чеканится', () => {
+  const same = veracity({ bornAt: '2026-08-26T10:00:00.000Z', day: '2026-09-23', sinceDay: '2026-08-26' });
+  assert.equal(same.fresh, false, 'иначе каждый вечер переписывал бы ту же папку');
+});
+
+test('#2418 граница верхняя ВКЛЮЧЕНА: сегодняшняя охота — вещдок', () => {
+  const today = veracity({ bornAt: '2026-09-23T03:00:00.000Z', day: '2026-09-23', sinceDay: '2026-08-26' });
+  assert.equal(today.fresh, true);
+});
+
+test('#2418 порядок окон: явный --window-hours сильнее «с прошлого архива»', () => {
+  const v = veracity({
+    bornAt: '2026-09-14T11:00:00.000Z',
+    day: '2026-09-23',
+    sinceDay: '2026-08-26',
+    windowHours: 24,
+    now: new Date('2026-09-23T20:00:00.000Z'),
+  });
+  assert.equal(v.fresh, false, 'два окна разом — не «строже», а неопределённо');
+});
+
+test('#2418 архив ПУСТ → окно падает к суткам, а не выметает полтора месяца', () => {
+  const cwd = sandbox();
+  writeFileSync(join(cwd, 'docs/seanses/night-hunt/old.md'), report('2026-07-12T12:47:56.410Z'), 'utf8');
+  const r = run(cwd);
+  assert.equal(r.code, 3, 'пустой архив — не повод зачеканить июльский отчёт');
+  assert.equal(existsSync(join(cwd, 'docs/archive/night-hunt')), false);
+});
+
+test('#2418 вещдок ложится в папку СВОЕГО дня рождения, а не дня архивации', () => {
+  const cwd = sandbox();
+  mkdirSync(join(cwd, 'docs/archive/night-hunt/2026-08-26'), { recursive: true });
+  writeFileSync(join(cwd, 'docs/archive/night-hunt/2026-08-26/manifest.json'), '{}\n', 'utf8');
+  const today = localDayKey(new Date());
+  writeFileSync(join(cwd, 'docs/seanses/night-hunt/a.md'), report('2026-09-14T11:00:33.135Z'), 'utf8');
+  writeFileSync(join(cwd, 'docs/seanses/night-hunt/b.md'), report('2026-09-16T07:00:44.945Z'), 'utf8');
+
+  const r = run(cwd);
+  assert.equal(r.code, 0, `архиватор отказал: ${r.err}`);
+  assert.ok(existsSync(join(cwd, 'docs/archive/night-hunt/2026-09-14/a.md')), 'папка 14.09 не создана');
+  assert.ok(existsSync(join(cwd, 'docs/archive/night-hunt/2026-09-16/b.md')), 'папка 16.09 не создана');
+  assert.equal(
+    existsSync(join(cwd, `docs/archive/night-hunt/${today}`)),
+    false,
+    'папка сегодняшнего дня читалась бы как ночь, которой не было — ровно ложь, ради которой заводился V(s,d)',
+  );
+
+  const m = JSON.parse(readFileSync(join(cwd, 'docs/archive/night-hunt/2026-09-14/manifest.json'), 'utf8'));
+  assert.equal(m.day, '2026-09-14');
+  assert.equal(m.entries[0].bornAt, '2026-09-14T11:00:33.135Z');
+  assert.equal(m.archivedBy.sinceDay, '2026-08-26', 'провенанс окна — в манифесте, не в голове');
+  assert.equal(m.archivedBy.runDay, today);
+});
+
+test('#2418 второй прогон того же вечера НЕ плодит папок: окно сдвинулось', () => {
+  const cwd = sandbox();
+  mkdirSync(join(cwd, 'docs/archive/night-hunt/2026-08-26'), { recursive: true });
+  writeFileSync(join(cwd, 'docs/seanses/night-hunt/a.md'), report('2026-09-14T11:00:33.135Z'), 'utf8');
+  assert.equal(run(cwd).code, 0);
+  const after = run(cwd);
+  assert.equal(after.code, 3, 'уже зачеканенный день обязан отказать, а не перечеканиться');
+  assert.deepEqual(
+    readdirSync(join(cwd, 'docs/archive/night-hunt')).sort(),
+    ['2026-08-26', '2026-09-14'],
+  );
+});
