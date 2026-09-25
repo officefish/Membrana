@@ -1,31 +1,24 @@
 {
   "magistralOptions": [
-    "cabinet-registration-rollout",
-    "tooling-guards-day",
-    "tariff-transitions-live-day3"
+    "night-schedule-vs-morning",
+    "night-hunt-silent-success",
+    "device-duty-readiness"
   ],
-  "frozenDigest": "1fe2b9b487173d92cc9d3ecb7ad0aa713ce0af8370f7768a9de369cb9417fc4f",
-  "magistral": "cabinet-registration-rollout",
+  "frozenDigest": "767b838f7599e3d9bda3bf7c522a584ab1b1eaf1ad53fcd39e2596f036cffcdf",
+  "magistral": "night-schedule-vs-morning",
   "swallow": {
-    "draftDigest": "9d0f1a73689003533df79f2e53b8b3f416414e6f33a94e9ccf668f5927b2d49d",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-24.md",
+    "draftDigest": "0e619075ca9f53c60fc6489760ed014ef0d43b119c1477a95ed4e2534381b299",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-09-25.md",
     "ownerAck": true,
-    "day": "2026-09-24",
-    "claimsProbe": {
-      "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-09-25.md",
-      "sha": "4473df999faf",
-      "at": "2026-09-25T13:31:31.922Z"
-    },
-    "gate": "evening:partner-swallow"
+    "day": "2026-09-25"
   },
-  "day": "2026-09-24",
-  "magistralChosenAt": "2026-09-24",
+  "day": "2026-09-25",
+  "magistralChosenAt": "2026-09-25",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-09-24",
-    "chosen": "cabinet-registration-rollout",
-    "snapshotDigest": "1fe2b9b487173d92cc9d3ecb7ad0aa713ce0af8370f7768a9de369cb9417fc4f",
+    "at": "2026-09-25",
+    "chosen": "night-schedule-vs-morning",
+    "snapshotDigest": "767b838f7599e3d9bda3bf7c522a584ab1b1eaf1ad53fcd39e2596f036cffcdf",
     "inSnapshot": true
   }
 }
