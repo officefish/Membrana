@@ -8,6 +8,7 @@ import { test } from 'node:test';
 import {
   SURFACING_STATES,
   classifySurfacing,
+  memoryReportFinding,
   parseMemoryDiff,
   renderMemoryReport,
   surfacingLine,
@@ -170,4 +171,40 @@ test('несколько отказов за день считаются, а н�
   assert.doesNotMatch(one, /\(1\)/u, 'единственный отказ счётом не украшается');
   assert.match(many, /отвергнуто \(3\)/u);
   assert.match(many, /причина первого/u, 'показана одна причина из трёх — сказано, какая');
+});
+
+// ── #2418: находка = регрессия памяти, а не всякая ротация ────────────────────────
+//
+// КРАСНЫЙ ВХОД: 22.09 у персоны dynin вытеснено 7 записей — и шаг отдал exit 3. Так же
+// он отдавал его 17, 18 и 21.09: у оперативки есть объём, и вытеснение случается в
+// любой день, когда команда что-то записала. Четыре вечера подряд журнал получал
+// непогашенное трение, которого никто не разбирал: разбирать нечего.
+
+test('#2418 ротация БЕЗ сжатия молчит: вытеснено меньше записанного', () => {
+  const f = memoryReportFinding({ added: 12, evicted: 7 });
+  assert.equal(f.code, 0, 'штатная ротация, объявленная находкой, краснеет каждый вечер');
+  assert.match(f.reason, /ротация в норме/u);
+});
+
+test('#2418 вытеснение РОВНО в объём записанного — тоже не находка', () => {
+  assert.equal(memoryReportFinding({ added: 7, evicted: 7 }).code, 0);
+});
+
+test('#2418 регрессия — память сжалась — остаётся находкой exit 3', () => {
+  const f = memoryReportFinding({ added: 2, evicted: 7 });
+  assert.equal(f.code, 3);
+  assert.match(f.reason, /регрессия памяти/u);
+  assert.match(f.reason, /вытеснено 7 при записанных 2/u);
+});
+
+test('#2418 пустой день: ни записей, ни вытеснений — молчание', () => {
+  assert.equal(memoryReportFinding({ added: 0, evicted: 0 }).code, 0);
+  assert.equal(memoryReportFinding(undefined).code, 0, 'отсутствие итогов не выдумывает находку');
+});
+
+test('#2418 предикат согласован с флагом regression рендера', () => {
+  const byPersona = { dynin: { added: [], evicted: [{ date: '2026-09-22', kind: 'k', slug: 's' }] } };
+  const { totals, regression } = renderMemoryReport(byPersona, { personas: ['dynin'] });
+  assert.equal(regression, true);
+  assert.equal(memoryReportFinding(totals).code, 3, 'две правды о том же дне разошлись бы');
 });

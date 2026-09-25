@@ -32,6 +32,65 @@ function isOutcomeRecord(rec) {
 }
 
 /**
+ * Предмет трения — то, О ЧЁМ оно. По контракту симптом пишется как `<id>: текст`, где
+ * `id` — имя шага или дыры; первый сегмент до двоеточия и есть предмет.
+ *
+ * Сегмент, а не подстрока: `includes('code-review')` считал бы трение по
+ * `archive-code-review` трением по `code-review` и гасил бы чужую дыру чужим симптомом.
+ *
+ * @param {string} s
+ * @returns {string}
+ */
+function subjectOf(s) {
+  const i = String(s ?? '').indexOf(':');
+  return (i === -1 ? String(s ?? '') : String(s).slice(0, i)).trim();
+}
+
+/**
+ * ЛОЖНОЕ БЛАГОПОЛУЧИЕ (#2413): дыра в покрытии, по которой не записано НИ ОДНОГО
+ * трения. Графа «Трения (непогашенные)» печатает тогда число, честное по своему счёту,
+ * и заниженное по своему предмету.
+ *
+ * Судится КАЖДАЯ дыра отдельно, а не запись целиком, и вот почему. Вечер 24.09 нёс и
+ * три gaps, и три трения — «трения есть» было бы зелёным. Но трения те рождены
+ * находками (`archive-night-hunt`, `leveling-workspace`, `day-memo` — шаги, которые не
+ * падали), а по трём упавшим (`code-review`, `archive-code-review`, `deliver-to-main`)
+ * в ленте нет ничего. Наличие трений рядом с дырой не есть трение ПО дыре: чужой
+ * симптом гасит чужую дыру только в глазах счётчика.
+ *
+ * Предикат чистый и ленту не чинит: он судит УЖЕ записанное. Нужен он потому, что
+ * починка сборщиков аргументов (`ritual-day-close`, `ritual-evening-close-args`)
+ * закрывает ДОРОГУ, но не ГРАФУ: любой новый писатель журнала волен снова записать gap
+ * без трения, и без предиката это опять станет заметно только через неделю.
+ *
+ * `orphaned` не в счёт: ленивое закрытие сироты — служебная запись, чей симптом целиком
+ * в `subject`; требовать от неё трения значило бы плодить шум вместо наблюдений.
+ *
+ * @param {object[]} records
+ * @returns {{ runId: string, sequence: number, procedureId: string, at: string, gaps: string[] }[]}
+ */
+export function findSilentFailures(records) {
+  if (!Array.isArray(records)) throw new Error('records must be an array');
+  const out = [];
+  for (const rec of records) {
+    if (!isOutcomeRecord(rec)) continue;
+    const gaps = Array.isArray(rec?.coverage?.gaps) ? rec.coverage.gaps : [];
+    const friction = Array.isArray(rec.friction) ? rec.friction : [];
+    const spoken = new Set(friction.map((f) => subjectOf(f?.symptom)));
+    const silent = gaps.filter((g) => g !== ORPHANED_GAP && !spoken.has(subjectOf(g)));
+    if (silent.length === 0) continue;
+    out.push({
+      runId: String(rec.runId ?? '—'),
+      sequence: Number(rec.sequence) || 0,
+      procedureId: String(rec.procedureId ?? '—'),
+      at: String(rec.at ?? '—'),
+      gaps: silent,
+    });
+  }
+  return out;
+}
+
+/**
  * @typedef {object} PillarRow
  * @property {string} procedureId
  * @property {number} runs уникальные runId в окне
@@ -149,6 +208,9 @@ export function buildProcedureRunsDigest(records, opts = {}) {
     pillars: pillarRows,
     others,
     problems,
+    // #2413: счёт трений говорит о том, что записано; эта графа — о том, что записать
+    // забыли. Без неё «0 непогашенных» неотличимо от «0 падений».
+    silentFailures: findSilentFailures(windowed),
   };
 }
 
@@ -179,6 +241,21 @@ export function renderProcedureRunsDigest(digest, opts = {}) {
     lines.push(
       `Вне пяти опор: ${digest.others.map((x) => `${x.procedureId} (${x.records})`).join(' · ')}`,
     );
+  }
+  // Раздел печатается ПЕРЕД проблемами чтения: молчащий отказ — не дефект ленты, а
+  // дефект правды о дне, и читать его надо сразу после таблицы, которая им и солгала.
+  if ((digest.silentFailures ?? []).length > 0) {
+    lines.push('');
+    lines.push('## Отказы без трения (#2413)');
+    lines.push('');
+    lines.push(
+      'Закрытия, заявившие дыру в покрытии и ни одного трения: графа «Трения (непогашенные)» ' +
+        'выше занижена ровно на эти отказы.',
+    );
+    lines.push('');
+    for (const s of digest.silentFailures) {
+      lines.push(`- ${s.procedureId} · ${s.runId}#${s.sequence} · ${s.at} — gaps: ${s.gaps.join(', ')}`);
+    }
   }
   if (digest.problems.length > 0) {
     lines.push('');

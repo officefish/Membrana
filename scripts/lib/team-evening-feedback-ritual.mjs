@@ -284,6 +284,7 @@ export function resolveEveningFeedbackOutputPath(opts) {
  *   readonly gitSummary: string;
  *   readonly ragBlock?: string;
  *   readonly focusNote?: string;
+ *   readonly freshnessNotice?: string;
  *   readonly date?: Date;
  * }} p
  */
@@ -303,6 +304,9 @@ export function buildEveningFeedbackUserMessage(p) {
     '\n\n---\n\n' +
     (p.ragBlock ? `## RAG context\n\n${p.ragBlock}\n\n---\n\n` : '') +
     (p.magistralBlock ? `${p.magistralBlock}\n\n---\n\n` : '') +
+    // #2438: оговорка о свежести стоит ПЕРЕД документами дня, а не после. Команда должна
+    // прочитать «вход датирован утром» до того, как начнёт судить по этому входу.
+    (p.freshnessNotice ? `## Свежесть входов\n\n${p.freshnessNotice}\n\n---\n\n` : '') +
     '## Документы дня\n\n' +
     p.dayDocs +
     '\n\n---\n\n## Git\n\n' +
@@ -317,6 +321,7 @@ export function buildEveningFeedbackUserMessage(p) {
  *   readonly path: string;
  *   readonly body: string;
  *   readonly saveAs?: string;
+ *   readonly freshnessNotice?: string;
  *   readonly meta?: { llmProvider?: string; llmModel?: string; llmSource?: string };
  * }} opts
  */
@@ -339,8 +344,12 @@ export function writeEveningFeedbackMarkdown(opts) {
   const guardLine = opts.meta?.guard
     ? `<!-- evening-feedback ${JSON.stringify(opts.meta.guard)} -->\n`
     : '';
+  // #2438: оговорка о свежести — ВИДИМАЯ строка протокола, не только машинная гарантия.
+  // Ложный вердикт 24.09 был опровержим из самого заголовка (`version = 8d251ad1` —
+  // утренний срез), но заголовок — комментарий: его читает разбор, а не читатель.
+  const freshness = opts.freshnessNotice ? `${opts.freshnessNotice}\n\n` : '';
   mkdirSync(dirname(opts.path), { recursive: true });
-  writeFileSync(opts.path, header + guardLine + '\n' + opts.body, 'utf8');
+  writeFileSync(opts.path, header + guardLine + '\n' + freshness + opts.body, 'utf8');
 }
 
 /**
@@ -407,6 +416,86 @@ export function validateEveningFeedbackReadAt(p) {
     // на этом: DAILY_CODE_REVIEW прочитан верно, потом закоммичен цепочкой — ложный красный.
   }
   return { ok: failures.length === 0, failures };
+}
+
+/**
+ * СВЕЖЕСТЬ ВХОДОВ ОТНОСИТЕЛЬНО МИРА (#2438) — чистый предикат, без ФС и часов внутри.
+ *
+ * ПОВОД. `validateEveningFeedbackReadAt` доказывает, что команда прочитала входы и что
+ * прочитала именно то, что лежит. Он не говорит ни слова о том, СВЕЖИ ли входы. Вечер
+ * 24.09: `readAt.MAIN_DAY_ISSUE.version = 8d251ad1` — утренний срез; протокол вынес дню
+ * 5.8/10 с четырьмя ложными несущими утверждениями (второй кабинет на free-v1,
+ * `cabinet.env` настроен, лог отказа образа получен, PR #2429 — ровно критический путь),
+ * и все четыре факта родились ПОСЛЕ полудня. Гарантия была зелёной, а вердикт ложным:
+ * документы дня нарезаны утром, и для протокола вторая половина дня не существовала.
+ *
+ * Предикат не запрещает ложный вердикт — он делает его ЗАМЕТНЫМ: называет самый старый
+ * вход и час, после которого события в протокол не попали.
+ *
+ * Вход без `versionAt` (io без порта, файла не было) возраста не выдумывает: он уходит
+ * в `unknown` и в строку отдельной оговоркой. Придуманный возраст был бы той же ложью,
+ * только с другой стороны.
+ *
+ * @param {{
+ *   readonly readAt: Record<string, { version?: string|null, digest?: string|null, versionAt?: string|null }>|null|undefined;
+ *   readonly now: string|Date;
+ *   readonly keys?: readonly string[];
+ * }} p
+ * @returns {{ oldest: { key: string, at: string, ageHours: number }|null, unknown: string[], ages: {key: string, at: string, ageHours: number}[] }}
+ */
+export function eveningInputFreshness(p) {
+  const nowMs = new Date(p?.now ?? Date.now()).getTime();
+  const readAt = p?.readAt && typeof p.readAt === 'object' ? p.readAt : {};
+  const keys = p?.keys ?? Object.keys(readAt);
+  const ages = [];
+  const unknown = [];
+  for (const key of keys) {
+    const at = readAt[key]?.versionAt;
+    const ms = at ? Date.parse(String(at)) : Number.NaN;
+    if (!Number.isFinite(ms)) {
+      unknown.push(key);
+      continue;
+    }
+    ages.push({ key, at: new Date(ms).toISOString(), ageHours: Math.max(0, (nowMs - ms) / 3_600_000) });
+  }
+  ages.sort((a, b) => Date.parse(a.at) - Date.parse(b.at) || a.key.localeCompare(b.key));
+  return { oldest: ages[0] ?? null, unknown: unknown.sort(), ages };
+}
+
+/**
+ * Видимая строка протокола (#2438). Машинная гарантия читается разбором, а вердикт
+ * читает человек — поэтому оговорка печатается словами, рядом с текстом, а не только
+ * внутри `<!-- evening-feedback … -->`.
+ *
+ * @param {ReturnType<typeof eveningInputFreshness>} f
+ * @returns {string}
+ */
+export function renderFreshnessNotice(f) {
+  const lines = ['> **Свежесть входов.**'];
+  if (!f?.oldest) {
+    lines.push(
+      '> Возраст входов неизвестен: ни один документ не принёс отметки версии. ' +
+        'Вердикт о дне НЕ опирается на доказанную свежесть.',
+    );
+  } else {
+    const d = new Date(f.oldest.at);
+    const hhmm = `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
+    lines.push(
+      `> Самый старый вход — \`${f.oldest.key}\`, версия датирована ${f.oldest.at} ` +
+        `(${f.oldest.ageHours.toFixed(1)} ч назад).`,
+    );
+    lines.push(
+      `> **Вход датирован ${hhmm} UTC; события после ${hhmm} в нём не учтены.** ` +
+        'Всё, что случилось позже, для этого протокола не существует — ' +
+        'утверждать «не сделано» по такому входу нельзя.',
+    );
+  }
+  if (f?.unknown?.length) {
+    lines.push(
+      `> Возраст неизвестен у: ${f.unknown.join(', ')} — эти входы не доказывают ни свежести, ни давности.`,
+    );
+  }
+  return lines.join('\n');
 }
 
 /**
@@ -510,6 +599,8 @@ export async function runEveningFeedbackLlm(deps) {
     path: deps.outputPath,
     body,
     saveAs: deps.saveAs,
+    // #2438: оговорка о свежести доезжает до файла, а не теряется между промптом и ним.
+    freshnessNotice: deps.freshnessNotice,
     meta: {
       llmProvider: result.provider,
       llmModel: result.model,

@@ -28,9 +28,40 @@ test('#1782 у каждого не-pass исхода есть НАЗВАННЫЙ
 });
 
 test('#1782 pending-ci и обрыв несут хвост во friction, pass — нет', () => {
-  assert.equal(valueOf(dayCloseArgs({ outcome: 'pending-ci', tail: 'жду CI' }), '--friction'), 'жду CI');
-  assert.equal(valueOf(dayCloseArgs({ outcome: 'aborted', tail: 'цепочка оборвана: X' }), '--friction'), 'цепочка оборвана: X');
+  // #2413 поправил ФОРМУ: хвост остался хвостом, но симптом теперь начинается с
+  // предмета — иначе трение не сводится с дырой, к которой относится.
+  assert.equal(valueOf(dayCloseArgs({ outcome: 'pending-ci', tail: 'жду CI' }), '--friction'), 'deliver-to-main: жду CI');
+  assert.equal(
+    valueOf(dayCloseArgs({ outcome: 'aborted', tail: 'цепочка оборвана: X' }), '--friction'),
+    'chain-aborted: цепочка оборвана: X',
+  );
   assert.ok(!dayCloseArgs({ outcome: 'pass' }).includes('--friction'));
+});
+
+// ── #2413: утро 23.09 — gaps:["daily-standup"], friction:[] ───────────────────────
+//
+// КРАСНЫЙ ВХОД: живая запись утра 2026-09-23 закрылась `fail` с одним gap и ПУСТЫМ
+// friction. Дайджест считает непогашенные трения по friction[] и про gaps в этой графе
+// молчит — отсюда «ноль трений» за утро, в котором упал стендап.
+test('#2413 отказ шага утра родит трение, а не только дыру в покрытии', () => {
+  const args = dayCloseArgs({ outcome: 'failed', stepId: 'daily-standup' });
+  assert.equal(valueOf(args, '--gap'), 'daily-standup');
+  assert.ok(args.includes('--friction'), 'gaps:["daily-standup"], friction:[] — ровно утро 23.09');
+  assert.match(valueOf(args, '--friction'), /^daily-standup: отказ шага/u);
+  assert.match(valueOf(args, '--friction'), /корень не назван/u, 'симптом известен, корень — нет');
+});
+
+test('#2413 обрыв БЕЗ хвоста тоже родит трение — молчание неотличимо от удачи', () => {
+  const args = dayCloseArgs({ outcome: 'aborted' });
+  assert.equal(valueOf(args, '--gap'), 'chain-aborted');
+  assert.ok(args.includes('--friction'), 'обрыв без хвоста оставлял gap без единого симптома');
+  assert.match(valueOf(args, '--friction'), /chain-aborted/u);
+});
+
+test('#2413 у неизвестного шага трение всё равно есть, под именем дыры', () => {
+  const args = dayCloseArgs({ outcome: 'failed', stepId: null });
+  assert.equal(valueOf(args, '--gap'), 'unknown-step');
+  assert.match(valueOf(args, '--friction'), /^unknown-step: отказ шага/u);
 });
 
 test('#1782 ПОРЧА: манифест с journal-open, но без journal-close — находка', () => {

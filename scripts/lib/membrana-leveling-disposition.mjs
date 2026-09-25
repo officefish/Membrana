@@ -66,6 +66,32 @@ export function inferTempOrScratch(path) {
 }
 
 /**
+ * ЖУРНАЛ ТЕКУЩЕГО ПРОГОНА (#2418): лента `docs/procedure-runs/trail/<дата>.jsonl` —
+ * не мусор и не забытый хлам, а то, что ПИШЕТ прямо сейчас цепочка, внутри которой
+ * выравнивание и запущено.
+ *
+ * Дефект был порядковый, а не классификационный. Вечер дописывает ленту прогона в
+ * дерево РАНЬШЕ, чем шаг `leveling-workspace` считает дерево; лента оказывается
+ * `dirty ∧ ¬registered` и по тотальности (правило 5) падает в `trash`, а гейт
+ * останавливается на `unnamed-trash`. Отсюда exit 3 каждый вечер 17, 18, 21 и 22.09:
+ * выравнивание требовало ИМЕНИ для мусора, которым был его собственный журнал.
+ *
+ * Класс намеренно узкий — одна лента, а не «всё, что пишет вечер»: широкое исключение
+ * пришлось бы угадывать, а угаданное исключение глушит и настоящий мусор. Лента
+ * append-only и живёт в стволе; трогать её выравниванию нечего ни в каком случае.
+ *
+ * @param {string} path
+ * @returns {boolean}
+ */
+export function inferRunJournalTrail(path) {
+  const n = String(path ?? '')
+    .replace(/\\/gu, '/')
+    .replace(/^\.\//u, '')
+    .toLowerCase();
+  return /(^|\/)docs\/procedure-runs\/trail\/\d{4}-\d{2}-\d{2}\.jsonl$/u.test(n);
+}
+
+/**
  * readyFacts(unit) ⇔ ciGreen ∧ ¬conflictsMain ∧ prApproved (без leadStamp).
  *
  * @param {Pick<DispositionCtx, 'ciGreen' | 'conflictsMain' | 'prApproved'>} ctx
@@ -111,6 +137,11 @@ export function disposition(path, ctx = {}) {
 
   // 1. мусор по расположению (даже в активной сессии)
   if (c.isTempOrScratch) return 'trash';
+
+  // 1а. журнал текущего прогона (#2418) — пишет его та самая цепочка, что запустила
+  // выравнивание. ДО правила 2, потому что `inActiveSession` про сессию оркестратора,
+  // а лента принадлежит ПРОГОНУ: она живая и без активной сессии человека.
+  if (inferRunJournalTrail(c.path)) return 'live';
 
   // 2. активная правка — НЕ трогать (R2); ДО fallback-trash
   if (c.dirty && c.inActiveSession) return 'live';
