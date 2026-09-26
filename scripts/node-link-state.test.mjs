@@ -163,3 +163,16 @@ test('#2461 отказ проверяемый: строка называет ф�
   const same = reconcileServiceBinding(paired(STUDIO_DEVICE), { deviceId: STUDIO_DEVICE, path: NODE_ENV_PATH });
   assert.ok(same.line.includes(`по ${NODE_ENV_PATH}`), 'и успех сверки называет предмет');
 });
+
+test('#2461 отказ говорит РОВНО своё следствие и не приписывает расхождению чужих последствий', () => {
+  // Поправка ведущей 26.09. Первая редакция строки говорила «пробы не поедут никуда» — лишний
+  // вывод: записи со сценария доски отправляет САМА Студия (server-storage-backend →
+  // POST /v1/devices/<id>/collections/<id>/samples) и после перевязки отправляет их от имени
+  // НОВОГО прибора. Безголовый тракт узла (ADR-0027) к записи с доски отношения не имеет.
+  // Причина отсутствия проб 25.09 не названа, и прибор не вправе выдавать её за найденную.
+  const r = reconcileServiceBinding(paired(STUDIO_DEVICE), { deviceId: SERVICE_DEVICE });
+  assert.equal(r.split, true);
+  assert.match(r.line, /задания и пульс/u, 'следствие расхождения названо');
+  assert.match(r.line, /уходят не туда/u);
+  assert.doesNotMatch(r.line, /не поедут никуда|не уходят никуда|ни одной пробы/u, 'чужих последствий отказ не обещает');
+});
