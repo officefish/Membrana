@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 import {
   EXIT_NOT_LIVE,
@@ -18,8 +19,42 @@ const node = (over = {}) => ({
   id: 'ad6975f1-0000-4000-8000-000000000001',
   name: 'Узел 1',
   accessKeys: [{ id: '77004e50-0000-4000-8000-000000000002', duration: 'weeks_2', expiresAt: new Date(NOW + 72 * H).toISOString(), revokedAt: null }],
-  device: { pairingStatus: 'paired', pairedKeyId: '77004e50-0000-4000-8000-000000000002', pairedKeyExpiresAt: new Date(NOW + 72 * H).toISOString(), lastSeenAt: '2026-09-05T21:40:17.695Z' },
+  device: { pairedKeyStatus: 'active', pairedKeyExpiresAt: new Date(NOW + 72 * H).toISOString(), lastSeenAt: '2026-09-05T21:40:17.695Z' },
   ...over,
+});
+
+test('#2473 поля device, которые читает скрипт, присутствуют в serializeNode', () => {
+  const script = readFileSync(new URL('./node-link-state.mjs', import.meta.url), 'utf8');
+  const cabinet = readFileSync(
+    new URL('../packages/background-cabinet/src/modules/membrane/membrane.service.ts', import.meta.url),
+    'utf8',
+  );
+  const serializedDevice = /device:\s*node\.device\s*\?\s*\{([\s\S]*?)\}\s*:\s*null/u.exec(cabinet)?.[1];
+  assert.ok(serializedDevice, 'выходной блок device в serializeNode найден');
+
+  const readFields = new Set(
+    [...script.matchAll(/\bdevice(?:\?\.|\.)(\w+)/gu)].map((match) => match[1]),
+  );
+  for (const field of readFields) {
+    assert.match(serializedDevice, new RegExp(`\\b${field}:`, 'u'), `device.${field} есть в GET /v1/membranes/me`);
+  }
+});
+
+test('#2473 membranes/me сам подтверждает сопряжение без вспомогательного link-state', () => {
+  const expiresAt = new Date(NOW + 72 * H).toISOString();
+  const r = judgeNode(
+    node({
+      device: {
+        mediaDeviceId: 'device-1',
+        pairedKeyStatus: 'active',
+        pairedKeyExpiresAt: expiresAt,
+        lastSeenAt: '2026-09-05T21:40:17.695Z',
+      },
+    }),
+    { now: NOW },
+  );
+
+  assert.equal(r.verdict, 'ok');
 });
 
 test('#2284 живой ключ и сопряжение — ok, exit 0', () => {
@@ -32,7 +67,7 @@ test('#2284 живой ключ и сопряжение — ok, exit 0', () => {
 test('#2284 ПОРЧА: ключ 20.08 с истечением 03.09 — expired, лекарство названо, exit 27', () => {
   // Ровно снимок приёмки 20.08 («истекает 03.09»), поданный живому суду 06.09.
   const exp = '2026-09-03T11:06:00.000Z';
-  const r = judgeNode(node({ accessKeys: [{ id: '77004e50-x', duration: 'weeks_2', expiresAt: exp, revokedAt: null }], device: { pairingStatus: 'paired', pairedKeyId: '77004e50-x', pairedKeyExpiresAt: exp } }), { now: NOW });
+  const r = judgeNode(node({ accessKeys: [{ id: '77004e50-x', duration: 'weeks_2', expiresAt: exp, revokedAt: null }], device: { pairedKeyStatus: 'expired', pairedKeyExpiresAt: exp } }), { now: NOW });
   assert.equal(r.verdict, 'expired');
   assert.match(r.lines.at(-1), /ИСТЁК/u);
   assert.match(r.remedy, /новый ключ/u);
@@ -41,13 +76,15 @@ test('#2284 ПОРЧА: ключ 20.08 с истечением 03.09 — expired
 
 test('#2284 осталось меньше суток — expiring: дежурство не переживёт', () => {
   const exp = new Date(NOW + 5 * H).toISOString();
-  const r = judgeNode(node({ accessKeys: [{ id: 'k', duration: 'hours_4', expiresAt: exp, revokedAt: null }], device: { pairingStatus: 'paired', pairedKeyId: 'k', pairedKeyExpiresAt: exp } }), { now: NOW });
+  const r = judgeNode(node({ accessKeys: [{ id: 'k', duration: 'hours_4', expiresAt: exp, revokedAt: null }], device: { pairedKeyStatus: 'active', pairedKeyExpiresAt: exp } }), { now: NOW });
   assert.equal(r.verdict, 'expiring');
   assert.equal(exitCodeFor([r.verdict]), EXIT_NOT_LIVE);
 });
 
 test('#2284 отозванный ключ — revoked; ключа нет — no-key', () => {
-  const revoked = judgeNode(node({ accessKeys: [{ id: 'k', expiresAt: new Date(NOW + 72 * H).toISOString(), revokedAt: '2026-09-04T00:00:00.000Z' }], device: { pairingStatus: 'paired', pairedKeyId: 'k' } }), { now: NOW });
+  const revokedAt = '2026-09-04T00:00:00.000Z';
+  const expiresAt = new Date(NOW + 72 * H).toISOString();
+  const revoked = judgeNode(node({ accessKeys: [{ id: 'k', expiresAt, revokedAt }], device: { pairedKeyStatus: 'revoked', pairedKeyExpiresAt: expiresAt } }), { now: NOW });
   assert.equal(revoked.verdict, 'revoked');
   const none = judgeNode({ id: 'n', name: 'Узел', accessKeys: [], device: null }, { now: NOW });
   assert.equal(none.verdict, 'no-key');
@@ -71,8 +108,7 @@ test('#2284 неизвестная форма ответа — unknown и ОТК
 const STUDIO_DEVICE = '9e86ec85-0572-4253-8a3e-998ac2f36e80';
 const SERVICE_DEVICE = '2b48c488-0000-4000-8000-000000000001';
 const paired = (mediaDeviceId) => ({
-  pairingStatus: 'paired',
-  pairedKeyId: '77004e50-0000-4000-8000-000000000002',
+  pairedKeyStatus: 'active',
   pairedKeyExpiresAt: new Date(NOW + 72 * H).toISOString(),
   lastSeenAt: '2026-09-05T21:40:17.695Z',
   mediaDeviceId,
@@ -146,7 +182,7 @@ test('#2461 расхождение видно в строках даже ког�
   const r = judgeNode(
     node({
       accessKeys: [{ id: '77004e50-x', duration: 'weeks_2', expiresAt: exp, revokedAt: null }],
-      device: { ...paired(STUDIO_DEVICE), pairedKeyId: '77004e50-x', pairedKeyExpiresAt: exp },
+      device: { ...paired(STUDIO_DEVICE), pairedKeyStatus: 'expired', pairedKeyExpiresAt: exp },
     }),
     { now: NOW, nodeBinding: { deviceId: SERVICE_DEVICE } },
   );
