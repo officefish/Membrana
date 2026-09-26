@@ -1,6 +1,7 @@
 import type { RuntimeOverflowHoldPayload } from '@membrana/core';
 import { isOverflowPolicy } from '@membrana/plugin-contracts';
 
+import { startOverflowHoldOwnerBridge } from './ownerBridge';
 import type {
   DeviceOverflowHold,
   HoldActivation,
@@ -336,6 +337,11 @@ let singleton: DeviceOverflowHoldImpl | null = null;
 export function getDeviceOverflowHold(): DeviceOverflowHold {
   if (singleton === null) {
     singleton = new DeviceOverflowHoldImpl();
+    // Мост владельца ставится ЗДЕСЬ, а не только в проводке (#2463): носитель создаётся первым
+    // же читателем эпизода — бейдж доски в `App` — задолго до того, как смонтируется плагин
+    // микрофона. Иначе поднятый из хранилища чужой эпизод успел бы показаться. Мост
+    // идемпотентен на носитель: повторный вызов из проводки второй подписки не плодит.
+    startOverflowHoldOwnerBridge(singleton);
   }
   return singleton;
 }

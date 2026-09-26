@@ -12,7 +12,6 @@
 import { useNodeConnectionStore } from '@/stores/nodeConnectionStore';
 import type { NodeConnectionMode, PairedNodeCredentials } from '@/lib/nodeConnectionMode';
 
-import { getDeviceOverflowHold } from './deviceOverflowHold';
 import type { DeviceOverflowHold, OverflowHoldOwner } from './types';
 
 /**
@@ -40,15 +39,28 @@ function reconcileFromStore(hold: DeviceOverflowHold): void {
   hold.reconcileOwner(resolveOverflowHoldOwner(hydrated, mode, pairing));
 }
 
+/** Одна подписка на носитель: мост зовут и синглтон, и проводка — второй не плодит третью. */
+const bridged = new WeakMap<DeviceOverflowHold, () => void>();
+
 /**
  * Поставить мост: сверить владельца сейчас же (эпизод мог быть поднят из хранилища до
  * подъёма привязки) и дальше — на каждое изменение связи. Возвращает снятие подписки.
  */
-export function startOverflowHoldOwnerBridge(
-  hold: DeviceOverflowHold = getDeviceOverflowHold(),
-): () => void {
+export function startOverflowHoldOwnerBridge(hold: DeviceOverflowHold): () => void {
+  const already = bridged.get(hold);
+  if (already !== undefined) {
+    // Повторный вызов — не вторая подписка, но сверку прогнать надо: привязка могла измениться.
+    reconcileFromStore(hold);
+    return already;
+  }
   reconcileFromStore(hold);
-  return useNodeConnectionStore.subscribe(() => {
+  const unsubscribe = useNodeConnectionStore.subscribe(() => {
     reconcileFromStore(hold);
   });
+  const off = (): void => {
+    bridged.delete(hold);
+    unsubscribe();
+  };
+  bridged.set(hold, off);
+  return off;
 }

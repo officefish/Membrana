@@ -278,4 +278,26 @@ describe('мост привязки → владелец', () => {
     off();
     useNodeConnectionStore.setState({ hydrated: false, mode: null, pairing: null });
   });
+
+  it('мост идемпотентен на носитель: второй вызов сверяет, но второй подписки не плодит', () => {
+    useNodeConnectionStore.setState({ hydrated: false, mode: null, pairing: null });
+    const { hold, changes } = restore(ADMIN_EPISODE, null);
+    const off1 = startOverflowHoldOwnerBridge(hold);
+    const off2 = startOverflowHoldOwnerBridge(hold);
+    expect(off2).toBe(off1);
+
+    useNodeConnectionStore.setState({ hydrated: true, mode: 'paired', pairing });
+
+    // Один `discarded`, а не два: подписка одна.
+    expect(changes).toEqual(['discarded']);
+    off1();
+    useNodeConnectionStore.setState({ hydrated: false, mode: null, pairing: null });
+  });
+
+  it('мост живёт на синглтоне носителя, а не только в проводке: бейдж доски строится раньше плагина', async () => {
+    const { readFileSync } = await import('node:fs');
+    const src = readFileSync(new URL('./deviceOverflowHold.ts', import.meta.url), 'utf8');
+    const factory = src.slice(src.indexOf('export function getDeviceOverflowHold'), src.length);
+    expect(factory).toContain('startOverflowHoldOwnerBridge(singleton)');
+  });
 });
