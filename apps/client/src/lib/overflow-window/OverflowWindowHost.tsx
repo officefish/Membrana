@@ -18,7 +18,7 @@ import { getOverflowWindowController, type OverflowWindowController } from './co
 import { deltaSinceStop, readBufferLedger, settleClean, type BufferLedgerSnapshot } from './ledger';
 import { OverflowWindow } from './OverflowWindow';
 import { formatBytes } from './reasonTexts';
-import { buildOverflowWindowViewModel, type TariffTransitionsKnowledge } from './viewModel';
+import { buildOverflowWindowViewModel, liveAxesFromQuota, type TariffTransitionsKnowledge } from './viewModel';
 
 export const SAMPLE_LIBRARY_MODULE_ID = 'sample-library';
 
@@ -43,7 +43,7 @@ function defaultOpenExternal(url: string): void {
 
 /**
  * Хост окна оператора (4/4, #2310) — единственное место, где окно встречает приложение:
- * снимок библиотеки (ЛОКАЛЬНЫЙ — квота повторно не запрашивается, каталог не перечитывается),
+ * живой снимок библиотеки (квота перечитывается при открытии и каждой новой попытке старта),
  * подтверждение чистки через общие ворота удаления (#2218), переход в библиотеку и в
  * кабинет. Монтируется один раз в `App`; плашка панели записи и бейдж доски — только входы.
  */
@@ -83,6 +83,13 @@ export function OverflowWindowHost({
   useEffect(() => {
     if (!state.open) setPendingClean(null);
   }, [state.open]);
+
+  useEffect(() => {
+    if (!state.open || state.episode === null) return;
+    void service.refresh().catch(() => {
+      // Последний успешный снимок остаётся виден; следующий vitals tick попробует снова.
+    });
+  }, [service, state.episode, state.open, state.opensForKey]);
 
   const onClose = useCallback(() => controller.close(), [controller]);
 
@@ -126,6 +133,7 @@ export function OverflowWindowHost({
 
   const vm = buildOverflowWindowViewModel({
     episode: state.episode,
+    liveAxes: liveAxesFromQuota(library.quota),
     held: state.held,
     // Состояние узла (`runtime.state`) счётчика «записано до остановки» не несёт — честное
     // «н/д»; ниже, отдельной строкой, окно показывает счёт буфера при остановке (снимок).

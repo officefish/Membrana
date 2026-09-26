@@ -29,10 +29,18 @@ const EPISODE: OverflowHoldEpisode = {
   owner: { kind: 'membrane', membraneId: 'm-1', deviceId: 'dev-1' },
 };
 
+const LIVE_AXES = { buffer: EPISODE.buffer, userStorage: EPISODE.userStorage } as const;
+
 function props(overrides: Partial<OverflowWindowProps> = {}, tariff: TariffTransitionsKnowledge = 'unknown') {
   return {
     open: true,
-    vm: buildOverflowWindowViewModel({ episode: EPISODE, held: true, recordedBeforeStop: null, tariffTransitions: tariff }),
+    vm: buildOverflowWindowViewModel({
+      episode: EPISODE,
+      liveAxes: LIVE_AXES,
+      held: true,
+      recordedBeforeStop: null,
+      tariffTransitions: tariff,
+    }),
     refusedAttempt: null,
     bufferAtStop: { bufferSamples: 3, bufferBytes: 300, outsideSamples: 0 },
     sinceStop: { gone: 0, exported: 0, deleted: 0 },
@@ -69,6 +77,7 @@ describe('OverflowWindow — содержание (а)', () => {
   it('неизвестный код: заголовок «Буфер полон», сырой код приглушённой строкой', () => {
     const vm = buildOverflowWindowViewModel({
       episode: { ...EPISODE, reason: 'weird_code' },
+      liveAxes: LIVE_AXES,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
@@ -163,6 +172,7 @@ describe('OverflowWindow — закрытие и a11y (DoD 7)', () => {
     expect(p.onResumeByHuman).toHaveBeenCalledTimes(1);
     const released = buildOverflowWindowViewModel({
       episode: EPISODE,
+      liveAxes: LIVE_AXES,
       held: false,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',

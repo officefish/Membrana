@@ -3,8 +3,8 @@
  * Зубы хоста окна (DoD 1, 2, 5, #2310) — предмет: `OverflowWindowHost.tsx` поверх НАСТОЯЩИХ
  * носителя удержания, контроллера, сервиса библиотеки с memory-бэкендом и ворот удаления.
  *
- * Порчи → красный: второй запрос квоты при построении окна (`getQuota`/`refresh` > 0 после
- * открытия) — красный; чистка без подтверждения (`removeSample` до confirm) — красный;
+ * Порчи → красный: нет живого запроса квоты при открытии/повторном старте — красный;
+ * чистка без подтверждения (`removeSample` до confirm) — красный;
  * закрытие окна сняло удержание — красный; после чистки нет сводки с числом — красный;
  * вывоз стёр пробы или снял удержание — красный.
  */
@@ -103,18 +103,58 @@ describe('OverflowWindowHost', () => {
     );
   }
 
-  it('окно строится из эпизода + статуса: ноль getQuota и ноль refresh при открытии', () => {
+  it('#2444: при открытии шкала живая, а снимок остановки остаётся рядом', async () => {
+    getQuota.mockResolvedValue({
+      usedBytes: 30,
+      limitBytes: 300,
+      bufferUsedBytes: 20,
+      bufferLimitBytes: 200,
+      backend: 'server',
+      serverReachable: true,
+    });
     mount();
     expect(screen.queryByTestId('overflow-window')).toBeNull();
     act(() => {
       expect(hold.activateFromServer(REFUSAL)).toBe('entered');
     });
     expect(screen.getByTestId('overflow-window').getAttribute('data-overflow-key')).toBe('ovf-host-1');
-    expect(getQuota).toHaveBeenCalledTimes(0);
-    expect(refresh).toHaveBeenCalledTimes(0);
+    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.getByTestId('overflow-axis-buffer').textContent).toContain('лимит 200 B'));
+    expect(screen.getByTestId('overflow-axis-buffer-at-stop').textContent).toContain('лимит 100 B');
     // Счёт буфера при остановке — из ЛОКАЛЬНОГО снимка: 2 пробы.
     expect(screen.getByTestId('overflow-buffer-at-stop').textContent).toMatch(/^2 проб/u);
     expect(screen.getByTestId('overflow-road-clean').textContent).toContain('уйдёт 2 проб');
+  });
+
+  it('#2444: каждая отбитая попытка перечитывает квоту, но удержание сама не снимает', async () => {
+    getQuota.mockResolvedValue({
+      usedBytes: 30,
+      limitBytes: 300,
+      bufferUsedBytes: 20,
+      bufferLimitBytes: 200,
+      backend: 'server',
+      serverReachable: true,
+    });
+    mount();
+    act(() => void hold.activateFromServer(REFUSAL));
+    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
+
+    getQuota.mockResolvedValue({
+      usedBytes: 30,
+      limitBytes: 600,
+      bufferUsedBytes: 20,
+      bufferLimitBytes: 400,
+      backend: 'server',
+      serverReachable: true,
+    });
+    act(() => {
+      expect(hold.refuseStart({ source: 'board', what: 'запись сценария' })).toBe(true);
+    });
+
+    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(screen.getByTestId('overflow-axis-buffer').textContent).toContain('лимит 400 B'));
+    expect(screen.getByTestId('overflow-axis-buffer-at-stop').textContent).toContain('лимит 100 B');
+    expect(hold.isHeld()).toBe(true);
   });
 
   it('закрытие крестиком не снимает удержание; плашка/бейдж поднимают то же окно', () => {
@@ -185,12 +225,13 @@ describe('OverflowWindowHost', () => {
     expect(String(openExternal.mock.calls[0]?.[0])).toMatch(/^https?:\/\//u);
   });
 
-  it('«Возобновить запись» — явное действие: release(human), окно остаётся для чтения', () => {
+  it('«Возобновить запись» — явное действие: release(human), окно остаётся для чтения', async () => {
     mount();
     act(() => void hold.activateFromServer(REFUSAL));
+    await waitFor(() => expect(getQuota).toHaveBeenCalledTimes(1));
     fireEvent.click(screen.getByTestId('overflow-resume'));
     expect(hold.isHeld()).toBe(false);
     expect(screen.getByTestId('overflow-released')).toBeTruthy();
-    expect(getQuota).toHaveBeenCalledTimes(0);
+    expect(getQuota).toHaveBeenCalledTimes(1);
   });
 });
