@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14289/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 380 (причины в op-log) -->
+Записей: 49 · бюджет 14265/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 381 (причины в op-log) -->
+
+### 2026-09-26 · позиция · team-evening-feedback
+
+> Ozhegov **Оценка артефактов:** `DAILY_CODE_REVIEW` по моей зоне (C4, C7) — чисто: `night-hunt-graph.ts` без React, чистые функции (`entryKey`, `workspaceDescriptor`, `countWorkspaceEntries`), тесты рядом, критические ветки покрыты (CONFLICTING/DIRTY, MERGEABLE/CLEAN, составной […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-26.md#reply-1`
 
 ### 2026-09-25 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Леммы. `SilenceWatchdog` ≠ `NightHuntTrigger` ≠ `OfficeClient`. Сторож — отдельная словарная статья: «ожидал факт → не нашёл в окне → красный». Публичный контракт — проверка наличия/честности исхода, без импорта office-кода и без «optional echo». Глушение в YAML […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/hunt-and-canon-m1-silence-guard-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m2-false-evidence
-
-> Леммы. **Вещдок** ≠ **копия**. Вещдок — артефакт, привязанный к ожидаемому событию ночи (исход e в смысле M1). Копия — байты, перенесённые без доказательства свежести источника. `manifest.archivedAt` — лемма «когда скопировали»; имя папки `YYYY-MM-DD` сейчас врёт, что это исход […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m2-false-evidence-2026-08-27.md#reply-1`

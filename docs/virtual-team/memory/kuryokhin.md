@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14394/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 374 (причины в op-log) -->
+Записей: 50 · бюджет 14374/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 375 (причины в op-log) -->
+
+### 2026-09-26 · позиция · team-evening-feedback
+
+> Kuryokhin **Оценка артефактов:** По моей зоне (Web Audio, DSP, edge-захват, IoT) дифф пустой. Стендап честно запрещает DSP-бенчмарки (потолок эшелона 0 зафиксирован в `FFT_METRICS_POTENTIAL_AND_LIMITS.md §6`) — правило соблюдено, слот не потрачен впустую. `DAILY_CODE_REVIEW` по […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-26.md#reply-1`
 
 ### 2026-09-25 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > С края ночного тракта слышу не «упавший curl», а тишину партитуры: три расписания 27.08 просто не вступили. Руками — играют, по cron — пауза без ферматы. Глушение `continue-on-error` плюс `|| echo` — это как выключить лампочку клиппинга и сказать, что эфир чистый. Молчание — […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/hunt-and-canon-m1-silence-guard-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m2-false-evidence
-
-> С тракта «записи ночи»: это как выдать мастер ленты с датой сессии, когда на катушке тот же дубль июля. Ухо (и git) слышит тождество; датированная коробка врёт громче оригинала. Архив не должен подпевать ритуалу. При протухшем источнике — не «тихий skip с зелёным вечером», а […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m2-false-evidence-2026-08-27.md#reply-1`
 
 ### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 

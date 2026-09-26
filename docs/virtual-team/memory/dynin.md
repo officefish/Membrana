@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14230/14400 · статус ok
+Записей: 50 · бюджет 14390/14400 · статус ok
 <!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 372 (причины в op-log) -->
+
+### 2026-09-26 · позиция · team-evening-feedback
+
+> Dynin **Оценка артефактов:** `DAILY_CODE_REVIEW` по C6 (чистые функции, границы/NaN) — точный: `entryKey` и `workspaceDescriptor` возвращают `null` при несовпадении вместо бросков; `assertWorkspaceGraphIntegrity` бросает `Error` при нарушении инварианта, а не молчит. Инвариант […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-26.md#reply-1`
 
 ### 2026-09-25 · позиция · team-evening-feedback
 
@@ -296,8 +302,8 @@
 
 — источник: `docs/seanses/hunt-and-canon-m1-silence-guard-2026-08-27.md#reply-1`
 
-### 2026-08-27 · позиция · hunt-and-canon-m2-false-evidence
+### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 
-> Формализую. Пусть источник s несёт метку рождения τ(s) (поле `Generated (UTC)` или эквивалент) и содержимое hash h(s). Ожидаемое окно ночи d: [t_d, t_d+δ]. Предикат свежести F(s,d) ⇔ τ(s) ∈ окну, согласованному с d (и/или h(s) не равен уже известному stale-эталону без новой […] _(реплик в сеансе: 6)_
+> Порядок ролей полный: `public < ally < operator < owner`. Решение строится одной функцией сравнения ролей, без permission-grant и без снижения роли субъекта. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/hunt-and-canon-m2-false-evidence-2026-08-27.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
