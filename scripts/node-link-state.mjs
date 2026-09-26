@@ -184,15 +184,19 @@ function judgeNodeAgainstCabinet(node, ctx, binding) {
     };
   }
 
-  // Ключ, которым узел сопряжён: сначала то, что кабинет сам назвал pairedKey, иначе — лучший живой.
-  const pairedKeyId = device?.pairedKeyId ?? null;
-  let key = keys?.find((k) => k.id === pairedKeyId) ?? null;
+  // `membranes/me` не отдаёт pairedKeyId: пару описывают производные поля статуса и срока.
+  // Сам ключ узнаём по тому же сроку только для подписи; вердикт держится на device-контракте.
+  const pairedKeyStatus = device?.pairedKeyStatus ?? null;
+  const devicePairedExpires = device?.pairedKeyExpiresAt ?? null;
+  let key = devicePairedExpires
+    ? (keys?.find((candidate) => candidate.expiresAt === devicePairedExpires) ?? null)
+    : null;
   if (!key && keys && keys.length > 0) {
     const alive = keys.filter((k) => !k.revokedAt && Date.parse(k.expiresAt) > now);
     key = alive.sort((a, b) => Date.parse(b.expiresAt) - Date.parse(a.expiresAt))[0] ?? keys[0];
   }
-  const pairedExpires = device?.pairedKeyExpiresAt ?? key?.expiresAt ?? null;
-  const paired = ctx.link?.paired ?? (device ? device.pairingStatus === 'paired' || Boolean(device.pairedKeyId) : null);
+  const pairedExpires = devicePairedExpires ?? key?.expiresAt ?? null;
+  const paired = ctx.link?.paired ?? (device ? pairedKeyStatus === 'active' : null);
 
   if (device) {
     lines.push(
@@ -203,6 +207,25 @@ function judgeNodeAgainstCabinet(node, ctx, binding) {
     // Строка сверки печатается ВСЕГДА, каким бы ни вышел вердикт: расхождение привязок не должно
     // прятаться за более срочным отказом по ключу. Вердиктом оно становится ниже, шагом 4.
     lines.push(`узел ${name}: ${binding.line}`);
+  }
+
+  if (device && !['active', 'expired', 'revoked'].includes(pairedKeyStatus)) {
+    return {
+      verdict: 'unknown',
+      lines: [...lines, `узел ${name}: pairedKeyStatus отсутствует или неизвестен: ${pairedKeyStatus}`],
+      remedy: 'проверить версию кабинета: GET /v1/membranes/me должен отдавать device.pairedKeyStatus',
+    };
+  }
+
+  if (pairedKeyStatus === 'revoked') {
+    return {
+      verdict: 'revoked',
+      lines: [
+        ...lines,
+        `узел ${name}: ключ ${key ? String(key.id).slice(0, 8) : '(из device)'} ОТОЗВАН${key?.revokedAt ? ` ${key.revokedAt}` : ''}`,
+      ],
+      remedy: 'выпустить новый ключ в кабинете и перевязать узел',
+    };
   }
 
   if (!key && !pairedExpires) {
