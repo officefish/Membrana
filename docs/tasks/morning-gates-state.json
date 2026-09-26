@@ -11,7 +11,13 @@
     "draftFile": "docs/comms/drafts/swallow-evening-2026-09-25.md",
     "ownerAck": true,
     "day": "2026-09-25",
-    "gate": "evening:partner-swallow"
+    "gate": "evening:partner-swallow",
+    "claimsProbe": {
+      "verdict": "hard",
+      "protocol": "docs/seanses/team-evening-feedback-2026-09-26.md",
+      "sha": "36e88e71687d",
+      "at": "2026-09-26T15:57:21.598Z"
+    }
   },
   "day": "2026-09-25",
   "magistralChosenAt": "2026-09-25",
