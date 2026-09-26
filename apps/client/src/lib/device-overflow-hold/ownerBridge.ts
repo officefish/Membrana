@@ -47,11 +47,12 @@ const bridged = new WeakMap<DeviceOverflowHold, () => void>();
  * подъёма привязки) и дальше — на каждое изменение связи. Возвращает снятие подписки.
  */
 export function startOverflowHoldOwnerBridge(hold: DeviceOverflowHold): () => void {
-  const already = bridged.get(hold);
-  if (already !== undefined) {
+  if (bridged.has(hold)) {
     // Повторный вызов — не вторая подписка, но сверку прогнать надо: привязка могла измениться.
     reconcileFromStore(hold);
-    return already;
+    // Снять ЧУЖУЮ подписку второй вызывающий права не имеет: иначе dispose плагина микрофона
+    // оставил бы синглтон приложения без сверки владельца до конца жизни процесса.
+    return () => {};
   }
   reconcileFromStore(hold);
   const unsubscribe = useNodeConnectionStore.subscribe(() => {

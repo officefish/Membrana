@@ -283,12 +283,31 @@ describe('мост привязки → владелец', () => {
     useNodeConnectionStore.setState({ hydrated: false, mode: null, pairing: null });
     const { hold, changes } = restore(ADMIN_EPISODE, null);
     const off1 = startOverflowHoldOwnerBridge(hold);
-    const off2 = startOverflowHoldOwnerBridge(hold);
-    expect(off2).toBe(off1);
+    startOverflowHoldOwnerBridge(hold);
 
     useNodeConnectionStore.setState({ hydrated: true, mode: 'paired', pairing });
 
     // Один `discarded`, а не два: подписка одна.
+    expect(changes).toEqual(['discarded']);
+    off1();
+    useNodeConnectionStore.setState({ hydrated: false, mode: null, pairing: null });
+  });
+
+  /**
+   * Порча: вернуть второму вызывающему ЧУЖОЕ снятие подписки — тогда dispose плагина
+   * микрофона (проводка ставится вторым вызовом поверх синглтона) оставляет приложение без
+   * сверки владельца, и следующая перевязка чужой эпизод уже не уберёт → красный.
+   */
+  it('снятие от второго вызова не гасит мост: перевязка после него всё ещё судится', () => {
+    useNodeConnectionStore.setState({ hydrated: false, mode: null, pairing: null });
+    const { hold, changes } = restore(ADMIN_EPISODE, null);
+    const off1 = startOverflowHoldOwnerBridge(hold);
+    const offSecond = startOverflowHoldOwnerBridge(hold);
+
+    offSecond();
+    useNodeConnectionStore.setState({ hydrated: true, mode: 'paired', pairing });
+
+    expect(hold.getEpisode()).toBeNull();
     expect(changes).toEqual(['discarded']);
     off1();
     useNodeConnectionStore.setState({ hydrated: false, mode: null, pairing: null });
