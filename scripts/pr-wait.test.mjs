@@ -7,6 +7,7 @@ import {
   classifyChecks,
   classifyPrWait,
   explainNoChecks,
+  explainMergeBlock,
   readCheckpoint,
   writeCheckpoint,
   clearCheckpoint,
@@ -120,6 +121,24 @@ test('explainNoChecks при CONFLICTING называет причину и де
 test('explainNoChecks без конфликта: none — это НЕ зелено', () => {
   const msg = explainNoChecks({ mergeable: 'MERGEABLE', mergeStateStatus: 'CLEAN' });
   assert.match(msg, /НЕ зелено/);
+});
+
+test('#2466: CONFLICTING отказывает до ожидания даже при старом зелёном check rollup', () => {
+  const pr = {
+    mergeable: 'CONFLICTING',
+    mergeStateStatus: 'DIRTY',
+    statusCheckRollup: [{ name: 'старый CI', status: 'COMPLETED', conclusion: 'SUCCESS' }],
+  };
+  assert.equal(classifyChecks(pr.statusCheckRollup).state, 'green', 'красный вход: старый ролап выглядит зелёным');
+  const refusal = explainMergeBlock(pr);
+  assert.match(refusal, /ОТКАЗ|конфликтует/i);
+  assert.match(refusal, /новые проверки не запустятся/);
+  assert.match(refusal, /разрешить конфликт/);
+  assert.match(refusal, /yarn pr:wait/);
+});
+
+test('#2466: CLEAN не создаёт ложный отказ до ожидания', () => {
+  assert.equal(explainMergeBlock({ mergeable: 'MERGEABLE', mergeStateStatus: 'CLEAN' }), null);
 });
 
 test('#724: CI green + REVIEW_REQUIRED → approval (не green/red/none)', () => {
