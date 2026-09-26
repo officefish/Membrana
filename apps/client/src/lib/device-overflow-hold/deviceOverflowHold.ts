@@ -9,13 +9,45 @@ import type {
   HoldReleaseBy,
   LocalGuardSnapshot,
   OverflowHoldEpisode,
+  OverflowHoldOwner,
   OverflowHoldStore,
   OverflowRefusalSnapshot,
+  OwnerReconcileOutcome,
   StartAttempt,
   WindowSignalListener,
 } from './types';
 
 export const OVERFLOW_HOLD_STORE_KEY = 'membrana.device-overflow-hold.v1';
+
+/**
+ * Владелец — в ПОЛЕ эпизода, а не в ключе хранилища (#2463, выбор обоснован здесь).
+ *
+ * Ключ с идентификатором внутри («…v1:<membraneId>:<deviceId>») выглядит строже — чужое
+ * физически не прочитать, — но у прибора владелец известен НЕ в момент чтения: в Студии
+ * привязка лежит в шифртексте safeStorage и поднимается обещанием (ADR-0028 Р4), а эпизод
+ * читается синхронно в конструкторе носителя. Ключ пришлось бы собирать из «ещё неизвестно»,
+ * то есть читать анонимную ячейку и потом перечитывать по второму ключу — и хранилище
+ * заросло бы ячейками каждой прошлой привязки, ни одна из которых никогда не чистится.
+ *
+ * Поле + сверка на чтении даёт то же свойство и одно место хранения: чужой эпизод не
+ * возвращается наружу и УДАЛЯЕТСЯ, а сверка происходит тогда, когда владелец действительно
+ * известен (`reconcileOwner`), а не тогда, когда понадобился ключ.
+ */
+function parseOverflowHoldOwner(value: unknown): OverflowHoldOwner | null {
+  if (value === null || typeof value !== 'object') return null;
+  const raw = value as { kind?: unknown; membraneId?: unknown; deviceId?: unknown };
+  if (raw.kind === 'autonomous') return { kind: 'autonomous' };
+  if (raw.kind !== 'membrane') return null;
+  if (typeof raw.membraneId !== 'string' || raw.membraneId.length === 0) return null;
+  if (typeof raw.deviceId !== 'string' || raw.deviceId.length === 0) return null;
+  return { kind: 'membrane', membraneId: raw.membraneId, deviceId: raw.deviceId };
+}
+
+/** Один владелец или разные: мембрана И прибор, иначе автономный с автономным. */
+export function sameOverflowHoldOwner(a: OverflowHoldOwner, b: OverflowHoldOwner): boolean {
+  if (a.kind === 'autonomous' || b.kind === 'autonomous') return a.kind === b.kind;
+  return a.membraneId === b.membraneId && a.deviceId === b.deviceId;
+}
 
 /** Память эпизода сверх процесса: перезагрузка страницы прибора не должна «забыть» стоп. */
 export function createLocalStorageOverflowHoldStore(): OverflowHoldStore {
@@ -38,6 +70,9 @@ export function createLocalStorageOverflowHoldStore(): OverflowHoldStore {
           buffer: parsed.buffer ?? null,
           userStorage: parsed.userStorage ?? null,
           enteredAtMs: typeof parsed.enteredAtMs === 'number' ? parsed.enteredAtMs : Date.now(),
+          // Битая или незнакомая подпись — это ОТСУТСТВИЕ подписи, а не «подходит любому»:
+          // неподписанный эпизод из хранилища сверка отбрасывает.
+          owner: parseOverflowHoldOwner(parsed.owner),
         };
       } catch {
         return null;
@@ -70,6 +105,8 @@ export function createMemoryOverflowHoldStore(initial: OverflowHoldEpisode | nul
 export interface DeviceOverflowHoldOptions {
   readonly store?: OverflowHoldStore;
   readonly now?: () => number;
+  /** Владелец, известный уже при создании носителя; `null`/пропуск — ещё неизвестен (#2463). */
+  readonly owner?: OverflowHoldOwner | null;
 }
 
 /**
@@ -92,12 +129,26 @@ export class DeviceOverflowHoldImpl implements DeviceOverflowHold {
 
   private readonly windowListeners = new Set<WindowSignalListener>();
 
+  /** Владелец прибора сейчас; `null` — привязка ещё не прочитана (#2463). */
+  private owner: OverflowHoldOwner | null;
+
+  /**
+   * Эпизод поднят из хранилища БЕЗ подписи. Это единственное, чем «чужой, записанный прошлой
+   * версией» отличается от «своего, открытого до чтения привязки»: второй наблюдён в этом
+   * процессе на этом приборе и потому подписывается, первый — доказать своим нельзя.
+   */
+  private unsignedFromStore: boolean;
+
   constructor(options: DeviceOverflowHoldOptions = {}) {
     this.store = options.store ?? createLocalStorageOverflowHoldStore();
     this.now = options.now ?? (() => Date.now());
+    this.owner = options.owner ?? null;
     // Восстановленный эпизод — тот же факт: окно по нему само не поднимается (сигнал только
     // на вход и на отбитый старт), но `isHeld()` уже истинен — застучать после reload нельзя.
     this.episode = this.store.load();
+    this.unsignedFromStore = this.episode !== null && this.episode.owner === null;
+    // Владелец известен уже сейчас — судим поднятый эпизод до того, как его кто-то увидит.
+    this.reconcileOwner(this.owner);
   }
 
   activateFromServer(refusal: OverflowRefusalSnapshot): HoldActivation {
@@ -114,6 +165,7 @@ export class DeviceOverflowHoldImpl implements DeviceOverflowHold {
       buffer: refusal.buffer,
       userStorage: refusal.userStorage,
       enteredAtMs: current?.enteredAtMs ?? this.now(),
+      owner: this.owner ?? current?.owner ?? null,
     };
     if (current !== null && current.overflowId === null) {
       // Локальный эпизод повышается до серверного: тот же факт, окно уже поднято — без сигнала.
@@ -144,6 +196,7 @@ export class DeviceOverflowHoldImpl implements DeviceOverflowHold {
       buffer: guard.buffer,
       userStorage: null,
       enteredAtMs,
+      owner: this.owner,
     };
     this.commit(next, 'entered');
     this.emitWindow({ overflowId: null, episode: next, cause: 'entered', attempt: null });
@@ -187,12 +240,59 @@ export class DeviceOverflowHoldImpl implements DeviceOverflowHold {
     this.commit(null, 'released');
   }
 
+  /**
+   * Сверка эпизода с владельцем прибора (#2463). Асимметрия намеренная и односторонняя:
+   *
+   *  - владелец НЕИЗВЕСТЕН (`null`: привязка ещё не поднята, режим не выбран) → не судим
+   *    вовсе. Своё удержание не снимается ни само, ни по неуверенности (норма 25.09);
+   *  - владелец известен и совпал → эпизод наш, держим до человека;
+   *  - владелец известен, эпизод подписан ДРУГИМ → эпизод не наш: убираем целиком, вместе
+   *    с записью в хранилище. Оператору нельзя показывать чужие числа как свои, и чужой
+   *    эпизод не имеет права держать запись на новом приборе;
+   *  - владелец известен, эпизод без подписи и поднят из хранилища → доказать своим нечем,
+   *    убираем так же. Это и разовый переход на подпись, и ровно случай 25.09. Цена мала:
+   *    если буфер правда полон, эпизод откроется заново в ту же минуту — страж читает квоту
+   *    по каждому её обновлению, а сервер чеканит отказ на первой же пробе;
+   *  - владелец известен, эпизод без подписи, но открыт в ЭТОМ процессе → факт наблюдён
+   *    здесь и сейчас: подписываем, не выбрасываем.
+   */
+  reconcileOwner(owner: OverflowHoldOwner | null): OwnerReconcileOutcome {
+    if (owner === null) return 'deferred';
+    this.owner = owner;
+    const episode = this.episode;
+    if (episode === null) return 'kept';
+    if (episode.owner === null) {
+      if (this.unsignedFromStore) {
+        this.commit(null, 'discarded');
+        return 'discarded';
+      }
+      this.sign(episode, owner);
+      return 'adopted';
+    }
+    if (sameOverflowHoldOwner(episode.owner, owner)) return 'kept';
+    this.commit(null, 'discarded');
+    return 'discarded';
+  }
+
+  /**
+   * Подпись эпизода владельцем — не событие: для подписчиков ничего не изменилось (тот же
+   * факт, то же `isHeld()`, те же числа), поэтому `commit` здесь не зовётся. Меняется только
+   * то, кому эпизод принадлежит, — и это надо сохранить, чтобы следующая привязка его увидела.
+   */
+  private sign(episode: OverflowHoldEpisode, owner: OverflowHoldOwner): void {
+    this.episode = { ...episode, owner };
+    this.unsignedFromStore = false;
+    this.store.save(this.episode);
+  }
+
   toRuntimePayload(): RuntimeOverflowHoldPayload | null {
     return overflowHoldToRuntimePayload(this.episode);
   }
 
   private commit(next: OverflowHoldEpisode | null, change: HoldChange): void {
     this.episode = next;
+    // Всё, что положено здесь, положено в этом процессе: «неподписанный из хранилища» снят.
+    this.unsignedFromStore = false;
     this.store.save(next);
     for (const listener of this.listeners) {
       listener(next, change);
@@ -245,6 +345,7 @@ export function resetDeviceOverflowHoldForTests(options: DeviceOverflowHoldOptio
   singleton = new DeviceOverflowHoldImpl({
     store: options.store ?? createMemoryOverflowHoldStore(),
     ...(options.now ? { now: options.now } : {}),
+    ...(options.owner !== undefined ? { owner: options.owner } : {}),
   });
   return singleton;
 }

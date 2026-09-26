@@ -49,7 +49,9 @@ const EMPTY: OverflowWindowState = {
  *  - `close()` — только прячет окно; удержание НЕ трогает (носитель не зовётся);
  *  - `releaseByHuman()` — единственный путь снять удержание из окна, явным действием;
  *  - сброс удержания (`released`) при открытом окне НЕ закрывает его — сводка ушедшего
- *    должна быть прочитана человеком; при закрытом — состояние очищается.
+ *    должна быть прочитана человеком; при закрытом — состояние очищается;
+ *  - чужой эпизод (`discarded`, #2463) закрывает окно в любом состоянии: сводки у чужого
+ *    факта нет, показывать его числа нельзя даже как «ушедшее».
  * Второго запроса квоты здесь нет: контроллер не знает ни сервиса библиотеки, ни сети.
  */
 export class OverflowWindowController {
@@ -64,7 +66,12 @@ export class OverflowWindowController {
   constructor(private readonly hold: DeviceOverflowHold) {
     this.offSignal = hold.subscribeWindowSignal((signal) => this.onSignal(signal));
     this.offHold = hold.subscribe((episode, change) => {
-      if (change === 'released') {
+      if (change === 'discarded') {
+        // Эпизод оказался чужим (#2463). Это не «удержание снято»: сводки тут нет и читать её
+        // некому — числа принадлежат другой мембране. Окно закрывается ЦЕЛИКОМ, даже открытое,
+        // иначе оператор доразглядывает чужой буфер как свой.
+        this.patch({ ...EMPTY });
+      } else if (change === 'released') {
         this.onReleased();
       } else if (change === 'promoted' && episode !== null) {
         // Локальный эпизод получил серверный id — тот же факт, окно то же; ключ следует за ним.

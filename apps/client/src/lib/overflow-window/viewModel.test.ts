@@ -30,6 +30,7 @@ const EPISODE: OverflowHoldEpisode = {
   buffer: { usedBytes: 1_000_000, limitBytes: 1_000_000 },
   userStorage: { usedBytes: 10, limitBytes: 1_000_000 },
   enteredAtMs: 1_000,
+  owner: { kind: 'membrane', membraneId: 'm-1', deviceId: 'dev-1' },
 };
 
 describe('таблица код→текст', () => {

@@ -26,6 +26,7 @@ const EPISODE: OverflowHoldEpisode = {
   buffer: { usedBytes: 1000, limitBytes: 1000 },
   userStorage: { usedBytes: 10, limitBytes: 1000 },
   enteredAtMs: 1,
+  owner: { kind: 'membrane', membraneId: 'm-1', deviceId: 'dev-1' },
 };
 
 function props(overrides: Partial<OverflowWindowProps> = {}, tariff: TariffTransitionsKnowledge = 'unknown') {
