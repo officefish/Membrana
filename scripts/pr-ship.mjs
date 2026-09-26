@@ -194,8 +194,8 @@ export function liveMergeHeadPath(run = execFileSync) {
   }
 }
 
-/** Локальный и удалённый SHA текущей ветки. `null`, если upstream не настроен. */
-export function readHeadRefs(run = execFileSync) {
+/** Локальный SHA и SHA одноимённой ветки origin. Настроенный upstream намеренно не читается. */
+export function readHeadRefs(branch, run = execFileSync) {
   const read = (args) => {
     try {
       return String(run('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })).trim() || null;
@@ -203,7 +203,11 @@ export function readHeadRefs(run = execFileSync) {
       return null;
     }
   };
-  return { local: read(['rev-parse', 'HEAD']), remote: read(['rev-parse', '@{u}']) };
+  return {
+    local: read(['rev-parse', 'HEAD']),
+    remote: branch ? read(['rev-parse', `refs/remotes/origin/${branch}`]) : null,
+    branch: branch ?? null,
+  };
 }
 
 /**
@@ -431,19 +435,12 @@ export function planMergeTail(opts = {}) {
     steps.push({
       label: 'land-rebase',
       cmd: 'git',
-      args: ['checkout', '-B', landBranch ?? currentBranch ?? base, `origin/${base}`],
+      args: ['checkout', '--no-track', '-B', landBranch ?? currentBranch ?? base, `origin/${base}`],
     });
-    // `checkout -B` печатает «upstream is gone» по СТАРОМУ upstream — по ветке, которую
-    // мерджем только что удалили, — и лишь ПОСЛЕ этого настраивает новый. Предупреждение
-    // о прошлом состоянии стоит последним и читается как текущее: 08.08 на нём попались
-    // и пошли чинить целое состояние. Явный шаг утверждает итог своей строкой и снимает
-    // зависимость от того, перенастроит ли checkout: команда идемпотентна.
-    steps.push({
-      label: 'land-upstream',
-      cmd: 'git',
-      args: ['branch', `--set-upstream-to=origin/${base}`, landBranch ?? currentBranch ?? base],
-    });
-    skippedSync = `дерево осталось на «${landBranch ?? 'рабочей ветке'}» вровень с origin/${base}, upstream ветки → origin/${base}; ${base} никто не держит (умолчание #1759, «сесть на base» — флаг --land-on-base)`;
+    // --no-track сохраняет identity рабочей ветки: хвост выравнивает её содержимое со
+    // стволом, но не переставляет upstream на origin/main. Иначе следующий merge-only
+    // сравнивал HEAD со стволом (или вообще с чужим upstream), а не с remote своей ветки.
+    skippedSync = `дерево осталось на «${landBranch ?? 'рабочей ветке'}» вровень с origin/${base}, upstream не переназначался; ${base} никто не держит (умолчание #1759, «сесть на base» — флаг --land-on-base)`;
   }
   return { steps, skippedSync };
 }
@@ -824,7 +821,7 @@ function main(argv = process.argv) {
       printFinalPrState(prNum);
       return confirmedPrShipSuccess();
     }
-    const problem = headSyncProblem(readHeadRefs());
+    const problem = headSyncProblem(readHeadRefs(current));
     if (problem) {
       console.error(problem);
       process.exitCode = 1;
