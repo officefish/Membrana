@@ -13,6 +13,29 @@ export interface OverflowHoldAxis {
 }
 
 /**
+ * Владелец эпизода (#2463) — прибор и мембрана, чьё это состояние буфера.
+ *
+ * `autonomous` — ПОЛНОЦЕННЫЙ владелец (прибор не привязан, буфер локальный), а не «не знаю»:
+ * незнание выражается `null` там, где владелец ещё не прочитан. Сверка идёт по паре
+ * «мембрана + прибор»: у одной установки Студии одно место под эпизод на все привязки, и
+ * эпизод чужой мембраны ИЛИ чужого прибора — не наш (25.09: прибор перевязан на кабинет
+ * `september`, а числа показаны от старой мембраны `admin`).
+ */
+export type OverflowHoldOwner =
+  | { readonly kind: 'membrane'; readonly membraneId: string; readonly deviceId: string }
+  | { readonly kind: 'autonomous' };
+
+/**
+ * Что решила сверка владельца (`reconcileOwner`):
+ * `deferred` — владелец неизвестен, никто ничего не судил (неизвестность удержание НЕ снимает);
+ * `kept` — эпизод наш (либо эпизода нет);
+ * `adopted` — эпизод открыт в этом процессе до того, как владелец стал известен → подписан им;
+ * `discarded` — эпизод принадлежит другому владельцу либо поднят из хранилища без подписи:
+ * он не наш, ни показывать его, ни удерживать запись по нему нельзя.
+ */
+export type OwnerReconcileOutcome = 'deferred' | 'kept' | 'adopted' | 'discarded';
+
+/**
  * Эпизод переполнения на приборе (M3 (в), #2309) — единственная память «уже остановлен».
  * `overflowId` чеканит сервер; `null` — эпизод открыт локальным стражем и ещё не повышен.
  */
@@ -28,6 +51,13 @@ export interface OverflowHoldEpisode {
   readonly userStorage: OverflowHoldAxis | null;
   /** Момент входа в удержание на приборе (мс, Date.now). */
   readonly enteredAtMs: number;
+  /**
+   * Чей это эпизод (#2463). `null` — эпизод НЕ подписан: либо записан версией до подписи
+   * (как эпизод 08.09, показанный 25.09 на чужой мембране), либо открыт в этом процессе
+   * раньше, чем прочиталась привязка. Первый случай отбрасывается сверкой, второй —
+   * подписывается: см. `reconcileOwner`.
+   */
+  readonly owner: OverflowHoldOwner | null;
 }
 
 /** Снимок серверного отказа, прошедший проверку словаря (`isBufferOverflowRefusal`, см. `wiring.ts`). */
@@ -57,7 +87,12 @@ export interface LocalGuardSnapshot {
  */
 export type HoldActivation = 'entered' | 'promoted' | 'unchanged' | 'ignored';
 
-export type HoldChange = 'entered' | 'promoted' | 'released';
+/**
+ * Что сказать подписчикам о судьбе эпизода. `released` — удержание СНЯТО (человек или
+ * очистка) и сводку ушедшего оператор читает; `discarded` — эпизод оказался ЧУЖИМ (#2463):
+ * сводки нет, читать её некому, показанное надо убрать с глаз целиком.
+ */
+export type HoldChange = 'entered' | 'promoted' | 'released' | 'discarded';
 
 export type HoldReleaseBy = 'human' | 'cleanup';
 
@@ -100,6 +135,12 @@ export interface DeviceOverflowHold {
   refuseStart(attempt: StartAttempt): boolean;
   /** Единственные два выхода из удержания: слово человека или очистка буфера. */
   release(by: HoldReleaseBy): void;
+  /**
+   * Сверить эпизод с текущим владельцем прибора (#2463). Зовётся при каждом изменении
+   * привязки; `null` — владелец ещё неизвестен, и тогда сверка НИЧЕГО не делает: своё
+   * удержание само не снимается (норма 25.09), чужое снимается только доказанно чужим.
+   */
+  reconcileOwner(owner: OverflowHoldOwner | null): OwnerReconcileOutcome;
   /** Значение для `runtime.state.overflowHold` (M4). */
   toRuntimePayload(): RuntimeOverflowHoldPayload | null;
 }

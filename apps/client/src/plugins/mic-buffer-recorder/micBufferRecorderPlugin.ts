@@ -374,12 +374,13 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
         );
       });
 
-      // Вход в удержание / повышение id — гасим активную запись; сброс — снимаем слово.
+      // Вход в удержание / повышение id — гасим активную запись; сброс и чужой эпизод —
+      // снимаем слово (#2463: слово о ЧУЖОМ буфере тем более не должно висеть на панели).
       const unsubHold = hold.subscribe((_episode, change) => {
         if (disposed) return;
         if ((change === 'entered' || change === 'promoted') && hold.isHeld()) {
           quenchForOverflowHold();
-        } else if (change === 'released') {
+        } else if (change === 'released' || change === 'discarded') {
           micBufferRecorderPluginState.setError(null);
         }
       });

@@ -7,8 +7,10 @@ export {
   getDeviceOverflowHold,
   overflowHoldToRuntimePayload,
   resetDeviceOverflowHoldForTests,
+  sameOverflowHoldOwner,
 } from './deviceOverflowHold';
 export { LOCAL_GUARD_REASON, applyLocalGuardFromQuota, judgeLocalGuard } from './localGuard';
+export { resolveOverflowHoldOwner, startOverflowHoldOwnerBridge } from './ownerBridge';
 export {
   installDeviceOverflowHoldWiring,
   resetDeviceOverflowHoldWiringForTests,
@@ -24,11 +26,13 @@ export type {
   LocalGuardSnapshot,
   OverflowHoldAxis,
   OverflowHoldEpisode,
+  OverflowHoldOwner,
   OverflowHoldPolicy,
   OverflowHoldSource,
   OverflowHoldStore,
   OverflowRefusalSnapshot,
   OverflowWindowSignal,
+  OwnerReconcileOutcome,
   StartAttempt,
   WindowSignalListener,
 } from './types';
