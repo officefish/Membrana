@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14400/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 370 (причины в op-log) -->
+Записей: 50 · бюджет 14394/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 371 (причины в op-log) -->
+
+### 2026-09-26 · позиция · team-evening-feedback
+
+> Rodchenko **Оценка артефактов:** По моей зоне (UI, DESIGN.md) в развёрнутом диффе правок нет — только даты в `DAILY_STANDUP.md`, `DAY_PLAN.md`, `MAIN_DAY_ISSUE.md`. `DAILY_CODE_REVIEW` по C5 — «—», корректно. Оверсайз #2467 (601 строк) касается […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-26.md#reply-1`
 
 ### 2026-09-25 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/hunt-and-canon-m1-silence-guard-2026-08-27.md#reply-1`
 
-### 2026-08-27 · позиция · hunt-and-canon-m2-false-evidence
+### 2026-08-27 · позиция · team-evening-feedback
 
-> С витрины оператора папка за каждую ночь до 23.08 читается как «охота жива». Это фотомонтаж без факта: датированная обложка сильнее мелкого `archivedAt` в JSON. Конструкция лжёт взгляду раньше, чем человек откроет манифест. Вещдок на экране архива обязан нести видимый отказ, […] _(реплик в сеансе: 6)_
+> Оценка артефактов: MAIN_DAY_ISSUE явно перечислил «сознательно не делаем» — это уберегло от распыления. Code-review справедливо отметил отсутствие diff по UI-креплениям. Итоги дня: Journal mount — тот же panel, fallback «Выберите узел» с `role="status"`; локальные tenants через […]
 
-— источник: `docs/seanses/hunt-and-canon-m2-false-evidence-2026-08-27.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
-
-> Пользователь видит контейнерные identities и разрешённые результаты, а не нативные роли и ids Affine. Исчезновение движка может убрать browsing и layout, но не должно изменить адрес, права или историю материала. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-08-27.md#reply-1`
