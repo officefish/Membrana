@@ -1,4 +1,5 @@
 import type { RuntimeOverflowHoldPayload } from '@membrana/core';
+import type { StorageQuota } from '@membrana/media-library-service';
 import type { OverflowPolicy, QuotaSubject } from '@membrana/plugin-contracts';
 
 import type { OverflowHoldAxis, OverflowHoldEpisode } from '@/lib/device-overflow-hold';
@@ -46,7 +47,10 @@ export interface OverflowWindowViewModel {
   readonly overflowId: string | null;
   readonly title: string;
   readonly reason: OverflowReasonDescription;
+  /** Живые величины из последнего снимка библиотеки — основание решения оператора. */
   readonly axes: Readonly<Record<QuotaSubject, OverflowAxisView | null>>;
+  /** Неизменяемый вещдок момента остановки. */
+  readonly axesAtStop: Readonly<Record<QuotaSubject, OverflowAxisView | null>>;
   readonly overflowAt: string;
   readonly phase: RuntimeOverflowHoldPayload['phase'];
   readonly phaseText: string;
@@ -67,6 +71,7 @@ export interface OverflowWindowViewModel {
 
 export interface OverflowWindowViewModelInput {
   readonly episode: OverflowHoldEpisode;
+  readonly liveAxes: Readonly<Record<QuotaSubject, OverflowHoldAxis | null>>;
   /** `hold.isHeld()` — эпизод ∧ политика `stop`. */
   readonly held: boolean;
   readonly recordedBeforeStop: RecordedBeforeStop | null;
@@ -83,6 +88,17 @@ export function toAxisView(axis: OverflowHoldAxis | null): OverflowAxisView | nu
   const percent =
     axis.limitBytes > 0 ? Math.min(100, Math.max(0, Math.round((axis.usedBytes / axis.limitBytes) * 100))) : 100;
   return { usedBytes: axis.usedBytes, limitBytes: axis.limitBytes, freeBytes, percent };
+}
+
+export function liveAxesFromQuota(quota: StorageQuota): Readonly<Record<QuotaSubject, OverflowHoldAxis | null>> {
+  const buffer =
+    typeof quota.bufferUsedBytes === 'number' && typeof quota.bufferLimitBytes === 'number'
+      ? { usedBytes: quota.bufferUsedBytes, limitBytes: quota.bufferLimitBytes }
+      : null;
+  return {
+    buffer,
+    userStorage: { usedBytes: quota.usedBytes, limitBytes: quota.limitBytes },
+  };
 }
 
 function describeRecordedBeforeStop(value: RecordedBeforeStop | null): string {
@@ -109,9 +125,8 @@ function resolveTariff(transitions: TariffTransitionsKnowledge): OverflowWindowV
 }
 
 /**
- * Окно строится ТОЛЬКО из эпизода носителя (ответ отказа A уже внутри: причина, оси, политика,
- * `overflowId`/`overflowAt`) и статуса удержания — второго запроса квоты здесь нет и быть не
- * может: функция чистая, без сети, сервиса и React (зуб `viewModel.test.ts`).
+ * Функция чистая: замороженный эпизод остаётся вещдоком, а живые оси приходят отдельным
+ * входом из снимка библиотеки. Сеть и React остаются в host.
  */
 export function buildOverflowWindowViewModel(input: OverflowWindowViewModelInput): OverflowWindowViewModel {
   const { episode } = input;
@@ -122,6 +137,10 @@ export function buildOverflowWindowViewModel(input: OverflowWindowViewModelInput
     title: OVERFLOW_WINDOW_TITLE,
     reason: describeOverflowReason(episode.reason),
     axes: {
+      buffer: toAxisView(input.liveAxes.buffer),
+      userStorage: toAxisView(input.liveAxes.userStorage),
+    },
+    axesAtStop: {
       buffer: toAxisView(episode.buffer),
       userStorage: toAxisView(episode.userStorage),
     },

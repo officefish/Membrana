@@ -49,22 +49,38 @@ export interface OverflowWindowProps {
 
 const AXES: readonly QuotaSubject[] = ['buffer', 'userStorage'];
 
-function AxisMeter({ subject, axis }: { readonly subject: QuotaSubject; readonly axis: OverflowAxisView | null }) {
+function axisSummary(axis: OverflowAxisView | null): string {
+  if (axis === null) return NOT_AVAILABLE_TEXT;
+  return `занято ${formatBytes(axis.usedBytes)} / лимит ${formatBytes(axis.limitBytes)} / свободно ${formatBytes(axis.freeBytes)}`;
+}
+
+function AxisMeter({
+  subject,
+  axis,
+  axisAtStop,
+}: {
+  readonly subject: QuotaSubject;
+  readonly axis: OverflowAxisView | null;
+  readonly axisAtStop: OverflowAxisView | null;
+}) {
   const title = OVERFLOW_AXIS_TITLE[subject];
   if (axis === null) {
     return (
       <div className="flex flex-col gap-1" data-testid={`overflow-axis-${subject}`}>
         <div className="flex justify-between text-xs">
-          <span>{title}</span>
+          <span>{title} сейчас</span>
           <span className="opacity-70">{NOT_AVAILABLE_TEXT}</span>
         </div>
+        <p className="text-xs opacity-60" data-testid={`overflow-axis-${subject}-at-stop`}>
+          При остановке: {axisSummary(axisAtStop)}
+        </p>
       </div>
     );
   }
   return (
     <div className="flex flex-col gap-1" data-testid={`overflow-axis-${subject}`}>
       <div className="flex justify-between text-xs">
-        <span>{title}</span>
+        <span>{title} сейчас</span>
         <span className="tabular-nums">
           занято {formatBytes(axis.usedBytes)} / лимит {formatBytes(axis.limitBytes)} / свободно{' '}
           {formatBytes(axis.freeBytes)}
@@ -76,6 +92,9 @@ function AxisMeter({ subject, axis }: { readonly subject: QuotaSubject; readonly
         max={100}
         aria-label={`${title}: занято ${axis.percent}%`}
       />
+      <p className="text-xs opacity-60" data-testid={`overflow-axis-${subject}-at-stop`}>
+        При остановке: {axisSummary(axisAtStop)}
+      </p>
     </div>
   );
 }
@@ -219,7 +238,7 @@ export function OverflowWindow({
 
         <div className="flex flex-col gap-3 rounded border border-base-300 p-3" data-testid="overflow-axes">
           {AXES.map((subject) => (
-            <AxisMeter key={subject} subject={subject} axis={vm.axes[subject]} />
+            <AxisMeter key={subject} subject={subject} axis={vm.axes[subject]} axisAtStop={vm.axesAtStop[subject]} />
           ))}
         </div>
 

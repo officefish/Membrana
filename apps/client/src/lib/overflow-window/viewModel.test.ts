@@ -19,7 +19,12 @@ import {
   describeOverflowReason,
   formatAxisRemaining,
 } from './reasonTexts';
-import { buildOverflowWindowViewModel, episodeWindowKey } from './viewModel';
+import { buildOverflowWindowViewModel, episodeWindowKey, liveAxesFromQuota } from './viewModel';
+
+const LIVE_AXES = {
+  buffer: { usedBytes: 250_000, limitBytes: 2_000_000 },
+  userStorage: { usedBytes: 20, limitBytes: 2_000_000 },
+} as const;
 
 const EPISODE: OverflowHoldEpisode = {
   overflowId: '7e0d3f9a-0000-4000-8000-000000000001',
@@ -63,12 +68,14 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
   it('две шкалы всегда: занято / лимит / свободно (T4), даже если одна «ок»', () => {
     const vm = buildOverflowWindowViewModel({
       episode: EPISODE,
+      liveAxes: LIVE_AXES,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
-    expect(vm.axes.buffer).toEqual({ usedBytes: 1_000_000, limitBytes: 1_000_000, freeBytes: 0, percent: 100 });
-    expect(vm.axes.userStorage).toEqual({ usedBytes: 10, limitBytes: 1_000_000, freeBytes: 999_990, percent: 0 });
+    expect(vm.axes.buffer).toEqual({ usedBytes: 250_000, limitBytes: 2_000_000, freeBytes: 1_750_000, percent: 13 });
+    expect(vm.axes.userStorage).toEqual({ usedBytes: 20, limitBytes: 2_000_000, freeBytes: 1_999_980, percent: 0 });
+    expect(vm.axesAtStop.buffer).toEqual({ usedBytes: 1_000_000, limitBytes: 1_000_000, freeBytes: 0, percent: 100 });
     expect(vm.reason.text).toBe(OVERFLOW_REASON_TEXT.device_buffer_full);
     expect(vm.overflowAt).toBe(EPISODE.overflowAt);
     expect(vm.phase).toBe('held');
@@ -80,6 +87,7 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
   it('«что записано до остановки»: нет в состоянии узла → явная строка «н/д»; есть → число', () => {
     const none = buildOverflowWindowViewModel({
       episode: EPISODE,
+      liveAxes: LIVE_AXES,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
@@ -87,6 +95,7 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
     expect(none.recordedBeforeStopText).toBe(NOT_AVAILABLE_TEXT);
     const some = buildOverflowWindowViewModel({
       episode: EPISODE,
+      liveAxes: LIVE_AXES,
       held: true,
       recordedBeforeStop: { samples: 12, bytes: 2048 },
       tariffTransitions: 'unknown',
@@ -94,22 +103,24 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
     expect(some.recordedBeforeStopText).toBe('12 проб · 2.0 KB');
   });
 
-  it('локальный эпизод: фаза held_local, ключ окна — локальный, ось хранилища н/д', () => {
+  it('локальный эпизод: фаза held_local, ключ окна — локальный, снимок хранилища н/д', () => {
     const vm = buildOverflowWindowViewModel({
       episode: { ...EPISODE, overflowId: null, source: 'local', userStorage: null },
+      liveAxes: LIVE_AXES,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     expect(vm.phase).toBe('held_local');
     expect(vm.windowKey).toBe(`local:${EPISODE.overflowAt}`);
-    expect(vm.axes.userStorage).toBeNull();
+    expect(vm.axesAtStop.userStorage).toBeNull();
     expect(episodeWindowKey({ overflowId: null, overflowAt: 'x' })).toBe('local:x');
   });
 
   it('тариф: переходов нет → кнопка выключена + прямой текст; неизвестно → в кабинет; есть → счёт', () => {
     const empty = buildOverflowWindowViewModel({
       episode: EPISODE,
+      liveAxes: LIVE_AXES,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: [],
@@ -119,6 +130,7 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
 
     const unknown = buildOverflowWindowViewModel({
       episode: EPISODE,
+      liveAxes: LIVE_AXES,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
@@ -128,6 +140,7 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
 
     const some = buildOverflowWindowViewModel({
       episode: EPISODE,
+      liveAxes: LIVE_AXES,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: [{ id: 'checkpoint-v1', name: 'Блокпост' }],
@@ -139,11 +152,28 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
   it('неизвестный код причины доезжает до окна сырым и приглушённым', () => {
     const vm = buildOverflowWindowViewModel({
       episode: { ...EPISODE, reason: 'something_new' },
+      liveAxes: LIVE_AXES,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     expect(vm.reason.text).toBe(OVERFLOW_WINDOW_TITLE);
     expect(vm.reason.rawCode).toBe('something_new');
+  });
+
+  it('#2444: квота библиотеки преобразуется в две живые оси; снимок эпизода в этом не участвует', () => {
+    expect(
+      liveAxesFromQuota({
+        usedBytes: 30,
+        limitBytes: 300,
+        bufferUsedBytes: 20,
+        bufferLimitBytes: 200,
+        backend: 'server',
+        serverReachable: true,
+      }),
+    ).toEqual({
+      buffer: { usedBytes: 20, limitBytes: 200 },
+      userStorage: { usedBytes: 30, limitBytes: 300 },
+    });
   });
 });

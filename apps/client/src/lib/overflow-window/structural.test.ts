@@ -78,14 +78,24 @@ describe('одна таблица код→текст', () => {
   });
 });
 
-describe('окно без второго запроса квоты и без обхода ворот', () => {
-  it.each(MODULE_FILES.map((p) => [relative(HERE, p).replace(/\\/gu, '/'), p]))(
+describe('живое чтение квоты только в host и без обхода ворот', () => {
+  const hostPath = join(HERE, 'OverflowWindowHost.tsx');
+  const networklessFiles = MODULE_FILES.filter((p) => p !== hostPath);
+
+  it.each(networklessFiles.map((p) => [relative(HERE, p).replace(/\\/gu, '/'), p]))(
     '%s: нет getQuota / refresh( / fetch( / useMediaLibrary / init(',
     (_name, p) => {
       const s = read(p);
       expect(s).not.toMatch(/getQuota|\.refresh\(|fetch\(|useMediaLibrary\b|\.init\(/u);
     },
   );
+
+  it('#2444: только host перечитывает квоту через сервис, без прямого getQuota/fetch', () => {
+    const host = read(hostPath);
+    expect(host).not.toMatch(/getQuota|fetch\(|useMediaLibrary\b|\.init\(/u);
+    expect(host.match(/service\.refresh\(\)/gu)).toHaveLength(1);
+    expect(host).toContain('state.opensForKey');
+  });
 
   it('чистка — только через общие ворота удаления (#2218): DeletionConfirmDialog, не window.confirm', () => {
     const host = read(join(HERE, 'OverflowWindowHost.tsx'));
