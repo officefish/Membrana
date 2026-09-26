@@ -12,6 +12,8 @@ import { tmpdir } from 'node:os';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { bashArgv, explainBashFailure } from './lib/bash-invoke.mjs';
+
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const GUARD = join(repoRoot, 'deploy', 'disk-watchdog', 'disk-watchdog.sh');
 const SENTINEL = join(repoRoot, 'deploy', 'disk-watchdog', 'disk-watchdog-sentinel.sh');
@@ -21,11 +23,18 @@ const MiB = 1024 ** 2;
 const NOW = 1_756_000_000;
 
 function runBash(script, args, env = {}) {
-  const r = spawnSync('bash', [script, ...args], {
+  // Путь для bash — в POSIX-форме (#2420): в Windows-форме msys-слой Git Bash снимал
+  // обратные косые как экранирование, до скрипта доезжало «C:Users…», и общий прогон
+  // краснел с exit 127 при зелёном прямом запуске. Разбор — в scripts/lib/bash-invoke.mjs.
+  const r = spawnSync('bash', bashArgv(script, args), {
     env: { ...process.env, DW_ENV_FILE: '/dev/null', LC_ALL: 'C', ...env },
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
   });
+  // 127 и ENOENT — отказ ЗОВА, а не вердикт сторожа. Он обязан назвать себя: иначе прогон
+  // краснеет номером, а «общий прогон красный» перестаёт что-либо значить.
+  const why = explainBashFailure(r, script);
+  if (why) throw new Error(why);
   return { code: r.status ?? 1, stdout: r.stdout ?? '', stderr: r.stderr ?? '' };
 }
 

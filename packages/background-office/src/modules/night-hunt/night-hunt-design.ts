@@ -120,6 +120,12 @@ export interface DesignSubject {
   readonly themeConfig: string;
   readonly designMd: string;
   readonly files: readonly SourceFile[];
+  /**
+   * Граница выборки словами: откуда взяты файлы и чего в них заведомо нет.
+   * Число без своей границы читается как число обо всём — это тихая ложь, ради
+   * которой и переписывалось это дело. Обязательна, поэтому не необязательное поле.
+   */
+  readonly scope: string;
 }
 
 /**
@@ -161,10 +167,16 @@ export function renderDesignSubject(subject: DesignSubject): string {
   const lines = [
     '## Замер оформления (посчитан кодом по исходникам)',
     '',
-    `Файлов компонентов прочитано: ${subject.files.length} · ` +
-      `токенов в DESIGN.md: ${tokens.length} · не объявлено в конфиге темы: ${missing.length} · ` +
-      `разных семантических классов цвета: ${byClass.size} · их употреблений: ${classUses.length} · ` +
-      `прямых значений цвета в коде: ${rawUses.length}`,
+    `**Граница замера: ${subject.scope}.** Все числа ниже — об этой выборке и только о ней; ` +
+      'читать их как утверждение обо всём приложении нельзя.',
+    '',
+    `В прочитанной выборке — файлов: ${subject.files.length} · ` +
+      `прямых значений цвета: ${rawUses.length} · ` +
+      `разных семантических классов цвета: ${byClass.size} · их употреблений: ${classUses.length}.`,
+    '',
+    `По всему документу: токенов в DESIGN.md — ${tokens.length}, ` +
+      `из них не объявлено в конфиге темы — ${missing.length} ` +
+      '(это утверждение о документе и конфиге целиком, не о выборке).',
     '',
     `Конфиг темы: \`${subject.themeConfigPath}\` · темы DaisyUI: ` +
       (themes.length > 0 ? themes.map((t) => `\`${t}\``).join(', ') : 'не объявлены'),
@@ -185,7 +197,11 @@ export function renderDesignSubject(subject: DesignSubject): string {
 
   lines.push('### Прямые значения цвета в коде (мимо системы токенов)', '');
   if (rawUses.length === 0) {
-    lines.push('Прямых значений цвета в прочитанных файлах не найдено.', '');
+    lines.push(
+      `Прямых значений цвета не найдено в прочитанной выборке (${subject.scope}). ` +
+        'Про файлы вне выборки замер не говорит ничего.',
+      '',
+    );
   } else {
     lines.push('| Значение | Файл | Строка |', '|---|---|---|');
     for (const r of rawUses.slice(0, 40)) lines.push(`| \`${r.hex}\` | ${r.file} | ${r.line} |`);

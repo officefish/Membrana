@@ -196,7 +196,10 @@ echo "CABINET IMAGE DEPLOY OK (tag: ${imageTag})"
  * образ и откатил прод. Явный `CABINET_IMAGE_TAG` (env или .env) — приоритет.
  */
 export function resolveCabinetImageTag({ env = process.env, envFileGet = () => '' } = {}) {
-  return env.CABINET_IMAGE_TAG || envFileGet('CABINET_IMAGE_TAG') || 'main';
+  const explicit = String(env.CABINET_IMAGE_TAG ?? '').trim();
+  if (explicit) return explicit;
+  const fromFile = String(envFileGet('CABINET_IMAGE_TAG') ?? '').trim();
+  return fromFile || 'main';
 }
 
 /** Записать JSON-сводку в deploy-artifacts/ и вернуть путь. */

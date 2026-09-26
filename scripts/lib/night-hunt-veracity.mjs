@@ -64,10 +64,21 @@ export function localDayKey(date) {
  * `windowHours` — осознанное послабление под другой график (например, охота через ночь):
  * тогда судим по возрасту относительно момента архивации.
  *
- * @param {{ bornAt: string|null, reason?: string, day: string, now?: Date, windowHours?: number|null }} input
+ * `sinceDay` — окно «С ПРОШЛОГО АРХИВА» (#2418). Охота ходит 2–3 раза в неделю, а окно
+ * суток требовало, чтобы она сходила ИМЕННО сегодня; в итоге шаг `archive-night-hunt`
+ * отказывал каждый вечер (exit 3), и последняя папка архива осталась за 2026-08-26 при
+ * живых отчётах от 14, 16 и 21.09. Окно `(sinceDay, day]` берёт всё, что родилось после
+ * последней зачеканенной ночи и не позже сегодняшней.
+ *
+ * Провенанс от этого НЕ слабеет, а крепнет: вызывающий обязан класть вещдок в папку его
+ * СОБСТВЕННОГО дня рождения (`bornDay`), а не сегодняшнего. Прежний инвариант «имя папки
+ * = день рождения отчёта» держался отказом, теперь держится построением — а отказ
+ * освобождается для своего настоящего предмета: отчётов без маркера и протухших копий.
+ *
+ * @param {{ bornAt: string|null, reason?: string, day: string, now?: Date, windowHours?: number|null, sinceDay?: string|null }} input
  * @returns {{ fresh: boolean, reason: VerityReason, ageHours: number|null, bornDay: string|null }}
  */
-export function veracity({ bornAt, reason, day, now = new Date(), windowHours = null }) {
+export function veracity({ bornAt, reason, day, now = new Date(), windowHours = null, sinceDay = null }) {
   if (!bornAt) {
     const why = reason === 'parse_error' ? 'parse_error' : 'missing_marker';
     return { fresh: false, reason: /** @type {VerityReason} */ (why), ageHours: null, bornDay: null };
@@ -79,10 +90,18 @@ export function veracity({ bornAt, reason, day, now = new Date(), windowHours = 
   const bornDay = localDayKey(new Date(bornMs));
   const ageHours = Math.max(0, (now.getTime() - bornMs) / 3_600_000);
 
-  const fresh =
-    typeof windowHours === 'number' && Number.isFinite(windowHours)
-      ? ageHours <= windowHours
-      : bornDay === day;
+  // Порядок окон фиксирован: явный `windowHours` сильнее `sinceDay`, `sinceDay` сильнее
+  // суток. Два окна разом — не «строже», а неопределённо: пусть решает одно, названное.
+  let fresh;
+  if (typeof windowHours === 'number' && Number.isFinite(windowHours)) {
+    fresh = ageHours <= windowHours;
+  } else if (typeof sinceDay === 'string' && sinceDay !== '') {
+    // Полуинтервал (sinceDay, day]: нижняя граница ИСКЛЮЧЕНА — день, уже зачеканенный,
+    // второй раз не чеканится; верхняя включена — сегодняшняя охота вещдок, а не будущее.
+    fresh = bornDay > sinceDay && bornDay <= day;
+  } else {
+    fresh = bornDay === day;
+  }
 
   return {
     fresh,
@@ -135,12 +154,12 @@ export function refusalLine(item, day) {
  * @param {{ day: string, now?: Date, windowHours?: number|null }} ctx
  * @returns {{ exhibits: Array<object>, refused: Array<object> }}
  */
-export function classifySources(sources, { day, now = new Date(), windowHours = null }) {
+export function classifySources(sources, { day, now = new Date(), windowHours = null, sinceDay = null }) {
   const exhibits = [];
   const refused = [];
   for (const s of sources) {
     const parsed = parseBornAt(s.content);
-    const v = veracity({ bornAt: parsed.bornAt, reason: parsed.reason, day, now, windowHours });
+    const v = veracity({ bornAt: parsed.bornAt, reason: parsed.reason, day, now, windowHours, sinceDay });
     const item = { name: s.name, content: s.content, bornAt: parsed.bornAt, verity: v };
     (v.fresh ? exhibits : refused).push(item);
   }

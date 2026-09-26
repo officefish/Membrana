@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14388/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 369 (причины в op-log) -->
+Записей: 50 · бюджет 14400/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 370 (причины в op-log) -->
+
+### 2026-09-25 · позиция · team-evening-feedback
+
+> Rodchenko **Оценка артефактов:** По моей зоне (React/TS UI по DESIGN.md) день почти пустой: `apps/panel/src/components/panel-users/PanelUsersBoard.tsx` и `apps/panel/src/lib/mintModes.*` — правки #2449 «зуб дрейфа называет предмет, форма называет умолчание». Это микро-семантика […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-25.md#reply-1`
 
 ### 2026-09-24 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/hunt-and-canon-m2-false-evidence-2026-08-27.md#reply-1`
 
-### 2026-08-27 · позиция · hunt-and-canon-m3-design-canon
+### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
 
-> С витрины: `--color-*` в клиенте — ноль, значит экраны уже живут классами DaisyUI и utility. Конструктивизм: форма = сообщение; два красных «опасности» — ложь формы. Канон должен читаться в одном месте. Принимаю направление «описание → жизнь»: восьми токенам Membrana — статус […] _(реплик в сеансе: 6)_
+> Пользователь видит контейнерные identities и разрешённые результаты, а не нативные роли и ids Affine. Исчезновение движка может убрать browsing и layout, но не должно изменить адрес, права или историю материала. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/hunt-and-canon-m3-design-canon-2026-08-27.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m3-access
-
-> Видимость полей разнесена до ответа API: `sensitive.reason` и `location.kind` входят в metadata, `location.ref` выдаётся только действием `read-ref`, байты — только `read-bytes`. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`

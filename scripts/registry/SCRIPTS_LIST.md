@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-24 |
-| Head SHA | e30a6f786b620bfcbe6f3927a9be5b93f2e46aad |
+| Date | 2026-09-25 |
+| Head SHA | 5485ede5ba16cc92d6b2b12a217c29fa4834ff1d |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1243 |
-| Yarn scripts (package.json) | 474 |
-| Yarn → `scripts/` | 420 |
+| Code files under `scripts/` | 1251 |
+| Yarn scripts (package.json) | 475 |
+| Yarn → `scripts/` | 421 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 906 |
+| Code files without yarn ref | 913 |
 
-## Yarn → scripts/ (420)
+## Yarn → scripts/ (421)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -425,6 +425,7 @@
 - `vdr:labels-merge` → `scripts/vdr-labels-merge.mjs`
 - `vdr:list` → `scripts/list-free-v1-content.mjs`
 - `vds:run` → `scripts/deploy-run.mjs`, `scripts/_ssh-office-exec.mjs`
+- `verify:adr-registry` → `scripts/verify-adr-registry.mjs`
 - `verify:branch-protection` → `scripts/verify-branch-protection.mjs`
 - `verify:declared-imports` → `scripts/verify-declared-imports.mjs`
 - `verify:encoding` → `scripts/verify-encoding.mjs`
@@ -446,7 +447,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (906)
+## Code files without yarn ref (913)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -527,6 +528,7 @@
 - `scripts/audit-evening.test.mjs`
 - `scripts/audit-pins.test.mjs`
 - `scripts/audit-sources.test.mjs`
+- `scripts/bash-invoke.test.mjs`
 - `scripts/belongs-invariant.test.mjs`
 - `scripts/belongs-tooth.mjs`
 - `scripts/belongs-tooth.test.mjs`
@@ -662,6 +664,7 @@
 - `scripts/lab-yamnet-embeddings.mjs`
 - `scripts/layer-direction.test.mjs`
 - `scripts/lens-run.mjs`
+- `scripts/lib/adr-registry.mjs`
 - `scripts/lib/affine-import.mjs`
 - `scripts/lib/affine-import.test.mjs`
 - `scripts/lib/affine-inventory-extractor.mjs`
@@ -684,6 +687,7 @@
 - `scripts/lib/audit-pins.mjs`
 - `scripts/lib/audit-sources.mjs`
 - `scripts/lib/audit-trunk.mjs`
+- `scripts/lib/bash-invoke.mjs`
 - `scripts/lib/belongs-invariant.mjs`
 - `scripts/lib/belongs.mjs`
 - `scripts/lib/benchmark-metrics.mjs`
@@ -1148,7 +1152,9 @@
 - `scripts/node-link-probe.test.mjs`
 - `scripts/node-link-state.test.mjs`
 - `scripts/norm-liveness.test.mjs`
+- `scripts/office-image-smoke-workflow.test.mjs`
 - `scripts/office-image-smoke.test.mjs`
+- `scripts/office-prod-up-tar-coverage.test.mjs`
 - `scripts/office-token.test.mjs`
 - `scripts/one-shot-rank.test.mjs`
 - `scripts/one-shot-run.test.mjs`
@@ -1158,6 +1164,7 @@
 - `scripts/optional-yarn-script.test.mjs`
 - `scripts/orphan-waiver.test.mjs`
 - `scripts/panel-cabinet-invite.test.mjs`
+- `scripts/panel-deploy-tar.test.mjs`
 - `scripts/panel-dns-gate.test.mjs`
 - `scripts/parse-studio-shell-log.test.mjs`
 - `scripts/percentile-template.test.mjs`
@@ -1331,6 +1338,7 @@
 - `scripts/validate-workshop.test.mjs`
 - `scripts/vdr-blind-corpus.test.mjs`
 - `scripts/vdr-labels-merge.test.mjs`
+- `scripts/verify-adr-registry.test.mjs`
 - `scripts/verify-encoding.test.mjs`
 - `scripts/verify-image-runtime-reads.test.mjs`
 - `scripts/verify-image-workspace-deps.test.mjs`
@@ -1365,7 +1373,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1243)
+## All code files (1251)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1491,6 +1499,7 @@
 - `scripts/audit-evening.test.mjs`
 - `scripts/audit-pins.test.mjs`
 - `scripts/audit-sources.test.mjs`
+- `scripts/bash-invoke.test.mjs`
 - `scripts/belongs-invariant.test.mjs`
 - `scripts/belongs-tooth.mjs`
 - `scripts/belongs-tooth.test.mjs`
@@ -1729,6 +1738,7 @@
 - `scripts/lab-yamnet-embeddings.mjs`
 - `scripts/layer-direction.test.mjs`
 - `scripts/lens-run.mjs`
+- `scripts/lib/adr-registry.mjs`
 - `scripts/lib/affine-import.mjs`
 - `scripts/lib/affine-import.test.mjs`
 - `scripts/lib/affine-inventory-extractor.mjs`
@@ -1751,6 +1761,7 @@
 - `scripts/lib/audit-pins.mjs`
 - `scripts/lib/audit-sources.mjs`
 - `scripts/lib/audit-trunk.mjs`
+- `scripts/lib/bash-invoke.mjs`
 - `scripts/lib/belongs-invariant.mjs`
 - `scripts/lib/belongs.mjs`
 - `scripts/lib/benchmark-metrics.mjs`
@@ -2263,8 +2274,10 @@
 - `scripts/node-link-state.mjs`
 - `scripts/node-link-state.test.mjs`
 - `scripts/norm-liveness.test.mjs`
+- `scripts/office-image-smoke-workflow.test.mjs`
 - `scripts/office-image-smoke.mjs`
 - `scripts/office-image-smoke.test.mjs`
+- `scripts/office-prod-up-tar-coverage.test.mjs`
 - `scripts/office-research-digest.mjs`
 - `scripts/office-token.test.mjs`
 - `scripts/one-shot-rank.mjs`
@@ -2278,6 +2291,7 @@
 - `scripts/orphan-waiver.test.mjs`
 - `scripts/panel-cabinet-invite.mjs`
 - `scripts/panel-cabinet-invite.test.mjs`
+- `scripts/panel-deploy-tar.test.mjs`
 - `scripts/panel-dns-gate.mjs`
 - `scripts/panel-dns-gate.test.mjs`
 - `scripts/panel-invite.mjs`
@@ -2562,6 +2576,8 @@
 - `scripts/vdr-blind-corpus.test.mjs`
 - `scripts/vdr-labels-merge.mjs`
 - `scripts/vdr-labels-merge.test.mjs`
+- `scripts/verify-adr-registry.mjs`
+- `scripts/verify-adr-registry.test.mjs`
 - `scripts/verify-branch-protection.mjs`
 - `scripts/verify-client-catalog.mjs`
 - `scripts/verify-declared-imports.mjs`

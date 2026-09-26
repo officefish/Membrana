@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14295/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 371 (причины в op-log) -->
+Записей: 49 · бюджет 14230/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 372 (причины в op-log) -->
+
+### 2026-09-25 · позиция · team-evening-feedback
+
+> Dynin **Оценка артефактов:** `DAILY_CODE_REVIEW` корректно разобрал алгоритм `scheduleLateness` — «ближайший объявленный срок не позже факта» верен для суточного cron, вычитание 86_400_000 мс при `declared > started` правильно. Регулярка […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-25.md#reply-1`
 
 ### 2026-09-24 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Формализую. Пусть источник s несёт метку рождения τ(s) (поле `Generated (UTC)` или эквивалент) и содержимое hash h(s). Ожидаемое окно ночи d: [t_d, t_d+δ]. Предикат свежести F(s,d) ⇔ τ(s) ∈ окну, согласованному с d (и/или h(s) не равен уже известному stale-эталону без новой […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/hunt-and-canon-m2-false-evidence-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m3-design-canon
-
-> Формализую. Пусть множество имён токенов продукта \(T = \{bg, surface, border, text, text-muted, accent, accent-hover, danger\}\). Пусть \(D\) — отображение семантических ролей DaisyUI (primary, error, base, …) в значения. Двоевластие = два независимых отображения \(f_{canon}: T […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m3-design-canon-2026-08-27.md#reply-1`

@@ -9,10 +9,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   AuthService,
+  REGISTRATION_CODE_LOG_PREFIX_LENGTH,
   REGISTRATION_CODE_MAX_LENGTH,
   REGISTRATION_DISABLED_MESSAGE,
   REGISTRATION_NOT_ACCEPTED_MESSAGE,
   REGISTRATION_TRY_LATER_MESSAGE,
+  registrationCodePrefix,
   type RegistrationCodeRedeemer,
   type RegistrationOutcome,
 } from './auth.service';
@@ -164,7 +166,7 @@ describe('AuthService.register — карта двери M3 по исходам 
     expect(err).toBeInstanceOf(ServiceUnavailableException);
     expect(prisma.user.create).not.toHaveBeenCalled();
     expect(warnSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ event: 'registration_redeem_outcome_unknown', code: 'ABCD-EFGH' }),
+      expect.objectContaining({ event: 'registration_redeem_outcome_unknown', codePrefix: 'ABCD-E…' }),
       expect.any(String),
     );
   });
@@ -333,7 +335,7 @@ describe('AuthService.register — порядок шагов, гонки и по
       expect.objectContaining({
         event: 'registration_redeem_orphaned',
         login: 'newcomer',
-        code: 'ABCD-EFGH',
+        codePrefix: 'ABCD-E…',
         error: 'disk is full',
       }),
       expect.any(String),
@@ -346,5 +348,107 @@ describe('AuthService.register — порядок шагов, гонки и по
     await expectHttp(service.register(GOOD.login, GOOD.password, GOOD.code), 403, REGISTRATION_NOT_ACCEPTED_MESSAGE);
     await expectHttp(service.register(GOOD.login, GOOD.password, GOOD.code), 403, REGISTRATION_NOT_ACCEPTED_MESSAGE);
     expect(users).toHaveLength(0);
+  });
+});
+
+// ─── зуб #2433: код приглашения в след не уходит ──────────────────────────────────────
+//
+// 24.09 действующий ключ лежал в логе прод-контейнера целиком. Зуб судит не отдельную
+// строку, а ВЕСЬ след попытки: гоняет регистрацию по каждой ветке настоящим кодом в 16
+// символов и требует, чтобы ни один аргумент логгера его не содержал.
+//
+// Красный вход (показан при сдаче): вернуть `code: normalizedCode` в любую из двух веток
+// `auth.service.ts` — зуб падает и называет ветку, а не «что-то не так».
+
+/** Код той же формы, что чеканит офис: 16 символов base32 (panel-users-core.ts). */
+const REAL_CODE = 'ABCDEFGHJKMNPQRS';
+
+describe('зуб #2433: след регистрации несёт префикс, а не ключ', () => {
+  let logSpy: ReturnType<typeof vi.spyOn>;
+  let debugSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    logSpy = vi.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined);
+    debugSpy = vi.spyOn(Logger.prototype, 'debug').mockImplementation(() => undefined);
+  });
+
+  /** Всё, что ушло в логгер за попытку, — одной строкой; по ней и судим. */
+  function loggedText(): string {
+    const all = [warnSpy, errorSpy, logSpy, debugSpy].flatMap((spy) => spy.mock.calls);
+    return all
+      .map((args) => args.map((a) => (typeof a === 'string' ? a : JSON.stringify(a))).join(' '))
+      .join('\n');
+  }
+
+  it('предмет зуба на месте: registrationCodePrefix усекает код до шести символов', () => {
+    // сначала утверждение о предмете, потом сравнение: иначе зуб судил бы пустоту
+    expect(typeof registrationCodePrefix).toBe('function');
+    expect(REGISTRATION_CODE_LOG_PREFIX_LENGTH).toBe(6);
+    expect(REAL_CODE.length).toBeGreaterThan(REGISTRATION_CODE_LOG_PREFIX_LENGTH);
+    expect(registrationCodePrefix(REAL_CODE)).toBe('ABCDEF…');
+    expect(registrationCodePrefix(REAL_CODE)).not.toContain(REAL_CODE);
+  });
+
+  it.each([
+    ['office-unavailable', { kind: 'office-unavailable', detail: 'timeout 5000ms' } as RegistrationOutcome],
+    ['refused(exhausted)', { kind: 'refused', reason: 'exhausted' } as RegistrationOutcome],
+    ['ok', { kind: 'ok', payload: {} } as RegistrationOutcome],
+  ])('исход %s: полный код ни в одной строке следа', async (_name, outcome) => {
+    const { service } = build({ outcomes: [outcome] });
+    await service.register(GOOD.login, GOOD.password, ` ${REAL_CODE} `).catch(() => undefined);
+    expect(loggedText()).not.toContain(REAL_CODE);
+  });
+
+  it('полуудача A (orphaned): полного кода нет, есть префикс и метка попытки', async () => {
+    const { service, prisma } = build();
+    prisma.user.create.mockRejectedValueOnce(new Error('disk is full'));
+    await expectHttp(
+      service.register(GOOD.login, GOOD.password, REAL_CODE),
+      403,
+      REGISTRATION_NOT_ACCEPTED_MESSAGE,
+    );
+    expect(loggedText()).not.toContain(REAL_CODE);
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'registration_redeem_orphaned',
+        codePrefix: 'ABCDEF…',
+        attemptId: expect.any(String),
+      }),
+      expect.any(String),
+    );
+  });
+
+  it('исход неизвестен: полного кода нет, есть префикс и метка попытки', async () => {
+    const { service } = build({ outcomes: [{ kind: 'office-unavailable', detail: 'timeout 5000ms' }] });
+    await expectHttp(
+      service.register(GOOD.login, GOOD.password, REAL_CODE),
+      503,
+      REGISTRATION_TRY_LATER_MESSAGE,
+    );
+    expect(loggedText()).not.toContain(REAL_CODE);
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'registration_redeem_outcome_unknown',
+        codePrefix: 'ABCDEF…',
+        attemptId: expect.any(String),
+      }),
+      expect.any(String),
+    );
+  });
+
+  it('метка попытки одна на всю попытку и разная у двух попыток', async () => {
+    const { service } = build({
+      outcomes: [
+        { kind: 'office-unavailable', detail: 'a' },
+        { kind: 'office-unavailable', detail: 'b' },
+      ],
+    });
+    await service.register('first-login', GOOD.password, REAL_CODE).catch(() => undefined);
+    await service.register('second-login', GOOD.password, REAL_CODE).catch(() => undefined);
+    const ids = warnSpy.mock.calls
+      .map(([payload]) => (payload as { attemptId?: string }).attemptId)
+      .filter((v): v is string => typeof v === 'string');
+    expect(ids).toHaveLength(2);
+    expect(new Set(ids).size).toBe(2);
   });
 });

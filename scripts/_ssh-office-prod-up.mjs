@@ -4,10 +4,12 @@
  * Office files may be ahead of remote git — uploads local sources.
  */
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, unlinkSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, unlinkSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { Client } from 'ssh2';
 import { getOfficeSshConfig, repoRoot } from './_ssh-office-config.mjs';
+import { copiedLocalBuildSources } from './verify-image-workspace-deps.mjs';
 
 // Не tmpdir(): держим архив внутри репо, чтобы путь для tar был ОТНОСИТЕЛЬНЫМ.
 const cacheDir = join(repoRoot, 'scripts', 'cache');
@@ -19,14 +21,15 @@ const tarPath = join(cacheDir, `office-src-${Date.now()}.tgz`);
 const tarArg = relative(repoRoot, tarPath).replace(/\\/gu, '/');
 const remoteTar = '/tmp/office-src.tgz';
 
-const tarArgs = [
+const tarExcludes = [
   '--exclude=packages/background-office/node_modules',
   '--exclude=packages/background-office/dist',
   '--exclude=packages/background-office/.tsbuildinfo',
   '--exclude=packages/services/rag/.tsbuildinfo',
   '--exclude=packages/background-office/.env.docker',
-  '-czf',
-  tarArg,
+];
+
+export const officeProdUpTarSources = Object.freeze([
   'package.json',
   'yarn.lock',
   '.yarnrc.yml',
@@ -37,8 +40,12 @@ const tarArgs = [
   'docs/ARCHITECTURE.md',
   'docs/SERVICES.md',
   'docs/truth/registry.json',
+  'docs/evidence/registry.jsonl',
   'docs/prompts/DREAM_MASTER_PROMPT.md',
   'packages/services/rag',
+  'packages/services/static-registry',
+  'packages/core',
+  'packages/plugin-contracts',
   'packages/background-office',
   'scripts/lib/llm-procedures.json',
   'scripts/lib/llm-procedure-defaults.json',
@@ -51,14 +58,58 @@ const tarArgs = [
   'scripts/lib/night-research.mjs',
   'scripts/lib/strategy-horizon.mjs',
   'scripts/lib/truth-graph.mjs',
-  'scripts/llm-probe.mjs',
+  'scripts/network/lib/classify.mjs',
   'deploy/background-office.prod.compose.yml',
   'deploy/office-stack.sh',
   'deploy/generate-office-env.sh',
-];
+]);
 
-console.log('Packing office build context...');
-execFileSync('tar', tarArgs, { cwd: repoRoot, stdio: 'inherit' });
+function normalizeRelPath(path) {
+  return String(path ?? '').trim().replace(/\\/gu, '/').replace(/^\.\//u, '').replace(/\/$/u, '');
+}
+
+function coversPath(container, path) {
+  const parent = normalizeRelPath(container);
+  const child = normalizeRelPath(path);
+  return parent === child || child.startsWith(`${parent}/`);
+}
+
+export function officeTarCoverageFindings({
+  dockerfileText,
+  tarSources = officeProdUpTarSources,
+} = {}) {
+  const uploaded = tarSources.map(normalizeRelPath).filter(Boolean);
+  const copied = copiedLocalBuildSources(dockerfileText);
+  return copied.filter((source) => !uploaded.some((entry) => coversPath(entry, source)));
+}
+
+export function assertOfficeProdUpTarCoversDockerfileCopies({
+  root = repoRoot,
+  dockerfilePath = 'packages/background-office/Dockerfile',
+  tarSources = officeProdUpTarSources,
+} = {}) {
+  const abs = join(root, dockerfilePath);
+  if (!existsSync(abs)) {
+    throw new Error(`office-prod-up: нет ${dockerfilePath} — не могу сверить COPY с выгрузкой`);
+  }
+  const missing = officeTarCoverageFindings({
+    dockerfileText: readFileSync(abs, 'utf8'),
+    tarSources,
+  });
+  if (missing.length > 0) {
+    throw new Error(
+      `office-prod-up: Dockerfile COPY требует пути, которых нет в tar-выгрузке: ${missing.join(', ')}`,
+    );
+  }
+  return true;
+}
+
+const tarArgs = [
+  ...tarExcludes,
+  '-czf',
+  tarArg,
+  ...officeProdUpTarSources,
+];
 
 const remoteScript = `#!/bin/bash
 set -euo pipefail
@@ -147,16 +198,27 @@ function runDeploy() {
   });
 }
 
-const { host, username } = getOfficeSshConfig();
-console.log(`Office prod deploy → ${username}@${host}\n`);
+export async function main() {
+  assertOfficeProdUpTarCoversDockerfileCopies();
 
-try {
-  await runDeploy();
-  console.log('\nOffice prod deploy OK.');
-} finally {
+  console.log('Packing office build context...');
+  execFileSync('tar', tarArgs, { cwd: repoRoot, stdio: 'inherit' });
+
+  const { host, username } = getOfficeSshConfig();
+  console.log(`Office prod deploy → ${username}@${host}\n`);
+
   try {
-    unlinkSync(tarPath);
-  } catch {
-    /* ignore */
+    await runDeploy();
+    console.log('\nOffice prod deploy OK.');
+  } finally {
+    try {
+      unlinkSync(tarPath);
+    } catch {
+      /* ignore */
+    }
   }
+}
+
+if (pathToFileURL(process.argv[1] ?? '').href === import.meta.url) {
+  await main();
 }

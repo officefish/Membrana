@@ -7,7 +7,7 @@
  * это спишут на прод. Тест читает исходник и падает на расхождении.
  */
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -20,8 +20,38 @@ const CORE_SRC = resolve(
   'packages/background-office/src/modules/panel-users/panel-users-core.ts',
 );
 
+/**
+ * Предикат предмета (#2435): «исходник двери офиса найден по пути X».
+ *
+ * Без него `readFileSync` на переехавшем пакете бросал ENOENT, и зуб дрейфа говорил НЕ ТО:
+ * «файла нет» читается как поломка теста, хотя утверждение зуба — про букву гранта.
+ * Предмет проверяется первым и отдельной фразой, сравнение — только после.
+ *
+ * @param {string} [path]
+ * @returns {string}
+ */
+export function readOfficeCoreSource(path = CORE_SRC) {
+  if (!existsSync(path)) {
+    throw new Error(
+      `предмет зуба потерян: исходник двери офиса не найден по пути ${path}. ` +
+        'Это НЕ дрейф буквы гранта — пакет переехал или переименован; поправьте путь в зубе.',
+    );
+  }
+  return readFileSync(path, 'utf8');
+}
+
+test('предмет зуба: исходник двери офиса найден по объявленному пути', () => {
+  assert.ok(existsSync(CORE_SRC), `исходник офиса не найден: ${CORE_SRC}`);
+});
+
+test('переезд пакета даёт внятный отказ, а не ENOENT', () => {
+  const moved = `${CORE_SRC}.moved-away`;
+  assert.throws(() => readOfficeCoreSource(moved), /предмет зуба потерян/);
+  assert.throws(() => readOfficeCoreSource(moved), (e) => !/ENOENT/.test(String(e.message)));
+});
+
 test('грант совпадает с буквой в двери офиса', () => {
-  const src = readFileSync(CORE_SRC, 'utf8');
+  const src = readOfficeCoreSource();
   const match = src.match(/export const CABINET_REGISTER_GRANT = '([^']+)'/);
   assert.ok(match, 'CABINET_REGISTER_GRANT не найден в panel-users-core.ts');
   assert.equal(CABINET_REGISTER_GRANT, match[1]);

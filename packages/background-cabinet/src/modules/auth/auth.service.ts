@@ -37,6 +37,41 @@ export const REGISTRATION_TRY_LATER_MESSAGE = 'Please try again later';
 export const REGISTRATION_CODE_MAX_LENGTH = 128;
 
 /**
+ * Сколько символов кода приглашения попадает в след (#2433).
+ *
+ * Шесть — столько же берёт `scripts/_ssh-panel-smoke.mjs` → `codePrefix`, которым пользуется
+ * `scripts/panel-cabinet-invite.mjs`. Панель в admin-списке показывает четыре
+ * (`packages/background-office/src/modules/panel-users/panel-users-core.ts` → `codePrefix`),
+ * то есть префикс следа накрывает префикс панели: оператор сличает первые четыре и попадает
+ * в ту же строку. Код чеканится в 16 символов base32 (80 бит), так что шесть оставляют
+ * неназванными 50 бит: префикс опознаёт строку, но не отпирает регистрацию.
+ */
+export const REGISTRATION_CODE_LOG_PREFIX_LENGTH = 6;
+
+/**
+ * Префикс кода для следа: сам код в лог не уходит никогда (#2433).
+ *
+ * 24.09 действующий ключ лёг в лог прод-контейнера целиком — из веток
+ * `registration_redeem_outcome_unknown` и `registration_redeem_orphaned`, где стояло
+ * `code: normalizedCode`. Разбор сгоревшего приглашения требует опознать строку, а не
+ * получить ключ: связь префикса с промокодом даёт аудит офиса.
+ */
+export function registrationCodePrefix(code: string): string {
+  return `${String(code).slice(0, REGISTRATION_CODE_LOG_PREFIX_LENGTH)}…`;
+}
+
+/**
+ * Идентификатор попытки: один на вызов `register`, во всех строках следа этой попытки.
+ * Он сшивает лог там, где префикса мало (два приглашения с одинаковым началом), и при этом
+ * не является секретом — это метка строки, наружу она не уходит.
+ */
+let registrationAttemptSeq = 0;
+function nextRegistrationAttemptId(): string {
+  registrationAttemptSeq = (registrationAttemptSeq + 1) % 0x1000000;
+  return `${Date.now().toString(36)}-${registrationAttemptSeq.toString(36).padStart(4, '0')}`;
+}
+
+/**
  * Исход клиента офиса — тип модуля B (решение M2), только тип: во время выполнения сервис
  * регистрации модуль B не тянет, зубы идут на подменном клиенте по этому же типу.
  */
@@ -87,25 +122,28 @@ export class AuthService {
       throw new UnauthorizedException(REGISTRATION_DISABLED_MESSAGE);
     }
 
+    // метка попытки — во все строки следа ниже, чтобы разбор шёл по ней, а не по коду (#2433)
+    const attemptId = nextRegistrationAttemptId();
+
     // 3) длины (ограничитель — шаг 2 — бьёт контроллер до входа сюда)
     const normalizedLogin = typeof login === 'string' ? login.trim().toLowerCase() : '';
     if (normalizedLogin.length < 3 || typeof password !== 'string' || password.length < 8) {
-      throw this.refuseLocally('invalid_lengths', normalizedLogin);
+      throw this.refuseLocally('invalid_lengths', normalizedLogin, attemptId);
     }
 
     // 4) код: trim; пустой или длиннее предела — отказ без офиса
     const normalizedCode = typeof code === 'string' ? code.trim() : '';
     if (normalizedCode.length === 0) {
-      throw this.refuseLocally('empty_code', normalizedLogin);
+      throw this.refuseLocally('empty_code', normalizedLogin, attemptId);
     }
     if (normalizedCode.length > REGISTRATION_CODE_MAX_LENGTH) {
-      throw this.refuseLocally('code_too_long', normalizedLogin);
+      throw this.refuseLocally('code_too_long', normalizedLogin, attemptId);
     }
 
     // 5) логин занят — отказ без офиса
     const existing = await this.prisma.user.findUnique({ where: { login: normalizedLogin } });
     if (existing) {
-      throw this.refuseLocally('login_taken', normalizedLogin);
+      throw this.refuseLocally('login_taken', normalizedLogin, attemptId);
     }
 
     // 6) хеш — локально, без записи; при отказе офиса просто отбрасывается
@@ -119,17 +157,19 @@ export class AuthService {
       case 'refused':
         // причина — только в серверный лог; наружу одна фраза (Q3, ADR-0005)
         this.logger.warn(
-          { event: 'registration_refused', login: normalizedLogin, reason: outcome.reason },
+          { event: 'registration_refused', login: normalizedLogin, attemptId, reason: outcome.reason },
           'registration refused by office',
         );
         throw new ForbiddenException(REGISTRATION_NOT_ACCEPTED_MESSAGE);
       case 'office-unavailable':
         // исход гашения неизвестен: пользователя не создаём, код мог сгореть в офисе (M3, компенсация B)
+        // в след — префикс и метка попытки, не ключ (#2433)
         this.logger.warn(
           {
             event: 'registration_redeem_outcome_unknown',
             login: normalizedLogin,
-            code: normalizedCode,
+            attemptId,
+            codePrefix: registrationCodePrefix(normalizedCode),
             detail: outcome.detail ?? null,
           },
           'office unavailable during registration; user not created',
@@ -137,7 +177,7 @@ export class AuthService {
         throw new ServiceUnavailableException(REGISTRATION_TRY_LATER_MESSAGE);
       case 'config-invalid':
         this.logger.error(
-          { event: 'registration_office_config_invalid', detail: outcome.detail ?? null },
+          { event: 'registration_office_config_invalid', attemptId, detail: outcome.detail ?? null },
           'office pair for registration is invalid; user not created',
         );
         throw new ServiceUnavailableException(REGISTRATION_TRY_LATER_MESSAGE);
@@ -145,7 +185,13 @@ export class AuthService {
         // исход вне контракта M2 — считаем неизвестным, как недоступность офиса
         const unknown: never = outcome;
         this.logger.error(
-          { event: 'registration_redeem_outcome_unknown', login: normalizedLogin, outcome: unknown },
+          {
+            event: 'registration_redeem_outcome_unknown',
+            login: normalizedLogin,
+            attemptId,
+            codePrefix: registrationCodePrefix(normalizedCode),
+            outcomeKind: (unknown as { kind?: unknown }).kind ?? null,
+          },
           'unexpected client outcome kind; user not created',
         );
         throw new ServiceUnavailableException(REGISTRATION_TRY_LATER_MESSAGE);
@@ -160,11 +206,13 @@ export class AuthService {
         data: { login: normalizedLogin, passwordHash, role: 'user' },
       });
     } catch (error) {
+      // в след — префикс и метка попытки, не ключ (#2433)
       this.logger.error(
         {
           event: 'registration_redeem_orphaned',
           login: normalizedLogin,
-          code: normalizedCode,
+          attemptId,
+          codePrefix: registrationCodePrefix(normalizedCode),
           error: error instanceof Error ? error.message : String(error),
         },
         'code redeemed but user was not created',
@@ -176,8 +224,11 @@ export class AuthService {
   }
 
   /** Локальный отказ до гашения: одна фраза наружу, причина — в лог (M3). */
-  private refuseLocally(reason: LocalRefusalReason, login: string): ForbiddenException {
-    this.logger.warn({ event: 'registration_local_refusal', login, reason }, 'registration refused locally');
+  private refuseLocally(reason: LocalRefusalReason, login: string, attemptId: string): ForbiddenException {
+    this.logger.warn(
+      { event: 'registration_local_refusal', login, attemptId, reason },
+      'registration refused locally',
+    );
     return new ForbiddenException(REGISTRATION_NOT_ACCEPTED_MESSAGE);
   }
 
