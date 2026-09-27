@@ -71,13 +71,38 @@ export const MOVE_ALL_STAY_REASON_TITLE: Record<MoveBatchStayReason, string> = {
   'no-space': 'не хватило места в хранилище',
   'not-found': 'проба не найдена',
   /**
-   * Одно слово на два случая (уточнение двери 27.09): проба тарифного набора, которой в
-   * буфере и не было, и проба, ушедшая из буфера между планом и применением — единственная
-   * форма гонки, которую окно увидит. «Уже не в исходном наборе» обещало бы гонку там, где
-   * тарифная проба в буфере не бывала.
+   * Одно слово на ТРИ случая. Причина ставится дверью по одному признаку — `row.inBuffer ===
+   * false` (`packages/background-media/src/modules/samples/move-batch-plan.ts`), и под него
+   * попадают: проба тарифного набора, которой в буфере и не было; проба, ушедшая из буфера
+   * между планом и применением (единственная форма гонки, видимая окну); и ЛЮБАЯ проба, когда
+   * источником выбран не буфер, а свой набор человека — кнопка «перенести все» к буферу не
+   * привязана (#2249), а дверь вывозит пачкой ТОЛЬКО из буфера.
+   *
+   * Прежнее «пробы нет в исходном наборе» на третьем случае врало прямо: проба лежит ровно в
+   * том наборе, который человек назвал источником, и остаётся она не поэтому. Говорим то, что
+   * дверь на самом деле проверила.
    */
-  'not-in-buffer': 'пробы нет в исходном наборе',
+  'not-in-buffer': 'проба не в буфере прибора',
 };
+
+/** Сколько проб остаётся по этой причине. */
+function countStayReason(stayed: readonly MoveBatchStay[], reason: MoveBatchStayReason): number {
+  return stayed.filter((s) => s.reason === reason).length;
+}
+
+/**
+ * «не хватило места в хранилище — 271; проба не в буфере прибора — 3» — счёт по КАЖДОЙ причине.
+ *
+ * Одна сборка на план и на итог: до подтверждения и после человек читает одни и те же слова о
+ * тех же причинах, иначе два места складывали бы один перечень двумя способами.
+ */
+function stayReasonsLine(stayed: readonly MoveBatchStay[]): string {
+  const byReason = new Map<MoveBatchStayReason, number>();
+  for (const s of stayed) byReason.set(s.reason, (byReason.get(s.reason) ?? 0) + 1);
+  return [...byReason.entries()]
+    .map(([reason, count]) => `${MOVE_ALL_STAY_REASON_TITLE[reason]} — ${count}`)
+    .join('; ');
+}
 
 /** Откуда едут пробы: имя для слов и признак буфера — у буфера свои слова об остатке. */
 export interface MoveAllSource {
@@ -154,10 +179,14 @@ export function describeMoveAllPlan(input: {
   readonly requested: number;
   readonly source: MoveAllSource;
   readonly userStorage: { readonly usedBytes: number; readonly limitBytes: number };
-  /** Кто и почему остаётся по плану — нужен, чтобы не соврать в мегабайтах остатка. */
-  readonly stayed?: readonly MoveBatchStay[];
+  /**
+   * Кто и почему остаётся по плану. ОБЯЗАТЕЛЕН, а не «по возможности»: без причин слова умеют
+   * сказать только «не влезло», а это неправда в двух случаях из трёх (см. виновника ниже).
+   * Необязательное поле здесь и было щелью — забыть его значило молча вернуться ко лжи.
+   */
+  readonly stayed: readonly MoveBatchStay[];
 }): MoveAllPlanWords {
-  const { plan, requested, source, userStorage, stayed = [] } = input;
+  const { plan, requested, source, userStorage, stayed } = input;
   const judged = plan.willMove + plan.willStay;
   const headline = `Перенесётся ${plan.willMove} из ${judged} · ${formatMoveAllBytes(plan.moveBytes)}`;
 
@@ -170,17 +199,37 @@ export function describeMoveAllPlan(input: {
    * согласование по одному правилу не вытягивает, а кривая грамматика в предупреждении
    * читается как небрежность, и предупреждению перестают верить целиком.
    */
-  const unweighed = stayed.filter((s) => s.reason === 'not-found').length;
+  const unweighed = countStayReason(stayed, 'not-found');
   const bytesCaveat =
     unweighed > 0 ? ` (мегабайты неполны: веса ненайденных проб дверь не знает, их ${unweighed})` : '';
 
-  const warning =
-    plan.willStay > 0
-      ? `Не всё поместится: перенесётся ${plan.willMove} из ${judged} · ${formatMoveAllBytes(plan.moveBytes)}, ` +
-        `остальное останется ${stayPlace(source)} — ${pluralSamples(plan.willStay)} · ${formatMoveAllBytes(plan.stayBytes)}${bytesCaveat}. ` +
-        'Дело не в наборе: ёмкости у набора нет, места не хватает в хранилище мембраны — занято ' +
+  /**
+   * ВИНОВНИК НАЗЫВАЕТСЯ ПО ПРИЧИНАМ, А НЕ ПО ОДНОМУ `willStay > 0`.
+   *
+   * `willStay` считает ВСЕХ остающихся, а места не хватило только тем, у кого причина
+   * `no-space`. Безусловное «места не хватает в хранилище мембраны, освободите место или
+   * смените тариф» врёт ровно тем же способом, каким врало бы «набор полон»: называет виновным
+   * не то, что отказало. Живой случай этой лжи — источником выбран свой набор, а не буфер:
+   * дверь отдаёт `not-in-buffer` на ВСЁ, места при этом сколько угодно, а окно посылало
+   * человека чистить хранилище или менять тариф.
+   */
+  const noSpace = countStayReason(stayed, 'no-space');
+  const blame =
+    noSpace > 0
+      ? 'Дело не в наборе: ёмкости у набора нет, места не хватает в хранилище мембраны — занято ' +
         `${formatMoveAllBytes(userStorage.usedBytes)} из ${formatMoveAllBytes(userStorage.limitBytes)}. ` +
         'Освободите место или смените тариф и повторите перенос — остаток цел.'
+      : stayed.length > 0
+        ? 'Места в хранилище мембраны хватает — дело не в нём. Пачкой дверь вывозит только из ' +
+          'буфера прибора; остальное переносите по одной пробе.'
+        : 'Причин дверь не назвала — о месте по одному числу остатка судить нельзя.';
+
+  const warning =
+    plan.willStay > 0
+      ? `Перенесётся не всё: ${plan.willMove} из ${judged} · ${formatMoveAllBytes(plan.moveBytes)}, ` +
+        `остальное останется ${stayPlace(source)} — ${pluralSamples(plan.willStay)} · ${formatMoveAllBytes(plan.stayBytes)}${bytesCaveat}. ` +
+        (stayed.length > 0 ? `Почему остаётся: ${stayReasonsLine(stayed)}. ` : '') +
+        blame
       : null;
 
   const requestedMismatch =
@@ -219,16 +268,9 @@ export function describeMoveAllOutcome(input: {
   const { outcome, requested, source } = input;
   const headline = `Перенесено ${outcome.moved.length} из ${requested}`;
 
-  const byReason = new Map<MoveBatchStayReason, number>();
-  for (const s of outcome.stayed) {
-    byReason.set(s.reason, (byReason.get(s.reason) ?? 0) + 1);
-  }
-  const reasons = [...byReason.entries()]
-    .map(([reason, count]) => `${MOVE_ALL_STAY_REASON_TITLE[reason]} — ${count}`)
-    .join('; ');
   const stayed =
     outcome.stayed.length > 0
-      ? `Останется ${stayPlace(source)} ${pluralSamples(outcome.stayed.length)} · ${reasons}.`
+      ? `Останется ${stayPlace(source)} ${pluralSamples(outcome.stayed.length)} · ${stayReasonsLine(outcome.stayed)}.`
       : null;
 
   const planMismatch =
@@ -332,6 +374,23 @@ export function moveAllReducer(state: MoveAllState, event: MoveAllEvent): MoveAl
   }
 }
 
+/** Органы окна, которые СЕЙЧАС берут фокус. Погашенные (`disabled`) не берут — и не считаются. */
+const FOCUSABLE_IN_DIALOG =
+  'button:not([disabled]), select:not([disabled]), input:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
+
+function focusablesOf(node: HTMLElement | null): readonly HTMLElement[] {
+  return Array.from(node?.querySelectorAll<HTMLElement>(FOCUSABLE_IN_DIALOG) ?? []);
+}
+
+/**
+ * Первый орган окна под фокус, а если органов нет — САМО окно (`tabIndex={-1}` у него для этого).
+ * Оставить фокус снаружи значило бы открыть модальное окно, не забрав к нему человека.
+ */
+function focusInsideDialog(node: HTMLElement | null): void {
+  if (!node) return;
+  (focusablesOf(node)[0] ?? node).focus();
+}
+
 export interface MoveAllToCollectionDialogProps {
   readonly open: boolean;
   /** Откуда едут пробы: имя для слов и признак буфера — у буфера свои слова об остатке. */
@@ -380,18 +439,28 @@ export function MoveAllToCollectionDialog({
   const phase = state.phase;
   const busy = phase.kind === 'planning' || phase.kind === 'moving';
 
-  /** Клавиатура и фокус: Esc закрывает (пока не идёт работа), Tab не выпускает, фокус возвращается. */
+  /**
+   * ЗАХВАТ И ВОЗВРАТ ФОКУСА — по ОДНОМУ открытию, а не по каждой смене занятости.
+   *
+   * Образец — окно остановки буфера (`OverflowWindow.tsx`) — держит захват, возврат и
+   * клавиатуру одним эффектом с `busy` в зависимостях, и там это безвредно: занятость ему
+   * приносит дом снаружи. Здесь `busy` меняет САМО окно (план → перенос → итог), и на каждой
+   * смене чистка того же эффекта возвращала бы фокус НАРУЖУ — кнопке, которая окно открыла.
+   * Поэтому захват и возврат зависят только от `open`, а клавиатура живёт отдельным эффектом.
+   */
   useEffect(() => {
     if (!open) return undefined;
     returnFocusTo.current = document.activeElement;
+    focusInsideDialog(dialogRef.current);
+    return () => {
+      if (returnFocusTo.current instanceof HTMLElement) returnFocusTo.current.focus();
+    };
+  }, [open]);
+
+  /** Клавиатура: Esc закрывает (пока не идёт работа), Tab не выпускает из окна. */
+  useEffect(() => {
+    if (!open) return undefined;
     const node = dialogRef.current;
-    const focusables = () =>
-      Array.from(
-        node?.querySelectorAll<HTMLElement>(
-          'button:not([disabled]), select:not([disabled]), input:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
-        ) ?? [],
-      );
-    focusables()[0]?.focus();
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -399,8 +468,18 @@ export function MoveAllToCollectionDialog({
         return;
       }
       if (e.key !== 'Tab') return;
-      const list = focusables();
-      if (list.length === 0) return;
+      const list = focusablesOf(node);
+      /**
+       * ОРГАНОВ НЕТ — НЕ КРАЙ, А ШТАТНЫЙ ШАГ: пока идёт работа, окно гасит ВСЕ свои органы
+       * (закрытие, отмена, выбор набора, кнопка плана — каждый `disabled`). Прежнее `return`
+       * на пустом перечне означало, что ровно в эти секунды Tab уводил человека на страницу
+       * ПОД модальным окном. Уводить некуда: фокус едет на само окно.
+       */
+      if (list.length === 0) {
+        e.preventDefault();
+        node?.focus();
+        return;
+      }
       const first = list[0];
       const last = list[list.length - 1];
       if (!first || !last) return;
@@ -416,7 +495,6 @@ export function MoveAllToCollectionDialog({
     window.addEventListener('keydown', onKey);
     return () => {
       window.removeEventListener('keydown', onKey);
-      if (returnFocusTo.current instanceof HTMLElement) returnFocusTo.current.focus();
     };
   }, [open, busy, onClose]);
 
@@ -473,6 +551,8 @@ export function MoveAllToCollectionDialog({
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descId}
+        /* Пристанище фокуса на те секунды, когда окно занято и все его органы погашены. */
+        tabIndex={-1}
         className="flex max-h-[85vh] w-full max-w-xl flex-col gap-3 overflow-auto rounded-lg bg-base-100 p-5 shadow-xl"
       >
         <div className="flex items-start justify-between gap-3">
@@ -633,6 +713,14 @@ export function MoveAllToCollectionDialog({
                   type="button"
                   className="btn btn-sm btn-primary"
                   data-testid="move-all-confirm"
+                  /*
+                    ПО ПЛАНУ НЕ ЕДЕТ НИ ОДНА — подтверждать нечего, и орган погашен. Живая
+                    дорога сюда есть: источником выбран свой набор, а не буфер (кнопка к
+                    буферу не привязана, #2249), и дверь отдаёт `not-in-buffer` на всё.
+                    Действующая кнопка «Перенести 0» обещала бы движение и отправляла бы
+                    дверь возить пустоту; почему не едет — сказано плашкой выше.
+                  */
+                  disabled={phase.outcome.plan.willMove === 0}
                   onClick={() => void runMove(phase.sampleIds, phase.toCollectionId)}
                 >
                   Перенести {phase.outcome.plan.willMove} в «{targetName}»

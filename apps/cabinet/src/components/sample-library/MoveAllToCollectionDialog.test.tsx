@@ -37,23 +37,47 @@ const COLLECTIONS: readonly Collection[] = [
 
 const BUFFER: MoveAllSource = { name: 'Буфер', isBuffer: true };
 
+const ids = (n: number) => Array.from({ length: n }, (_, i) => `s-${i}`);
+
+/**
+ * Остающиеся живого случая — ПОИМЁННО и с причиной у каждой.
+ *
+ * Прежняя редакция держала в образце `stayed: []` при `willStay: 317`, то есть описывала исход,
+ * которого дверь не отдаёт: планировщик кладёт причину КАЖДОМУ остающемуся
+ * (`packages/background-media/src/modules/samples/move-batch-plan.ts`). На таком образце зуб
+ * «виноват не набор» был зелёным не потому, что окно право, а потому, что судить было не по чему.
+ */
+const STAY_NO_SPACE = ids(317).map((sampleId) => ({ sampleId, reason: 'no-space' as const }));
+
 /** Живой случай 27.09: прибор 9e86ec85 — 1057 проб, 486.7 МБ из 512 МБ, места на 740. */
 const TIGHT: MoveBatchOutcome = {
   plan: { willMove: 740, willStay: 317, moveBytes: 357_564_416, stayBytes: 153_092_096 },
   moved: [],
-  stayed: [],
+  stayed: STAY_NO_SPACE,
   userStorage: { usedBytes: 510_378_803, limitBytes: 536_870_912 },
   buffer: { usedBytes: 510_378_803, limitBytes: 536_870_912 },
   maxBatch: 2000,
 };
 
-const ids = (n: number) => Array.from({ length: n }, (_, i) => `s-${i}`);
+/** Ожидание, которым зуб держит окно «занятым» ровно столько, сколько нужно проверке. */
+function deferred<T>(): { readonly promise: Promise<T>; resolve: (value: T) => void } {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((r) => {
+    resolve = r;
+  });
+  return { promise, resolve };
+}
 
 function stubPort(overrides: Partial<MoveAllPort> = {}): MoveAllPort {
   return {
     enumerate: vi.fn(async () => ids(1057)),
+    /**
+     * Настоящий прогон отдаёт ТЕХ ЖЕ остающихся, что и план: дверь обещает, что при неизменном
+     * состоянии множество одно (`planMoveBatch` чист и `dryRun` не видит). Прежний образец
+     * гасил здесь `stayed`, и вместе с ним гасил единственную проверку слов об остатке в итоге.
+     */
     run: vi.fn(async (_sampleIds, _toCollectionId, options) =>
-      options?.dryRun === true ? TIGHT : { ...TIGHT, moved: ids(740), stayed: [] },
+      options?.dryRun === true ? TIGHT : { ...TIGHT, moved: ids(740) },
     ),
     ...overrides,
   };
@@ -107,6 +131,7 @@ describe('слова плана до подтверждения', () => {
       requested: 1057,
       source: BUFFER,
       userStorage: TIGHT.userStorage,
+      stayed: STAY_NO_SPACE,
     });
     expect(words.headline).toBe('Перенесётся 740 из 1057 · 341.0 МБ');
     // ПОРЧА: вернуть долю — процент запрещён, он и был «выдуманной пропорцией» (владелец 27.09).
@@ -115,11 +140,14 @@ describe('слова плана до подтверждения', () => {
   });
 
   it('ПРЕДУПРЕЖДЕНИЕ ТОЛЬКО ПРИ willStay > 0', () => {
+    // ПОРЧА: снять условие `plan.willStay > 0` — предупреждение полезет туда, где помещается
+    // всё, а предупреждение «на всякий случай» перестают читать целиком.
     const fits = describeMoveAllPlan({
       plan: { willMove: 1057, willStay: 0, moveBytes: 510_378_803, stayBytes: 0 },
       requested: 1057,
       source: BUFFER,
       userStorage: TIGHT.userStorage,
+      stayed: [],
     });
     expect(fits.warning).toBeNull();
   });
@@ -130,6 +158,7 @@ describe('слова плана до подтверждения', () => {
       requested: 1057,
       source: BUFFER,
       userStorage: TIGHT.userStorage,
+      stayed: STAY_NO_SPACE,
     });
     expect(words.warning).toContain('останется в буфере');
     expect(words.warning).toContain('317 проб');
@@ -145,6 +174,7 @@ describe('слова плана до подтверждения', () => {
       requested: 1057,
       source: BUFFER,
       userStorage: TIGHT.userStorage,
+      stayed: STAY_NO_SPACE,
     });
     expect(words.warning).toContain('ёмкости у набора нет');
     expect(words.warning).toContain('хранилище мембраны');
@@ -186,9 +216,64 @@ describe('слова плана до подтверждения', () => {
       requested: 1057,
       source: { name: 'Ночь 27.09', isBuffer: false },
       userStorage: TIGHT.userStorage,
+      stayed: STAY_NO_SPACE,
     });
     expect(words.warning).toContain('останется в наборе «Ночь 27.09»');
-    expect(words.warning).not.toContain('в буфере');
+    expect(words.warning).not.toContain('останется в буфере');
+  });
+
+  it('ПОЧЕМУ ОСТАЁТСЯ — НАЗВАНО ПРИЧИНАМИ И ЧИСЛАМИ, теми же словами, что и в итоге', () => {
+    // ПОРЧА: убрать перечень причин из предупреждения — человек узнаёт «осталось 317» и не
+    // узнаёт, чинить ли ему место или дверь вообще не его набор возит.
+    const words = describeMoveAllPlan({
+      plan: { willMove: 2, willStay: 3, moveBytes: 1024, stayBytes: 2048 },
+      requested: 5,
+      source: BUFFER,
+      userStorage: TIGHT.userStorage,
+      stayed: [
+        { sampleId: 'x', reason: 'no-space' },
+        { sampleId: 'y', reason: 'no-space' },
+        { sampleId: 'z', reason: 'not-in-buffer' },
+      ],
+    });
+    expect(words.warning).toContain('Почему остаётся: не хватило места в хранилище — 2; проба не в буфере прибора — 1.');
+  });
+
+  it('ВИНОВНИК — ПО ПРИЧИНАМ, А НЕ ПО willStay: место не винят, когда места хватило', () => {
+    /**
+     * Живой случай: источником выбран свой набор, а не буфер. Дверь возит пачкой ТОЛЬКО из
+     * буфера, поэтому отдаёт `not-in-buffer` на ВСЁ — при том, что в хранилище свободно почти
+     * всё. Безусловное «места не хватает, освободите место или смените тариф» врёт ровно тем же
+     * способом, каким врало бы «набор полон»: называет виновным не то, что отказало.
+     *
+     * ПОРЧА: снять условие `noSpace > 0` у обвинения — предупреждение снова пошлёт человека
+     * чистить хранилище и менять тариф там, где место ни при чём.
+     */
+    const words = describeMoveAllPlan({
+      plan: { willMove: 0, willStay: 3, moveBytes: 0, stayBytes: 3072 },
+      requested: 3,
+      source: { name: 'День 27.09', isBuffer: false },
+      userStorage: { usedBytes: 1024, limitBytes: 536_870_912 },
+      stayed: ['a', 'b', 'c'].map((sampleId) => ({ sampleId, reason: 'not-in-buffer' as const })),
+    });
+    expect(words.warning).toContain('проба не в буфере прибора — 3');
+    expect(words.warning).toContain('Места в хранилище мембраны хватает');
+    expect(words.warning).toContain('только из буфера прибора');
+    expect(words.warning).not.toMatch(/Освободите место|смените тариф|ёмкости у набора нет/u);
+  });
+
+  it('место ВИНЯТ, когда оно и виновато — обвинение не потерялось вместе с условием', () => {
+    // Обратная сторона того же зуба: снять обвинение целиком было бы вторым способом соврать.
+    const words = describeMoveAllPlan({
+      plan: TIGHT.plan,
+      requested: 1057,
+      source: BUFFER,
+      userStorage: TIGHT.userStorage,
+      stayed: STAY_NO_SPACE,
+    });
+    expect(words.warning).toContain('ёмкости у набора нет');
+    expect(words.warning).toContain('Освободите место или смените тариф');
+    expect(words.warning).not.toContain('Места в хранилище мембраны хватает');
   });
 
   it('план посчитан не по заказанному — это названо, а не проглочено', () => {
@@ -197,6 +282,7 @@ describe('слова плана до подтверждения', () => {
       requested: 1100,
       source: BUFFER,
       userStorage: TIGHT.userStorage,
+      stayed: STAY_NO_SPACE,
     });
     expect(words.requestedMismatch).toContain('Заказано 1100 проб');
     expect(words.requestedMismatch).toContain('1057');
@@ -219,9 +305,15 @@ describe('слова после прогона', () => {
     expect(words.planMismatch).toContain('планом, а не фактом');
   });
 
-  it('план сошёлся с фактом — второго слова не нужно', () => {
+  it('план сошёлся с фактом и не осталось никого — второго слова не нужно', () => {
+    // Уехало ВСЁ: и расхождения с планом нет, и об остатке говорить нечего.
     const words = describeMoveAllOutcome({
-      outcome: { ...TIGHT, moved: ids(740) },
+      outcome: {
+        ...TIGHT,
+        plan: { willMove: 1057, willStay: 0, moveBytes: 510_378_803, stayBytes: 0 },
+        moved: ids(1057),
+        stayed: [],
+      },
       requested: 1057,
       source: BUFFER,
     });
@@ -257,9 +349,17 @@ describe('слова после прогона', () => {
     );
   });
 
-  it('слова причины «нет в исходном наборе» годятся и тарифной пробе, и гонке', () => {
-    expect(MOVE_ALL_STAY_REASON_TITLE['not-in-buffer']).toBe('пробы нет в исходном наборе');
-    expect(MOVE_ALL_STAY_REASON_TITLE['not-in-buffer']).not.toContain('уже');
+  it('СЛОВО ПРИЧИНЫ not-in-buffer годится ВСЕМ ТРЁМ её случаям, включая источник-не-буфер', () => {
+    /**
+     * Дверь ставит эту причину по одному признаку — `row.inBuffer === false`
+     * (`move-batch-plan.ts`), и третий её случай живой: человек выбрал источником свой набор,
+     * а не буфер (кнопка к буферу не привязана, #2249), и причина приходит на КАЖДУЮ пробу.
+     *
+     * ПОРЧА: вернуть «пробы нет в исходном наборе» — на третьем случае это прямая ложь, проба
+     * лежит ровно в том наборе, который человек назвал источником.
+     */
+    expect(MOVE_ALL_STAY_REASON_TITLE['not-in-buffer']).toBe('проба не в буфере прибора');
+    expect(MOVE_ALL_STAY_REASON_TITLE['not-in-buffer']).not.toMatch(/нет в исходном наборе|уже/u);
   });
 });
 
@@ -347,6 +447,116 @@ describe('окно переноса — доступность', () => {
     open(stubPort());
     expect(screen.getByRole('dialog').contains(document.activeElement)).toBe(true);
   });
+
+  it('ПОКА ОКНО ЗАНЯТО, ОРГАНОВ НЕТ ВОВСЕ — и фокус всё равно не уходит наружу', async () => {
+    /**
+     * Предмет — те секунды, когда окно считает план: закрытие, отмена, выбор набора и кнопка
+     * плана погашены ВСЕ. Прежняя редакция держала захват фокуса, возврат фокуса и клавиатуру
+     * одним эффектом с `busy` в зависимостях, и на каждой смене занятости чистка эффекта
+     * отдавала фокус кнопке СНАРУЖИ окна, а ловушка Tab, упираясь в пустой перечень органов,
+     * выпускала человека на страницу ПОД модальным окном.
+     *
+     * ПОРЧА 1: вернуть `busy` в зависимости эффекта захвата — фокус уедет на кнопку снаружи.
+     * ПОРЧА 2: вернуть `if (list.length === 0) return` в обработчик Tab — Tab оставит фокус
+     * снаружи, то есть модальность окна кончится ровно там, где человек ждёт работы.
+     */
+    const gate = deferred<MoveBatchOutcome>();
+    const outside = document.createElement('button');
+    outside.textContent = 'кнопка снаружи';
+    document.body.appendChild(outside);
+    outside.focus();
+
+    open(stubPort({ run: vi.fn(() => gate.promise) }));
+    fireEvent.change(screen.getByTestId('move-all-target'), { target: { value: 'night' } });
+    fireEvent.click(screen.getByTestId('move-all-plan-request'));
+    await waitFor(() => expect(screen.getByTestId('move-all-planning')).toBeTruthy());
+
+    const dialog = screen.getByRole('dialog');
+    // Посылка зуба — замером, а не на слово: органов, берущих фокус, в эти секунды нет.
+    expect(
+      dialog.querySelectorAll('button:not([disabled]), select:not([disabled]), input:not([disabled])'),
+    ).toHaveLength(0);
+
+    expect(document.activeElement).not.toBe(outside);
+    expect(dialog.contains(document.activeElement)).toBe(true);
+
+    // Фокус силой уведён наружу — Tab обязан вернуть его в окно, а не оставить снаружи.
+    outside.focus();
+    expect(dialog.contains(document.activeElement)).toBe(false);
+    fireEvent.keyDown(window, { key: 'Tab' });
+    expect(dialog.contains(document.activeElement)).toBe(true);
+
+    gate.resolve(TIGHT);
+    await waitFor(() => expect(screen.getByTestId('move-all-plan')).toBeTruthy());
+    outside.remove();
+  });
+
+  it('ФОКУС УХОДИТ НАРУЖУ РОВНО ОДИН РАЗ — на закрытии, и к тому, кто окно открыл', async () => {
+    /**
+     * Два утверждения об одном: пока окно открыто, наружу фокус не отдаётся ВООБЩЕ, а на
+     * закрытии возвращается тому, кто окно открыл.
+     *
+     * Первое — не придирка. Прежняя редакция держала захват фокуса, возврат и клавиатуру одним
+     * эффектом с `busy` в зависимостях, а `busy` у этого окна меняет оно САМО (план пошёл, план
+     * пришёл, перенос пошёл, перенос кончился). На каждой такой смене чистка эффекта исполняла
+     * возврат — то есть фокус четыре раза съезжал на кнопку СНАРУЖИ открытого модального окна и
+     * дёргался обратно. Человек с клавиатурой в эти секунды не в окне.
+     *
+     * Конец состояния при такой порче совпадает со здоровым (чистка сама же и возвращает фокус
+     * внутрь на следующем проходе), поэтому предмет проверки — СОБЫТИЯ фокуса, а не снимок
+     * `activeElement`: по снимку зуб был бы зелёным на сломанном окне.
+     *
+     * ПОРЧА 1: вернуть `busy` в зависимости эффекта захвата — счёт уходов наружу станет не 0.
+     * ПОРЧА 2: убрать возврат фокуса из чистки — на закрытии человек останется у `body`.
+     */
+    const outside = document.createElement('button');
+    outside.textContent = 'кнопка, открывшая окно';
+    document.body.appendChild(outside);
+    outside.focus();
+
+    let leftToOutside = 0;
+    const countLeaving = () => {
+      leftToOutside += 1;
+    };
+    outside.addEventListener('focus', countLeaving);
+
+    const port = stubPort();
+    const view = render(
+      <MoveAllToCollectionDialog
+        open
+        source={BUFFER}
+        sourceTotal={1057}
+        collections={COLLECTIONS}
+        sourceCollectionId="buffer"
+        port={port}
+        onClose={() => undefined}
+      />,
+    );
+    // Занятость меняется четырежды: план пошёл, план пришёл, перенос пошёл, перенос кончился.
+    fireEvent.change(screen.getByTestId('move-all-target'), { target: { value: 'night' } });
+    fireEvent.click(screen.getByTestId('move-all-plan-request'));
+    await waitFor(() => expect(screen.getByTestId('move-all-plan')).toBeTruthy());
+    fireEvent.click(screen.getByTestId('move-all-confirm'));
+    await waitFor(() => expect(screen.getByTestId('move-all-result')).toBeTruthy());
+
+    expect(leftToOutside).toBe(0);
+
+    view.rerender(
+      <MoveAllToCollectionDialog
+        open={false}
+        source={BUFFER}
+        sourceTotal={1057}
+        collections={COLLECTIONS}
+        sourceCollectionId="buffer"
+        port={port}
+        onClose={() => undefined}
+      />,
+    );
+    expect(document.activeElement).toBe(outside);
+    expect(leftToOutside).toBe(1);
+    outside.removeEventListener('focus', countLeaving);
+    outside.remove();
+  });
 });
 
 describe('выбор набора', () => {
@@ -419,6 +629,44 @@ describe('план до подтверждения', () => {
         'только при серверной библиотеке',
       ),
     );
+  });
+
+  it('ИСТОЧНИК НЕ БУФЕР — дверь не двинет ничего: окно говорит правду и не даёт подтвердить', async () => {
+    /**
+     * Кнопка «перенести все» к буферу не привязана (#2249), а дверь вывозит пачкой ТОЛЬКО из
+     * буфера (`row.inBuffer`), поэтому из своего набора план приходит нулевым, а причина у всех
+     * — `not-in-buffer`. Два прежних поведения на этой дороге были ложью: предупреждение
+     * посылало чистить хранилище, а кнопка «Перенести 0 в «Ночь 27.09»» обещала движение.
+     *
+     * ПОРЧА: снять `disabled` у подтверждения — окно обещает движение, которого дверь не сделает.
+     */
+    const stuck: MoveBatchOutcome = {
+      ...TIGHT,
+      plan: { willMove: 0, willStay: 3, moveBytes: 0, stayBytes: 3072 },
+      moved: [],
+      stayed: ['a', 'b', 'c'].map((sampleId) => ({ sampleId, reason: 'not-in-buffer' as const })),
+      userStorage: { usedBytes: 1024, limitBytes: 536_870_912 },
+    };
+    render(
+      <MoveAllToCollectionDialog
+        open
+        source={{ name: 'День 27.09', isBuffer: false }}
+        sourceTotal={3}
+        collections={COLLECTIONS}
+        sourceCollectionId="day"
+        port={stubPort({ enumerate: vi.fn(async () => ['a', 'b', 'c']), run: vi.fn(async () => stuck) })}
+        onClose={() => undefined}
+      />,
+    );
+    fireEvent.change(screen.getByTestId('move-all-target'), { target: { value: 'night' } });
+    fireEvent.click(screen.getByTestId('move-all-plan-request'));
+    await waitFor(() => expect(screen.getByTestId('move-all-warning')).toBeTruthy());
+
+    const warning = screen.getByTestId('move-all-warning').textContent ?? '';
+    expect(warning).toContain('проба не в буфере прибора — 3');
+    expect(warning).toContain('Места в хранилище мембраны хватает');
+    expect(warning).not.toMatch(/Освободите место|смените тариф/u);
+    expect((screen.getByTestId('move-all-confirm') as HTMLButtonElement).disabled).toBe(true);
   });
 
   it('отказ двери (например цель — сам буфер) доезжает до человека словами', async () => {
