@@ -1,5 +1,9 @@
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { DeletionConfirmDialog } from '@/components/DeletionConfirmDialog';
+import {
+  MoveAllToCollectionDialog,
+  type MoveAllPort,
+} from '@/components/MoveAllToCollectionDialog';
 import { readPersistedPairedCredentials } from '@/lib/resolveMediaLibraryBackend';
 import { ModuleProps, useMembranaStore } from '@membrana/agenda';
 import { useShallow } from 'zustand/react/shallow';
@@ -434,6 +438,29 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     [service, snapshot.collections],
   );
 
+  /**
+   * ПЕРЕНОС ПАЧКОЙ (заказ владельца 27.09) — окно выбора набора, план, подтверждение.
+   *
+   * Перечисление идёт ПОЛНЫМ списком набора (`listSamples` бэкенда обходит все страницы), а
+   * НЕ по `samples`: список в руках дома — это загруженное, а перенести надо набор. В Studio
+   * они сейчас совпадают, в кабинете-близнеце нет, и правило одно на двоих (класс
+   * `docs/field/decisions-on-partial-data.md`).
+   *
+   * Почему через `getBackend()`, а не своим глаголом сервиса: слой доступа к двери приезжает
+   * серверной половиной (#2488, арбитраж ведущей 27.09), и второй раз добавлять в тот же
+   * пакет ничего нельзя — один шов там уже разошёлся на два контракта. `listSamples` у порта
+   * обязательный и публичный, так что новой двери для этого не нужно.
+   */
+  const [moveAllOpen, setMoveAllOpen] = useState(false);
+  const moveAllPort = useMemo<MoveAllPort>(
+    () => ({
+      enumerate: async () => (await service.getBackend().listSamples(selectedId)).map((s) => s.id),
+      run: (sampleIds, toCollectionId, options) =>
+        service.moveSamplesBatch(sampleIds, toCollectionId, options),
+    }),
+    [selectedId, service],
+  );
+
   const handleClearBuffer = useCallback(async () => {
     if (snapshot.quota.backend === 'server' && !snapshot.quota.serverReachable) {
       setError('Media-server недоступен — очистка буфера невозможна.');
@@ -650,6 +677,23 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
               onClick={() => void handleDeleteCollection()}
             >
               Удалить коллекцию
+            </button>
+          ) : null}
+
+          {/*
+            «Перенести все» стоит рядом с «Очистить буфер» намеренно: обе — операции над
+            НАБОРОМ ЦЕЛИКОМ, и у полного буфера это две дороги одного решения — вывезти или
+            стереть. Кнопка не привязана к буферу (`canMoveFrom`, тот же предикат, что у
+            построчного переноса): привязка «только буфер» уже была дефектом — человек не мог
+            переложить пробы из набора в набор, потому что органа не нарисовали (#2249).
+          */}
+          {canMoveFrom && moveTargets.length > 0 ? (
+            <button
+              type="button"
+              className="btn btn-sm btn-outline"
+              onClick={() => setMoveAllOpen(true)}
+            >
+              Перенести все
             </button>
           ) : null}
 
@@ -965,6 +1009,16 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       {localActivePluginIds.includes(NEURAL_DRONE_ANALYZER_PLUGIN_ID) ? (
         <NeuralDroneAnalyzerPanel moduleId={module.id} />
       ) : null}
+
+      <MoveAllToCollectionDialog
+        open={moveAllOpen}
+        source={{ name: selected?.name ?? '—', isBuffer: selectedId === BUFFER_COLLECTION_ID }}
+        sourceTotal={selected?.sampleCount ?? samples.length}
+        collections={snapshot.collections}
+        sourceCollectionId={selectedId}
+        port={moveAllPort}
+        onClose={() => setMoveAllOpen(false)}
+      />
 
       <DeletionConfirmDialog
         open={pendingDeletion !== null}

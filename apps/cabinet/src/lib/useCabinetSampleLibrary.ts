@@ -18,6 +18,8 @@ import {
   useSamplePlaybackEscapeKey,
 } from '@membrana/sample-playback-service';
 
+import { type MoveAllPort } from '@/components/sample-library/MoveAllToCollectionDialog';
+
 import {
   fetchMembraneCatalog,
   fetchMembraneNodes,
@@ -582,6 +584,39 @@ export function useCabinetSampleLibrary() {
     ],
   );
 
+  /**
+   * ПЕРЕНОС ПАЧКОЙ (заказ владельца 27.09). Близнец Studio: окно, план, подтверждение.
+   *
+   * Перечисление идёт ПОЛНЫМ списком набора (`listSamples` бэкенда обходит все страницы), а
+   * НЕ по `nodeSamples`: в руках кабинета лежит
+   * СТРАНИЦА (40 из 1057), и перенос по ней уехал бы сороковкой — с виду успешно. Это тот
+   * самый класс решений по видимому вместо существующего (`docs/field/decisions-on-partial-data.md`).
+   *
+   * Недоступность media названа словами и здесь: порт обязан ОТКАЗАТЬ, а не вернуть пустой
+   * перечень — пустой перечень окно прочло бы как «в наборе нет проб».
+   */
+  const moveAllPort = useMemo<MoveAllPort>(
+    () => ({
+      enumerate: async () => {
+        if (!service || !active || selection.kind !== 'node') {
+          throw new Error('Media-server недоступен — перечислить пробы набора нечем.');
+        }
+        const all = await service.getBackend().listSamples(selection.collectionId);
+        return all.map((s) => s.id);
+      },
+      run: async (sampleIds, toCollectionId, options) => {
+        if (!service || !active) {
+          throw new Error('Media-server недоступен — перенос невозможен.');
+        }
+        return service.moveSamplesBatch(sampleIds, toCollectionId, options);
+      },
+    }),
+    [active, selection, service],
+  );
+
+  /** Есть ли куда переносить. Тот же предикат, что у построчного переноса, — не «только буфер». */
+  const canMoveAll = canMutate && moveTargets.length > 0;
+
   const handleClearBuffer = useCallback(async () => {
     if (selection.kind !== 'node') return;
     await runMediaOp('Очистка буфера', async () => {
@@ -641,6 +676,10 @@ export function useCabinetSampleLibrary() {
     quotaBlocked,
     canMutate,
     moveTargets,
+    canMoveAll,
+    moveAllPort,
+    /** Перечитать страницу проб — окну переноса после удачного прогона. */
+    reloadSamplesPage,
     selectedPlaybackSample,
     playbackDisabled,
     activeNodeLabel,
