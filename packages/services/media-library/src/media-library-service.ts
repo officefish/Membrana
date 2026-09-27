@@ -13,6 +13,7 @@ import { isBufferSampleCountCapActive } from './quota-status.js';
 import type { IStorageBackend } from './ports/storage-backend.js';
 import type {
   DeleteByIdsOutcome,
+  MoveBatchOutcome,
   BufferCleanupPlanOutcome,
   BufferCleanupPlanRequest,
   LibraryChartListRequest,
@@ -349,6 +350,33 @@ export class MediaLibraryService {
     const moved = await this.backend.moveSample(sampleId, toCollectionId);
     await this.refresh();
     return moved;
+  }
+
+  /**
+   * МАССОВЫЙ ВЫВОЗ ПРОБ ИЗ БУФЕРА В НАБОР — одно действие человека «перенести все».
+   *
+   * Цикл по `moveSample` тут не годится по той же причине, по какой не годился при удалении
+   * пачкой: тысяча запросов даёт худший из возможных ответов — отказ на пятисотой и никакого
+   * внятного числа. Место считает сервер по осям квоты, потому что перенос ПЕРЕЛИВАЕТ байты из
+   * оси буфера в ось наборов, и половина этой арифметики в браузере жить не может.
+   *
+   * `dryRun` — счёт без движения: то, что окно показывает до подтверждения. Обновление
+   * снимка после него НЕ делается — двигать было нечего, а лишний обход страниц на полном
+   * буфере не бесплатен.
+   */
+  async moveSamplesBatch(
+    sampleIds: readonly string[],
+    toCollectionId: string,
+    options: { readonly dryRun?: boolean } = {},
+  ): Promise<MoveBatchOutcome> {
+    if (!this.backend.moveSamplesBatch) {
+      throw new Error('Массовый перенос доступен только при серверной библиотеке (media-server)');
+    }
+    const outcome = await this.backend.moveSamplesBatch(sampleIds, toCollectionId, options);
+    if (options.dryRun !== true && outcome.moved.length > 0) {
+      await this.refresh();
+    }
+    return outcome;
   }
 
   async updateSampleLabelNotes(

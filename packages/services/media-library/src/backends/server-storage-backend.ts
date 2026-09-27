@@ -5,6 +5,7 @@ import { resolveMediaLibraryTraceId } from '../media-library-trace.js';
 import type { IStorageBackend } from '../ports/storage-backend.js';
 import type {
   DeleteByIdsOutcome,
+  MoveBatchOutcome,
   BufferCleanupPlanOutcome,
   BufferCleanupPlanRequest,
   Collection,
@@ -623,6 +624,37 @@ export class ServerStorageBackend implements IStorageBackend {
     if (!res.ok) {
       throwForStatus(res, await parseApiError(res, this.baseUrl));
     }
+  }
+
+  /**
+   * Массовый вывоз из буфера в набор. ОДНА дверь на тысячу проб, а не тысяча вызовов
+   * `moveSample`: буфер прибора `9e86ec85` держит 1057 проб, и отказ на пятисотой оставил бы
+   * человека с половиной вывоза и без числа, сколько уехало.
+   *
+   * Пустой список сюда не отправляется: переносить без показанного человеку списка нечего —
+   * это же правило, что у удаления по списку.
+   *
+   * Ответ 200 с непустым `stayed` — ШТАТНЫЙ ИСХОД (частичный перенос), поэтому исключения
+   * здесь нет: `requestJson` бросает только на настоящих ошибках транспорта и на отказах
+   * целиком (нет прибора, нет набора, цель — сам буфер, список длиннее `maxBatch`).
+   */
+  async moveSamplesBatch(
+    sampleIds: readonly string[],
+    toCollectionId: string,
+    options: { readonly dryRun?: boolean } = {},
+  ): Promise<MoveBatchOutcome> {
+    if (sampleIds.length === 0) {
+      throw new Error('Перенос без списка невозможен: сперва план, потом слово человека');
+    }
+    return this.requestJson<MoveBatchOutcome>('/samples/move-batch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sampleIds: [...sampleIds],
+        toCollectionId,
+        ...(options.dryRun === true ? { dryRun: true } : {}),
+      }),
+    });
   }
 
   async moveSample(sampleId: string, toCollectionId: string): Promise<MediaSample> {
