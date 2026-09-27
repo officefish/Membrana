@@ -7,8 +7,8 @@
   "frozenDigest": "be70c6129d696a76613bb7c36d38f99d3c47362e9e68edddb2b2f1a7c2f73979",
   "magistral": "three-roads-experiment",
   "swallow": {
-    "draftDigest": "7850247acbea3331f18068493e60d039f6c110a0616be2d0892d1b8f735439a3",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-09-27.md",
+    "draftDigest": "feb402d8d53e7d68157775cd9a048c5ab148fbcdbba3d0c5796d736c8fec8e35",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-27.md",
     "ownerAck": true,
     "day": "2026-09-27",
     "claimsProbe": {
@@ -16,7 +16,8 @@
       "protocol": "docs/seanses/team-evening-feedback-2026-09-27.md",
       "sha": "b638f6d11e7b",
       "at": "2026-09-27T17:24:17.951Z"
-    }
+    },
+    "gate": "evening:partner-swallow"
   },
   "day": "2026-09-27",
   "magistralChosenAt": "2026-09-27",

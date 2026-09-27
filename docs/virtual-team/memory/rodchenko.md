@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14394/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 371 (причины в op-log) -->
+Записей: 50 · бюджет 14395/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 372 (причины в op-log) -->
+
+### 2026-09-27 · позиция · team-evening-feedback
+
+> Rodchenko **Оценка артефактов:** `DAILY_CODE_REVIEW` по `NodeRebindStepsNote.tsx` — образцовый: правильно назвал правило DaisyUI (`*-content` рассчитан под сплошную заливку `bg-<sem>`, поверхность `bg-warning/10` остаётся `base-100`) и подтвердил, что комментарий в коде называет […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-27.md#reply-1`
 
 ### 2026-09-26 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > UI этой комнаты нет — и не надо. Но сигнал оператору (телега/лента) должен быть честной конструкцией: имя расписания, окно, «факта нет» или «отказ был скрыт», без метафор «ночь болеет». Молчание на витрине офиса — соседняя тема; здесь важно, чтобы текст тревоги читался без […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/hunt-and-canon-m1-silence-guard-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE явно перечислил «сознательно не делаем» — это уберегло от распыления. Code-review справедливо отметил отсутствие diff по UI-креплениям. Итоги дня: Journal mount — тот же panel, fallback «Выберите узел» с `role="status"`; локальные tenants через […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-27.md#reply-1`

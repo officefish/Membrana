@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14265/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 381 (причины в op-log) -->
+Записей: 49 · бюджет 14257/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 382 (причины в op-log) -->
+
+### 2026-09-27 · позиция · team-evening-feedback
+
+> Ozhegov **Оценка артефактов:** Стендап корректно вынес два XS в «разблокирующие гейт независимо от owner-choice» — это правильный уровень декомпозиции: не «доделать rollout», а «снять лишний технический блок». `DAILY_CODE_REVIEW` по `CabinetSampleDuplicatesPanel.tsx` (#2481) — […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-27.md#reply-1`
 
 ### 2026-09-26 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Лемма зависимости решения та же, что на logging-observability-cut-m0: «A раньше B», если без A комната B либо пуста, либо ломает уже принятый контракт. Словарь кандидатов закрыт — не сливать (2) и (3): оба про проглоченный отказ, но один не замечает тишину, другой активно […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/hunt-and-canon-m0-order-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m1-silence-guard
-
-> Леммы. `SilenceWatchdog` ≠ `NightHuntTrigger` ≠ `OfficeClient`. Сторож — отдельная словарная статья: «ожидал факт → не нашёл в окне → красный». Публичный контракт — проверка наличия/честности исхода, без импорта office-кода и без «optional echo». Глушение в YAML […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m1-silence-guard-2026-08-27.md#reply-1`
