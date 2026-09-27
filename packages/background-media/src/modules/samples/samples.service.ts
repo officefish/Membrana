@@ -33,6 +33,14 @@ import {
   type BufferOverflowRefusal,
   type OverflowPolicy,
 } from './buffer-overflow-refusal';
+import {
+  MAX_MOVE_BATCH_SAMPLES,
+  planMoveBatch,
+  tallyMoveBatch,
+  type MoveBatchPlanNumbers,
+  type MoveBatchRow,
+  type MoveBatchStay,
+} from './move-batch-plan';
 import { OverflowEpisodeRegistry } from './overflow-episode-registry';
 
 /**
@@ -113,6 +121,27 @@ export interface UpdateLabelNotesOptions {
 
 export interface PaginatedSamplesDto extends PageMeta {
   items: SampleDto[];
+}
+
+/** Ось квоты в ответе пачки: два числа, без `backend` — пачка не описывает, где лежит звук. */
+export interface MoveBatchAxisView {
+  readonly usedBytes: number;
+  readonly limitBytes: number;
+}
+
+/**
+ * Итог массового вывоза. `plan` — что вышло из этого вызова (при `dryRun` — что вышло бы),
+ * `moved` — адреса в порядке переноса, `stayed` — оставшиеся ПОИМЁННО с причиной у каждой.
+ * `maxBatch` объявлен в ответе, чтобы окно листало по объявленному предмету, а не угадывало
+ * предел по первой 400-й.
+ */
+export interface MoveBatchResult {
+  readonly plan: MoveBatchPlanNumbers;
+  readonly moved: readonly string[];
+  readonly stayed: readonly MoveBatchStay[];
+  readonly userStorage: MoveBatchAxisView;
+  readonly buffer: MoveBatchAxisView;
+  readonly maxBatch: number;
 }
 
 @Injectable()
@@ -316,6 +345,158 @@ export class SamplesService {
     // Проба ушла из оси-источника — там появилось место.
     this.releaseEpisodeOf(deviceId, row.collection);
     return sampleToDto(updated);
+  }
+
+  /**
+   * МАССОВЫЙ ВЫВОЗ ИЗ БУФЕРА В НАБОР. Одно действие человека — «перенести все».
+   *
+   * ЗАЧЕМ ОТДЕЛЬНЫЙ ГЛАГОЛ, А НЕ ЦИКЛ ПО `move`. Буфер прибора `9e86ec85` держит 1057 проб на
+   * 486.7 МБ — первая в истории проекта штатная остановка по полному буферу. Тысяча запросов
+   * подряд даёт человеку худший из возможных ответов: отказ на пятисотой и никакого внятного
+   * числа, сколько же уехало. Здесь один план и одно применение, и оба говорят числами.
+   *
+   * ЧАСТИЧНЫЙ УСПЕХ — НЕСУЩЕЕ СВОЙСТВО, А НЕ КРАЙ. Наборы младшего тарифа (`free-v1`) держат
+   * 512 МБ — ровно столько же, сколько буфер. Значит полный буфер в непустой набор целиком не
+   * влезает ПО УСТРОЙСТВУ тарифа, а не по невезению: уедет часть, остальное останется в буфере
+   * с причиной `no-space`. Транспорт при этом 200 — отказать целиком означало бы не вывезти
+   * ничего там, где можно было вывезти 70%.
+   *
+   * ОТКАЗ ЦЕЛИКОМ — только по причинам, не связанным с местом: нет прибора или набора (404),
+   * пустой список, цель — сам буфер, список длиннее `maxBatch` (400).
+   *
+   * ПОРЯДОК ПЕРЕНОСА — старейшие первыми; правило и его обоснование живут в
+   * `move-batch-plan.ts`, здесь их копии нет. `dryRun` считает тот же план и НИЧЕГО не
+   * двигает — это то, что окно показывает человеку до подтверждения.
+   *
+   * ОСЬ НЕ ПЕРЕПОЛНЯЕТСЯ. Вместимость судит `axisRefuses` — тот же предикат, что отбивает
+   * загрузку одиночной пробы. Перенос переливает байты из оси `buffer` в ось `userStorage`,
+   * поэтому считается именно ось ЦЕЛИ, накопительно по ходу очереди.
+   *
+   * ЧИСЛА ОСЕЙ В ОТВЕТЕ — СОСТОЯНИЕ НА КОНЕЦ ВЫЗОВА: при `dryRun` это текущие оси (ничего не
+   * двигалось), при настоящем прогоне — оси ПОСЛЕ переноса, перечитанные из базы, а не
+   * досчитанные арифметикой. Считать оси сложением значило бы отчитываться своей же моделью
+   * вместо факта.
+   *
+   * ИДЕМПОТЕНТНОСТЬ ПО СМЫСЛУ: повторный вызов с тем же списком видит перенесённые пробы уже не
+   * в буфере и кладёт их в `stayed` с причиной `not-in-buffer` — второй раз они не едут, и
+   * `plan` этого не скрывает.
+   */
+  async moveBatch(
+    deviceId: string,
+    sampleIds: readonly string[],
+    toCollectionId: string,
+    options: { readonly dryRun?: boolean } = {},
+  ): Promise<MoveBatchResult> {
+    if (!Array.isArray(sampleIds) || sampleIds.length === 0) {
+      throw new BadRequestException('sampleIds required — переносить без списка нечего');
+    }
+    if (sampleIds.length > MAX_MOVE_BATCH_SAMPLES) {
+      throw new BadRequestException(
+        `sampleIds: at most ${MAX_MOVE_BATCH_SAMPLES} per call (see maxBatch in the response) — send the rest as the next call`,
+      );
+    }
+
+    const toCollection = await this.collections.getOwned(deviceId, toCollectionId);
+    this.assertUploadAllowed(toCollection);
+    if (toCollection.kind === 'buffer') {
+      // Вывоз ИЗ буфера В буфер — не перенос. Отдать 200 с пустым планом здесь было бы хуже
+      // отказа: окно показало бы «перенесётся 0 из 1057», и человек искал бы вину в квоте.
+      throw new BadRequestException(
+        'toCollectionId is the buffer itself — move-batch carries samples OUT of the buffer',
+      );
+    }
+    const targetSubject = resolveQuotaSubject(toCollection, TARIFF_DATASET_SYSTEM_KEY);
+    if (!targetSubject) {
+      throw new BadRequestException('Target collection is outside quota accounting');
+    }
+
+    const quotaBefore = await this.devices.getQuota(deviceId);
+    const rows = await this.loadMoveBatchRows(deviceId, sampleIds);
+    const decision = planMoveBatch({
+      requested: sampleIds,
+      rows,
+      targetAxis: quotaBefore[targetSubject],
+    });
+
+    if (options.dryRun === true || decision.moveIds.length === 0) {
+      return this.buildMoveBatchResult(decision.plan, [], decision.stayed, quotaBefore);
+    }
+
+    // Один оператор на всю пачку. Условие `collection: { kind: 'buffer' }` — ВТОРАЯ проверка
+    // происхождения: между планом и применением проба могла уйти из буфера сама (уборка,
+    // одиночный перенос), и тащить её этим вызовом нельзя.
+    await this.prisma.sample.updateMany({
+      where: { deviceId, id: { in: [...decision.moveIds] }, collection: { kind: 'buffer' } },
+      data: { collectionId: toCollectionId, source: 'move' },
+    });
+
+    // Кто РЕАЛЬНО лёг в цель. Судить по одному `count` нельзя: при расхождении он говорит
+    // сколько, но не кто, — а `moved` это список адресов, не число.
+    const landed = await this.prisma.sample.findMany({
+      where: { deviceId, collectionId: toCollectionId, id: { in: [...decision.moveIds] } },
+      select: { id: true },
+    });
+    const landedIds = new Set(landed.map((row) => row.id));
+    const moved = decision.moveIds.filter((id) => landedIds.has(id));
+    const slipped: MoveBatchStay[] = decision.moveIds
+      .filter((id) => !landedIds.has(id))
+      .map((sampleId) => ({ sampleId, reason: 'not-in-buffer' as const }));
+    const stayed = [...decision.stayed, ...slipped];
+
+    // Пробы ушли из буфера — место там появилось, эпизод переполнения закрыт.
+    this.episodes.release(deviceId, 'buffer');
+
+    const quotaAfter = await this.devices.getQuota(deviceId);
+    // Числа пересчитаны по ФАКТУ тем же счётом, которым считался план: без гонки это ровно
+    // `decision.plan`, а при гонке — правда, а не обещание.
+    return this.buildMoveBatchResult(tallyMoveBatch(moved, stayed, rows), moved, stayed, quotaAfter);
+  }
+
+  /** Строки пачки в форме, которую судит планировщик. Дубликаты адресов базу не беспокоят. */
+  private async loadMoveBatchRows(
+    deviceId: string,
+    sampleIds: readonly string[],
+  ): Promise<Map<string, MoveBatchRow>> {
+    const rows = await this.prisma.sample.findMany({
+      where: { deviceId, id: { in: [...new Set(sampleIds)] } },
+      select: {
+        id: true,
+        sizeBytes: true,
+        createdAt: true,
+        collection: { select: { kind: true } },
+      },
+    });
+    return new Map(
+      rows.map((row) => [
+        row.id,
+        {
+          sampleId: row.id,
+          sizeBytes: row.sizeBytes,
+          createdAtMs: row.createdAt.getTime(),
+          inBuffer: row.collection.kind === 'buffer',
+        },
+      ]),
+    );
+  }
+
+  /** Сборка ответа. Из осей уезжают только два числа: `backend` пачку не описывает. */
+  private buildMoveBatchResult(
+    plan: MoveBatchPlanNumbers,
+    moved: readonly string[],
+    stayed: readonly MoveBatchStay[],
+    quota: DeviceQuotaDto,
+  ): MoveBatchResult {
+    return {
+      plan,
+      moved: [...moved],
+      stayed: [...stayed],
+      userStorage: {
+        usedBytes: quota.userStorage.usedBytes,
+        limitBytes: quota.userStorage.limitBytes,
+      },
+      buffer: { usedBytes: quota.buffer.usedBytes, limitBytes: quota.buffer.limitBytes },
+      maxBatch: MAX_MOVE_BATCH_SAMPLES,
+    };
   }
 
   async updateLabelNotes(

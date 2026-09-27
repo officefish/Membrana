@@ -19,6 +19,12 @@ import {
 } from '@membrana/sample-playback-service';
 
 import {
+  canOfferMoveAll,
+  isMoveAllSourceBuffer,
+  type MoveAllPort,
+} from '@/components/sample-library/MoveAllToCollectionDialog';
+
+import {
   fetchMembraneCatalog,
   fetchMembraneNodes,
   patchCatalogSample,
@@ -582,6 +588,51 @@ export function useCabinetSampleLibrary() {
     ],
   );
 
+  /**
+   * ПЕРЕНОС ПАЧКОЙ (заказ владельца 27.09). Близнец Studio: окно, план, подтверждение.
+   *
+   * Перечисление идёт ПОЛНЫМ списком набора (`listSamples` бэкенда обходит все страницы), а
+   * НЕ по `nodeSamples`: в руках кабинета лежит
+   * СТРАНИЦА (40 из 1057), и перенос по ней уехал бы сороковкой — с виду успешно. Это тот
+   * самый класс решений по видимому вместо существующего (`docs/field/decisions-on-partial-data.md`).
+   *
+   * Недоступность media названа словами и здесь: порт обязан ОТКАЗАТЬ, а не вернуть пустой
+   * перечень — пустой перечень окно прочло бы как «в наборе нет проб».
+   */
+  const moveAllPort = useMemo<MoveAllPort>(
+    () => ({
+      enumerate: async () => {
+        if (!service || !active || selection.kind !== 'node') {
+          throw new Error('Media-server недоступен — перечислить пробы набора нечем.');
+        }
+        const all = await service.getBackend().listSamples(selection.collectionId);
+        return all.map((s) => s.id);
+      },
+      run: async (sampleIds, toCollectionId, options) => {
+        if (!service || !active) {
+          throw new Error('Media-server недоступен — перенос невозможен.');
+        }
+        return service.moveSamplesBatch(sampleIds, toCollectionId, options);
+      },
+    }),
+    [active, selection, service],
+  );
+
+  /**
+   * Адрес источника для МАССОВОГО переноса: у вида «каталог»/«узел офлайн» набора нет, и
+   * буфером такой выбор не бывает. Один вывод на два потребителя — предикат кнопки и
+   * `source.isBuffer` окна, — чтобы они не разошлись двумя написаниями одного признака.
+   */
+  const moveAllSourceId = selection.kind === 'node' ? selection.collectionId : null;
+  const sourceIsBuffer = isMoveAllSourceBuffer(moveAllSourceId);
+
+  /**
+   * МАССОВЫЙ перенос — только из буфера (слово владельца 27.09): дверь возит пачкой только
+   * оттуда. Правило не объявляется здесь заново, его несёт носитель окна — один на два дома.
+   * Построчный перенос остаётся на `canMutate`, из любого набора (#2249).
+   */
+  const canMoveAll = canMutate && canOfferMoveAll(moveAllSourceId, moveTargets);
+
   const handleClearBuffer = useCallback(async () => {
     if (selection.kind !== 'node') return;
     await runMediaOp('Очистка буфера', async () => {
@@ -641,6 +692,11 @@ export function useCabinetSampleLibrary() {
     quotaBlocked,
     canMutate,
     moveTargets,
+    canMoveAll,
+    sourceIsBuffer,
+    moveAllPort,
+    /** Перечитать страницу проб — окну переноса после удачного прогона. */
+    reloadSamplesPage,
     selectedPlaybackSample,
     playbackDisabled,
     activeNodeLabel,

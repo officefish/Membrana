@@ -159,6 +159,50 @@ export interface DeleteByIdsOutcome {
   refused: readonly { id: string; why: string }[];
 }
 
+/**
+ * Причина, по которой проба осталась в буфере при массовом вывозе. Закрытый набор — окно
+ * разбирает исход по нему, а не по тексту.
+ *
+ * `no-space` — ось набора не вмещает; `not-found` — такой пробы у прибора нет;
+ * `not-in-buffer` — проба уже не в буфере (в том числе после удачного прошлого вызова).
+ */
+export type MoveBatchStayReason = 'no-space' | 'not-found' | 'not-in-buffer';
+
+export interface MoveBatchStay {
+  sampleId: string;
+  reason: MoveBatchStayReason;
+}
+
+/** Числа пачки: сколько поместится/останется и сколько это байт. */
+export interface MoveBatchPlan {
+  willMove: number;
+  willStay: number;
+  moveBytes: number;
+  stayBytes: number;
+}
+
+/**
+ * Итог массового вывоза проб из буфера в набор.
+ *
+ * ЧАСТИЧНЫЙ ПЕРЕНОС — НЕСУЩЕЕ СВОЙСТВО, а не крайний случай: набор младшего тарифа держит
+ * столько же, сколько буфер, и полный буфер в непустой набор целиком не влезает по устройству
+ * тарифа. Непустой `stayed` — это штатный исход, и каждая оставшаяся названа ПОИМЁННО.
+ *
+ * При `dryRun` `moved` пуст, а `plan` — то, что вышло БЫ: это и есть то, что окно показывает
+ * человеку до подтверждения («перенесётся 740 из 1057»). Оси — состояние на конец вызова.
+ *
+ * `maxBatch` — объявленный сервером потолок списка за вызов; листать по нему, а не угадывать
+ * предел по первому отказу.
+ */
+export interface MoveBatchOutcome {
+  plan: MoveBatchPlan;
+  moved: readonly string[];
+  stayed: readonly MoveBatchStay[];
+  userStorage: { usedBytes: number; limitBytes: number };
+  buffer: { usedBytes: number; limitBytes: number };
+  maxBatch: number;
+}
+
 /** Заказ свода сеанса (#2039): ночь — промежутком дат в поясе человека, ISO включительно. */
 export interface SessionDigestRequest {
   from?: string;

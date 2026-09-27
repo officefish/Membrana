@@ -1,5 +1,11 @@
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { DeletionConfirmDialog } from '@/components/DeletionConfirmDialog';
+import {
+  MoveAllToCollectionDialog,
+  canOfferMoveAll,
+  isMoveAllSourceBuffer,
+  type MoveAllPort,
+} from '@/components/MoveAllToCollectionDialog';
 import { readPersistedPairedCredentials } from '@/lib/resolveMediaLibraryBackend';
 import { ModuleProps, useMembranaStore } from '@membrana/agenda';
 import { useShallow } from 'zustand/react/shallow';
@@ -226,6 +232,13 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     (c) => c.id !== selectedId && c.kind !== 'buffer' && c.kind !== 'system',
   );
 
+  /**
+   * МАССОВЫЙ перенос — только из буфера (слово владельца 27.09). Правило не объявляется здесь
+   * заново: его несёт носитель окна, один на два дома (`canOfferMoveAll`). Построчный перенос
+   * остаётся на `canMoveFrom` — он к буферу не привязан (#2249).
+   */
+  const canMoveAll = canMoveFrom && canOfferMoveAll(selectedId, moveTargets);
+
   const handleCreateCollection = useCallback(async () => {
     setError(null);
     try {
@@ -432,6 +445,29 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       }
     },
     [service, snapshot.collections],
+  );
+
+  /**
+   * ПЕРЕНОС ПАЧКОЙ (заказ владельца 27.09) — окно выбора набора, план, подтверждение.
+   *
+   * Перечисление идёт ПОЛНЫМ списком набора (`listSamples` бэкенда обходит все страницы), а
+   * НЕ по `samples`: список в руках дома — это загруженное, а перенести надо набор. В Studio
+   * они сейчас совпадают, в кабинете-близнеце нет, и правило одно на двоих (класс
+   * `docs/field/decisions-on-partial-data.md`).
+   *
+   * Почему через `getBackend()`, а не своим глаголом сервиса: слой доступа к двери приезжает
+   * серверной половиной (#2488, арбитраж ведущей 27.09), и второй раз добавлять в тот же
+   * пакет ничего нельзя — один шов там уже разошёлся на два контракта. `listSamples` у порта
+   * обязательный и публичный, так что новой двери для этого не нужно.
+   */
+  const [moveAllOpen, setMoveAllOpen] = useState(false);
+  const moveAllPort = useMemo<MoveAllPort>(
+    () => ({
+      enumerate: async () => (await service.getBackend().listSamples(selectedId)).map((s) => s.id),
+      run: (sampleIds, toCollectionId, options) =>
+        service.moveSamplesBatch(sampleIds, toCollectionId, options),
+    }),
+    [selectedId, service],
   );
 
   const handleClearBuffer = useCallback(async () => {
@@ -650,6 +686,24 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
               onClick={() => void handleDeleteCollection()}
             >
               Удалить коллекцию
+            </button>
+          ) : null}
+
+          {/*
+            «Перенести все» стоит рядом с «Очистить буфер» намеренно: обе — операции над
+            НАБОРОМ ЦЕЛИКОМ, и у полного буфера это две дороги одного решения — вывезти или
+            стереть. И живёт кнопка ТОЛЬКО в буфере (`canMoveAll`, слово владельца 27.09):
+            дверь возит пачкой только из буфера, и вне буфера окно могло сказать человеку
+            ровно одно — «не поедет ничего». Построчный перенос это не затрагивает: он
+            по-прежнему на `canMoveFrom`, из любого набора (#2249).
+          */}
+          {canMoveAll ? (
+            <button
+              type="button"
+              className="btn btn-sm btn-outline"
+              onClick={() => setMoveAllOpen(true)}
+            >
+              Перенести все
             </button>
           ) : null}
 
@@ -965,6 +1019,16 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       {localActivePluginIds.includes(NEURAL_DRONE_ANALYZER_PLUGIN_ID) ? (
         <NeuralDroneAnalyzerPanel moduleId={module.id} />
       ) : null}
+
+      <MoveAllToCollectionDialog
+        open={moveAllOpen}
+        source={{ name: selected?.name ?? '—', isBuffer: isMoveAllSourceBuffer(selectedId) }}
+        sourceTotal={selected?.sampleCount ?? samples.length}
+        collections={snapshot.collections}
+        sourceCollectionId={selectedId}
+        port={moveAllPort}
+        onClose={() => setMoveAllOpen(false)}
+      />
 
       <DeletionConfirmDialog
         open={pendingDeletion !== null}

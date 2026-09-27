@@ -3,7 +3,15 @@ import { BUFFER_COLLECTION_ID } from '@membrana/media-library-service';
 import type { MembraneNodeLibrary } from '@/api/sampleLibrary';
 import type { CabinetSampleLibraryModel } from '@/lib/useCabinetSampleLibrary';
 
-export type SampleLibrarySidebarProps = Pick<
+export interface SampleLibrarySidebarExtraProps {
+  /** Есть ли куда переносить пачкой. Предикат приходит из модели, дом его не пересчитывает. */
+  readonly canMoveAll: boolean;
+  /** Открыть окно переноса пачкой — само окно живёт на странице, рядом с окном удаления. */
+  readonly onMoveAll: () => void;
+}
+
+export type SampleLibrarySidebarProps = SampleLibrarySidebarExtraProps &
+  Pick<
   CabinetSampleLibraryModel,
   | 'catalog'
   | 'nodes'
@@ -24,9 +32,11 @@ export type SampleLibrarySidebarProps = Pick<
   | 'handleCreateCollection'
   | 'handleDeleteCollection'
   | 'handleClearBuffer'
->;
+  >;
 
 export function SampleLibrarySidebar({
+  canMoveAll,
+  onMoveAll,
   catalog,
   nodes,
   selection,
@@ -140,6 +150,25 @@ export function SampleLibrarySidebar({
                 onClick={() => void handleDeleteCollection()}
               >
                 Удалить коллекцию
+              </button>
+            ) : null}
+            {/*
+              «Перенести все» стоит рядом с «Очистить буфер» намеренно: обе — операции над
+              НАБОРОМ ЦЕЛИКОМ, и у полного буфера это две дороги одного решения — вывезти или
+              стереть. И живёт кнопка ТОЛЬКО в буфере: `canMoveAll` приходит из модели
+              (`useCabinetSampleLibrary`) и несёт условие буфера (слово владельца 27.09) —
+              дверь возит пачкой только оттуда, а вне буфера окно могло сказать ровно одно:
+              «не поедет ничего». Построчный перенос это не затрагивает: он остался на
+              `canMutate`, из любого набора (#2249). Близнец Studio устроен так же.
+            */}
+            {canMoveAll ? (
+              <button
+                type="button"
+                className="btn btn-xs btn-outline"
+                disabled={busy}
+                onClick={onMoveAll}
+              >
+                Перенести все
               </button>
             ) : null}
             {selection.kind === 'node' && selection.collectionId === BUFFER_COLLECTION_ID ? (
