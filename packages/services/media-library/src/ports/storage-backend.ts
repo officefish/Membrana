@@ -11,6 +11,7 @@ import type {
   LibraryChartListRunOutcome,
   MediaSample,
   MediaPluginState,
+  MoveBatchOutcome,
   NewSampleMeta,
   PaginatedSamples,
   StorageQuota,
@@ -80,6 +81,20 @@ export interface IStorageBackend {
     collectionId: string,
     sampleIds: readonly string[],
   ): Promise<DeleteByIdsOutcome>;
+  /**
+   * Массовый вывоз проб ИЗ БУФЕРА в набор — одним вызовом, с частичным переносом как штатным
+   * исходом. Только серверный бэкенд, и опциональность честная: место считается по осям квоты
+   * прибора, а их знает сервер записей. Браузерный и electron-fs бэкенды звать некого — сервис
+   * отвечает named-отказом, а не двигает пробы по одной за спиной у человека.
+   *
+   * `dryRun` считает план и НЕ двигает ничего; при неизменном состоянии настоящий прогон
+   * выбирает то же множество.
+   */
+  moveSamplesBatch?(
+    sampleIds: readonly string[],
+    toCollectionId: string,
+    options?: { readonly dryRun?: boolean },
+  ): Promise<MoveBatchOutcome>;
   /** Домовая включённость плагинов media collections (#2186): только серверный бэкенд. */
   listCollectionPlugins?(
     collectionId: string,
