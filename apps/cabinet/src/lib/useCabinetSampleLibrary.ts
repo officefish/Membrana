@@ -7,7 +7,6 @@ import {
   isReadOnlyCollection,
   type Collection,
   type MediaSample,
-  type MoveBatchPort,
   type PaginatedSamples,
 } from '@membrana/media-library-service';
 import {
@@ -18,6 +17,8 @@ import {
   useSamplePlayback,
   useSamplePlaybackEscapeKey,
 } from '@membrana/sample-playback-service';
+
+import { type MoveAllPort } from '@/components/sample-library/MoveAllToCollectionDialog';
 
 import {
   fetchMembraneCatalog,
@@ -586,27 +587,28 @@ export function useCabinetSampleLibrary() {
   /**
    * ПЕРЕНОС ПАЧКОЙ (заказ владельца 27.09). Близнец Studio: окно, план, подтверждение.
    *
-   * Перечисление идёт через `listAllSamples`, а НЕ по `nodeSamples`: в руках кабинета лежит
+   * Перечисление идёт ПОЛНЫМ списком набора (`listSamples` бэкенда обходит все страницы), а
+   * НЕ по `nodeSamples`: в руках кабинета лежит
    * СТРАНИЦА (40 из 1057), и перенос по ней уехал бы сороковкой — с виду успешно. Это тот
    * самый класс решений по видимому вместо существующего (`docs/field/decisions-on-partial-data.md`).
    *
    * Недоступность media названа словами и здесь: порт обязан ОТКАЗАТЬ, а не вернуть пустой
    * перечень — пустой перечень окно прочло бы как «в наборе нет проб».
    */
-  const moveAllPort = useMemo<MoveBatchPort>(
+  const moveAllPort = useMemo<MoveAllPort>(
     () => ({
       enumerate: async () => {
         if (!service || !active || selection.kind !== 'node') {
           throw new Error('Media-server недоступен — перечислить пробы набора нечем.');
         }
-        const all = await service.listAllSamples(selection.collectionId);
+        const all = await service.getBackend().listSamples(selection.collectionId);
         return all.map((s) => s.id);
       },
-      run: async (request) => {
+      run: async (sampleIds, toCollectionId, options) => {
         if (!service || !active) {
           throw new Error('Media-server недоступен — перенос невозможен.');
         }
-        return service.moveSamplesBatch(request);
+        return service.moveSamplesBatch(sampleIds, toCollectionId, options);
       },
     }),
     [active, selection, service],

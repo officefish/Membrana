@@ -24,7 +24,6 @@ import type {
   UpdateSampleLabelNotes,
   PaginatedSamples,
 } from '../types.js';
-import type { MoveBatchOutcome, MoveBatchRequest } from '../move-batch.js';
 
 export interface ServerStorageBackendConfig {
   baseUrl: string;
@@ -490,29 +489,6 @@ export class ServerStorageBackend implements IStorageBackend {
         body: JSON.stringify({ sampleIds: [...sampleIds] }),
       },
     );
-  }
-
-  /**
-   * Перенос ПАЧКОЙ в набор (заказ владельца 27.09). Контракт двери задан ведущей 27.09 и
-   * реализуется параллельно в `background-media`; здесь — только способ до неё дойти.
-   *
-   * `dryRun: true` ничего не двигает и возвращает план: это то, что окно показывает ДО
-   * слова человека. Пустой список сюда не уходит — «перенести все» без перечня было бы
-   * переносом по догадке, а по догадке дверь бить нельзя.
-   */
-  async moveSamplesBatch(request: MoveBatchRequest): Promise<MoveBatchOutcome> {
-    if (request.sampleIds.length === 0) {
-      throw new Error('Перенос без списка невозможен: сперва перечень проб набора, потом план');
-    }
-    return this.requestJson<MoveBatchOutcome>('/samples/move-batch', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sampleIds: [...request.sampleIds],
-        toCollectionId: request.toCollectionId,
-        ...(request.dryRun === undefined ? {} : { dryRun: request.dryRun }),
-      }),
-    });
   }
 
   async listCollectionPlugins(collectionId: string): Promise<readonly MediaPluginState[]> {

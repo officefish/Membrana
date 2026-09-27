@@ -7,47 +7,344 @@
  * обязан узнать это ДО, а не по факту. Поэтому шаг плана (`dryRun`) обязателен: дверь
  * считает, сколько поместится, окно называет живые числа, и только потом — слово человека.
  *
+ * ПРО ДОЛЮ. Владелец 27.09: «70% — это просто пример, выдуманная пропорция для
+ * наглядности». Доля здесь нигде не задана числом и не считается: окно называет ЖИВЫЕ
+ * числа плана («перенесётся 740 из 1057 · 341 МБ»). Константа доли соврала бы при первом же
+ * другом буфере, а процент от настоящих чисел ничего к ним не добавляет.
+ *
+ * ПРО ЧТО ПРЕДУПРЕЖДЕНИЕ. Замер по `devices.service.ts:254-263`: пробы набора `kind ===
+ * 'buffer'` считаются осью `buffer`, пробы `kind === 'user'` — осью `userStorage`. ЁМКОСТИ У
+ * НАБОРА НЕТ. Перенос переливает байты из одной оси квоты в другую и упирается в
+ * `userStorage` мембраны. Значит честная формулировка — «не вмещает хранилище мембраны», а
+ * НЕ «набор полон»: второе назвало бы виновным то, у чего и предела-то нет, и человек пошёл
+ * бы чистить набор.
+ *
  * ВОРОТА МЯГЧЕ, ЧЕМ У УДАЛЕНИЯ, И ЭТО НАМЕРЕННО. Перенос обратим: проба цела, у неё
  * меняется набор. Пугать его окном вещдоков (`DeletionConfirmDialog`, галочка «понимаю,
  * что удаляю») значило бы уравнять обратимое с необратимым — а от предупреждения, которое
  * пугает всем одинаково, перестают читать все предупреждения.
  *
- * СЛОВА И ЧИСЛА — ИЗ ЯДРА (`move-batch.ts`), одного на оба дома. Здесь вёрстка, клавиши и
- * фокус; ни одной своей формулировки о плане, ни одного своего суждения о месте.
+ * ПОЧЕМУ СЛОВА ЖИВУТ ЗДЕСЬ, А НЕ В ПАКЕТЕ. Первая редакция держала их ядром в
+ * `@membrana/media-library-service`. Арбитраж ведущей 27.09 по шву #2488/#2489: слой
+ * доступа к двери приезжает серверной половиной, и вторая рука в том же пакете уже дала два
+ * несовместимых объявления одного метода. Поэтому в пакет отсюда не добавляется НИЧЕГО —
+ * оттуда только типы двери, а слова и машина шагов живут в носителе окна. Цена названа:
+ * копий текста две, по одной на дом.
  *
  * БЛИЗНЕЦ. Тот же файл по смыслу живёт в кабинете
  * (`apps/cabinet/src/components/sample-library/MoveAllToCollectionDialog.tsx`). Общего
- * UI-пакета у домов нет, поэтому правило одно, а носителя два; расхождение ловит зуб
- * сходства `apps/client/src/modules/move-all-dialog-twins.test.ts`, а не внимательность.
+ * UI-пакета у домов нет, поэтому правило одно, а носителя два; побайтное совпадение тел —
+ * не добрая воля, его держит зуб сходства
+ * `apps/client/src/modules/move-all-dialog-twins.test.ts`, а не внимательность.
  */
 import { useCallback, useEffect, useId, useReducer, useRef, type ReactNode } from 'react';
 
 import {
-  MOVE_BATCH_START,
-  describeMoveBatchOutcome,
-  describeMoveBatchPlan,
-  formatMoveBatchBytes,
-  moveBatchReducer,
-  moveBatchTargets,
-  pluralSamples,
+  BUFFER_COLLECTION_ID,
   type Collection,
-  type MoveBatchPort,
-  type MoveBatchSource,
+  type MoveBatchOutcome,
+  type MoveBatchPlan,
+  type MoveBatchStay,
+  type MoveBatchStayReason,
 } from '@membrana/media-library-service';
+
+/**
+ * Порт окна: чем оно перечисляет пробы набора и чем зовёт дверь.
+ *
+ * Дверь может быть ещё не влита — окно строится против ЭТОГО, а не против `fetch`, и зубы
+ * ходят подставным портом: дом тоже видит только порт. Подпись `run` ПОЗИЦИОННАЯ, ровно как
+ * у глагола слоя доступа (`moveSamplesBatch(sampleIds, toCollectionId, options)`, арбитраж
+ * 27.09): своя форма заказа-объектом была бы третьим контрактом на одном шву.
+ */
+export interface MoveAllPort {
+  /** Все пробы исходного набора — ПОЛНЫЙ перечень, не загруженная страница. */
+  readonly enumerate: () => Promise<readonly string[]>;
+  readonly run: (
+    sampleIds: readonly string[],
+    toCollectionId: string,
+    options?: { readonly dryRun?: boolean },
+  ) => Promise<MoveBatchOutcome>;
+}
+
+/** Слова причины — человеку на экран, а не в лог. */
+export const MOVE_ALL_STAY_REASON_TITLE: Record<MoveBatchStayReason, string> = {
+  'no-space': 'не хватило места в хранилище',
+  'not-found': 'проба не найдена',
+  /**
+   * Одно слово на два случая (уточнение двери 27.09): проба тарифного набора, которой в
+   * буфере и не было, и проба, ушедшая из буфера между планом и применением — единственная
+   * форма гонки, которую окно увидит. «Уже не в исходном наборе» обещало бы гонку там, где
+   * тарифная проба в буфере не бывала.
+   */
+  'not-in-buffer': 'пробы нет в исходном наборе',
+};
+
+/** Откуда едут пробы: имя для слов и признак буфера — у буфера свои слова об остатке. */
+export interface MoveAllSource {
+  readonly name: string;
+  readonly isBuffer: boolean;
+}
+
+/**
+ * Куда разрешено переносить: буфер адресатом не бывает (перенос в буфер — это не перенос),
+ * системный набор только для чтения, текущий набор сам себе адресатом не бывает.
+ */
+export function moveAllTargets(
+  collections: readonly Collection[],
+  fromCollectionId: string,
+): readonly Collection[] {
+  return collections.filter(
+    (c) => c.id !== fromCollectionId && c.id !== BUFFER_COLLECTION_ID && c.kind === 'user',
+  );
+}
+
+/** «341 МБ» — те же единицы, что у соседей по смыслу (`buffer-stop`, `deletion-value`). */
+export function formatMoveAllBytes(bytes: number): string {
+  if (!Number.isFinite(bytes) || bytes < 0) return 'н/д';
+  if (bytes < 1024) return `${Math.round(bytes)} Б`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`;
+  if (bytes < 1024 * 1024 * 1024) return `${(bytes / 1048576).toFixed(1)} МБ`;
+  return `${(bytes / 1073741824).toFixed(2)} ГБ`;
+}
+
+/** «1 проба», «2 пробы», «317 проб» — согласование, а не «проб(а)». */
+export function pluralSamples(count: number): string {
+  const n = Math.abs(Math.trunc(count)) % 100;
+  const last = n % 10;
+  if (n > 10 && n < 20) return `${count} проб`;
+  if (last === 1) return `${count} проба`;
+  if (last >= 2 && last <= 4) return `${count} пробы`;
+  return `${count} проб`;
+}
+
+function stayPlace(source: MoveAllSource): string {
+  return source.isBuffer ? 'в буфере' : `в наборе «${source.name}»`;
+}
+
+/**
+ * Обе оси квоты одной строкой — состояние на КОНЕЦ вызова, прямо из ответа двери (уточнение
+ * 27.09). За квотой второй раз не ходим: второй запрос дал бы третью версию правды.
+ */
+export function moveAllAxesLine(outcome: MoveBatchOutcome): string {
+  return (
+    `Хранилище наборов: занято ${formatMoveAllBytes(outcome.userStorage.usedBytes)} из ` +
+    `${formatMoveAllBytes(outcome.userStorage.limitBytes)} · буфер: ` +
+    `${formatMoveAllBytes(outcome.buffer.usedBytes)} из ${formatMoveAllBytes(outcome.buffer.limitBytes)} · ` +
+    `дверь принимает до ${outcome.maxBatch} проб за вызов`
+  );
+}
+
+export interface MoveAllPlanWords {
+  /** Главная строка плана — живые числа, без процентов. */
+  readonly headline: string;
+  /** Предупреждение о нехватке места. `null`, когда помещается ВСЁ. */
+  readonly warning: string | null;
+  /** План судит не о том, что заказали. `null`, когда числа сходятся. */
+  readonly requestedMismatch: string | null;
+}
+
+/**
+ * Слова плана до подтверждения.
+ *
+ * Предупреждение появляется ТОЛЬКО при `willStay > 0` — предупреждение «на всякий случай»
+ * перестают читать целиком, и тогда оно не работает там, где нужно.
+ */
+export function describeMoveAllPlan(input: {
+  readonly plan: MoveBatchPlan;
+  readonly requested: number;
+  readonly source: MoveAllSource;
+  readonly userStorage: { readonly usedBytes: number; readonly limitBytes: number };
+  /** Кто и почему остаётся по плану — нужен, чтобы не соврать в мегабайтах остатка. */
+  readonly stayed?: readonly MoveBatchStay[];
+}): MoveAllPlanWords {
+  const { plan, requested, source, userStorage, stayed = [] } = input;
+  const judged = plan.willMove + plan.willStay;
+  const headline = `Перенесётся ${plan.willMove} из ${judged} · ${formatMoveAllBytes(plan.moveBytes)}`;
+
+  /**
+   * Веса ненайденных проб дверь не знает (уточнение 27.09), и в `stayBytes` их нет, а в
+   * `willStay` они есть счётом. Молча показать оба числа рядом — значит выдать неполные
+   * мегабайты за полные. Называем оговорку, а не подгоняем числа.
+   *
+   * Числительное здесь без существительного намеренно: «без 2 пробы» — падеж, который
+   * согласование по одному правилу не вытягивает, а кривая грамматика в предупреждении
+   * читается как небрежность, и предупреждению перестают верить целиком.
+   */
+  const unweighed = stayed.filter((s) => s.reason === 'not-found').length;
+  const bytesCaveat =
+    unweighed > 0 ? ` (мегабайты неполны: веса ненайденных проб дверь не знает, их ${unweighed})` : '';
+
+  const warning =
+    plan.willStay > 0
+      ? `Не всё поместится: перенесётся ${plan.willMove} из ${judged} · ${formatMoveAllBytes(plan.moveBytes)}, ` +
+        `остальное останется ${stayPlace(source)} — ${pluralSamples(plan.willStay)} · ${formatMoveAllBytes(plan.stayBytes)}${bytesCaveat}. ` +
+        'Дело не в наборе: ёмкости у набора нет, места не хватает в хранилище мембраны — занято ' +
+        `${formatMoveAllBytes(userStorage.usedBytes)} из ${formatMoveAllBytes(userStorage.limitBytes)}. ` +
+        'Освободите место или смените тариф и повторите перенос — остаток цел.'
+      : null;
+
+  const requestedMismatch =
+    judged === requested
+      ? null
+      : `Заказано ${pluralSamples(requested)}, а план посчитан по ${judged}: показываем то, что посчитала дверь, а не то, что просили.`;
+
+  return { headline, warning, requestedMismatch };
+}
+
+export interface MoveAllResultWords {
+  /** Что произошло НА САМОМ ДЕЛЕ — по `moved`, а не по плану. */
+  readonly headline: string;
+  /** Кто остался и почему, с числами по каждой причине. `null` — не осталось никого. */
+  readonly stayed: string | null;
+  /** Факт разошёлся с планом. `null` — сошлись. */
+  readonly planMismatch: string | null;
+  /** Свежие оси квоты словами — состояние на конец вызова, прямо из ответа двери. */
+  readonly axes: string;
+}
+
+/**
+ * Слова после прогона.
+ *
+ * ПЛАН — НЕ ФАКТ, и итог считается по `moved`, а не по `plan`. Дверь обещает (уточнение
+ * 27.09), что при НАСТОЯЩЕМ прогоне `plan` описывает исход, а `moved` сверен перечитыванием
+ * из базы, то есть числа обязаны совпасть. Сравнение оставлено именно поэтому: это сторож
+ * обещания, а не ожидаемая дорога. Сломается обещание — человек увидит оба числа, а не
+ * успокаивающее одно; пропуск «в свою пользу» в этом деле уже стоил дорого (#2237).
+ */
+export function describeMoveAllOutcome(input: {
+  readonly outcome: MoveBatchOutcome;
+  readonly requested: number;
+  readonly source: MoveAllSource;
+}): MoveAllResultWords {
+  const { outcome, requested, source } = input;
+  const headline = `Перенесено ${outcome.moved.length} из ${requested}`;
+
+  const byReason = new Map<MoveBatchStayReason, number>();
+  for (const s of outcome.stayed) {
+    byReason.set(s.reason, (byReason.get(s.reason) ?? 0) + 1);
+  }
+  const reasons = [...byReason.entries()]
+    .map(([reason, count]) => `${MOVE_ALL_STAY_REASON_TITLE[reason]} — ${count}`)
+    .join('; ');
+  const stayed =
+    outcome.stayed.length > 0
+      ? `Останется ${stayPlace(source)} ${pluralSamples(outcome.stayed.length)} · ${reasons}.`
+      : null;
+
+  const planMismatch =
+    outcome.moved.length === outcome.plan.willMove
+      ? null
+      : `План обещал ${outcome.plan.willMove}, перенеслось ${outcome.moved.length}: показанное было планом, а не фактом.`;
+
+  return { headline, stayed, planMismatch, axes: moveAllAxesLine(outcome) };
+}
+
+/**
+ * МАШИНА ШАГОВ ОКНА — отдельно от вёрстки и без `useState`.
+ *
+ * Тот же приём, что у ворот удаления (`deletionGateReducer`, #2232): состояние объявляется
+ * событиями, потому что в доме оно переживает закрытие (компонент не размонтируется) и
+ * второй перенос открылся бы с планом первого — то есть человек подтвердил бы числа,
+ * которых больше нет. Здесь состояние сбрасывается объявленным `close`, а не надеждой.
+ */
+export type MoveAllPhase =
+  | { readonly kind: 'choose' }
+  | { readonly kind: 'planning'; readonly toCollectionId: string }
+  | {
+      readonly kind: 'planned';
+      readonly toCollectionId: string;
+      readonly sampleIds: readonly string[];
+      readonly outcome: MoveBatchOutcome;
+    }
+  | { readonly kind: 'moving'; readonly toCollectionId: string; readonly sampleIds: readonly string[] }
+  | {
+      readonly kind: 'done';
+      readonly toCollectionId: string;
+      readonly requested: number;
+      readonly outcome: MoveBatchOutcome;
+    }
+  | { readonly kind: 'failed'; readonly why: string };
+
+export interface MoveAllState {
+  readonly phase: MoveAllPhase;
+  /** Набор-адресат, выбранный человеком. Живёт отдельно от шага: шаг сменился — выбор остался. */
+  readonly toCollectionId: string;
+}
+
+export const MOVE_ALL_START: MoveAllState = { phase: { kind: 'choose' }, toCollectionId: '' };
+
+export type MoveAllEvent =
+  | { readonly type: 'close' }
+  | { readonly type: 'choose'; readonly toCollectionId: string }
+  | { readonly type: 'plan-start' }
+  | { readonly type: 'plan-done'; readonly sampleIds: readonly string[]; readonly outcome: MoveBatchOutcome }
+  | { readonly type: 'move-start' }
+  | { readonly type: 'move-done'; readonly outcome: MoveBatchOutcome }
+  | { readonly type: 'failed'; readonly why: string };
+
+export function moveAllReducer(state: MoveAllState, event: MoveAllEvent): MoveAllState {
+  switch (event.type) {
+    case 'close':
+      return MOVE_ALL_START;
+    case 'choose':
+      // Сменил адресата — прежний план недействителен: он считался для другого набора.
+      return { phase: { kind: 'choose' }, toCollectionId: event.toCollectionId };
+    case 'plan-start':
+      if (!state.toCollectionId) return state;
+      return { ...state, phase: { kind: 'planning', toCollectionId: state.toCollectionId } };
+    case 'plan-done':
+      if (state.phase.kind !== 'planning') return state;
+      return {
+        ...state,
+        phase: {
+          kind: 'planned',
+          toCollectionId: state.phase.toCollectionId,
+          sampleIds: event.sampleIds,
+          outcome: event.outcome,
+        },
+      };
+    case 'move-start':
+      // Переносить можно ТОЛЬКО из показанного плана: без него нет ни списка, ни слова.
+      if (state.phase.kind !== 'planned') return state;
+      return {
+        ...state,
+        phase: {
+          kind: 'moving',
+          toCollectionId: state.phase.toCollectionId,
+          sampleIds: state.phase.sampleIds,
+        },
+      };
+    case 'move-done':
+      if (state.phase.kind !== 'moving') return state;
+      return {
+        ...state,
+        phase: {
+          kind: 'done',
+          toCollectionId: state.phase.toCollectionId,
+          requested: state.phase.sampleIds.length,
+          outcome: event.outcome,
+        },
+      };
+    case 'failed':
+      return { ...state, phase: { kind: 'failed', why: event.why } };
+    default:
+      return state;
+  }
+}
 
 export interface MoveAllToCollectionDialogProps {
   readonly open: boolean;
   /** Откуда едут пробы: имя для слов и признак буфера — у буфера свои слова об остатке. */
-  readonly source: MoveBatchSource;
+  readonly source: MoveAllSource;
   /**
    * Сколько проб в наборе по счётчику НАБОРА, а не по загруженной странице. Число стоит в
    * окне до плана; страница кабинета держит 40 из 1057, и показать её было бы занижением.
    */
   readonly sourceTotal: number;
-  /** Все наборы узла. Кого из них можно выбрать — решает ядро, а не дом. */
+  /** Все наборы узла. Кого из них можно выбрать — решает `moveAllTargets`, а не дом. */
   readonly collections: readonly Collection[];
   readonly sourceCollectionId: string;
-  readonly port: MoveBatchPort;
+  readonly port: MoveAllPort;
   readonly onClose: () => void;
   /** Перенос состоялся — дому пора перечитать свою страницу проб. */
   readonly onMoved?: () => void;
@@ -63,7 +360,7 @@ export function MoveAllToCollectionDialog({
   onClose,
   onMoved,
 }: MoveAllToCollectionDialogProps): ReactNode {
-  const [state, dispatch] = useReducer(moveBatchReducer, MOVE_BATCH_START);
+  const [state, dispatch] = useReducer(moveAllReducer, MOVE_ALL_START);
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const returnFocusTo = useRef<Element | null>(null);
   const titleId = useId();
@@ -123,7 +420,7 @@ export function MoveAllToCollectionDialog({
     };
   }, [open, busy, onClose]);
 
-  const targets = moveBatchTargets(collections, sourceCollectionId);
+  const targets = moveAllTargets(collections, sourceCollectionId);
 
   const askPlan = useCallback(async () => {
     const mine = generation.current;
@@ -136,11 +433,7 @@ export function MoveAllToCollectionDialog({
         }
         return;
       }
-      const outcome = await port.run({
-        sampleIds,
-        toCollectionId: state.toCollectionId,
-        dryRun: true,
-      });
+      const outcome = await port.run(sampleIds, state.toCollectionId, { dryRun: true });
       if (generation.current === mine) dispatch({ type: 'plan-done', sampleIds, outcome });
     } catch (e) {
       if (generation.current === mine) {
@@ -156,7 +449,7 @@ export function MoveAllToCollectionDialog({
       try {
         // Переносим РОВНО тот список, по которому считался показанный план: пересчитать
         // перечень здесь значило бы подтвердить одно, а сделать другое.
-        const outcome = await port.run({ sampleIds, toCollectionId, dryRun: false });
+        const outcome = await port.run(sampleIds, toCollectionId, { dryRun: false });
         if (generation.current === mine) dispatch({ type: 'move-done', outcome });
         onMoved?.();
       } catch (e) {
@@ -237,11 +530,14 @@ export function MoveAllToCollectionDialog({
 
         {phase.kind === 'planned'
           ? (() => {
-              const words = describeMoveBatchPlan({
+              const words = describeMoveAllPlan({
                 plan: phase.outcome.plan,
                 requested: phase.sampleIds.length,
                 source,
                 userStorage: phase.outcome.userStorage,
+                // Причины остатка нужны словам: в мегабайтах остатка НЕТ проб, которых дверь
+                // не нашла (уточнение 27.09), и оговорку об этом произносят слова, не дом.
+                stayed: phase.outcome.stayed,
               });
               return (
                 <div className="flex flex-col gap-2">
@@ -249,7 +545,7 @@ export function MoveAllToCollectionDialog({
                     {words.headline}
                   </p>
                   {/*
-                    ПЛАШКА НЕХВАТКИ МЕСТА — только при `willStay > 0` (ядро отдаёт `null`, когда
+                    ПЛАШКА НЕХВАТКИ МЕСТА — только при `willStay > 0` (слова отдают `null`, когда
                     помещается всё). Предупреждение «на всякий случай» перестают читать целиком.
 
                     Классы: сплошная семантическая поверхность `alert alert-warning`. Своего цвета
@@ -267,11 +563,8 @@ export function MoveAllToCollectionDialog({
                       {words.requestedMismatch}
                     </p>
                   ) : null}
-                  <p className="text-xs text-base-content/60 tabular-nums">
-                    Хранилище наборов: занято {formatMoveBatchBytes(phase.outcome.userStorage.usedBytes)} из{' '}
-                    {formatMoveBatchBytes(phase.outcome.userStorage.limitBytes)} · буфер:{' '}
-                    {formatMoveBatchBytes(phase.outcome.buffer.usedBytes)} из{' '}
-                    {formatMoveBatchBytes(phase.outcome.buffer.limitBytes)}
+                  <p className="text-xs text-base-content/60 tabular-nums" data-testid="move-all-axes">
+                    {moveAllAxesLine(phase.outcome)}
                   </p>
                 </div>
               );
@@ -286,7 +579,7 @@ export function MoveAllToCollectionDialog({
 
         {phase.kind === 'done'
           ? (() => {
-              const words = describeMoveBatchOutcome({
+              const words = describeMoveAllOutcome({
                 outcome: phase.outcome,
                 requested: phase.requested,
                 source,
@@ -301,12 +594,19 @@ export function MoveAllToCollectionDialog({
                       {words.stayed}
                     </p>
                   ) : null}
-                  {/* Факт разошёлся с планом — говорим оба числа, а не показываем план как итог. */}
+                  {/*
+                    Факт разошёлся с планом — говорим оба числа, а не показываем план как итог.
+                    Дверь обещает, что при настоящем прогоне они совпадают; это сторож обещания.
+                  */}
                   {words.planMismatch !== null ? (
                     <p className="alert alert-warning py-2 text-sm" role="alert" data-testid="move-all-result-mismatch">
                       {words.planMismatch}
                     </p>
                   ) : null}
+                  {/* Свежие оси — из того же ответа: за квотой второй раз не ходим. */}
+                  <p className="text-xs text-base-content/60 tabular-nums" data-testid="move-all-result-axes">
+                    {words.axes}
+                  </p>
                 </div>
               );
             })()

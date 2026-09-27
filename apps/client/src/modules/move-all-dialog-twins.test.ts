@@ -1,11 +1,17 @@
 /**
- * Зубы окна «перенести все» (заказ владельца 27.09): близнецы не расходятся, а дома не
- * заводят своих слов о плане.
+ * Зубы окна «перенести все» (заказ владельца 27.09): близнецы не расходятся, дома не заводят
+ * своих слов о плане, и в пакет слоя доступа отсюда не добавляется НИЧЕГО.
  *
- * Почему зуб читает ФАЙЛЫ, а не рендерит: правило живёт в двух домах-носителях (общего
- * UI-пакета нет), и вопрос здесь не «работает ли кнопка» — это проверено рендером в кабинете
- * (`MoveAllToCollectionDialog.test.tsx`), — а «одинаково ли правило и не завёл ли дом
- * обходной путь». Рендер этого не покажет: он проверяет ОДИН дом.
+ * Почему зуб читает ФАЙЛЫ, а не рендерит: поведение окна проверено рендером в кабинете
+ * (`MoveAllToCollectionDialog.test.tsx`, там настроен jsdom), а вопрос здесь другой —
+ * «одинаково ли правило в двух домах и не завёл ли дом обходной путь». Рендер этого не
+ * покажет: он проверяет ОДИН дом.
+ *
+ * ТРЕТИЙ КОНТРАКТ НА ОДНОМ ШВУ. 27.09 две сессии независимо объявили в
+ * `packages/services/media-library` два несовместимых `moveSamplesBatch`, и CI каждого PR в
+ * одиночку был зелёным: шов между двумя PR не судил никто. По арбитражу ведущей слой доступа
+ * приезжает серверной половиной (#2488), а окно берёт оттуда ТИПЫ и зовёт ПОЗИЦИОННЫЙ глагол.
+ * Зубы ниже сторожат именно это: своих типов двери у окна нет, форма вызова — как у порта.
  */
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -21,9 +27,10 @@ const STUDIO_MODULE = resolve(REPO, 'apps/client/src/modules/SampleLibraryModule
 const CABINET_PAGE = resolve(REPO, 'apps/cabinet/src/pages/SampleLibraryPage.tsx');
 const CABINET_SIDEBAR = resolve(REPO, 'apps/cabinet/src/components/sample-library/SampleLibrarySidebar.tsx');
 const CABINET_MODEL = resolve(REPO, 'apps/cabinet/src/lib/useCabinetSampleLibrary.ts');
-const CORE = resolve(REPO, 'packages/services/media-library/src/move-batch.ts');
 
 const read = (p: string) => readFileSync(p, 'utf8');
+/** Предмет — КОД, а не проза о нём: иначе зуб краснеет на объяснении (класс #2461). */
+const code = (p: string) => read(p).replace(/\/\*[\s\S]*?\*\//gu, ' ').replace(/(^|[^:])\/\/[^\n]*/gu, '$1');
 const DIALOGS = [STUDIO_DIALOG, CABINET_DIALOG];
 
 describe('окно переноса — близнецы', () => {
@@ -36,32 +43,40 @@ describe('окно переноса — близнецы', () => {
     expect(norm(read(STUDIO_DIALOG))).toEqual(norm(read(CABINET_DIALOG)));
   });
 
-  it('ЗЕРКАЛО: слова и числа плана приходят из ЯДРА, дом их не сочиняет', () => {
+  it('ТИПЫ ДВЕРИ — ИЗ БОЧКИ ПАКЕТА, своих окно не объявляет', () => {
     for (const p of DIALOGS) {
-      const s = read(p);
+      const s = code(p);
       expect(s).toContain("from '@membrana/media-library-service'");
-      expect(s).toContain('describeMoveBatchPlan(');
-      expect(s).toContain('describeMoveBatchOutcome(');
-      // Своя формулировка о нехватке места — вторая копия правды, которая разойдётся.
-      expect(s, 'дом сочинил своё предупреждение').not.toMatch(/Не всё поместится/u);
-      expect(s, 'дом сочинил свой итог').not.toMatch(/Перенесено \$\{/u);
+      expect(s).toContain('type MoveBatchOutcome');
+      // Своё объявление исхода двери = третий контракт на шву, за который уже платили 27.09.
+      expect(s, 'окно объявило свой исход двери').not.toMatch(/interface MoveBatchOutcome/u);
+      expect(s, 'окно объявило свои причины остатка').not.toMatch(/type MoveBatchStayReason\s*=/u);
     }
   });
 
-  it('КОГО МОЖНО ВЫБРАТЬ — решает ядро: буфер адресатом не бывает', () => {
+  it('ВЫЗОВ ПОРТА ПОЗИЦИОННЫЙ — той же формы, что глагол слоя доступа', () => {
     for (const p of DIALOGS) {
-      const s = read(p);
-      expect(s).toContain('moveBatchTargets(');
-      // Свой фильтр адресатов рядом с ядровым — ровно то расхождение, что чинили в #2249.
-      expect(s, 'дом завёл свой фильтр адресатов').not.toMatch(/kind !== 'buffer'/u);
+      const s = code(p);
+      expect(s).toContain('port.run(sampleIds, state.toCollectionId, { dryRun: true })');
+      expect(s).toContain('port.run(sampleIds, toCollectionId, { dryRun: false })');
+      // Заказ-объектом был бы второй формой одного вызова — ровно расхождение 27.09.
+      expect(s, 'вернулась форма заказа-объектом').not.toMatch(/run\(\{\s*sampleIds/u);
     }
   });
 
-  it('СОСТОЯНИЕ ОКНА — в ядре: второй перенос не открывается с планом первого', () => {
+  it('КОГО МОЖНО ВЫБРАТЬ — одно правило: буфер адресатом не бывает', () => {
     for (const p of DIALOGS) {
-      const s = read(p);
-      expect(s).toContain('moveBatchReducer');
-      expect(s).toContain('MOVE_BATCH_START');
+      const s = code(p);
+      expect(s).toContain('moveAllTargets(');
+      expect(s).toContain('BUFFER_COLLECTION_ID');
+    }
+  });
+
+  it('СОСТОЯНИЕ ОКНА — событиями, не useState: второй перенос не открывается с планом первого', () => {
+    for (const p of DIALOGS) {
+      const s = code(p);
+      expect(s).toContain('moveAllReducer');
+      expect(s).toContain('MOVE_ALL_START');
       expect(s, 'состояние окна в useState переживает закрытие — класс ревью #2232').not.toContain(
         'useState',
       );
@@ -70,15 +85,23 @@ describe('окно переноса — близнецы', () => {
 
   it('ДОЛЯ НЕ ВШИТА: ни процентов, ни 70 в носителях', () => {
     // Владелец 27.09: «70% — это просто пример, выдуманная пропорция для наглядности».
-    for (const p of [...DIALOGS, CORE]) {
-      const s = read(p).replace(/\/\*[\s\S]*?\*\//gu, ' ').replace(/(^|[^:])\/\/[^\n]*/gu, '$1');
-      expect(s, `${p}: доля в коде — выдуманное число вместо живого`).not.toMatch(/0\.7|70\s*%/u);
+    for (const p of DIALOGS) {
+      expect(code(p), `${p}: доля в коде — выдуманное число вместо живого`).not.toMatch(/0\.7|70\s*%/u);
+    }
+  });
+
+  it('ПРЕДЕЛ ПАЧКИ — ОБЪЯВЛЕННЫЙ дверью, а не свой', () => {
+    // maxBatch приходит в исходе; копия числа в доме разошлась бы с дверью молча.
+    for (const p of DIALOGS) {
+      const s = code(p);
+      expect(s).toContain('outcome.maxBatch');
+      expect(s, 'дом завёл свой потолок пачки').not.toMatch(/2000/u);
     }
   });
 
   it('ПЛАН ОБЯЗАТЕЛЕН: показ идёт dryRun, перенос — нет', () => {
     for (const p of DIALOGS) {
-      const s = read(p);
+      const s = code(p);
       expect(s).toContain('dryRun: true');
       expect(s).toContain('dryRun: false');
     }
@@ -86,14 +109,13 @@ describe('окно переноса — близнецы', () => {
 
   it('СЕМАНТИЧЕСКИЙ ТЕКСТ НЕ НА ПОЛУПРОЗРАЧНОМ: плашка предупреждения читается в тёмных темах', () => {
     // Зуб клиента (`semanticSurfaceContrast.test.ts`) кабинетных файлов НЕ читает, а плашка
-    // тут одна на два дома — правило повторено там, где второй носитель иначе остался бы
-    // без сторожа (класс #2461: `text-warning-content` поверх только `bg-warning/N`).
+    // одна на два дома — правило повторено там, где второй носитель иначе остался бы без
+    // сторожа (класс #2461: `text-warning-content` поверх только `bg-warning/N`).
     for (const p of DIALOGS) {
-      const s = read(p).replace(/\/\*[\s\S]*?\*\//gu, ' ');
-      expect(s, `${p}: -content подобран под сплошную заливку`).not.toMatch(
+      expect(code(p), `${p}: -content подобран под сплошную заливку`).not.toMatch(
         /text-(warning|error|success|info)-content/u,
       );
-      expect(s).toContain('alert alert-warning');
+      expect(read(p)).toContain('alert alert-warning');
     }
   });
 });
@@ -113,7 +135,7 @@ describe('дома заведены на окно, а не на тихий пе�
     // успеха. Класс docs/field/decisions-on-partial-data.md.
     for (const p of [STUDIO_MODULE, CABINET_MODEL]) {
       const s = read(p);
-      expect(s, 'дом перечисляет пробы не полным списком').toContain('listAllSamples(');
+      expect(s, 'дом перечисляет пробы не полным списком').toContain('getBackend().listSamples(');
       expect(s).toContain('moveSamplesBatch(');
     }
     expect(read(CABINET_MODEL), 'перечень по странице — занижение').not.toContain(
@@ -142,9 +164,7 @@ describe('дома заведены на окно, а не на тихий пе�
     // Перенос обратим — проба цела, меняется набор. Галочка «понимаю, что удаляю вещдоки»
     // здесь была бы ложью, а от лжи в предупреждении перестают читать все предупреждения.
     for (const p of DIALOGS) {
-      // Предмет — КОД, а не проза о нём: объяснение, почему ворот вещдоков здесь нет, само
-      // содержит это слово, и построчная проверка покраснела бы на объяснении (класс #2461).
-      const s = read(p).replace(/\/\*[\s\S]*?\*\//gu, ' ').replace(/(^|[^:])\/\/[^\n]*/gu, '$1');
+      const s = code(p);
       expect(s).not.toContain('assessDeletion');
       expect(s).not.toContain('isDeletionBlocked');
       expect(s).not.toContain('вещдок');
