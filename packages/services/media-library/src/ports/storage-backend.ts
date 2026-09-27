@@ -16,6 +16,7 @@ import type {
   StorageQuota,
   UpdateSampleLabelNotes,
 } from '../types.js';
+import type { MoveBatchOutcome, MoveBatchRequest } from '../move-batch.js';
 
 /** Persistence port — web / Electron / server implementations. */
 export interface IStorageBackend {
@@ -80,6 +81,18 @@ export interface IStorageBackend {
     collectionId: string,
     sampleIds: readonly string[],
   ): Promise<DeleteByIdsOutcome>;
+  /**
+   * Перенос ПАЧКОЙ в набор (заказ владельца 27.09): один вызов на всю пачку, `dryRun` —
+   * план без движения.
+   *
+   * Только серверный бэкенд: ёмкость ОБЕИХ осей квоты (буфер и хранилище наборов) знает
+   * media, и считать «поместится ли» на стороне дома значило бы угадывать за сервером —
+   * ровно то, чем окно и обманывало бы человека.
+   *
+   * Набора-источника в заказе нет намеренно: дверь судит по самим пробам, как и
+   * `deleteSamplesByIds` судит по владению, а не по переданному имени набора.
+   */
+  moveSamplesBatch?(request: MoveBatchRequest): Promise<MoveBatchOutcome>;
   /** Домовая включённость плагинов media collections (#2186): только серверный бэкенд. */
   listCollectionPlugins?(
     collectionId: string,

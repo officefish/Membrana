@@ -117,6 +117,34 @@ export {
   type SampleReference,
 } from './buffer-cleanup.js';
 
+/**
+ * Перенос пачкой буфер→набор (заказ владельца 27.09): слова, числа и машина шагов окна —
+ * одни на оба дома. Дверь media реализуется параллельно против того же контракта.
+ */
+export {
+  MOVE_BATCH_STAY_REASON_TITLE,
+  MOVE_BATCH_START,
+  describeMoveBatchOutcome,
+  describeMoveBatchPlan,
+  formatMoveBatchBytes,
+  moveBatchReducer,
+  moveBatchTargets,
+  pluralSamples,
+  type MoveBatchAxis,
+  type MoveBatchEvent,
+  type MoveBatchOutcome,
+  type MoveBatchPhase,
+  type MoveBatchPlan,
+  type MoveBatchPlanWords,
+  type MoveBatchPort,
+  type MoveBatchRequest,
+  type MoveBatchResultWords,
+  type MoveBatchSource,
+  type MoveBatchStay,
+  type MoveBatchStayReason,
+  type MoveBatchState,
+} from './move-batch.js';
+
 export { BUFFER_MANAGER_MANIFEST, BUFFER_MANAGER_ID } from './buffer-manager-manifest.js';
 export {
   BUFFER_AUTO_CLEANUP_RATIO,

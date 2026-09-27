@@ -29,6 +29,7 @@ import type {
   NewSampleMeta,
   PaginatedSamples,
 } from './types.js';
+import type { MoveBatchOutcome, MoveBatchRequest } from './move-batch.js';
 
 export class MediaLibraryService {
   private readonly backend: IStorageBackend;
@@ -166,6 +167,18 @@ export class MediaLibraryService {
     limit = DEFAULT_SAMPLES_PAGE_SIZE,
   ): Promise<PaginatedSamples> {
     return this.backend.listSamplesPage(collectionId, page, limit);
+  }
+
+  /**
+   * ВСЕ пробы набора, а не загруженная страница (заказ владельца 27.09).
+   *
+   * Нужно «перенести все»: дверь переноса принимает ПЕРЕЧЕНЬ проб, значит дом обязан
+   * перечислить набор целиком. Кабинет держит в руках страницу из 40, и перенос по ней
+   * уехал бы сороковкой из 1057 — с виду успешно. Это ровно класс
+   * `docs/field/decisions-on-partial-data.md`: решение по видимому вместо существующего.
+   */
+  async listAllSamples(collectionId: string): Promise<MediaSample[]> {
+    return this.backend.listSamples(collectionId);
   }
 
   async init(): Promise<void> {
@@ -325,6 +338,24 @@ export class MediaLibraryService {
       throw new Error('Удаление по списку доступно только при серверной библиотеке (media-server)');
     }
     return this.backend.deleteSamplesByIds(collectionId, sampleIds);
+  }
+
+  /**
+   * Перенос ПАЧКОЙ в набор (заказ владельца 27.09): один вызов на всю пачку.
+   *
+   * `dryRun` ничего не двигает — снапшот после него не обновляем, иначе «показать план»
+   * дёргало бы список проб на ровном месте. После настоящего переноса снапшот обязателен:
+   * пробы сменили набор, и старый список соврал бы, что они ещё в буфере.
+   */
+  async moveSamplesBatch(request: MoveBatchRequest): Promise<MoveBatchOutcome> {
+    if (!this.backend.moveSamplesBatch) {
+      throw new Error('Перенос пачкой доступен только при серверной библиотеке (media-server)');
+    }
+    const outcome = await this.backend.moveSamplesBatch(request);
+    if (request.dryRun !== true) {
+      await this.refresh();
+    }
+    return outcome;
   }
 
   async listCollectionPlugins(collectionId: string): Promise<readonly MediaPluginState[]> {
