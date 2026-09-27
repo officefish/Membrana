@@ -364,7 +364,8 @@ export function SampleLibraryPage() {
         open={moveAllOpen}
         source={{
           name: lib.selectedCollection?.name ?? '—',
-          isBuffer: lib.selection.kind === 'node' && lib.selection.collectionId === BUFFER_COLLECTION_ID,
+          /* Тот же вывод, что и у предиката кнопки: второго признака буфера здесь не заводим. */
+          isBuffer: lib.sourceIsBuffer,
         }}
         /* Полное число НАБОРА, а не длина страницы: страница держит 40 из 1057 (#2237). */
         sourceTotal={lib.selectedCollection?.sampleCount ?? lib.nodeSamplesTotal}

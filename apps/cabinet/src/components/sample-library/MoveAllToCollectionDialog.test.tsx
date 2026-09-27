@@ -12,15 +12,18 @@
  */
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { BUFFER_COLLECTION_ID } from '@membrana/media-library-service';
 import type { Collection, MoveBatchOutcome } from '@membrana/media-library-service';
 
 import {
   MOVE_ALL_START,
   MOVE_ALL_STAY_REASON_TITLE,
   MoveAllToCollectionDialog,
+  canOfferMoveAll,
   describeMoveAllOutcome,
   describeMoveAllPlan,
   formatMoveAllBytes,
+  isMoveAllSourceBuffer,
   moveAllAxesLine,
   moveAllReducer,
   moveAllTargets,
@@ -121,6 +124,40 @@ describe('куда разрешено переносить', () => {
 
   it('системный набор и сам источник тоже не адресаты', () => {
     expect(moveAllTargets(all, 'buffer').map((c) => c.id)).toEqual(['night', 'day']);
+  });
+});
+
+describe('когда орган массового переноса вообще показывают', () => {
+  const targets: readonly Collection[] = [
+    { id: 'night', name: 'Ночь 27.09', kind: 'user', createdAt: 'x', updatedAt: 'x' },
+  ];
+
+  it('ВНЕ БУФЕРА КНОПКИ НЕТ: дверь возит пачкой только из буфера (слово владельца 27.09)', () => {
+    /**
+     * «Полагаю, вне буфера она не нужна». Дверь ставит `not-in-buffer` на ВСЁ, когда источник —
+     * свой набор человека, то есть окно могло сказать ровно одно: «не поедет ничего». Орган,
+     * который не работает, показывать не надо.
+     *
+     * ПОРЧА: снять условие буфера из `canOfferMoveAll` (вернуть `targets.length > 0`) — зуб
+     * краснеет на своём наборе и на виде без набора.
+     */
+    expect(canOfferMoveAll('night', targets)).toBe(false);
+    expect(canOfferMoveAll(null, targets)).toBe(false);
+    expect(canOfferMoveAll('', targets)).toBe(false);
+    expect(canOfferMoveAll(BUFFER_COLLECTION_ID, targets)).toBe(true);
+  });
+
+  it('в буфере, но переносить некуда — кнопки тоже нет', () => {
+    // ПОРЧА: убрать `targets.length > 0` — кнопка открыла бы окно с пустым выбором адресата.
+    expect(canOfferMoveAll(BUFFER_COLLECTION_ID, [])).toBe(false);
+  });
+
+  it('признак буфера — АДРЕС набора, один на кнопку и на слова окна', () => {
+    // Второе написание того же признака (`kind === 'buffer'`) разъехалось бы молча: кнопки нет,
+    // а окно говорит «останется в наборе». ПОРЧА: сравнить не с BUFFER_COLLECTION_ID.
+    expect(isMoveAllSourceBuffer(BUFFER_COLLECTION_ID)).toBe(true);
+    expect(isMoveAllSourceBuffer('buffer')).toBe(false);
+    expect(isMoveAllSourceBuffer(undefined)).toBe(false);
   });
 });
 
@@ -274,6 +311,78 @@ describe('слова плана до подтверждения', () => {
     expect(words.warning).toContain('ёмкости у набора нет');
     expect(words.warning).toContain('Освободите место или смените тариф');
     expect(words.warning).not.toContain('Места в хранилище мембраны хватает');
+  });
+
+  it('ОСТАТОК ТОЛЬКО ИЗ НЕНАЙДЕННЫХ: совет НЕ предлагает переносить их по одной (#2496)', () => {
+    /**
+     * Живой случай: окно перечисляет пробы `port.enumerate()`, дверь считает план позже, и
+     * проба, удалённая между этим, приезжает с причиной `not-found`
+     * (`packages/background-media/src/modules/samples/move-batch-plan.ts:108-112`). Человек
+     * читал «проба не найдена — 3» и тут же «остальное переносите по одной пробе» — совет о
+     * пробе, которой нет; ровно от такого предупреждения перестают читать все предупреждения.
+     *
+     * ПОРЧА: свести совет назад к двузначной развилке (одна ветка на `not-in-buffer` и
+     * `not-found`) — зуб краснеет на «переносите по одной» там, где переносить нечего.
+     */
+    const words = describeMoveAllPlan({
+      plan: { willMove: 0, willStay: 3, moveBytes: 0, stayBytes: 0 },
+      requested: 3,
+      source: BUFFER,
+      userStorage: { usedBytes: 1024, limitBytes: 536_870_912 },
+      stayed: ['a', 'b', 'c'].map((sampleId) => ({ sampleId, reason: 'not-found' as const })),
+    });
+    expect(words.warning).toContain('проба не найдена — 3');
+    expect(words.warning).toContain('Места в хранилище мембраны хватает');
+    expect(words.warning).toContain('Ненайденные пробы переносить нечем');
+    expect(words.warning).toContain('обновите список набора');
+    expect(words.warning, 'совет о пробе, которой нет').not.toMatch(/переносите по одной/u);
+    expect(words.warning).not.toMatch(/Освободите место|смените тариф|ёмкости у набора нет/u);
+  });
+
+  it('СМЕСЬ «не в буфере» + «не найдена»: «по одной» относится ТОЛЬКО к тем, кто вне буфера', () => {
+    // ПОРЧА: склеить обе причины в один совет — «по одной» накроет и ненайденные, то есть
+    // соврёт про 3 из 5, как врала двузначная развилка до #2496.
+    const words = describeMoveAllPlan({
+      plan: { willMove: 0, willStay: 5, moveBytes: 0, stayBytes: 2048 },
+      requested: 5,
+      source: BUFFER,
+      userStorage: { usedBytes: 1024, limitBytes: 536_870_912 },
+      stayed: [
+        { sampleId: 'b-1', reason: 'not-in-buffer' as const },
+        { sampleId: 'b-2', reason: 'not-in-buffer' as const },
+        { sampleId: 'g-1', reason: 'not-found' as const },
+        { sampleId: 'g-2', reason: 'not-found' as const },
+        { sampleId: 'g-3', reason: 'not-found' as const },
+      ],
+    });
+    expect(words.warning).toContain('Места в хранилище мембраны хватает');
+    expect(words.warning).toContain('пробы вне буфера переносите по одной');
+    expect(words.warning).toContain('Ненайденные пробы переносить нечем');
+    // Совет назван по каждой причине, а не «остальное» — «остальное» и было ложью на смеси.
+    expect(words.warning).not.toContain('остальное переносите по одной пробе');
+  });
+
+  it('СМЕСЬ «нет места» + «не найдена»: место винят, а про ненайденные сказано отдельно', () => {
+    // ПОРЧА: оставить обвинение места единственным слагаемым — человек не узнает, что часть
+    // остатка не поедет НИКОГДА, сколько места ни освободи.
+    const words = describeMoveAllPlan({
+      plan: { willMove: 1, willStay: 4, moveBytes: 1024, stayBytes: 2048 },
+      requested: 5,
+      source: BUFFER,
+      userStorage: TIGHT.userStorage,
+      stayed: [
+        { sampleId: 'n-1', reason: 'no-space' as const },
+        { sampleId: 'n-2', reason: 'no-space' as const },
+        { sampleId: 'g-1', reason: 'not-found' as const },
+        { sampleId: 'g-2', reason: 'not-found' as const },
+      ],
+    });
+    expect(words.warning).toContain('ёмкости у набора нет');
+    expect(words.warning).toContain('Освободите место или смените тариф');
+    expect(words.warning).toContain('Ненайденные пробы переносить нечем');
+    expect(words.warning, 'вне буфера никого нет — совета «по одной» быть не должно').not.toMatch(
+      /переносите по одной/u,
+    );
   });
 
   it('план посчитан не по заказанному — это названо, а не проглочено', () => {
