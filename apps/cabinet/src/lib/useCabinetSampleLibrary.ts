@@ -18,7 +18,11 @@ import {
   useSamplePlaybackEscapeKey,
 } from '@membrana/sample-playback-service';
 
-import { type MoveAllPort } from '@/components/sample-library/MoveAllToCollectionDialog';
+import {
+  canOfferMoveAll,
+  isMoveAllSourceBuffer,
+  type MoveAllPort,
+} from '@/components/sample-library/MoveAllToCollectionDialog';
 
 import {
   fetchMembraneCatalog,
@@ -614,8 +618,20 @@ export function useCabinetSampleLibrary() {
     [active, selection, service],
   );
 
-  /** Есть ли куда переносить. Тот же предикат, что у построчного переноса, — не «только буфер». */
-  const canMoveAll = canMutate && moveTargets.length > 0;
+  /**
+   * Адрес источника для МАССОВОГО переноса: у вида «каталог»/«узел офлайн» набора нет, и
+   * буфером такой выбор не бывает. Один вывод на два потребителя — предикат кнопки и
+   * `source.isBuffer` окна, — чтобы они не разошлись двумя написаниями одного признака.
+   */
+  const moveAllSourceId = selection.kind === 'node' ? selection.collectionId : null;
+  const sourceIsBuffer = isMoveAllSourceBuffer(moveAllSourceId);
+
+  /**
+   * МАССОВЫЙ перенос — только из буфера (слово владельца 27.09): дверь возит пачкой только
+   * оттуда. Правило не объявляется здесь заново, его несёт носитель окна — один на два дома.
+   * Построчный перенос остаётся на `canMutate`, из любого набора (#2249).
+   */
+  const canMoveAll = canMutate && canOfferMoveAll(moveAllSourceId, moveTargets);
 
   const handleClearBuffer = useCallback(async () => {
     if (selection.kind !== 'node') return;
@@ -677,6 +693,7 @@ export function useCabinetSampleLibrary() {
     canMutate,
     moveTargets,
     canMoveAll,
+    sourceIsBuffer,
     moveAllPort,
     /** Перечитать страницу проб — окну переноса после удачного прогона. */
     reloadSamplesPage,

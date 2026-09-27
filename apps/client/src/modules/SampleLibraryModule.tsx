@@ -2,6 +2,8 @@ import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'reac
 import { DeletionConfirmDialog } from '@/components/DeletionConfirmDialog';
 import {
   MoveAllToCollectionDialog,
+  canOfferMoveAll,
+  isMoveAllSourceBuffer,
   type MoveAllPort,
 } from '@/components/MoveAllToCollectionDialog';
 import { readPersistedPairedCredentials } from '@/lib/resolveMediaLibraryBackend';
@@ -229,6 +231,13 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   const moveTargets = snapshot.collections.filter(
     (c) => c.id !== selectedId && c.kind !== 'buffer' && c.kind !== 'system',
   );
+
+  /**
+   * МАССОВЫЙ перенос — только из буфера (слово владельца 27.09). Правило не объявляется здесь
+   * заново: его несёт носитель окна, один на два дома (`canOfferMoveAll`). Построчный перенос
+   * остаётся на `canMoveFrom` — он к буферу не привязан (#2249).
+   */
+  const canMoveAll = canMoveFrom && canOfferMoveAll(selectedId, moveTargets);
 
   const handleCreateCollection = useCallback(async () => {
     setError(null);
@@ -683,11 +692,12 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
           {/*
             «Перенести все» стоит рядом с «Очистить буфер» намеренно: обе — операции над
             НАБОРОМ ЦЕЛИКОМ, и у полного буфера это две дороги одного решения — вывезти или
-            стереть. Кнопка не привязана к буферу (`canMoveFrom`, тот же предикат, что у
-            построчного переноса): привязка «только буфер» уже была дефектом — человек не мог
-            переложить пробы из набора в набор, потому что органа не нарисовали (#2249).
+            стереть. И живёт кнопка ТОЛЬКО в буфере (`canMoveAll`, слово владельца 27.09):
+            дверь возит пачкой только из буфера, и вне буфера окно могло сказать человеку
+            ровно одно — «не поедет ничего». Построчный перенос это не затрагивает: он
+            по-прежнему на `canMoveFrom`, из любого набора (#2249).
           */}
-          {canMoveFrom && moveTargets.length > 0 ? (
+          {canMoveAll ? (
             <button
               type="button"
               className="btn btn-sm btn-outline"
@@ -1012,7 +1022,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
 
       <MoveAllToCollectionDialog
         open={moveAllOpen}
-        source={{ name: selected?.name ?? '—', isBuffer: selectedId === BUFFER_COLLECTION_ID }}
+        source={{ name: selected?.name ?? '—', isBuffer: isMoveAllSourceBuffer(selectedId) }}
         sourceTotal={selected?.sampleCount ?? samples.length}
         collections={snapshot.collections}
         sourceCollectionId={selectedId}

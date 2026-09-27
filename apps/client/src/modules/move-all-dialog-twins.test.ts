@@ -148,16 +148,58 @@ describe('дома заведены на окно, а не на тихий пе�
     expect(read(CABINET_PAGE)).toMatch(/sourceTotal=\{lib\.selectedCollection\?\.sampleCount/u);
   });
 
-  it('КНОПКА НЕ ПРИВЯЗАНА К БУФЕРУ: тот же предикат, что у построчного переноса', () => {
-    // Привязка «только буфер» уже была дефектом: человек не мог переложить пробы из набора в
-    // набор, потому что органа не нарисовали (#2249).
+  it('КНОПКА МАССОВОГО ПЕРЕНОСА ЖИВЁТ ТОЛЬКО В БУФЕРЕ — правило одно на два дома', () => {
+    /**
+     * Слово владельца 27.09: «полагаю, вне буфера она не нужна». Дверь возит пачкой ТОЛЬКО из
+     * буфера (`row.inBuffer`), значит вне буфера окно могло сказать человеку ровно одно: «не
+     * поедет ничего».
+     *
+     * ПОРЧА: убрать `canOfferMoveAll(...)` из предиката любого дома (вернуть
+     * `canMoveFrom && moveTargets.length > 0` / `canMutate && moveTargets.length > 0`) — зуб
+     * краснеет: кнопка снова появилась бы на любом наборе.
+     */
     const studio = read(STUDIO_MODULE);
-    expect(studio).toContain('{canMoveFrom && moveTargets.length > 0 ? (');
+    expect(studio).toContain('const canMoveAll = canMoveFrom && canOfferMoveAll(selectedId, moveTargets);');
+    expect(studio).toContain('{canMoveAll ? (');
     expect(studio).toContain('Перенести все');
     const sidebar = read(CABINET_SIDEBAR);
     expect(sidebar).toContain('{canMoveAll ? (');
     expect(sidebar).toContain('Перенести все');
-    expect(read(CABINET_MODEL)).toContain('canMoveAll = canMutate && moveTargets.length > 0');
+    expect(read(CABINET_MODEL)).toContain(
+      'const canMoveAll = canMutate && canOfferMoveAll(moveAllSourceId, moveTargets);',
+    );
+  });
+
+  it('ПРИЗНАК БУФЕРА — ОДИН на кнопку и на слова окна, второго дом не заводит', () => {
+    // Два написания одного признака (`id === BUFFER_COLLECTION_ID` у кнопки и отдельное — у
+    // `source.isBuffer`) разъехались бы молча: кнопки нет, а окно говорит «останется в наборе».
+    // ПОРЧА: вернуть в дом собственное сравнение с BUFFER_COLLECTION_ID для `isBuffer`.
+    expect(read(STUDIO_MODULE)).toContain('isBuffer: isMoveAllSourceBuffer(selectedId)');
+    expect(read(CABINET_PAGE)).toContain('isBuffer: lib.sourceIsBuffer');
+    expect(read(CABINET_MODEL)).toContain('const sourceIsBuffer = isMoveAllSourceBuffer(moveAllSourceId);');
+    for (const p of DIALOGS) {
+      expect(code(p)).toContain('export function isMoveAllSourceBuffer');
+      expect(code(p)).toContain('export function canOfferMoveAll');
+    }
+  });
+
+  it('ПОСТРОЧНЫЙ ПЕРЕНОС К БУФЕРУ НЕ ПРИВЯЗАН (#2249): предикаты разведены', () => {
+    /**
+     * Привязка «только буфер» для ОДИНОЧНОГО переноса была дефектом: человек не мог переложить
+     * пробы из набора в набор, потому что органа не нарисовали. `moveSample` работает из любого
+     * набора, и его предикат остаётся без буфера — новое условие 27.09 касается только пачки.
+     *
+     * ПОРЧА: дописать буфер в `canMoveFrom` / `canMutate` — зуб краснеет.
+     */
+    const studio = read(STUDIO_MODULE);
+    expect(studio).toContain('const canMoveFrom = Boolean(selected) && !readOnlyCollection;');
+    // Построчный орган («Переместить» у строки пробы) живёт на непривязанном предикате.
+    expect(studio).toContain('{canMoveFrom && moveTargets.length > 0 ? (');
+    const model = read(CABINET_MODEL);
+    expect(model).toContain('const canMutate = isNodeView && active && !readOnlyCollection && !busy;');
+    expect(model, 'построчный перенос привязали к буферу').not.toMatch(
+      /canMutate\s*=[^;]*BUFFER_COLLECTION_ID/u,
+    );
   });
 
   it('ПЕРЕНОС НЕ ПРИРАВНЕН К УДАЛЕНИЮ: воротам вещдоков он не отдан', () => {
