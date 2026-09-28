@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14257/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 382 (причины в op-log) -->
+Записей: 49 · бюджет 14237/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 383 (причины в op-log) -->
+
+### 2026-09-28 · позиция · team-evening-feedback
+
+> Ожегов. Оценка артефактов: `DAILY_CODE_REVIEW` по раскрытым PR (#2503, #2502) корректно показал, что `DEFAULT_LEAD` вынесен константой, `SCOPE_TO_PERSONA` расширен серверным контуром с комментариями порядка правил, `isGitAncestor` — чистая функция с инжектируемым `exec`. Это […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-28.md#reply-1`
 
 ### 2026-09-27 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Оценка артефактов: Документы дня связны: стендап → MAIN_DAY_ISSUE → DoD → code-review — единая линия #2204. Единственное слабое место — отсутствие карточек `media-library-service` / `background-media` в registry (отмечено в MAIN_DAY_ISSUE), что мешает трассировке. Итоги дня: […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m0-order
-
-> Лемма зависимости решения та же, что на logging-observability-cut-m0: «A раньше B», если без A комната B либо пуста, либо ломает уже принятый контракт. Словарь кандидатов закрыт — не сливать (2) и (3): оба про проглоченный отказ, но один не замечает тишину, другой активно […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/hunt-and-canon-m0-order-2026-08-27.md#reply-1`

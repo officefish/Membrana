@@ -1,1 +1,4 @@
 {"ts":"2026-09-28T10:54:43.472Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-09-28T18:02:45.134Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-09-28-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-28T18:02:45.134Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-08-27-hunt-and-canon-m0-order","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-28T18:02:45.134Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
