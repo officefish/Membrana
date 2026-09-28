@@ -1,152 +1,141 @@
-<!-- Сгенерировано: 2026-09-27T09:32:42.621Z (yarn main-day-issue@5cf6539e) -->
+<!-- Сгенерировано: 2026-09-28T10:51:49.133Z (yarn main-day-issue@369cd8b9) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
-<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"5b65e02b109167289e1724aeaa4b72d4adcb4743","digest":"65d8188fed683dd5c15bc578b8139984a8ce8a96500ef2f6124554021a469b3b","versionAt":"2026-09-26T14:43:18+03:00"},"DAILY_STANDUP":{"version":"5b65e02b109167289e1724aeaa4b72d4adcb4743","digest":"3ea9d98f4e4f42309aab20969617361f264a7f80fffa6e0fa311244d5cefe84b","versionAt":"2026-09-26T14:43:18+03:00"}}} -->
+<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"f8b4637b67e5726702e764383640dea5f5e2c184","digest":"9dbdda055fb277398ac45183b944e06a4c1eea503ace1bde800f9e6152a9c821","versionAt":"2026-09-27T12:42:34+03:00"},"DAILY_STANDUP":{"version":"f8b4637b67e5726702e764383640dea5f5e2c184","digest":"212ede4be4de67a5b78fda1a9676aa842b46182e999449c3e41edc2c2cf74575","versionAt":"2026-09-27T12:42:34+03:00"}}} -->
 <!-- Звено канала: provider=anthropic model=claude-sonnet-4-6 source=overlay generations=1 -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
 <!-- active в реестре: cowork-library-open-api, node-duty-ready-predicate, studio-package-av-refusal, session-digest-library-face, dedup-pairs-show-and-wait, obs-sentry-container, logging-observability-contour, chart-list-plugin, media-per-device-token, capture-sidecar-protocol, plugin-results-payload-pocket, firebat-node-device, server-plugin-foundation, static-mmbrn-retirement, static-mmbrn-live-services, static-mmbrn-cutover, static-mmbrn-m6-alignment, static-mmbrn-rehydrate-parity, static-mmbrn-ingress-auth, static-mmbrn-target-provision, static-mmbrn-disposition-ledger, static-mmbrn-container, frame-holders-reassign-twenty, workflow-examples-marathon, procedure-run-journal-f1-local-trail, procedure-run-journal-2026-08-01, meeting-evening-review-predicate, evening-chain-review-predicate, mfcc-compare-sprint, insight-mandate-for-new, frame-rails-2307, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, membrane-node-runtime-remote, mp7b-rt7-prod-hardening, device-board-three-hosts-2026-06-26, db3h-s4-microphone-detectors, neural-free-tier-dataset-report, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, detection-alarm-loop-refactor, batch-collection-run-contour -->
 
-# MAIN_DAY_ISSUE · Membrana · 2026-09-27
+# MAIN_DAY_ISSUE — 2026-09-28
 
 ## Метаданные
 
 | Поле | Значение |
-|------|----------|
-| `primaryFocusId` | `cabinet-registration-rollout` |
-| `primaryTitle` | Пересборка образа офиса и прохождение rollout день 3 |
-| `githubIssue` | #2369 |
+|---|---|
+| `primaryFocusId` | `pagination-sample-library` |
+| `primaryTitle` | Пагинация библиотеки сэмплов |
+| `githubIssue` | — |
 | `size` | L |
-| `promptPath` | `docs/meeting/cabinet-registration-promo/MEETING_ACTIVE.md` |
-| `сгенерировано` | 2026-09-27 |
-
----
+| `promptPath` | — |
+| `сгенерировано` | 2026-09-28 |
 
 ## Магистраль
 
-**Магистраль взята с `sources[0].claim` из `docs/tasks/main-day-assertions.json` — это прямой выбор владельца от 24.09 (ответ «1» на замороженный снимок топ-3: `cabinet-registration-rollout` · `tooling-guards-day` · `tariff-transitions-live-day3`). Синтез из входов запрещён, пока owner-source задан.**
+Магистраль дня — **pagination-sample-library** — взята из прямого выбора владельца 28.09 (owner-choice@chat/magistral-28-09, `sources[0]`): «формально выбираем пагинацию». Библиотека сэмплов сейчас отображает все 1057 проб одновременно; это прямой кандидат в причину фризов #2476, которую не удалось измерить 27.09. Цель дня: реализовать постраничную загрузку в библиотеке сэмплов так, чтобы первый экран рендерился без блокировки UI, а дальнейшие страницы подгружались по запросу. Параллельным путём того же дня владелец обозначил опыт трёх дорог (`three-roads-experiment`) — он упирается в физические руки (сборка Студии на узле) и ведётся владельцем самостоятельно; пагинацию ведут сессии.
 
-> ⚠️ **Расхождение зафиксировано (норма У1, 31.07):** `docs/tasks/main-day-assertions.json` несёт `sources[0]` с датой 24.09; `docs/tasks/morning-gates-state.json` в стендапе за 27.09 не содержит поля `magistral` с сегодняшней датой (генератор стендапа прямо пишет «магистраль владельцем ещё не выбрана»). Следовательно, более свежего гейтового выбора НЕТ — `sources[0]` остаётся единственным владельческим источником. **Магистраль взята с `assertions.sources[0]`, `morning-gates-state` не перечеканен под 27.09 — перечеканка предписана каноном и не сделана; это сама по себе находка, требующая фиксации.**
-
-**`cabinet-registration-rollout`** — выкатка кабинетного контура, третий день. Образ офиса не собран из-за несовместимости `RunRecord.mountTarget` для `background-cabinet/journal`; старый офис работает здоровым (`/health` 200, внешний смоук 5 ok), прод не тронут (fail-closed соблюдён). Исходники ствола чисты (`turbo build --filter=@membrana/background-office` зелёный дважды — из кеша и с `--force`). Класс отказа: устаревшие собранные пакеты соседей в образе (рецидив 21.08 и 27.08, `verify:image-workspace-deps`). `cabinet.env` на сервере не содержит `OFFICE_URL`/`OFFICE_API_TOKEN`, `ALLOW_REGISTRATION=false`.
-
-**Критерий успеха к вечеру:** новый образ офиса собран с `--no-cache`, `docker push` выполнен, `verify:image-workspace-deps` зелёный, `/health` нового контейнера 200, пишущий смоук панели (шаг 6, живая дверь) пройден без ошибок, `cabinet.env` дополнен `OFFICE_URL`/`OFFICE_API_TOKEN`, `ALLOW_REGISTRATION=false` → `true` (или по плану встречи), rollout-чеклист закрыт на сегодняшнюю дату.
-
----
+**Критерий успеха к вечеру:** открытие библиотеки на 1057 пробах не вызывает видимого фриза UI; счётчик страниц и навигация вперёд/назад работают; нет регрессий в существующих фильтрах и воспроизведении.
 
 ## Подкрепление
 
-- **Написать синтетический тест `sequence`-контракта** в `night-summary.test.mjs` (XS, Математик/Dynin): два пересекающихся `runId` с `sequence:1` → ожидаем монотонный счётчик. Прямой технический предикат гейта `secret-parser-built` — четвёртый день заблокирован именно из-за этого нарушения; без теста гейт технически непроходим и амнистия архива не снимается.
-- **Закрыть lint `titleOf`** (`react-hooks/exhaustive-deps`) в `apps/cabinet` (XS, Верстальщик/Rodchenko): снимает CI-шум четвёртый день, расчищает путь к пересборке rollout и к чистому прогону `office-image-smoke`-ворклоу (который сейчас не покрывает `packages/background-cabinet/**` — системная причина молчания CI при правках кабинета).
-
----
+- **Архитектурный проход oversized PR #2488 → #2489 → #2499 как связка** — три PR четвёртый день лежат в стволе без верифицированной целостности; разбор снимает главный риск работы по пагинации поверх непроверенного ствола. Выделенный слот до первой строки нового кода — не попутно.
+- **Перечеканка `main-day-assertions.json` под `pagination-sample-library`** — ассерции от 24.09 называли `cabinet-registration-rollout`; гейт 27.09 зачеканил `three-roads-experiment`, а выбор владельца 28.09 — `pagination-sample-library`; пока манифест не обновлён, `yarn main-day-probe` работает против устаревшей магистрали. XS, делать первым делом.
 
 ## Перспективные
 
-- Прохождение гейта `secret-parser-built` (резак + датированный проход с манифестом ротации) снимает мораторий амнистии архива и разблокирует правку исторических транскриптов — ближайший горизонт после закрытия rollout.
-- Добавление `packages/background-cabinet/**` в пути `office-image-smoke.yml` закроет системную дыру: образ офиса сейчас может ломаться молча при правках кабинета (именно это произошло 22.09 — CI не среагировал).
-- Архитектурное ревью трёх oversized-PR (#2467, #2461, `36e88e71`) разблокирует нормальный поток мерджей и закроет ревью-долг третьего дня; его нельзя делать попутно — требует выделенного слота.
-
----
+- Закрытие архитектурного разбора #2488 → #2489 → #2499 откроет следующий шаг rollout-магистрали (`cabinet-registration-rollout` #2369) без риска скрытых перекрёстных зависимостей — тогда статус rollout можно будет честно назвать: магистраль позже или перевод в фон.
+- После появления пагинации — smoke-измерение времени открытия библиотеки на 1057 пробах с трейсом; факт либо закрывает гипотезу о причине фриза #2476, либо называет новую.
+- `batch-collection-run-contour` (буфер 95 %, ETA 293 с) — разблокируется после консилиум-гейта по модели исполнения; держим на виду, в код не идём без гейта.
 
 ## Экспериментальные
 
-- **Dry-run резака на одном архивном файле** (`scripts/lib/secret-redact.mjs`) — узнаем, не задевает ли агрессивный срез легитимные строки до первого датированного прохода; ложные срабатывания лучше найти до включения в ночной пайплайн.
-- **Запуск `verify:image-workspace-deps` вручную на текущем образе** до `docker push --no-cache` — проверяем, стоит ли класс «устаревшие пакеты соседей» за отказом сборки rollout 24.09, прежде чем чинить типы вслепую.
-- **Синтетический `sequence`-тест с двумя пересекающимися `runId`** в режиме `--dry-run` против `2026-09-26.jsonl` — до коммита проверяем, ловит ли агрегатор нарушение монотонности, которое четвёртый день молчит в trail.
-
----
+- **Smoke-тест парсера по реальной сессии:** запустить `night-triage-secret-scan.mjs` в режиме резака на архиве вчерашней сессии (без отправки) — проверить, режет ли агрессивно или только детектирует (кристалл `secret-parser-cuts-aggressively` получит подтверждение или опровержение фактом).
+- **Граничный случай — пустой манифест ротации:** прогнать резак на сессии без засвеченных ключей и проверить exit-код и вывод — узнать, не ломается ли инструмент на пустом случае до первого датированного прохода.
+- **Порог ложного срабатывания:** скормить резаку заведомо чистый текст (докстринг без секретов) и измерить количество ложных вырезаний — понять, насколько агрессивность управляема без ручного контроля.
 
 ## Санитарные
 
-- Закрыть lint `titleOf` (`react-hooks/exhaustive-deps`) в `apps/cabinet` — XS, четвёртый день висит без фиксации
-- Написать синтетический тест `sequence`-контракта в `night-summary.test.mjs` — два `runId` с `sequence:1`, монотонный счётчик; гейт `secret-parser-built` непроходим без этого
-- Пометить `night-hunt-graph.test.ts` тегом `integration` или зафиксировать фикстуру `yarn.lock` вместо хрупкого пути `../../../../../yarn.lock`
-- Правка `CURRENT_TASK.md`: заменить устаревший `detector-scoreboard` на `cabinet-registration-rollout` — XS, третий день без фиксации
-- Заполнить `root`/`fix` в friction-записях trail за 26.09 (`morning-care`/`angelina` fail без диагноза) — `root:null, fix:null` делают агрегатор слепым: манифест ротации ключей будет ложным
-- Добавить `packages/background-cabinet/**` в пути `office-image-smoke.yml` — системная дыра, которая позволила образу сломаться молча 22.09
+- **Ревью-долг P1: oversized #2488 / #2489 / #2499** — четвёртый день в стволе без развёрнутого диффа; выделенный слот до нового кода (не попутно, не маскировать частичным просмотром).
+- **`night-hunt-graph.test.ts`** — пометить тегом `integration` (хрупкий путь `../../../../../yarn.lock`); 15 мин, четвёртый день висит, CI нестабилен.
+- **Перечеканить `main-day-assertions.json`** под `pagination-sample-library` — гейт 27.09 свежее ассерций 24.09, выбор владельца 28.09 свежее обоих; расхождение не снято.
+- **Исправить `CURRENT_TASK.md`** — убрать устаревший `detector-scoreboard`, вписать `pagination-sample-library`; третий день дезориентирует холодные сессии.
+- **Rollout #2369** — четвёртый день OPEN без лога отказа сборки, без `docker push --no-cache`, без довнесения `cabinet.env`; зафиксировать решение: магистраль или фон (ответ владельца ожидается как подкрепление, не как блокер пагинации).
+- **A11y `MoveAllToCollectionDialog`** (роль `dialog`, focus trap, Escape) — не проверена при разборе #2489/#2499; долг ревью oversized.
 
 ---
 
 ## Почему это магистраль (таблица обоснования)
 
 | Утверждение | Происхождение | Первоисточник | Свежесть |
-|-------------|---------------|---------------|----------|
-| Магистраль — `cabinet-registration-rollout` (ответ «1» на замороженный топ-3) | `docs/tasks/main-day-assertions.json` · `sources[0].claim` | Прямое слово владельца (owner-choice) | 24.09.2026 |
-| Продолжение второго дня: выкатка остановлена по fail-closed, прод не тронут | `sources[0]` (замер утра 24.09 в теле claim) | Отчёт исполнителя выкатки · слово владельца | 24.09.2026 |
-| Класс отказа — устаревшие пакеты соседей в образе (`verify:image-workspace-deps`) | `sources[0]` (замер ведущей: `turbo build` зелёный дважды) | Вывод `turbo run typecheck build --filter=@membrana/background-office` | 24.09.2026 |
-| Стендап 27.09 подтверждает: rollout #2369 OPEN, статус не изменился | `docs/DAILY_STANDUP.md` P1-риски | Стендап 27.09 — **1 источник, отражение того же owner-choice** | 27.09.2026 |
-| DAY_PLAN 27.09 выставляет rollout первым кандидатом из P1-рисков | `docs/DAY_PLAN.md` | DAY_PLAN — **1 источник, отражение того же owner-choice** | 27.09.2026 |
-| ⚠️ **Расхождение:** `morning-gates-state.json` не несёт `magistral` за 27.09 — перечеканка `main-day-assertions.json` каноном предписана и не сделана | `docs/DAILY_STANDUP.md` («источник фокуса: нет») | `morning-gates-state.json` + `main-day-assertions.json` | 27.09.2026 |
-| **Магистраль взята с `assertions.sources[0]` (24.09); гейтового выбора за 27.09 нет — `sources[0]` свежее** | норма У1, 31.07 | `docs/tasks/main-day-assertions.json` | 24.09.2026 |
+|---|---|---|---|
+| Владелец назвал `pagination-sample-library` магистралью: «формально выбираем пагинацию» | сессия (owner-choice) | `docs/tasks/main-day-assertions.json` → `sources[0]`, author=human | 2026-09-28 |
+| Оговорка владельца: `three-roads-experiment` идёт вторым путём того же дня, не отменён, но упирается в физические руки (сборка Студии на узле) | сессия (owner-choice) | `sources[0].claim`, прямая цитата | 2026-09-28 |
+| 1057 проб в библиотеке без пагинации — кандидат в причину фризов #2476; пагинация решает это прямо | код / issue | `sources[0].claim` (замер готовности опыта 28.09) | 2026-09-28 |
+| Установщик собран (артефакт CI #36336034884, 145 МБ, не истёк); по коду `b44d05f3` и вершина `77a9063b` идентичны — пагинации в этой сборке нет, она и есть работа дня | код | `sources[0].claim` (замер готовности опыта) | 2026-09-28 |
+| **Расхождение гейта и ассерций: магистраль взята с `sources[0]` (owner-choice 28.09); `main-day-assertions.json` перечеканен 24.09 под `cabinet-registration-rollout`; перечеканка под `pagination-sample-library` предписана и не сделана** | снимок-хардкод | `docs/tasks/main-day-assertions.json`, поле `//date` | 2026-09-24 (устарел) |
+| Стендап 28.09: `pagination-sample-library` — второй в топ-3 кандидатов (после `cabinet-registration-rollout`), поднят выбором владельца в первую позицию | план | `docs/DAILY_STANDUP.md` 28.09 (отражение owner-choice) | 2026-09-28 |
+| `DAY_PLAN.md` 28.09 называет три кандидата магистрали, в т.ч. `batch-collection-run-contour`; но выбор владельца (`sources[0]`) перекрывает синтез плана | план | `docs/DAY_PLAN.md` 28.09 (1 источник, отражение реестра) | 2026-09-28 |
 
-> Стендап и DAY_PLAN — **1 источник, 2 отражения** одного owner-choice от 24.09. Суммарный вес равен весу одного. Независимых первоисточников два: owner-choice 24.09 и отчёт исполнителя (класс отказа).
+**Счёт голосов по различным первоисточникам:**
+- Owner-choice 28.09 (`sources[0]`, author=human) — 1 независимый первоисточник, несёт прямое волеизъявление; все остальные строки таблицы — его отражения или подтверждения. Вес одного независимого источника не суммируется с его отражениями.
+- Синтез плана (`DAY_PLAN.md`) и стендапа — производные от реестра и owner-choice; самостоятельного веса не добавляют.
+
+**Итог:** магистраль назначена единственным способом, которым это делается — словом владельца.
 
 ---
 
-## Посылки (фокус строится на «работа не завершена»)
+## Посылки
 
 | Посылка | Маркер | Вердикт |
-|---------|--------|---------|
-| Новый образ офиса с исправленным `RunRecord.mountTarget` не собран и не задеплоен | `file:docs/evidence/rollout-cabinet-registration-2026-09-27.ok` (артефакт приёмки отсутствует) | `holds` |
-| `cabinet.env` на сервере не содержит `OFFICE_URL`/`OFFICE_API_TOKEN` | `symbol:OFFICE_URL` в `scripts/` / `.env`-шаблонах кабинета (в `cabinet.env` на сервере — по замеру `sources[0]`) | `holds` |
-| `office-image-smoke.yml` не покрывает `packages/background-cabinet/**` | `file:.github/workflows/office-image-smoke.yml` (путь background-cabinet отсутствует — зафиксировано в sources[0]) | `holds` |
-| Тест `sequence`-контракта не написан → гейт `secret-parser-built` непроходим | `symbol:sequence` в `night-summary.test.mjs` (отсутствует — P1, четвёртый день по стендапу) | `holds` |
+|---|---|---|
+| Пагинация в библиотеке сэмплов отсутствует: компонент отображает все пробы одним списком | `symbol:SampleLibraryPagination` (или аналог) в `apps/client/src/**` | `holds` — символ не обнаружен (1057 проб рендерятся разом, зафиксировано в `sources[0]`) |
+| Фриз #2476 при открытии библиотеки не измерен причинно | `file:docs/archive/` — нет трейса с причиной фриза | `holds` — трейс не зафиксирован, гипотеза открыта |
 
 ---
 
 ## Сегодня делаем
 
-1. Получить дословный вывод отказа сборки образа от исполнителя — подтвердить или опровергнуть класс «устаревшие пакеты соседей» до любых правок кода.
-2. Запустить `verify:image-workspace-deps` вручную на текущем образе; если подтверждён класс — пересобрать с `--no-cache`.
-3. Выполнить `docker build --no-cache` → `docker push` нового образа офиса с исправленным `RunRecord.mountTarget`.
-4. Прогнать внешний смоук + пишущий смоук панели (шаг 6, живая дверь) — зафиксировать 5 ok / 0 fail / 0 skip.
-5. Дополнить `/etc/membrana/cabinet.env` парами `OFFICE_URL`/`OFFICE_API_TOKEN`; выставить `ALLOW_REGISTRATION` по плану встречи.
-6. Написать синтетический тест `sequence`-контракта в `night-summary.test.mjs` (два `runId` с `sequence:1` → монотонный счётчик) — разблокирует гейт `secret-parser-built`.
-7. Закрыть lint `titleOf` (`react-hooks/exhaustive-deps`) в `apps/cabinet` — XS, CI-шум четвёртый день.
+1. Перечеканить `main-day-assertions.json` под `pagination-sample-library` (XS, до кода).
+2. Исправить `CURRENT_TASK.md`: убрать `detector-scoreboard`, вписать `pagination-sample-library` (XS).
+3. Провести архитектурный разбор oversized PR #2488 → #2489 → #2499 в выделенном слоте (M, до нового кода).
+4. Реализовать постраничную загрузку в библиотеке сэмплов: определить размер страницы, контракт `useSampleLibraryPage`, интеграцию с существующими фильтрами.
+5. Покрыть навигацию страниц (вперёд / назад / номер страницы) и убедиться в отсутствии регрессий фильтрации и воспроизведения.
+6. Smoke-замер: открыть библиотеку на 1057 пробах, зафиксировать отсутствие фриза; результат — один абзац в дневной фидбек.
+7. Пометить `night-hunt-graph.test.ts` тегом `integration` (XS, до обеда).
 
 ---
 
 ## Definition of Done (фокус)
 
-- [ ] Получен и зафиксирован дословный вывод отказа сборки образа; класс отказа подтверждён или опровергнут явно
-- [ ] `verify:image-workspace-deps` прогнан на текущем образе; результат задокументирован
-- [ ] Новый образ офиса собран с `--no-cache`, `docker push` выполнен, `docker inspect` несёт сегодняшний digest
-- [ ] `/health` нового контейнера офиса возвращает 200; внешний смоук 5 ok / 0 fail
-- [ ] Пишущий смоук панели (шаг 6, живая дверь) пройден без ошибок
-- [ ] `/etc/membrana/cabinet.env` дополнен `OFFICE_URL`/`OFFICE_API_TOKEN`; `ALLOW_REGISTRATION` выставлен по плану встречи
-- [ ] Rollout-чеклист `docs/meeting/cabinet-registration-promo/MEETING_ACTIVE.md` закрыт на 27.09
+- [ ] `SampleLibraryPagination` (или эквивалент) реализован: первый экран рендерится без блокировки UI
+- [ ] Навигация страниц работает (вперёд / назад / номер), размер страницы зафиксирован константой
+- [ ] Существующие фильтры библиотеки работают поверх пагинации без регрессий
+- [ ] Воспроизведение сэмпла из любой страницы работает
+- [ ] Smoke-замер на 1057 пробах: видимый фриз при открытии отсутствует, результат зафиксирован
+- [ ] `yarn turbo run typecheck test --filter=@membrana/client` — зелёный
+- [ ] `yarn turbo run lint --filter=@membrana/client` — зелёный
 
 ---
 
 ## Сознательно не делаем сегодня
 
-- **Не берём `angelina-hostess-impl`, `assets-container`, `batch-collection-run-contour`** — они кандидаты стендапа (план их ранжировал при отсутствии owner-choice), но `sources[0]` однозначен: магистраль — rollout.
-- **Не ревьюим oversized-PR (#2467, #2461, `36e88e71`) попутно** — каждый требует выделенного архитектурного слота; попутный разбор создаёт ложное ощущение закрытости.
-- **Не запускаем `batch-collection-run-contour` без консилиум-гейта** по модели исполнения.
-- **Не повторяем DSP-бенчмарки на free-v1** — потолок эшелона 0 зафиксирован (`FFT_METRICS_POTENTIAL_AND_LIMITS.md §6`).
-- **Не берём `mfcc-compare-sprint`, `dads-benchmark-bridge`** — блокированы до стабилизации rollout-среды (#2369 ещё OPEN).
+- **`batch-collection-run-contour`** — буфер давит, но запуск без консилиум-гейта по модели исполнения нарушает канон; не трогаем.
+- **`cabinet-registration-rollout` #2369** — статус OPEN; ждём слова владельца (магистраль позже или фон); в код не идём.
+- **DSP-бенчмарки, повтор free-v1, «Этап 1.A»** — потолок эшелона 0 зафиксирован; тема закрыта без смены датасета или алгоритма.
+- **`angelina-hostess-impl`** — накопленный контекст есть, но владелец назвал пагинацию; откладываем.
+- **Попутный архитектурный разбор #2488/#2489/#2499** — только выделенный слот, не между делом.
 
 ---
 
 ## Вторично (если останется время)
 
-- Добавить `packages/background-cabinet/**` в пути `office-image-smoke.yml` — XS, системная дыра, закрывает молчание CI при правках кабинета.
-- Правка `CURRENT_TASK.md`: заменить `detector-scoreboard` на `cabinet-registration-rollout` — XS, третий день.
+- Smoke-тест парсера `night-triage-secret-scan.mjs` на архиве вчерашней сессии (без отправки) — подтвердить или опровергнуть кристалл `secret-parser-cuts-aggressively`.
+- Первый шаг `three-roads-experiment` на стороне команды — если владелец сообщит о готовности узла для сборки Студии.
 
 ---
 
 ## Зависимости и риски
 
-- **Блокер 1:** дословный вывод отказа сборки от исполнителя не получен — без него правка типов вслепую (класс отказа не подтверждён). Первый шаг дня — именно это.
-- **Блокер 2:** `secret-parser-built` гейт непроходим без теста `sequence`-контракта — четвёртый день; если тест не написан сегодня, амнистия архива продолжает блокироваться.
-- **Риск:** `office-image-smoke.yml` не покрывает `packages/background-cabinet/**` — образ может снова сломаться молча при следующей правке кабинета до патча ворклоу.
-- **Риск:** расхождение `main-day-assertions.json` ↔ `morning-gates-state.json` (перечеканка предписана и не сделана) — если владелец сделает новый owner-choice сегодня утром, текущий документ устареет; перечеканить `main-day-assertions.json` при первой возможности.
+- **Блокер:** oversized PR #2488/#2489/#2499 не прошли архитектурный разбор — новый код поверх непроверенного ствола несёт скрытый риск; разбор обязателен до реализации пагинации.
+- **Риск:** `main-day-assertions.json` до перечеканки называет устаревшую магистраль — `yarn main-day-probe` будет давать ложный вердикт; снимается первым XS-шагом.
+- **Риск:** пагинация на 1057 пробах может не устранить фриз #2476, если причина не в размере списка — smoke-замер это выявит и назовёт следующую гипотезу.
+- **Наблюдение:** `three-roads-experiment` как второй путь дня упирается в физические руки владельца (сборка Студии на узле); команда не блокирует и не ускоряет этот путь.
 
 ---
 
 ## Ссылки
 
-- [`docs/DAILY_STANDUP.md`](docs/DAILY_STANDUP.md) — стендап 27.09 (широкий вход)
-- [`docs/meeting/cabinet-registration-promo/MEETING_ACTIVE.md`](docs/meeting/cabinet-registration-promo/MEETING_ACTIVE.md) — активный чеклист rollout
-- [`docs/tasks/main-day-assertions.json`](docs/tasks/main-day-assertions.json) — `sources[0]`, owner-choice 24.09
-- [GitHub Issue #2369](../../issues/2369) — `cabinet-registration-rollout`, OPEN
+- [DAILY_STANDUP.md 28.09](docs/DAILY_STANDUP.md)
+- [DAY_PLAN.md 28.09](docs/DAY_PLAN.md)
+- [main-day-assertions.json](docs/tasks/main-day-assertions.json)
+- [FFT_METRICS_POTENTIAL_AND_LIMITS.md](docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md)
+- [STRATEGY_DAY.md #592](docs/STRATEGY_DAY.md)
