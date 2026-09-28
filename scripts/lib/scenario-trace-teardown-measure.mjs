@@ -202,7 +202,12 @@ export function readMaxTraceLines(repoRoot) {
   const source = readFileSync(sourcePath, 'utf8');
   const match = source.match(/const\s+MAX_TRACE_LINES\s*=\s*([\d_]+)/);
   if (!match) throw new Error(`MAX_TRACE_LINES not found in ${sourcePath}`);
-  return Number.parseInt(match[1].replaceAll('_', ''), 10);
+  const parsed = Number.parseInt(match[1].replaceAll('_', ''), 10);
+  // Потолок — вещдок, а не подсказка: нечисло здесь тихо превратило бы прибор в генератор NaN.
+  if (!Number.isInteger(parsed) || parsed <= 0) {
+    throw new Error(`MAX_TRACE_LINES в ${sourcePath} не читается как положительное целое: ${match[1]}`);
+  }
+  return parsed;
 }
 
 /**
