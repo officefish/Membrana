@@ -132,7 +132,7 @@ export function evaluateNightReport({
       summary,
     };
   }
-  summary.push(`вершина ствола: ${wantedRevision}`);
+  summary.push(`текущая вершина ствола: ${wantedRevision}`);
   if (!reportRevision) {
     return {
       status: 'stale',
@@ -298,7 +298,7 @@ export function runNightReportGate(repoRoot, opts = {}) {
   });
   for (const s of verdict.summary) log(`  · ${s}`);
   if (verdict.status === 'pass') {
-    log('✓ night-report: ночь зелёная и совпадает с вершиной ствола');
+    log('✓ night-report: ночь зелёная, вершины ствола на момент запусков подтверждены');
     return 0;
   }
   for (const b of verdict.blockers) log(`  ✗ ${b}`);
