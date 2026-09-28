@@ -6,7 +6,7 @@ import { dirname, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 import { parseRagCliFlags } from './rag-ritual.mjs';
-import { renderScopeMarker, renderVerdictMarker } from './review-gate.mjs';
+import { renderLeadConventionMarker, renderScopeMarker, renderVerdictMarker } from './review-gate.mjs';
 import { renderSourceProvenance, resolveReviewDiff } from './review-diff-source.mjs';
 
 export const REGULATION_PATH = 'docs/prompts/CODE_REVIEW_REGULATION.md';
@@ -420,7 +420,7 @@ export function buildCodeReviewUserMessage(p) {
 }
 
 /**
- * @param {{ path: string, body: string, meta: { mode: string, full?: boolean, pr?: string, llmProvider?: string, llmModel?: string, llmSource?: string } }} opts
+ * @param {{ path: string, body: string, meta: { mode: string, full?: boolean, pr?: string, llmProvider?: string, llmModel?: string, llmSource?: string, leadOutOfConvention?: boolean } }} opts
  */
 export function writeReviewMarkdown(opts) {
   const stamp = new Date().toISOString();
@@ -442,6 +442,13 @@ export function writeReviewMarkdown(opts) {
   const scopeLine = opts.meta.diffScope?.truncated
     ? `${renderScopeMarker(opts.meta.diffScope)}\n> ⚠ **СУДИЛ ПО СРЕЗУ:** дифф обрезан до ${opts.meta.diffScope.sentChars} символов — часть файлов ревьюеру не показана. Вердикт не является суждением о непоказанном.\n\n`
     : '';
+  // #2491: второй адрес сигнала «у диффа нет хозяина ревью» — САМ артефакт, машинной меткой
+  // (её читает гейт через `leadConventionFromBody`) и громкой строкой человеку. Форма взята у
+  // соседа выше: срез диффа лечили ровно так же, и по той же причине — измеримый признак,
+  // живущий одной строкой в stderr, теряется полностью.
+  const leadConventionLine = opts.meta.leadOutOfConvention
+    ? `${renderLeadConventionMarker()}\n> ⚠ **ВНЕ КОНВЕНЦИИ:** карта скоупов не покрывает пути этого диффа — ведущий (${opts.meta.lead ?? 'умолчание'}) назначен умолчанием, а не по предмету. Это заявка на правило в \`SCOPE_TO_PERSONA\` (#2491).\n\n`
+    : '';
   let verdictLine = '';
   // Провенанс источника (#1771): чем именно был осмотренный код. До 08.08 вердикт нёс
   // только head — и по артефакту нельзя было проверить, от какой базы считался дифф.
@@ -462,7 +469,7 @@ export function writeReviewMarkdown(opts) {
     }
   }
   mkdirSync(dirname(opts.path), { recursive: true });
-  writeFileSync(opts.path, header + scopeLine + verdictLine + sourceLine + opts.body, 'utf8');
+  writeFileSync(opts.path, header + scopeLine + leadConventionLine + verdictLine + sourceLine + opts.body, 'utf8');
 }
 
 /**
