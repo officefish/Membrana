@@ -187,6 +187,20 @@ test('review-lead: попутный scripts/ в серверном диффе б
   assert.match(r.basis, /5 из 6 путей/u, 'серверные пути ГОЛОСУЮТ: их пять из шести, а не ноль');
 });
 
+test('review-lead: ничья голосов решается индексом ПЕРСОНЫ, а не индексом правила (#2491)', async () => {
+  const { resolveReviewLead, SCOPE_TO_PERSONA } = await import('./lib/review-lead.mjs');
+  // Утверждение из комментария к SCOPE_TO_PERSONA, которое иначе осталось бы непроверенным —
+  // а непроверенное утверждение в комментарии это ровно предмет #2491. Найдено порчей:
+  // подъём общего правила `scripts/|docs/` выше пакетных ничью НЕ переворачивает, потому что
+  // `ranked` сравнивает findIndex ПО ПЕРСОНЕ, и первый индекс `ozhegov` — его старое правило
+  // `packages/services/`, а не новое пакетное.
+  const tie = resolveReviewLead({ diffPaths: ['packages/background-office/src/main.ts', 'scripts/x.mjs'] });
+  assert.match(tie.basis, /1 из 2 путей/u, 'ровно ничья 1:1, а не большинство');
+  const first = (p) => SCOPE_TO_PERSONA.findIndex((s) => s.persona === p);
+  assert.ok(first('ozhegov') < first('vesnin'), 'предпосылка: первый индекс ozhegov меньше первого индекса vesnin');
+  assert.equal(tie.persona, 'ozhegov', 'при ничьей побеждает персона с меньшим ПЕРВЫМ индексом в карте');
+});
+
 test('review-lead: основание умолчания называет роль ТОГО, кого умолчание возвращает (#2491)', async () => {
   const { resolveReviewLead, PERSONAS, DEFAULT_LEAD } = await import('./lib/review-lead.mjs');
   const { PERSONA_ROLE_LABELS } = await import('./lib/persona-memory.mjs');
