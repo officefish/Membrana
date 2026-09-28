@@ -15,6 +15,7 @@ import {
 
 const HEAD = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 const OTHER = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+const CURRENT = 'cccccccccccccccccccccccccccccccccccccccc';
 
 function run(overrides = {}) {
   return {
@@ -70,6 +71,32 @@ test('buildNightSummary: чужая вершина и красный workflow в
   assert.match(summary.problems.join('\n'), /Red: conclusion=failure/u);
 });
 
+test('buildNightSummary: ночь на тогдашней вершине зелёная после движения ствола', () => {
+  const summary = buildNightSummary({
+    expectedRevision: CURRENT,
+    workflows: [{ id: 'night', title: 'Night', workflow: 'night.yml', required: true }],
+    runsByWorkflow: { 'night.yml': run({ headSha: HEAD }) },
+    revisionAtRun: () => HEAD,
+  });
+
+  assert.equal(summary.execution.status, 'pass');
+  assert.equal(summary.workflows[0].status, 'pass');
+  assert.equal(summary.workflows[0].run.trunkRevisionAtStart, HEAD);
+});
+
+test('buildNightSummary: ночь на уже устаревшей вершине остаётся красной', () => {
+  const summary = buildNightSummary({
+    expectedRevision: CURRENT,
+    workflows: [{ id: 'night', title: 'Night', workflow: 'night.yml', required: true }],
+    runsByWorkflow: { 'night.yml': run({ headSha: OTHER }) },
+    revisionAtRun: () => HEAD,
+  });
+
+  assert.equal(summary.execution.status, 'fail');
+  assert.equal(summary.workflows[0].status, 'stale');
+  assert.match(summary.workflows[0].reason, /ожидается aaaaaaaaaaaa/u);
+});
+
 test('buildNightSummary: неизвестная вершина ствола не маскируется missing-прогоном', () => {
   const summary = buildNightSummary({
     expectedRevision: null,
@@ -87,6 +114,7 @@ test('buildNightSummaryFromGithub: gh-сбой становится видимы
   const summary = buildNightSummaryFromGithub({
     cwd: process.cwd(),
     expectedRevision: HEAD,
+    revisionAtRun: () => HEAD,
     exec: (_cmd, args) => {
       if (args.includes('vitest-nightly.yml')) throw new Error('api down');
       return JSON.stringify([
@@ -109,6 +137,7 @@ test('buildNightSummaryFromGithub: ветка GitHub Actions передаётс�
     cwd: process.cwd(),
     expectedRevision: HEAD,
     branch: 'release/night',
+    revisionAtRun: () => HEAD,
     exec: (_cmd, args) => {
       calls.push(args);
       return JSON.stringify([run()]);

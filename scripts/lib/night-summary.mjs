@@ -112,8 +112,23 @@ export function readGitRevision(repoRoot, ref = 'HEAD') {
   }
 }
 
-export function classifyNightWorkflowRun({ workflow, run, expectedRevision }) {
-  const expected = normalizeRevision(expectedRevision);
+export function readGitRevisionAt(repoRoot, createdAt, ref = 'origin/main') {
+  if (typeof createdAt !== 'string' || Number.isNaN(new Date(createdAt).getTime())) return null;
+  try {
+    return execFileSync('git', ['rev-list', '--first-parent', '-1', `--before=${createdAt}`, ref], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim() || null;
+  } catch {
+    return null;
+  }
+}
+
+export function classifyNightWorkflowRun({ workflow, run, expectedRevision, revisionAtRun }) {
+  const expected = normalizeRevision(
+    run && revisionAtRun ? revisionAtRun(run.createdAt ?? null) : expectedRevision,
+  );
   if (!expected) {
     return {
       id: workflow.id,
@@ -148,6 +163,7 @@ export function classifyNightWorkflowRun({ workflow, run, expectedRevision }) {
       createdAt: run.createdAt ?? null,
       updatedAt: run.updatedAt ?? null,
       headSha,
+      trunkRevisionAtStart: expected,
       // Только для scheduled: у workflow_dispatch объявленного срока нет, и
       // «опоздание» там было бы выдумкой.
       schedule:
@@ -188,10 +204,11 @@ export function buildNightSummary({
   expectedRevision,
   workflows = NIGHT_WORKFLOWS,
   runsByWorkflow = {},
+  revisionAtRun = null,
 } = {}) {
   const checks = workflows.map((workflow) => {
     const run = runsByWorkflow[workflow.workflow] ?? runsByWorkflow[workflow.id] ?? null;
-    return classifyNightWorkflowRun({ workflow, run, expectedRevision });
+    return classifyNightWorkflowRun({ workflow, run, expectedRevision, revisionAtRun });
   });
   const blockers = problemsFromChecks(checks);
   return {
@@ -271,6 +288,7 @@ export function buildNightSummaryFromGithub({
   generatedAt,
   exec = execFileSync,
   branch = 'main',
+  revisionAtRun,
 } = {}) {
   const runsByWorkflow = {};
   const ghErrors = new Map();
@@ -285,7 +303,14 @@ export function buildNightSummaryFromGithub({
       );
     }
   }
-  const summary = buildNightSummary({ generatedAt, expectedRevision, runsByWorkflow });
+  const resolveRevisionAtRun =
+    revisionAtRun ?? ((createdAt) => readGitRevisionAt(cwd, createdAt, `origin/${branch}`));
+  const summary = buildNightSummary({
+    generatedAt,
+    expectedRevision,
+    runsByWorkflow,
+    revisionAtRun: resolveRevisionAtRun,
+  });
   if (ghErrors.size > 0) {
     summary.execution = { status: 'fail', exitCode: 1 };
     for (const [title, reason] of ghErrors) {

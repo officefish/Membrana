@@ -113,6 +113,7 @@ export function pullNightReport(cwd, deps = {}) {
       expectedRevision,
       branch: deps.branch ?? NIGHTLY_BRANCH,
       exec,
+      revisionAtRun: deps.revisionAtRun,
     });
     writeNightSummary(cwd, summary);
     console.error(

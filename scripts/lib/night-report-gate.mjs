@@ -9,7 +9,8 @@
  * ночи: что запускалось, что прошло, что упало и почему. Утро читает именно
  * сводку, а не один tests-report; иначе новый ночной механизм снова может
  * умереть невидимым.
- * Свежесть — по git revision ствола, НЕ по mtime и не по календарной дате.
+ * Свежесть — по git revision ствола в момент запуска, НЕ по mtime, календарной
+ * дате или текущей вершине после утренних merge.
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -142,7 +143,7 @@ export function evaluateNightReport({
     };
   }
   summary.push(`ревизия отчёта: ${reportRevision}`);
-  if (!sameRevision(reportRevision, wantedRevision)) {
+  if (report.kind !== 'night-summary' && !sameRevision(reportRevision, wantedRevision)) {
     return {
       status: 'stale',
       blockers: [
@@ -209,14 +210,29 @@ function evaluateNightSummary(report) {
       summary: lines,
     };
   }
-  const blockers = checks
+  const checked = checks.map((check) => {
+    if (check.required === false || check.status !== 'pass') return check;
+    const headSha = normalizeRevision(check.run?.headSha);
+    const trunkRevisionAtStart = normalizeRevision(check.run?.trunkRevisionAtStart);
+    if (!headSha || !trunkRevisionAtStart || !sameRevision(headSha, trunkRevisionAtStart)) {
+      return {
+        ...check,
+        status: 'stale',
+        reason: !trunkRevisionAtStart
+          ? 'вершина ствола на момент запуска не подтверждена'
+          : `запуск на ${shortRev(headSha)}, в момент запуска ствол был на ${shortRev(trunkRevisionAtStart)}`,
+      };
+    }
+    return check;
+  });
+  const blockers = checked
     .filter((check) => check.required !== false && check.status !== 'pass')
     .map((check) => {
       const title = check.title ?? check.id ?? check.workflow ?? 'unknown';
       return `ночной механизм не прошёл: ${title} — ${check.status ?? 'unknown'}${check.reason ? ` (${check.reason})` : ''}`;
     });
   if (blockers.length === 0) return { status: 'pass', blockers: [], summary: lines };
-  const first = checks.find((check) => check.required !== false && check.status !== 'pass');
+  const first = checked.find((check) => check.required !== false && check.status !== 'pass');
   const status = ['missing', 'stale', 'pending', 'red', 'invalid'].includes(first?.status)
     ? first.status
     : 'red';

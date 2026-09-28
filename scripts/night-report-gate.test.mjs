@@ -20,6 +20,7 @@ const CARRIER = { path: NIGHT_SUMMARY_REPORT_REL, blocksMorningWhen: SUPPORTED_B
 const TODAY = '2026-08-11';
 const HEAD_A = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 const HEAD_B = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+const HEAD_C = 'cccccccccccccccccccccccccccccccccccccccc';
 
 function reportFixture(overrides = {}) {
   return {
@@ -35,7 +36,13 @@ function reportFixture(overrides = {}) {
         required: true,
         status: 'pass',
         reason: 'success',
-        run: { databaseId: 42, headSha: HEAD_A, status: 'completed', conclusion: 'success' },
+        run: {
+          databaseId: 42,
+          headSha: HEAD_A,
+          trunkRevisionAtStart: HEAD_A,
+          status: 'completed',
+          conclusion: 'success',
+        },
       },
     ],
     execution: { status: 'pass', exitCode: 0 },
@@ -49,14 +56,16 @@ test('evaluateNightReport: три различимых блокера — missin
   assert.equal(missing.status, 'missing');
   assert.match(missing.blockers[0], /ночь не отработала/u);
 
+  const staleReport = reportFixture();
+  staleReport.workflows[0].run.headSha = HEAD_B;
   const stale = evaluateNightReport({
     carrier: CARRIER,
-    report: reportFixture({ git: { revision: HEAD_B } }),
+    report: staleReport,
     today: TODAY,
     expectedRevision: HEAD_A,
   });
   assert.equal(stale.status, 'stale');
-  assert.match(stale.blockers[0], /не на текущем стволе/u);
+  assert.match(stale.blockers[0], /в момент запуска ствол был на/u);
   assert.notEqual(stale.blockers[0], missing.blockers[0]);
 
   const red = evaluateNightReport({
@@ -134,7 +143,7 @@ test('evaluateNightReport: pending workflow остаётся pending в агре
   assert.match(verdict.blockers[0], /in_progress/u);
 });
 
-test('evaluateNightReport: свежесть не завязана на календарь, но чужая вершина красная', () => {
+test('evaluateNightReport: свежесть не завязана на календарь, но устаревшая при старте вершина красная', () => {
   const delayed = evaluateNightReport({
     carrier: CARRIER,
     report: reportFixture({ generatedAt: '2026-08-10T13:55:00.000Z' }),
@@ -143,14 +152,78 @@ test('evaluateNightReport: свежесть не завязана на кале�
   });
   assert.equal(delayed.status, 'pass');
 
+  const staleReport = reportFixture();
+  staleReport.workflows[0].run.headSha = HEAD_B;
   const wrongHead = evaluateNightReport({
     carrier: CARRIER,
-    report: reportFixture({ git: { revision: HEAD_B } }),
+    report: staleReport,
     today: TODAY,
     expectedRevision: HEAD_A,
   });
   assert.equal(wrongHead.status, 'stale');
-  assert.match(wrongHead.blockers[0], /отчёт bbbbbbbbbbbb, ожидается aaaaaaaaaaaa/u);
+  assert.match(wrongHead.blockers[0], /запуск на bbbbbbbbbbbb/u);
+});
+
+test('evaluateNightReport: сегодняшний случай — ночь на b44d05f3, текущий ствол 77a9063b — зелёный', () => {
+  const nightHead = 'b44d05f375890000000000000000000000000000';
+  const currentHead = '77a9063ba7ea0000000000000000000000000000';
+  const report = reportFixture({
+    git: { revision: currentHead },
+    workflows: [
+      {
+        id: 'tests-nightly-full',
+        title: 'Tests nightly full',
+        workflow: 'tests-nightly-full.yml',
+        required: true,
+        status: 'pass',
+        reason: 'success',
+        run: {
+          databaseId: 2501,
+          headSha: nightHead,
+          trunkRevisionAtStart: nightHead,
+          status: 'completed',
+          conclusion: 'success',
+          schedule: { cron: '0 20 * * *', latenessMs: (2 * 60 + 56) * 60_000 },
+        },
+      },
+    ],
+  });
+
+  const verdict = evaluateNightReport({
+    carrier: CARRIER,
+    report,
+    today: '2026-09-28',
+    expectedRevision: currentHead,
+  });
+  assert.equal(verdict.status, 'pass');
+  assert.ok(verdict.summary.some((line) => line.includes('пришло +2 ч 56 мин')));
+});
+
+test('evaluateNightReport: статус pass не скрывает запуск на уже устаревшей вершине', () => {
+  const report = reportFixture({
+    git: { revision: HEAD_C },
+    workflows: [
+      {
+        id: 'tests-nightly-full',
+        title: 'Tests nightly full',
+        workflow: 'tests-nightly-full.yml',
+        required: true,
+        status: 'pass',
+        reason: 'success',
+        run: {
+          databaseId: 43,
+          headSha: HEAD_B,
+          trunkRevisionAtStart: HEAD_A,
+          status: 'completed',
+          conclusion: 'success',
+        },
+      },
+    ],
+  });
+
+  const verdict = evaluateNightReport({ carrier: CARRIER, report, expectedRevision: HEAD_C });
+  assert.equal(verdict.status, 'stale');
+  assert.match(verdict.blockers[0], /в момент запуска ствол был на aaaaaaaaaaaa/u);
 });
 
 test('evaluateNightReport: неподдержанное выражение кадра — fail closed', () => {
@@ -241,6 +314,7 @@ test('parseNightReportArgs + pullNightReport с подставным gh', () => 
   const root = tempRoot();
   const okPull = pullNightReport(root, {
     expectedRevision: HEAD_A,
+    revisionAtRun: () => HEAD_A,
     exec: (cmd, args) => {
       calls.push([cmd, args[0], args[1]]);
       if (args[0] === 'run' && args[1] === 'list') {
@@ -264,6 +338,7 @@ test('parseNightReportArgs + pullNightReport с подставным gh', () => 
 
   const redSummaryPull = pullNightReport(root, {
     expectedRevision: HEAD_A,
+    revisionAtRun: () => HEAD_A,
     exec: (_cmd, args) => {
       if (args[0] === 'run' && args[1] === 'list') {
         return JSON.stringify([
@@ -302,6 +377,7 @@ test('pullNightReport: перед gh download удаляет существую�
 
   const okPull = pullNightReport(root, {
     expectedRevision: HEAD_A,
+    revisionAtRun: () => HEAD_A,
     exec: (_cmd, args) => {
       if (args[0] === 'run' && args[1] === 'list') {
         return JSON.stringify([
