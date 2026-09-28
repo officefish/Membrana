@@ -132,7 +132,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   /** Именованные состояния сохранения подписи — по каждой пробе (#2110). */
   const [labelStates, setLabelStates] = useState<Record<string, { state: 'idle' | 'saving' | 'saved' | 'error'; detail?: string }>>({});
   const [labelFilter, setLabelFilter] = useState<'all' | SampleLabel>('all');
-  /** Текущая страница списка проб (#2501). Приводится к живому диапазону в `resolveSamplePage`. */
+  /** Текущая страница списка проб (#2505). Приводится к живому диапазону в `resolveSamplesPageWindow`. */
   const [samplesPage, setSamplesPage] = useState(1);
   const { busy: clearingBuffer, run: runRemoteMutation } = useRemoteMutation();
 
@@ -143,7 +143,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
    * пусто, а счётчик уверяет, что где-то есть 27-я страница.
    *
    * Одного сброса мало: набор умеет ужиматься БЕЗ участия человека (удалили пробы, очистили
-   * буфер) — там сбрасывать некому, и номер приводит к диапазону сам `resolveSamplePage`.
+   * буфер) — там сбрасывать некому, и номер приводит к диапазону сам `resolveSamplesPageWindow`.
    */
   const selectCollection = useCallback((collectionId: string) => {
     setSelectedId(collectionId);
@@ -206,7 +206,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   const filteredSamples =
     labelFilter === 'all' ? samples : samples.filter((s) => s.label === labelFilter);
   /**
-   * ЛИСТАЕТСЯ ОТРИСОВКА, А НЕ ЗАГРУЗКА (#2501). Дом по-прежнему держит набор целиком — поэтому
+   * ЛИСТАЕТСЯ ОТРИСОВКА, А НЕ ЗАГРУЗКА (#2505). Дом по-прежнему держит набор целиком — поэтому
    * фильтр по метке, экспорт/импорт разметки, счётчик размеченных и поиск пробы по id для панелей
    * работают по ВСЕМУ набору, как и раньше. На экран уходит окно страницы: 1057 строк разом не
    * рисуются больше никогда.
@@ -616,7 +616,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
 
   /**
    * Кнопка «играть» у строки: выбрать, если играется другая, и переключить. Порядок тот же, что
-   * был в разметке модуля до выноса таблицы (#2501) — прослушивание НЕ зависит от страницы: проба
+   * был в разметке модуля до выноса таблицы (#2505) — прослушивание НЕ зависит от страницы: проба
    * играется по id, и уход на другую страницу его не останавливает.
    */
   const handleTogglePlay = useCallback(
@@ -870,7 +870,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
               <span className="text-xs text-base-content/60 tabular-nums" aria-live="polite">
                 {/* M — полное число набора: доля от страницы показывала «40 из 40»
                     при 1747 в наборе (#2237). Когда загружено не всё, так и сказано.
-                    Слово «страница» здесь больше не годится: с #2501 страница есть у ЭКРАНА, а
+                    Слово «страница» здесь больше не годится: с #2505 страница есть у ЭКРАНА, а
                     эта оговорка — про ЗАГРУЖЕННОЕ. Оставь прежнюю формулировку, и она стала бы
                     ложью: «на этой странице 1057» при сорока строках перед глазами. */}
                 размечено {labeledCount} из {selected?.sampleCount ?? samples.length}

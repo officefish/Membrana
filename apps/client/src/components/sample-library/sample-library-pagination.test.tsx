@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 /**
- * Зубы органов листания библиотеки Studio (#2501). Предмет — `SampleLibraryPagination.tsx`.
+ * Зубы органов листания библиотеки Studio (#2505). Предмет — `SampleLibraryPagination.tsx`.
  *
  * Порчи → красный (проверены руками):
  *  • скрыть нав при `totalPages < 1` вместо `<= 1` — красный на «одна страница — органов нет»

@@ -1,5 +1,5 @@
 /**
- * Зубы ЛИСТАНИЯ у близнецов (#2501). Предмет — дома библиотеки: Studio и кабинет.
+ * Зубы ЛИСТАНИЯ у близнецов (#2505). Предмет — дома библиотеки: Studio и кабинет.
  *
  * Носителей правила два (React-разметка у каждого приложения своя, общего пакета под органы
  * листания сегодня нет — см. #2497), поэтому проверяется не «есть ли класс», а то, что оба дома
@@ -8,6 +8,7 @@
  * Порчи → красный (проверены руками):
  *  • отдать таблице Studio весь отфильтрованный список (`rows={filteredSamples}`) — красный;
  *  • объявить размер страницы числом в доме (`= 40`) — красный;
+ *  • развести объявления сорока (дверь → 50, слой доступа → 40) — красный на «одно и то же число»;
  *  • сбросить страницу эффектом после отрисовки вместо сброса в том же движении — красный;
  *  • убрать приведение номера у кабинета (`clampSamplesPage`) — красный;
  *  • вернуть оговорку «на этой странице N» к числу ЗАГРУЖЕННОГО — красный.
@@ -32,6 +33,16 @@ const CABINET_HOOK = 'apps/cabinet/src/lib/useCabinetSampleLibrary.ts';
 const CABINET_NAV = 'apps/cabinet/src/components/sample-library/CabinetSampleTablePagination.tsx';
 const PAGE_RULE = 'packages/services/media-library/src/samples-page.ts';
 const PAGE_SIZE_HOME = 'packages/services/media-library/src/constants.ts';
+/**
+ * Ещё два объявления ТОГО ЖЕ числа — оба старше листания и оба законны.
+ *
+ * Дверь не может импортировать клиентский слой доступа (серверный контур от него не зависит), а
+ * оболочке Electron запрещено тащить сервис в main — так и написано в шапке её `constants.ts`.
+ * Свести их одним носителем нельзя, поэтому сводит зуб: разъедутся — «страница 3 из 27» у двери и
+ * у дома перестанут означать одно и то же, и увидит это не зуб, а человек на 1057 пробах.
+ */
+const DOOR_PAGE_SIZE = 'packages/background-media/src/lib/pagination.ts';
+const SHELL_PAGE_SIZE = 'apps/membrana-studio/src/media-library/constants.ts';
 
 /** «Размер страницы объявлен числом в доме» — то, чего быть не должно ни у одного близнеца. */
 const PAGE_SIZE_DECLARED_IN_HOUSE =
@@ -41,7 +52,7 @@ const PAGE_SIZE_DECLARED_IN_HOUSE =
 const WHOLE_LIST_INTO_TABLE = /rows=\{(filteredSamples|samples)\}/u;
 
 describe('листание: одно правило, два дома', () => {
-  it('размер страницы живёт в ОДНОМ месте и его зовут, а не объявляют заново', () => {
+  it('дома НЕ объявляют размер страницы заново — зовут его из слоя доступа', () => {
     expect(read(PAGE_SIZE_HOME)).toContain('export const DEFAULT_SAMPLES_PAGE_SIZE = 40');
 
     for (const house of [STUDIO, CABINET_HOOK]) {
@@ -49,6 +60,23 @@ describe('листание: одно правило, два дома', () => {
       expect(src).toContain('DEFAULT_SAMPLES_PAGE_SIZE');
       expect(src).not.toMatch(PAGE_SIZE_DECLARED_IN_HOUSE);
     }
+  });
+
+  /**
+   * СЧЁТ КОПИЙ, А НЕ «ЕСТЬ ГДЕ-ТО ОДНО». Прежняя редакция пробы выше называлась «размер страницы
+   * живёт в ОДНОМ месте» и смотрела только на два дома — а сорок в дереве объявлено ТРИ раза.
+   * Название было шире предмета: под ним можно было развести дверь и слой доступа, и зуб бы
+   * промолчал. Предмет переписан на то, что проверяемо: копии есть, и они СОГЛАСНЫ.
+   */
+  it('все объявления размера страницы называют одно и то же число', () => {
+    const DECLARED = /DEFAULT_SAMPLES_PAGE_SIZE\s*=\s*(\d+)/u;
+    const declared = [PAGE_SIZE_HOME, DOOR_PAGE_SIZE, SHELL_PAGE_SIZE].map((file) => {
+      const found = DECLARED.exec(read(file));
+      expect(found, `в ${file} не нашлось объявления размера страницы`).not.toBeNull();
+      return `${file} → ${found?.[1]}`;
+    });
+    // Три объявления, одно число. В сообщении — сами объявления: разъехавшееся видно без догадок.
+    expect([...new Set(declared.map((d) => d.split(' → ')[1]))], declared.join('; ')).toHaveLength(1);
   });
 
   it('Studio отдаёт таблице ОКНО страницы, а не весь отфильтрованный список', () => {

@@ -25,7 +25,7 @@ const STUDIO_DIALOG = resolve(REPO, 'apps/client/src/components/MoveAllToCollect
 const CABINET_DIALOG = resolve(REPO, 'apps/cabinet/src/components/sample-library/MoveAllToCollectionDialog.tsx');
 const STUDIO_MODULE = resolve(REPO, 'apps/client/src/modules/SampleLibraryModule.tsx');
 /**
- * Строки таблицы Studio с #2501 живут своим носителем: листание потребовало ИЗМЕРИМОЙ таблицы
+ * Строки таблицы Studio с #2505 живут своим носителем: листание потребовало ИЗМЕРИМОЙ таблицы
  * (`SampleLibraryTable.tsx`). Предмет зуба поехал за кодом — правило (`canMoveFrom`) осталось в
  * модуле, а ОРГАН построчного переноса рисует таблица.
  */
@@ -199,7 +199,7 @@ describe('дома заведены на окно, а не на тихий пе�
      */
     const studio = read(STUDIO_MODULE);
     expect(studio).toContain('const canMoveFrom = Boolean(selected) && !readOnlyCollection;');
-    // Построчный орган («Переместить» у строки пробы) живёт на непривязанном предикате. С #2501
+    // Построчный орган («Переместить» у строки пробы) живёт на непривязанном предикате. С #2505
     // орган рисует таблица, а предикат ей передаёт модуль — сторожим и шов, и орган.
     expect(studio).toContain('canMoveFrom={canMoveFrom}');
     expect(read(STUDIO_TABLE)).toContain('{canMoveFrom && moveTargets.length > 0 ? (');

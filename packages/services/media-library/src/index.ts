@@ -15,7 +15,8 @@ export {
   type MediaLibraryConfig,
 } from './constants.js';
 
-/** Правило страницы стоит рядом с размером страницы — одно место на дверь, кабинет и Studio (#2501). */
+/** Правило страницы стоит рядом с размером страницы — одно место на кабинет и Studio (#2505).
+ *  Дверь и оболочка Electron держат свои объявления того же числа — см. шапку `samples-page.ts`. */
 export {
   clampSamplesPage,
   resolveSamplesPageWindow,
