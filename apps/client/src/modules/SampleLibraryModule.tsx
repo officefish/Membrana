@@ -624,7 +624,14 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       if (playback.selectedSampleId !== sample.id) {
         await handleSelectSample(sample);
       }
-      await togglePlayPause();
+      try {
+        await togglePlayPause();
+      } catch (e) {
+        // Отказ переключения НЕ глотается (ревью #2505, P2). Прежняя разметка звала
+        // `togglePlayPause` из `void (async () => …)()`, и отказ уходил в никуда: кнопка
+        // «играть» молчала, а человек не знал, что проба не загрузилась.
+        setError(e instanceof Error ? e.message : String(e));
+      }
     },
     [handleSelectSample, playback.selectedSampleId],
   );
