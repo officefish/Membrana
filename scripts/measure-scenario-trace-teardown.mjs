@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -7,6 +6,7 @@ import {
   DEFAULT_REPEATS,
   DEFAULT_TRACE_SIZES,
   DEFAULT_WARMUP,
+  readMaxTraceLines,
   runScenarioTraceTeardownBenchmark,
 } from './lib/scenario-trace-teardown-measure.mjs';
 
@@ -55,13 +55,6 @@ function parseArgs(argv) {
   return options;
 }
 
-function readMaxTraceLines() {
-  const sourcePath = join(REPO_ROOT, 'apps/client/src/modules/device-board/scenarioTraceBuffer.ts');
-  const source = readFileSync(sourcePath, 'utf8');
-  const match = source.match(/const\s+MAX_TRACE_LINES\s*=\s*([\d_]+)/);
-  if (!match) throw new Error(`MAX_TRACE_LINES not found in ${sourcePath}`);
-  return Number.parseInt(match[1].replaceAll('_', ''), 10);
-}
 
 function ms(value) {
   return value.toFixed(3);
@@ -85,7 +78,7 @@ function main() {
   let options;
   try {
     options = parseArgs(process.argv.slice(2));
-    const maxLines = readMaxTraceLines();
+    const maxLines = readMaxTraceLines(REPO_ROOT);
     const results = runScenarioTraceTeardownBenchmark({ ...options, maxLines });
     console.log(`# scenario trace teardown measurement`);
     console.log(`maxLines=${maxLines}; repeats=${options.repeats}; warmup=${options.warmup}; subscribers=${options.subscribers}`);

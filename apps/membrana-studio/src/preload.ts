@@ -1,6 +1,11 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 import type { NewSampleMeta, UpdateSampleLabelNotes } from './media-library/types';
+import {
+  formatTraceFlushTiming,
+  isTraceFlushTimingEnabled,
+  traceFlushTimingLevel,
+} from './logging/trace-flush-timing';
 
 const ML = 'membrana:media-library';
 const JL = 'membrana:journal';
@@ -77,12 +82,35 @@ const studioShell = {
   getAppVersion: () => invoke<string>('membrana:studio-shell:getAppVersion'),
 };
 
+// Диагностический замер простоя отрисовщика на сбросе трейса (#2476). По умолчанию ВЫКЛЮЧЕН;
+// включается MEMBRANA_TRACE_FLUSH_TIMING=1 в окружении Студии. Флаг читается один раз.
+const traceFlushTimingEnabled = isTraceFlushTimingEnabled(process.env);
+
 const shellLog = {
   write: (level: 'debug' | 'info' | 'warn' | 'error', process: string, message: string) =>
     invoke<void>(`${LG}:write`, level, process, message),
   getLogsDir: () => invoke<string>(`${LG}:getLogsDir`),
   flushScenarioTrace: (text: string, runId: string | null) => {
+    // Канал синхронный (`sendSync`) НЕ ради результата — главный процесс отвечает пустотой.
+    // Единственное, что он даёт, — гарантия записи до выгрузки окна (`beforeunload`).
+    // Цена — простой отрисовщика до того, как до сообщения дойдёт очередь событий главного
+    // процесса. Замер этой цены — #2476/#2485, см. ./logging/trace-flush-timing.
+    if (!traceFlushTimingEnabled) {
+      ipcRenderer.sendSync(`${LG}:flushScenarioTrace`, text, runId);
+      return;
+    }
+    const startedAt = performance.now();
     ipcRenderer.sendSync(`${LG}:flushScenarioTrace`, text, runId);
+    const blockedMs = performance.now() - startedAt;
+    // Отчёт уходит АСИНХРОННО и уже после вызова: сам замер к простою ничего не добавляет.
+    ipcRenderer
+      .invoke(
+        `${LG}:write`,
+        traceFlushTimingLevel(blockedMs),
+        'preload',
+        formatTraceFlushTiming({ blockedMs, chars: text.length, runId }),
+      )
+      .catch(() => undefined);
   },
 };
 

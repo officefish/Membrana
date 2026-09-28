@@ -103,6 +103,14 @@ jobs:
         if: always()
         run: yarn workspace @membrana/client test:node
 
+      # Зуб предмета прибора #2485: scripts/lib/scenario-trace-teardown-measure.mjs воспроизводит
+      # логику apps/client/.../scenarioTraceBuffer.ts КОПИЕЙ. Копия молча разойдётся с оригиналом,
+      # и прибор начнёт мерить прошлое. Тест импортирует подлинный модуль (стирание типов, Node 22)
+      # и сверяет формовку строки, потолок кольца, вытеснение, склейку и поверхность экспортов.
+      - name: Scenario trace probe — совпадение копии прибора с продуктовым модулем (#2485)
+        if: always()
+        run: node --experimental-strip-types --test scripts/scenario-trace-teardown-measure.test.mjs
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4

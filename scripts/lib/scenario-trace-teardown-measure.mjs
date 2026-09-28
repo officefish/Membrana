@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { performance } from 'node:perf_hooks';
 
 export const DEFAULT_TRACE_SIZES = [100, 1_000, 10_000];
@@ -184,3 +186,42 @@ export function runScenarioTraceTeardownBenchmark({
   });
 }
 
+
+/**
+ * Единственный настоящий источник потолка — продуктовый модуль. Прибор ОБЯЗАН читать его,
+ * а не носить свою константу: разошедшийся потолок заставил бы прибор мерить прошлое.
+ */
+export const SCENARIO_TRACE_BUFFER_SOURCE = 'apps/client/src/modules/device-board/scenarioTraceBuffer.ts';
+
+export function scenarioTraceBufferSourcePath(repoRoot) {
+  return join(repoRoot, SCENARIO_TRACE_BUFFER_SOURCE);
+}
+
+export function readMaxTraceLines(repoRoot) {
+  const sourcePath = scenarioTraceBufferSourcePath(repoRoot);
+  const source = readFileSync(sourcePath, 'utf8');
+  const match = source.match(/const\s+MAX_TRACE_LINES\s*=\s*([\d_]+)/);
+  if (!match) throw new Error(`MAX_TRACE_LINES not found in ${sourcePath}`);
+  return Number.parseInt(match[1].replaceAll('_', ''), 10);
+}
+
+/**
+ * Поверхность продуктового модуля, которую прибор воспроизводит своей копией.
+ * Расхождение ловится зубом: новый экспорт, не попавший ни в один список, красит прогон,
+ * потому что копия про него молчит.
+ */
+export const PROBE_MODELLED_EXPORTS = Object.freeze([
+  'appendScenarioTraceLine',
+  'clearScenarioTraceBuffer',
+  'formatScenarioTraceLine',
+  'getScenarioTraceLines',
+  'getScenarioTraceText',
+  'subscribeScenarioTraceBuffer',
+]);
+
+/** Экспорты, сознательно НЕ воспроизводимые прибором, с причиной. */
+export const PROBE_UNMODELLED_EXPORTS = Object.freeze({
+  getScenarioTraceLineCount: 'дешёвое чтение length, вне измеряемой разборки',
+  copyScenarioTraceToClipboard: 'требует navigator.clipboard, недоступен в node',
+  downloadScenarioTraceFile: 'требует Blob/DOM, недоступен в node',
+});

@@ -1,0 +1,7 @@
+{
+  "name": "membrana-scenario-trace-ipc-probe",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Electron-приложение-прибор: мерит простой отрисовщика на sendSync сброса scenario trace (#2476/#2485).",
+  "main": "main.js"
+}
