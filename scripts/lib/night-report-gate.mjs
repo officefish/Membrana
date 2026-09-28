@@ -9,7 +9,8 @@
  * ночи: что запускалось, что прошло, что упало и почему. Утро читает именно
  * сводку, а не один tests-report; иначе новый ночной механизм снова может
  * умереть невидимым.
- * Свежесть — по git revision ствола, НЕ по mtime и не по календарной дате.
+ * Свежесть — по ancestry git revision и возрасту запуска, НЕ по mtime и не по
+ * календарной дате чтения. Утренний merge после ночи не делает ночь несвежей.
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -282,7 +283,7 @@ export function runNightReportGate(repoRoot, opts = {}) {
   });
   for (const s of verdict.summary) log(`  · ${s}`);
   if (verdict.status === 'pass') {
-    log('✓ night-report: ночь зелёная и совпадает с вершиной ствола');
+    log('✓ night-report: ночь зелёная, её ревизия и возраст подтверждены');
     return 0;
   }
   for (const b of verdict.blockers) log(`  ✗ ${b}`);

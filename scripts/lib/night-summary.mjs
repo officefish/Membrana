@@ -4,6 +4,8 @@ import { dirname, join } from 'node:path';
 
 export const NIGHT_SUMMARY_REPORT_REL = 'tests/reports/nightly-summary/latest.json';
 export const NIGHT_SUMMARY_MARKDOWN_REL = 'tests/reports/nightly-summary/latest.md';
+// Суточный ритм + 12 часов запаса на измеренное опоздание GitHub Actions.
+export const NIGHT_RUN_MAX_AGE_MS = 36 * 60 * 60 * 1000;
 
 export const NIGHT_WORKFLOWS = Object.freeze([
   {
@@ -112,7 +114,30 @@ export function readGitRevision(repoRoot, ref = 'HEAD') {
   }
 }
 
-export function classifyNightWorkflowRun({ workflow, run, expectedRevision }) {
+/**
+ * @returns {boolean | null} true/false when Git answered, null when ancestry is unknown
+ */
+export function isGitAncestor(repoRoot, ancestor, descendant, exec = execFileSync) {
+  try {
+    exec('git', ['merge-base', '--is-ancestor', ancestor, descendant], {
+      cwd: repoRoot,
+      stdio: ['ignore', 'ignore', 'ignore'],
+    });
+    return true;
+  } catch (error) {
+    if (error && typeof error === 'object' && error.status === 1) return false;
+    return null;
+  }
+}
+
+export function classifyNightWorkflowRun({
+  workflow,
+  run,
+  expectedRevision,
+  generatedAt,
+  isAncestor = null,
+  maxRunAgeMs = NIGHT_RUN_MAX_AGE_MS,
+}) {
   const expected = normalizeRevision(expectedRevision);
   if (!expected) {
     return {
@@ -159,11 +184,41 @@ export function classifyNightWorkflowRun({ workflow, run, expectedRevision }) {
   if (!headSha) {
     return { ...base, status: 'stale', reason: 'у запуска нет headSha' };
   }
-  if (!sameRevision(headSha, expected)) {
+  const ancestry = sameRevision(headSha, expected)
+    ? true
+    : typeof isAncestor === 'function'
+      ? isAncestor(headSha, expected)
+      : false;
+  if (ancestry === null) {
+    return {
+      ...base,
+      status: 'invalid',
+      reason: `родство ${shortRev(headSha)} с текущей вершиной ${shortRev(expected)} не подтверждено`,
+    };
+  }
+  if (!ancestry) {
     return {
       ...base,
       status: 'stale',
-      reason: `запуск на ${shortRev(headSha)}, ожидается ${shortRev(expected)}`,
+      reason: `запуск на ${shortRev(headSha)} не является предком текущей вершины ${shortRev(expected)}`,
+    };
+  }
+  const generatedMs = Date.parse(generatedAt ?? '');
+  const createdMs = Date.parse(run.createdAt ?? '');
+  if (!Number.isFinite(generatedMs) || !Number.isFinite(createdMs)) {
+    return { ...base, status: 'stale', reason: 'у запуска нет читаемого createdAt' };
+  }
+  const ageMs = generatedMs - createdMs;
+  if (ageMs < 0) {
+    return { ...base, status: 'stale', reason: 'createdAt запуска позже времени сборки сводки' };
+  }
+  if (ageMs > maxRunAgeMs) {
+    const ageHours = Math.floor(ageMs / 3_600_000);
+    const limitHours = Math.floor(maxRunAgeMs / 3_600_000);
+    return {
+      ...base,
+      status: 'stale',
+      reason: `запуск старше ${limitHours} ч: возраст ${ageHours} ч`,
     };
   }
   if (run.status !== 'completed') {
@@ -188,10 +243,19 @@ export function buildNightSummary({
   expectedRevision,
   workflows = NIGHT_WORKFLOWS,
   runsByWorkflow = {},
+  isAncestor = null,
+  maxRunAgeMs = NIGHT_RUN_MAX_AGE_MS,
 } = {}) {
   const checks = workflows.map((workflow) => {
     const run = runsByWorkflow[workflow.workflow] ?? runsByWorkflow[workflow.id] ?? null;
-    return classifyNightWorkflowRun({ workflow, run, expectedRevision });
+    return classifyNightWorkflowRun({
+      workflow,
+      run,
+      expectedRevision,
+      generatedAt,
+      isAncestor,
+      maxRunAgeMs,
+    });
   });
   const blockers = problemsFromChecks(checks);
   return {
@@ -270,6 +334,7 @@ export function buildNightSummaryFromGithub({
   expectedRevision,
   generatedAt,
   exec = execFileSync,
+  gitExec = execFileSync,
   branch = 'main',
 } = {}) {
   const runsByWorkflow = {};
@@ -285,7 +350,13 @@ export function buildNightSummaryFromGithub({
       );
     }
   }
-  const summary = buildNightSummary({ generatedAt, expectedRevision, runsByWorkflow });
+  const summary = buildNightSummary({
+    generatedAt,
+    expectedRevision,
+    runsByWorkflow,
+    isAncestor: (ancestor, descendant) =>
+      isGitAncestor(cwd, ancestor, descendant, gitExec),
+  });
   if (ghErrors.size > 0) {
     summary.execution = { status: 'fail', exitCode: 1 };
     for (const [title, reason] of ghErrors) {
