@@ -24,6 +24,12 @@ const REPO = resolve(HERE, '..', '..', '..', '..');
 const STUDIO_DIALOG = resolve(REPO, 'apps/client/src/components/MoveAllToCollectionDialog.tsx');
 const CABINET_DIALOG = resolve(REPO, 'apps/cabinet/src/components/sample-library/MoveAllToCollectionDialog.tsx');
 const STUDIO_MODULE = resolve(REPO, 'apps/client/src/modules/SampleLibraryModule.tsx');
+/**
+ * Строки таблицы Studio с #2501 живут своим носителем: листание потребовало ИЗМЕРИМОЙ таблицы
+ * (`SampleLibraryTable.tsx`). Предмет зуба поехал за кодом — правило (`canMoveFrom`) осталось в
+ * модуле, а ОРГАН построчного переноса рисует таблица.
+ */
+const STUDIO_TABLE = resolve(REPO, 'apps/client/src/components/sample-library/SampleLibraryTable.tsx');
 const CABINET_PAGE = resolve(REPO, 'apps/cabinet/src/pages/SampleLibraryPage.tsx');
 const CABINET_SIDEBAR = resolve(REPO, 'apps/cabinet/src/components/sample-library/SampleLibrarySidebar.tsx');
 const CABINET_MODEL = resolve(REPO, 'apps/cabinet/src/lib/useCabinetSampleLibrary.ts');
@@ -193,8 +199,10 @@ describe('дома заведены на окно, а не на тихий пе�
      */
     const studio = read(STUDIO_MODULE);
     expect(studio).toContain('const canMoveFrom = Boolean(selected) && !readOnlyCollection;');
-    // Построчный орган («Переместить» у строки пробы) живёт на непривязанном предикате.
-    expect(studio).toContain('{canMoveFrom && moveTargets.length > 0 ? (');
+    // Построчный орган («Переместить» у строки пробы) живёт на непривязанном предикате. С #2501
+    // орган рисует таблица, а предикат ей передаёт модуль — сторожим и шов, и орган.
+    expect(studio).toContain('canMoveFrom={canMoveFrom}');
+    expect(read(STUDIO_TABLE)).toContain('{canMoveFrom && moveTargets.length > 0 ? (');
     const model = read(CABINET_MODEL);
     expect(model).toContain('const canMutate = isNodeView && active && !readOnlyCollection && !busy;');
     expect(model, 'построчный перенос привязали к буферу').not.toMatch(

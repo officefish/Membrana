@@ -15,6 +15,13 @@ export {
   type MediaLibraryConfig,
 } from './constants.js';
 
+/** Правило страницы стоит рядом с размером страницы — одно место на дверь, кабинет и Studio (#2501). */
+export {
+  clampSamplesPage,
+  resolveSamplesPageWindow,
+  type SamplesPageWindow,
+} from './samples-page.js';
+
 export type {
   DeleteByIdsOutcome,
   BufferCleanupPlanOutcome,
