@@ -52,6 +52,7 @@ test('buildNightSummary: все ночные workflow на вершине ств
 
 test('buildNightSummary: чужая вершина и красный workflow видны в одном файле', () => {
   const summary = buildNightSummary({
+    generatedAt: '2026-08-30T07:00:00.000Z',
     expectedRevision: HEAD,
     workflows: [
       { id: 'stale', title: 'Stale', workflow: 'stale.yml', required: true },
@@ -66,8 +67,44 @@ test('buildNightSummary: чужая вершина и красный workflow в
   assert.equal(summary.execution.status, 'fail');
   assert.equal(summary.workflows[0].status, 'stale');
   assert.equal(summary.workflows[1].status, 'red');
-  assert.match(summary.problems.join('\n'), /Stale: запуск на bbbbbbbbbbbb/u);
+  assert.match(summary.problems.join('\n'), /Stale: запуск на bbbbbbbbbbbb не является предком/u);
   assert.match(summary.problems.join('\n'), /Red: conclusion=failure/u);
+});
+
+test('#2501 ПОРЧА: ночная вершина-предок остаётся свежей после утреннего движения main', () => {
+  const summary = buildNightSummary({
+    generatedAt: '2026-09-28T10:30:00.000Z',
+    expectedRevision: HEAD,
+    workflows: [{ id: 'night', title: 'Night', workflow: 'night.yml', required: true }],
+    runsByWorkflow: {
+      'night.yml': run({
+        headSha: OTHER,
+        createdAt: '2026-09-28T00:14:19.000Z',
+      }),
+    },
+    isAncestor: (ancestor, current) => ancestor === OTHER && current === HEAD,
+  });
+
+  assert.equal(summary.workflows[0].status, 'pass');
+  assert.equal(summary.execution.status, 'pass');
+});
+
+test('#2501 ПОРЧА: позавчерашняя ночь не проходит даже на допустимой ревизии', () => {
+  const summary = buildNightSummary({
+    generatedAt: '2026-09-28T10:30:00.000Z',
+    expectedRevision: HEAD,
+    workflows: [{ id: 'night', title: 'Night', workflow: 'night.yml', required: true }],
+    runsByWorkflow: {
+      'night.yml': run({
+        headSha: HEAD,
+        createdAt: '2026-09-26T00:14:19.000Z',
+      }),
+    },
+  });
+
+  assert.equal(summary.workflows[0].status, 'stale');
+  assert.match(summary.workflows[0].reason, /старше/u);
+  assert.equal(summary.execution.status, 'fail');
 });
 
 test('buildNightSummary: неизвестная вершина ствола не маскируется missing-прогоном', () => {
@@ -86,6 +123,7 @@ test('buildNightSummary: неизвестная вершина ствола не
 test('buildNightSummaryFromGithub: gh-сбой становится видимым пунктом сводки', () => {
   const summary = buildNightSummaryFromGithub({
     cwd: process.cwd(),
+    generatedAt: '2026-08-30T07:00:00.000Z',
     expectedRevision: HEAD,
     exec: (_cmd, args) => {
       if (args.includes('vitest-nightly.yml')) throw new Error('api down');
@@ -107,6 +145,7 @@ test('buildNightSummaryFromGithub: ветка GitHub Actions передаётс�
   const calls = [];
   const summary = buildNightSummaryFromGithub({
     cwd: process.cwd(),
+    generatedAt: '2026-08-30T07:00:00.000Z',
     expectedRevision: HEAD,
     branch: 'release/night',
     exec: (_cmd, args) => {
