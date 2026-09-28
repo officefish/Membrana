@@ -1,31 +1,24 @@
 {
   "magistralOptions": [
     "three-roads-experiment",
-    "oversized-architectural-review",
-    "trace-rethink"
+    "pagination-sample-library",
+    "batch-collection-run-contour"
   ],
-  "frozenDigest": "be70c6129d696a76613bb7c36d38f99d3c47362e9e68edddb2b2f1a7c2f73979",
-  "magistral": "three-roads-experiment",
+  "frozenDigest": "083221ffe04adeccf02daa82dbc6842ba0b4ae989597334c2c6428220df90d45",
+  "magistral": "pagination-sample-library",
   "swallow": {
-    "draftDigest": "feb402d8d53e7d68157775cd9a048c5ab148fbcdbba3d0c5796d736c8fec8e35",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-27.md",
+    "draftDigest": "25489ce54699abce3bf85411808b800e8d325844d447d32f7827d296da78d424",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-09-28.md",
     "ownerAck": true,
-    "day": "2026-09-27",
-    "claimsProbe": {
-      "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-09-27.md",
-      "sha": "b638f6d11e7b",
-      "at": "2026-09-27T17:24:17.951Z"
-    },
-    "gate": "evening:partner-swallow"
+    "day": "2026-09-28"
   },
-  "day": "2026-09-27",
-  "magistralChosenAt": "2026-09-27",
+  "day": "2026-09-28",
+  "magistralChosenAt": "2026-09-28",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-09-27",
-    "chosen": "three-roads-experiment",
-    "snapshotDigest": "be70c6129d696a76613bb7c36d38f99d3c47362e9e68edddb2b2f1a7c2f73979",
+    "at": "2026-09-28",
+    "chosen": "pagination-sample-library",
+    "snapshotDigest": "083221ffe04adeccf02daa82dbc6842ba0b4ae989597334c2c6428220df90d45",
     "inSnapshot": true
   }
 }

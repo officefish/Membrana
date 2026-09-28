@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-27 |
-| Head SHA | 1c69120770a56a4960af2d1403a335d6dbc912c2 |
+| Date | 2026-09-28 |
+| Head SHA | 412e05a2d8356b76c26e20a82d8ef718a90b0a50 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,12 +16,12 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1251 |
+| Code files under `scripts/` | 1254 |
 | Yarn scripts (package.json) | 475 |
 | Yarn → `scripts/` | 421 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 913 |
+| Code files without yarn ref | 916 |
 
 ## Yarn → scripts/ (421)
 
@@ -447,7 +447,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (913)
+## Code files without yarn ref (916)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -897,6 +897,7 @@
 - `scripts/lib/pr-mergeability.test.mjs`
 - `scripts/lib/pr-ship-size.mjs`
 - `scripts/lib/precedent-store.mjs`
+- `scripts/lib/prepush-secret-gate.mjs`
 - `scripts/lib/prisma-docker-guard.mjs`
 - `scripts/lib/procedural-workshop.mjs`
 - `scripts/lib/procedure-contract-license.mjs`
@@ -1139,6 +1140,7 @@
 - `scripts/network/lib/history-merge.mjs`
 - `scripts/network/lib/probe-core.mjs`
 - `scripts/network/probe-core.test.mjs`
+- `scripts/network/tooth-upkeep.test.mjs`
 - `scripts/network/tooth.test.mjs`
 - `scripts/night-build-handoff.test.mjs`
 - `scripts/night-hunt-veracity.test.mjs`
@@ -1202,6 +1204,7 @@
 - `scripts/precedent-store.test.mjs`
 - `scripts/prepare-free-v1-content.mjs`
 - `scripts/prepush-env-guard.test.mjs`
+- `scripts/prepush-secret-gate-reach.test.mjs`
 - `scripts/prepush-typecheck-scope.mjs`
 - `scripts/prepush-typecheck-scope.test.mjs`
 - `scripts/prisma-docker-guard.test.mjs`
@@ -1373,7 +1376,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1251)
+## All code files (1254)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1971,6 +1974,7 @@
 - `scripts/lib/pr-mergeability.test.mjs`
 - `scripts/lib/pr-ship-size.mjs`
 - `scripts/lib/precedent-store.mjs`
+- `scripts/lib/prepush-secret-gate.mjs`
 - `scripts/lib/prisma-docker-guard.mjs`
 - `scripts/lib/procedural-workshop.mjs`
 - `scripts/lib/procedure-contract-license.mjs`
@@ -2248,6 +2252,7 @@
 - `scripts/network/probe-core.test.mjs`
 - `scripts/network/probe.mjs`
 - `scripts/network/snapshot.mjs`
+- `scripts/network/tooth-upkeep.test.mjs`
 - `scripts/network/tooth.mjs`
 - `scripts/network/tooth.test.mjs`
 - `scripts/night-build-checkpoint.mjs`
@@ -2341,6 +2346,7 @@
 - `scripts/precedent-store.test.mjs`
 - `scripts/prepare-free-v1-content.mjs`
 - `scripts/prepush-env-guard.test.mjs`
+- `scripts/prepush-secret-gate-reach.test.mjs`
 - `scripts/prepush-typecheck-scope.mjs`
 - `scripts/prepush-typecheck-scope.test.mjs`
 - `scripts/prisma-docker-guard.test.mjs`
