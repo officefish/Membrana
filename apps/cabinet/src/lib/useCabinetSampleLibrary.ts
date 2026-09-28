@@ -3,6 +3,7 @@ import {
   BUFFER_COLLECTION_ID,
   DEFAULT_SAMPLES_PAGE_SIZE,
   TARIFF_DATASET_SYSTEM_KEY,
+  clampSamplesPage,
   isQuotaFull,
   isReadOnlyCollection,
   type Collection,
@@ -138,13 +139,36 @@ export function useCabinetSampleLibrary() {
     [collectionPageKey],
   );
 
+  /**
+   * ЗАПОМНЕННАЯ СТРАНИЦА ПЕРЕЖИВАЕТ СПИСОК, О КОТОРОМ БЫЛА (#2505).
+   *
+   * Кабинет помнит номер страницы по набору (`samplesPageByKey`) — это удобно, пока набор не
+   * ужался. Вывезли буфер окном «перенести все», удалили пачку, очистили буфер — страниц стало
+   * меньше, а номер остался. Дверь честно отвечает на запрос: `items: []`, `page: 3`,
+   * `totalPages: 1`. Дом при этом рисовал ПУСТУЮ таблицу, а органы листания скрываются при
+   * `totalPages <= 1` — то есть «Назад» не оставалось вовсе, и выйти из пустоты было нечем.
+   *
+   * Поэтому ответ двери проверяется на связность с номером: номер вне диапазона приводится к
+   * последней живой странице сразу, и эффект перезапрашивается уже за нею. Правило одно и живёт в
+   * ядре библиотеки (`clampSamplesPage`) — второй копии в доме нет.
+   */
+  const reconcileSamplesPage = useCallback(
+    (meta: { readonly page: number; readonly totalPages: number }) => {
+      const fixed = clampSamplesPage(meta.page, meta.totalPages);
+      if (fixed !== meta.page) setSamplesPage(fixed);
+    },
+    [setSamplesPage],
+  );
+
   useEffect(() => {
     if (!membraneId || selection.kind !== 'catalog') return;
     let cancelled = false;
     setSamplesPageLoading(true);
     void fetchMembraneCatalog(membraneId, samplesPage, DEFAULT_SAMPLES_PAGE_SIZE)
       .then((data) => {
-        if (!cancelled) setCatalog(data);
+        if (cancelled) return;
+        setCatalog(data);
+        reconcileSamplesPage({ page: data.page, totalPages: data.totalPages });
       })
       .catch((e) => {
         if (!cancelled) {
@@ -157,7 +181,7 @@ export function useCabinetSampleLibrary() {
     return () => {
       cancelled = true;
     };
-  }, [membraneId, selection.kind, samplesPage]);
+  }, [membraneId, reconcileSamplesPage, selection.kind, samplesPage]);
 
   const activeDeviceId = useMemo(() => {
     if (selection.kind === 'node') return selection.deviceId;
@@ -189,7 +213,9 @@ export function useCabinetSampleLibrary() {
     void service
       .listSamplesPage(collectionId, samplesPage, DEFAULT_SAMPLES_PAGE_SIZE)
       .then((data) => {
-        if (!cancelled) setNodePageData(data);
+        if (cancelled) return;
+        setNodePageData(data);
+        reconcileSamplesPage({ page: data.page, totalPages: data.totalPages });
       })
       .catch((e) => {
         if (!cancelled) {
@@ -203,7 +229,7 @@ export function useCabinetSampleLibrary() {
     return () => {
       cancelled = true;
     };
-  }, [active, samplesPage, selection, service, showError]);
+  }, [active, reconcileSamplesPage, samplesPage, selection, service, showError]);
 
   useEffect(() => {
     if (!playback.selectedSampleId) {
