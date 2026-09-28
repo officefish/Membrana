@@ -56,7 +56,7 @@
     "scripts/lib/morning-entry.mjs": "90bcdafae59a261cbee9b306bd49d96864db4da4",
     "scripts/lib/morning-gates.mjs": "ccacf0dfd74aeb696362313cdd3c08ddf208fabc",
     "scripts/lib/morning-wiring.mjs": "a472a1902236f5a80096094b498080ac0d2ea945",
-    "scripts/lib/night-report-gate.mjs": "34ca0460dcc81b5501fae8196f3dd03e798d926c",
+    "scripts/lib/night-report-gate.mjs": "ef6b5d477931138bf6378ec3616edc552cd6d777",
     "scripts/lib/night-summary.mjs": "2e0ce75aa8239d8b4bdd8695c26075560e9a5857",
     "scripts/lib/office-token.mjs": "b3203a0f7649d34f5eed3f61c0d0930bc0c4eeeb",
     "scripts/lib/persona-memory.mjs": "a3c7c4d264e1ad0a6cc47f1b0ef25dd1736cad03",
