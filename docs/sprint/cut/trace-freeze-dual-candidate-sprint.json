@@ -71,14 +71,20 @@
         "scripts/scenario-trace-buffer-parity.test.mjs",
         ".github/workflows/unit-tests.yml",
         "tests/test-scripts.catalog.json",
-        "kits/tests-master/MANIFEST.json"
+        "kits/tests-master/MANIFEST.json",
+        "scripts/measure-scenario-trace-ipc.mjs",
+        "scripts/measure-scenario-trace-teardown.mjs",
+        "scripts/scenario-trace-ipc-probe/index.html",
+        "scripts/scenario-trace-ipc-probe/main.js",
+        "scripts/scenario-trace-ipc-probe/package.json",
+        "scripts/scenario-trace-ipc-probe/preload.js"
       ],
       "estimate": {
         "changedLines": 260
       },
       "note": "Finish sorting the existing uncommitted probe work: portable source tooth for Node 20, behavioral parity import on Node >= 22, no silent drift between ScenarioTraceProbe and scenarioTraceBuffer.ts, and refresh the mandatory tests-master pin after changing the test catalog.",
-      "revisionAt": "2026-09-29T15:59:53+03:00",
-      "revisionOf": "7f9ace45394f766355673737bc12b58584f872e594bdb5babdaa483c62547c73"
+      "revisionAt": "2026-09-29T18:15:01+03:00",
+      "revisionOf": "507620716321588b9a008d71e367345f1d8ba64661c1b5155f3f8777fd51c0cf"
     },
     {
       "blockId": "e-adr-gate-pr",
@@ -103,9 +109,10 @@
   ],
   "//cutter": "Context: owner assignment 2026-09-29 plus GitHub issue #2476 comments from 2026-09-27 and 2026-09-28. Worktree: C:/Users/user190825/practice/Membrana/.worktrees/trace-run-2476-rethink. Dependencies absent; phase A uses node/static checks only.",
   "//out-of-scope": "No yarn install in this worktree. No product fix before owner ratification. No R2 evidence-sink redesign before consilium. No merge; PR must be shipped with --no-merge.",
+  "//recut-29-09-retro": "Перерезка в работе по слову владельца 29.09: зона блока замеров (vesnin) расширена на шесть файлов — приборы, давшие живой замер sendSync (20.5–34.2 мс после починки). Исполнитель вышел за ратифицированные зоны МОЛЧА — отчёт о сдаче этого не называл, выход нашла ведущая сверкой файлов PR с зонами. Процедура велит перерезку с новой ратификацией ДО выхода; здесь оформлено ПОСЛЕ. Это нарушение, записанное по решению владельца, а не образец.",
   "ratification": {
     "by": "owner",
-    "at": "2026-09-29T15:59:53+03:00",
-    "digest": "bf8b4e0af5544d174c0c4a552c5d18d7aae9089278b6fc47e1a616dd752f5bfe"
+    "at": "2026-09-29T18:15:01+03:00",
+    "digest": "abaf8465adc74359ad43cdda9ca75c1252a3b630cfbeb8a9d61bc51139d0d195"
   }
 }

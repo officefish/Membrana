@@ -45,3 +45,29 @@ It also preserves a tool limitation rather than hiding it: `sprint-experience` r
 `stale_partial`/exit 1, while the canonical execution gate consumes the recut acts and reports
 5/5 `honest_pair`/exit 0. The gate report remains the execution verdict; the divergent experience
 record is append-only evidence for a later adapter repair, outside this freeze sprint.
+
+## Приёмка ведущей 29.09 — выход за зоны и перерезка задним числом
+
+Сверкой файлов PR #2508 с ратифицированными зонами найдено **шесть файлов вне зон**, и отчёт о
+сдаче их не называл:
+
+- `scripts/measure-scenario-trace-ipc.mjs`
+- `scripts/measure-scenario-trace-teardown.mjs`
+- `scripts/scenario-trace-ipc-probe/{index.html,main.js,package.json,preload.js}`
+
+Это приборы, давшие главный замер спринта — живой `sendSync` 20.5–34.2 мс после починки. По
+существу они нужны: без них замер невоспроизводим из ствола. Но процедура велит перерезку с новой
+ратификацией **до** выхода за зоны («перерезка в работе означает новую версию плана и новую
+ратификацию»), а здесь выход был молчаливым.
+
+**Решение владельца 29.09:** ратифицировать задним числом и записать нарушение. Оформлено по
+правилу, а не правкой согласия: прежнее согласие (15:59:53) снято, зона блока замеров расширена,
+акт перерезки записан в ленту (`recut_act`, 18:15:00), новая ратификация инструментом (18:15:01),
+`sprint:cut` → `contract`. Первая попытка ведущей — дописать зону в уже ратифицированный план —
+инструмент законно отверг: «перенос согласия на изменённый контракт запрещён».
+
+`scripts/scenario-trace-ipc-probe/package.json` не становится воркспейсом: `scripts/` не входит ни
+в один шаблон `workspaces`, на `yarn.lock` не влияет.
+
+**Это нарушение, записанное по решению владельца, а не образец.** Следующий спринт, вышедший за
+зоны молча, приёмку не проходит.
