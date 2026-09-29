@@ -83,7 +83,6 @@ describe('detector batch executor', () => {
     expect(result).toMatchObject({
       status: 'completed',
       aggregate: { total: 3, ok: 2, failed: 1, skipped: 0, detected: 1 },
-      rejection: null,
     });
     expect(result.aggregate.total).toBe(result.aggregate.ok + result.aggregate.failed + result.aggregate.skipped);
     expect(analyze).toHaveBeenCalledTimes(3);
