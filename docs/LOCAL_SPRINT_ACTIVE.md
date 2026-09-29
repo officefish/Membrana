@@ -4,6 +4,12 @@
 
 ## Focus
 
+- **ritual-reads-done-work** (И8 недельного плана 28.09; Issue с первым PR) ·
+  **cut awaiting owner ratification** · [`OPEN.md`](./local-sprint/ritual-reads-done-work/OPEN.md) —
+  два читателя ритуала судят по документу, а не по предмету: каркас дня получает проекцию ассерций
+  со строкой свежести предикатом probe (вместо сырого файла, обрезанного 22k из 115k); вечер получает
+  блок «сделанное, заведённое билетами» (архитектурные слоты 27.09 по #2488/#2489 → #2492–#2498).
+  Порядок ритуалов, формат ассерций, промпты персон и основание снятия с очереди oversized — вне спринта.
 - **tariff-matrix-2333** ([#2333](https://github.com/officefish/Membrana/issues/2333)) ·
   implementation checks pass, awaiting review/PR · [`OPEN.md`](./local-sprint/tariff-matrix-2333/OPEN.md) —
   серверная адаптация к матрице тарифов по принятому M1: версия контракта на `Tariff`/`Device`,
