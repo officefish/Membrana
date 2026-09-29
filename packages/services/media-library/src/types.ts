@@ -1,3 +1,10 @@
+import type {
+  BatchCollectionDetectorVerdict,
+  BatchCollectionRunOutcome,
+  BatchCollectionRunRequest,
+  BatchCollectionSampleResult,
+} from '@membrana/plugin-contracts';
+
 export type CollectionKind = 'buffer' | 'user' | 'system';
 
 export type SampleLabel = 'drone' | 'not-drone' | 'unlabeled';
@@ -98,59 +105,13 @@ export interface MediaPluginState {
   enabled: boolean;
 }
 
-/** Transport mirror of the canonical plugin-contracts batch result. */
-export interface CollectionDetectorBatchRequest {
-  readonly sampleIds?: readonly string[];
-}
+export type CollectionDetectorBatchRequest = BatchCollectionRunRequest;
+export type CollectionDetectorBatchVerdict = BatchCollectionDetectorVerdict;
+export type CollectionDetectorBatchSampleResult = BatchCollectionSampleResult;
 
-export interface CollectionDetectorBatchVerdict {
-  readonly detectorId: string;
-  readonly isDrone: boolean;
-  readonly confidence: number;
-  readonly latencyMs: number;
-}
+type WithRunId<T> = T extends unknown ? T & { readonly runId: string } : never;
 
-export interface CollectionDetectorBatchSampleResult {
-  readonly sampleId: string;
-  readonly title: string;
-  readonly status: 'ok' | 'failed' | 'skipped';
-  readonly detected?: boolean;
-  readonly confidence?: number;
-  readonly latencyMs?: number;
-  readonly verdicts?: readonly CollectionDetectorBatchVerdict[];
-  readonly reason?: string;
-}
-
-interface CollectionDetectorBatchRunOutcomeBase {
-  readonly runId: string;
-  readonly inputHash: string;
-  readonly aggregate: {
-    readonly total: number;
-    readonly ok: number;
-    readonly failed: number;
-    readonly skipped: number;
-    readonly detected: number;
-    readonly latencyP50Ms: number;
-    readonly latencyP95Ms: number;
-  };
-  readonly results: readonly CollectionDetectorBatchSampleResult[];
-}
-
-export interface CollectionDetectorBatchRunCompleted extends CollectionDetectorBatchRunOutcomeBase {
-  readonly status: 'completed';
-}
-
-export interface CollectionDetectorBatchRunRejected extends CollectionDetectorBatchRunOutcomeBase {
-  readonly status: 'rejected';
-  readonly rejection: {
-    readonly reason: 'empty' | 'reader-failed' | 'detector-unavailable' | 'limit-exceeded';
-    readonly detail: string;
-  };
-}
-
-export type CollectionDetectorBatchRunOutcome =
-  | CollectionDetectorBatchRunCompleted
-  | CollectionDetectorBatchRunRejected;
+export type CollectionDetectorBatchRunOutcome = WithRunId<BatchCollectionRunOutcome>;
 
 export interface PaginatedSamples<T = MediaSample> {
   items: T[];

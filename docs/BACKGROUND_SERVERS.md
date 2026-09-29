@@ -205,6 +205,7 @@ Device (deviceId)
 | Devices | `POST /v1/devices` | первый запуск клиента |
 | Quota | `GET .../quota` | `StorageRuntimeIndicator`, banner |
 | Collections / samples | CRUD + multipart | `ServerStorageBackend` → `@membrana/media-library-service` |
+| Collection detector batch | `POST .../collections/:collectionId/plugins/membrana.report.detector-batch/request` | read-only последовательный прогон зарегистрированных детекторов |
 | Trends templates | `GET/PUT .../trends-templates` | `userTemplatesPersistence` / zustand store |
 
 Полная спецификация: [`prompts/BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md`](./prompts/BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md).
