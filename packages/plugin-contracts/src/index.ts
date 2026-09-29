@@ -50,6 +50,19 @@ export { type PluginContext, type PluginExecutor } from './executor.js';
 
 export { type IPluginHost } from './host.js';
 
+export {
+  type BatchCollectionDetectorVerdict,
+  type BatchCollectionRejectionReason,
+  type BatchCollectionRunAggregate,
+  type BatchCollectionRunCompleted,
+  type BatchCollectionRunOutcome,
+  type BatchCollectionRunRejected,
+  type BatchCollectionRunRejection,
+  type BatchCollectionRunRequest,
+  type BatchCollectionSampleResult,
+  type BatchCollectionSampleStatus,
+} from './batch-collection-run.js';
+
 /**
  * Словарь отказа «места нет» и режимов переполнения (вердикт M2, #2307; коворк
  * `cowork-buffer-full-stop`, блок A). Экспорт внесён на интеграции (адаптер A-2 контракта):
