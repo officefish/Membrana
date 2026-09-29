@@ -170,4 +170,46 @@ describe('ServerStorageBackend', () => {
       serverReachable: false,
     });
   });
+
+  it('requests a read-only detector batch through the collections plugin door', async () => {
+    const fetchMock = vi.fn(async (url: string | URL, init?: RequestInit) => {
+      const path = String(url);
+      if (path.endsWith('/collections/set-1/plugins/membrana.report.detector-batch/request')) {
+        expect(init?.method).toBe('POST');
+        expect(JSON.parse(String(init?.body))).toEqual({});
+        return jsonResponse({
+          runId: 'run-1',
+          result: {
+            status: 'completed',
+            inputHash: 'abc',
+            aggregate: {
+              total: 1,
+              ok: 1,
+              failed: 0,
+              skipped: 0,
+              detected: 1,
+              latencyP50Ms: 4,
+              latencyP95Ms: 4,
+            },
+            results: [{ sampleId: 's1', title: 'one', status: 'ok', detected: true }],
+            rejection: null,
+          },
+        });
+      }
+      throw new Error(`Unexpected fetch: ${path}`);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const backend = createServerStorageBackend({
+      baseUrl: BASE,
+      deviceId: DEVICE,
+      mediaToken: TOKEN,
+    });
+
+    await expect(backend.requestCollectionDetectorBatch('set-1')).resolves.toMatchObject({
+      runId: 'run-1',
+      status: 'completed',
+      aggregate: { total: 1, detected: 1 },
+    });
+  });
 });

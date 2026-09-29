@@ -23,6 +23,8 @@ import type {
   LibraryDuplicatesRequest,
   LibraryDuplicatesRunOutcome,
   Collection,
+  CollectionDetectorBatchRequest,
+  CollectionDetectorBatchRunOutcome,
   ImportBlobOptions,
   MediaLibrarySnapshot,
   MediaSample,
@@ -270,6 +272,16 @@ export class MediaLibraryService {
       throw new Error('Отбор чарт-листа доступен только при серверной библиотеке (media-server)');
     }
     return this.backend.requestLibraryChartList(collectionId, req);
+  }
+
+  async requestCollectionDetectorBatch(
+    collectionId: string,
+    req: CollectionDetectorBatchRequest = {},
+  ): Promise<CollectionDetectorBatchRunOutcome> {
+    if (!this.backend.requestCollectionDetectorBatch) {
+      throw new Error('Batch-прогон детекторов доступен только при серверной библиотеке (media-server)');
+    }
+    return this.backend.requestCollectionDetectorBatch(collectionId, req);
   }
 
   /** Свод сеанса (#2039): двадцать опорных звуков окна. Ядро отчёта — на media, здесь только заказ. */

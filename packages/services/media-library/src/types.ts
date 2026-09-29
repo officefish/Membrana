@@ -98,6 +98,49 @@ export interface MediaPluginState {
   enabled: boolean;
 }
 
+/** Transport mirror of the canonical plugin-contracts batch result. */
+export interface CollectionDetectorBatchRequest {
+  readonly sampleIds?: readonly string[];
+}
+
+export interface CollectionDetectorBatchVerdict {
+  readonly detectorId: string;
+  readonly isDrone: boolean;
+  readonly confidence: number;
+  readonly latencyMs: number;
+}
+
+export interface CollectionDetectorBatchSampleResult {
+  readonly sampleId: string;
+  readonly title: string;
+  readonly status: 'ok' | 'failed' | 'skipped';
+  readonly detected?: boolean;
+  readonly confidence?: number;
+  readonly latencyMs?: number;
+  readonly verdicts?: readonly CollectionDetectorBatchVerdict[];
+  readonly reason?: string;
+}
+
+export interface CollectionDetectorBatchRunOutcome {
+  readonly runId: string;
+  readonly status: 'completed' | 'rejected';
+  readonly inputHash: string;
+  readonly aggregate: {
+    readonly total: number;
+    readonly ok: number;
+    readonly failed: number;
+    readonly skipped: number;
+    readonly detected: number;
+    readonly latencyP50Ms: number;
+    readonly latencyP95Ms: number;
+  };
+  readonly results: readonly CollectionDetectorBatchSampleResult[];
+  readonly rejection: {
+    readonly reason: 'empty' | 'reader-failed' | 'detector-unavailable' | 'limit-exceeded';
+    readonly detail: string;
+  } | null;
+}
+
 export interface PaginatedSamples<T = MediaSample> {
   items: T[];
   page: number;

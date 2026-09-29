@@ -7,6 +7,7 @@ import {
   isQuotaFull,
   isReadOnlyCollection,
   type Collection,
+  type CollectionDetectorBatchRunOutcome,
   type MediaSample,
   type PaginatedSamples,
 } from '@membrana/media-library-service';
@@ -93,6 +94,11 @@ export function useCabinetSampleLibrary() {
   );
   const [labelAnnotateError, setLabelAnnotateError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [detectorBatch, setDetectorBatch] = useState<{
+    state: 'idle' | 'running' | 'done' | 'error';
+    outcome: CollectionDetectorBatchRunOutcome | null;
+    error: string | null;
+  }>({ state: 'idle', outcome: null, error: null });
   const [samplesPageByKey, setSamplesPageByKey] = useState<Record<string, number>>({});
   const [samplesPageLoading, setSamplesPageLoading] = useState(false);
   const [nodePageData, setNodePageData] = useState<PaginatedSamples | null>(null);
@@ -338,6 +344,10 @@ export function useCabinetSampleLibrary() {
     selection.kind === 'node'
       ? snapshot.collections.find((c) => c.id === selection.collectionId)
       : undefined;
+
+  useEffect(() => {
+    setDetectorBatch({ state: 'idle', outcome: null, error: null });
+  }, [selection.kind === 'node' ? selection.collectionId : selection.kind]);
 
   const isCatalogView = selection.kind === 'catalog';
   const isOfflineView = selection.kind === 'node-offline';
@@ -669,6 +679,24 @@ export function useCabinetSampleLibrary() {
     await reloadSamplesPage();
   }, [reloadSamplesPage, runMediaOp, selection, service, showSuccess]);
 
+  const handleRunDetectorBatch = useCallback(async () => {
+    if (!service || !active || selection.kind !== 'node') {
+      const message = 'Media-server недоступен — batch-прогон детекторов невозможен.';
+      setDetectorBatch({ state: 'error', outcome: null, error: message });
+      showError(message, retryMediaLibrary);
+      return;
+    }
+    setDetectorBatch({ state: 'running', outcome: null, error: null });
+    try {
+      const outcome = await service.requestCollectionDetectorBatch(selection.collectionId);
+      setDetectorBatch({ state: 'done', outcome, error: null });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      setDetectorBatch({ state: 'error', outcome: null, error: message });
+      showError(`Прогон детекторов: ${message}`, () => void handleRunDetectorBatch());
+    }
+  }, [active, retryMediaLibrary, selection, service, showError]);
+
   const handleExport = useCallback(
     async (sample: MediaSample) => {
       await runMediaOp('Экспорт', async () => {
@@ -736,6 +764,8 @@ export function useCabinetSampleLibrary() {
     handleRemoveMany,
     handleMove,
     handleClearBuffer,
+    detectorBatch,
+    handleRunDetectorBatch,
     handleExport,
     isAdmin,
     canLabelCatalog,

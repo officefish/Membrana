@@ -9,6 +9,8 @@ import type {
   BufferCleanupPlanOutcome,
   BufferCleanupPlanRequest,
   Collection,
+  CollectionDetectorBatchRequest,
+  CollectionDetectorBatchRunOutcome,
   LibraryChartListRequest,
   LibraryChartListRunOutcome,
   SessionDigestRequest,
@@ -448,6 +450,27 @@ export class ServerStorageBackend implements IStorageBackend {
       // Прогон был, а результата нет — это поломка канала, не пустая выборка: молча показать
       // ноль строк значило бы выдать сбой за «в наборе ничего не нашлось».
       throw new Error('Витрина отбора не вернула результат прогона (канал result пуст)');
+    }
+    return { runId: row.runId, ...row.result };
+  }
+
+  async requestCollectionDetectorBatch(
+    collectionId: string,
+    req: CollectionDetectorBatchRequest = {},
+  ): Promise<CollectionDetectorBatchRunOutcome> {
+    const row = await this.requestJson<{
+      runId: string;
+      result?: Omit<CollectionDetectorBatchRunOutcome, 'runId'>;
+    }>(
+      `/collections/${encodeURIComponent(collectionId)}/plugins/membrana.report.detector-batch/request`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...(req.sampleIds ? { sampleIds: req.sampleIds } : {}) }),
+      },
+    );
+    if (!row.result) {
+      throw new Error('media не вернул результат batch-прогона детекторов');
     }
     return { runId: row.runId, ...row.result };
   }
