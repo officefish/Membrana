@@ -21,6 +21,10 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `sample-library-paging-a11y` | Доступность органов листания библиотеки проб (Studio + кабинет): aria-семантика, клавиатура, фокус после смены страницы, узкий экран | M | [`SAMPLE_LIBRARY_PAGING_A11Y_PROMPT.md`](../prompts/SAMPLE_LIBRARY_PAGING_A11Y_PROMPT.md) | — |
+| `batch-collection-run-contour-a1-architecture-gate` | Фаза A1: live↔batch architecture gate для прогона детекторов по коллекции | S | [`OPEN.md`](../local-sprint/batch-collection-run-contour/OPEN.md) | — |
+| `batch-collection-run-contour-a2-run-contract` | Фаза A2: контракт запуска batch-прогона по коллекции без второго носителя библиотеки | M | [`OPEN.md`](../local-sprint/batch-collection-run-contour/OPEN.md) | — |
+| `batch-collection-run-contour-a3-detector-runner` | Фаза A3: исполнитель детекторов по коллекции и агрегированный результат | M | [`OPEN.md`](../local-sprint/batch-collection-run-contour/OPEN.md) | — |
+| `batch-collection-run-contour-a4-cabinet-entry` | Фаза A4: вход кабинета для batch-прогона и честные отказы полного буфера | M | [`OPEN.md`](../local-sprint/batch-collection-run-contour/OPEN.md) | — |
 | `cowork-library-open-api` | Cowork Sprint: Открытое API библиотеки | L | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md) | — |
 | `node-duty-ready-predicate` | Узел к дежурству: предикат готовности Firebat — сон/гибернация/автовход/служба (Г4) | S | [`NODE_DUTY_READY_PREDICATE_PROMPT.md`](../prompts/NODE_DUTY_READY_PREDICATE_PROMPT.md) | [#2049](https://github.com/officefish/Membrana/issues/2049) |
 | `studio-package-av-refusal` | Установщик Studio: честный отказ при AV-блокировке + fallback на артефакт CI (Г3) | S | [`STUDIO_PACKAGE_AV_REFUSAL_PROMPT.md`](../prompts/STUDIO_PACKAGE_AV_REFUSAL_PROMPT.md) | — |

@@ -22,6 +22,94 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "batch-collection-run-contour-a1-architecture-gate",
+      "title": "Фаза A1: live↔batch architecture gate для прогона детекторов по коллекции",
+      "promptPath": "docs/local-sprint/batch-collection-run-contour/OPEN.md",
+      "githubIssue": null,
+      "noIssueReason": "фаза эпика batch-collection-run-contour (#494); отдельный Issue не создаётся до ратификации нарезки владельцем",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-09-29",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ],
+      "notes": "Первый блок после ратификации: провести yarn consilium и зафиксировать, строим ли новый core-контракт SampleCollectionRef/batch-runtime или опираемся на существующие CollectionSampleReader + collections plugin request. Код до вердикта запрещён границей задания.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "batch-collection-run-contour"
+    },
+    {
+      "id": "batch-collection-run-contour-a2-run-contract",
+      "title": "Фаза A2: контракт запуска batch-прогона по коллекции без второго носителя библиотеки",
+      "promptPath": "docs/local-sprint/batch-collection-run-contour/OPEN.md",
+      "githubIssue": null,
+      "noIssueReason": "фаза эпика batch-collection-run-contour (#494); отдельный Issue не создаётся до ратификации нарезки владельцем",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-09-29",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ],
+      "notes": "Принятый verdict: public-контракт запуска/исхода поверх существующего collections plugin request; inputHash, частичные и полные отказы. Без SampleCollectionRef и второго носителя библиотеки.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "batch-collection-run-contour"
+    },
+    {
+      "id": "batch-collection-run-contour-a3-detector-runner",
+      "title": "Фаза A3: исполнитель детекторов по коллекции и агрегированный результат",
+      "promptPath": "docs/local-sprint/batch-collection-run-contour/OPEN.md",
+      "githubIssue": null,
+      "noIssueReason": "фаза эпика batch-collection-run-contour (#494); отдельный Issue не создаётся до ратификации нарезки владельцем",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-09-29",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "kuryokhin",
+        "vesnin"
+      ],
+      "notes": "Read-only collection executor по N пробам через CollectionSampleReader; DSP внедряется из живого drone-detection-orchestrator. Агрегат и per-sample отказы, 0 записей в samples/collections.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "batch-collection-run-contour"
+    },
+    {
+      "id": "batch-collection-run-contour-a4-cabinet-entry",
+      "title": "Фаза A4: вход кабинета для batch-прогона и честные отказы полного буфера",
+      "promptPath": "docs/local-sprint/batch-collection-run-contour/OPEN.md",
+      "githubIssue": null,
+      "noIssueReason": "фаза эпика batch-collection-run-contour (#494); отдельный Issue не создаётся до ратификации нарезки владельцем",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-09-29",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ],
+      "notes": "UI/API-вход существующего collections plugin request по выбранной коллекции, статус, частичный и полный отказ; без bulk/pagination и write-back. Ритуальные цепочки не трогать.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "batch-collection-run-contour"
+    },
+    {
       "id": "tariff-matrix-2333",
       "title": "Сервер: адаптация к матрице тарифов",
       "promptPath": "docs/prompts/TARIFF_MATRIX_2333_SERVER_ADAPTATION_PROMPT.md",
@@ -22497,7 +22585,7 @@
       "githubIssue": 494,
       "size": "L",
       "status": "active",
-      "sprintKind": "day-sprint",
+      "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-07-15",
       "archivedAt": null,
       "leadPersona": "ozhegov",

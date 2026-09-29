@@ -1,0 +1,94 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "batch-collection-run-contour",
+  "taskId": "batch-collection-run-contour",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "//why": "Issue #494 старый: он просил новую execution-модель live↔batch, но ствол 2026-09-29 уже имеет массовый перенос из буфера, пагинацию полного набора и read-only CollectionSampleReader/plugin request. Нарезка начинается с архитектурного gate, чтобы не решить новый core-контракт единолично.",
+  "//order": "a1 обязателен до любого кода. Если consilium выбирает новый core-contract/SampleCollectionRef, a2/a3 перерезаются и заново ратифицируются. Если выбирает существующий plugin host, a2 -> a3 -> a4. Любое пересечение зон или новая дверь записи в samples/collections — recut.",
+  "//dod": "Контур даёт запуск детекторного batch-run по выбранной коллекции, честный inputHash по всем пробам, агрегированный результат, частичные/полные отказы словами, и не переизобретает уже закрытые перенос/пагинацию. Ритуальные цепочки не меняются.",
+  "//out-of-scope": "Массовый перенос из буфера, постраничная библиотека, очистка буфера, тарифные квоты как таковые, порядок утреннего/вечернего ритуала, production deploy, новый core-contract без consilium.",
+  "//review": "Дынин проверяет контракт/алгоритм и красные входы; Ожегов проверяет слова отказов и отсутствие старого day-sprint; Родченко проверяет UI-вход и не-путаницу live/batch; Веснин держит границы пакетов и архитектурный gate.",
+  "window": {
+    "from": "2026-09-29T14:58:19+03:00",
+    "to": "2026-09-30T14:58:19+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "architecture-gate",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/meeting/batch-collection-run-contour/",
+        "docs/adr/ADR-batch-collection-run-contour.md"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "//": "yarn consilium до кода: новый SampleCollectionRef/batch-runtime или развитие существующих CollectionSampleReader + collections plugin request. Выход — ратифицированный verdict, который открывает либо recut, либо a2.",
+      "revisionAt": "2026-09-29T15:17:33.2162370+03:00",
+      "revisionOf": "2ed44ad1ad0d4af5c6144ad118824dee546ccad0688b3fb7715471a9d3d5b117"
+    },
+    {
+      "blockId": "run-contract",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/plugin-contracts/src/batch-collection-run.ts",
+        "packages/plugin-contracts/src/batch-collection-run.test.ts",
+        "packages/plugin-handlers/src/batch-run/",
+        "packages/background-media/src/modules/collections/batch-run.contract.ts",
+        "packages/background-media/src/modules/collections/batch-run.contract.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 300
+      },
+      "//": "Форма входа/выхода, inputHash по всем пробам, отказов и лимитов. Не дублировать listSamplesPage/move-batch; read-only порт остаётся исходной посылкой, если a1 не решит иначе.",
+      "revisionAt": "2026-09-29T15:17:33.2162370+03:00",
+      "revisionOf": "70665d191e5618cf7425dcfe97627cace502effe1c789f35f3960dbb998db5ad"
+    },
+    {
+      "blockId": "detector-runner",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/plugin-handlers/src/detector-batch/",
+        "packages/plugin-handlers/src/detector-batch.test.ts",
+        "packages/services/detectors/",
+        "packages/background-media/src/modules/collections/first-wave.registrar.ts",
+        "packages/background-media/src/modules/collections/first-wave.registrar.spec.ts"
+      ],
+      "estimate": {
+        "changedLines": 390
+      },
+      "//": "Исполнитель гонит detector по N пробам коллекции, собирает агрегат и не пишет в samples/collections. Порог 400 держится впритык; рост зоны после a1 — recut.",
+      "revisionAt": "2026-09-29T15:17:33.2162370+03:00",
+      "revisionOf": "43be23a3ee4ac863678b276a62f495fe35f8f4d89fccfc8143539fbd9e4cb894"
+    },
+    {
+      "blockId": "cabinet-entry",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "packages/background-media/src/modules/collections/collections.controller.ts",
+        "packages/background-media/src/modules/collections/collections.dto.ts",
+        "packages/services/media-library/src/backends/server-storage-backend.ts",
+        "packages/services/media-library/src/types.ts",
+        "apps/cabinet/src/lib/useCabinetSampleLibrary.ts",
+        "apps/cabinet/src/components/sample-library/BatchDetectorRunPanel.tsx",
+        "apps/cabinet/src/pages/SampleLibraryPage.tsx"
+      ],
+      "estimate": {
+        "changedLines": 360
+      },
+      "//": "Пользовательский вход: выбрать коллекцию, запустить batch-run, увидеть статус/частичный отказ. Тексты называют media-недоступность, полный буфер и квоту без смешения с уже существующим переносом пачкой.",
+      "revisionAt": "2026-09-29T15:17:33.2162370+03:00",
+      "revisionOf": "72a7128d95f1162d83639de7698558cbcf143fc340fd206e9f01215fb5efc786"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-09-29T15:17:33.2162370+03:00",
+    "digest": "43e6934ea322b82c7fa6a9c12c9aa3fc33a2632d914a0d4c0b5a5a8350c73ea6"
+  }
+}
