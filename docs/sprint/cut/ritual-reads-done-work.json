@@ -1,0 +1,86 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "ritual-reads-done-work",
+  "taskId": "ritual-reads-done-work",
+  "mode": "explicit-honest",
+  "cutBy": "ozhegov",
+  "window": {
+    "from": "2026-09-29T13:00:00+00:00",
+    "to": "2026-09-30T20:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-assertions-projection",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/lib/main-day-assertions-view.mjs",
+        "scripts/lib/main-day-assertions-view.test.mjs",
+        "scripts/_main-day-issue.mjs"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionAt": "2026-09-29T15:19:14+03:00",
+      "revisionOf": "86064dc0b149eb5a8d865cf0033bc85ecc1db68308bc6235acae371c9b1fd412"
+    },
+    {
+      "blockId": "b2-done-ledger-core",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/review-done-ledger.mjs",
+        "scripts/lib/review-done-ledger.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 240
+      },
+      "revisionAt": "2026-09-29T15:19:14+03:00",
+      "revisionOf": "633bb62086655ffd9389aa626052c91d269206bbeca4c2b441d444eff1503f12"
+    },
+    {
+      "blockId": "b3-evening-reads-done-work",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/team-evening-feedback-ritual.mjs",
+        "scripts/team-evening-feedback-ritual.test.mjs",
+        "scripts/team-evening-feedback.mjs",
+        "scripts/lib/review-done-ledger-port.mjs"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "revisionAt": "2026-09-29T15:19:14+03:00",
+      "revisionOf": "a6417d84352b600a4d4f73ebcedb9c1acea282cc320b7219723c9c245404506f"
+    },
+    {
+      "blockId": "b4-live-check-closure",
+      "persona": "angelina",
+      "context": "angelina",
+      "zone": [
+        "docs/local-sprint/ritual-reads-done-work/",
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/sprint/experience/segments-ritual-reads-done-work.json"
+      ],
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionAt": "2026-09-29T15:19:14+03:00",
+      "revisionOf": "f55f76eba9859fa9c6ce0d9c43ed3eeb8c37181ac59b12e5d8f9a582396af963"
+    }
+  ],
+  "//why": "И8 недельного плана (PREP_2026-09-28 §4): два читателя ритуала судят по документу, а не по предмету. (1) Вечерний фидбек команды четыре вечера подряд (26, 27, 28.09 и каркас 29.09) требует «выделенный слот на архитектурный разбор #2488 → #2489 → #2499», сделанный 27.09 — результаты легли в билеты #2492–#2498, а фидбек читает DAY_DOC_INPUTS + git-сводку дня + гейт, билетов ни в одном входе нет. (2) Каркас дня 29.09 и фидбек 28.09 объявили перечеканку main-day-assertions.json несделанной при вердикте probe «aligned».",
+  "//measure": "Замер 29.09. Генератор MAIN_DAY_ISSUE подкладывает main-day-assertions.json как текст через readBounded(…, 22_000) — файл 115 531 байт. В окне 22k видно: `//date` = «Перечеканено 24.09 …» (позиция 297), `assertions: []`, `sources[0].date = 2026-09-29` (позиция 9855). НЕ видно: `//recut-29-09` (76 851), `//retired-rollout-magistral-24-09` (70 456), `//retired-pagination-magistral-28-09` (74 273). Гипотеза ведущей «генератор читает архивные ключи и принимает за текущее» ОПРОВЕРГНУТА: архив за границей чтения. Корень: мета-ключ `//date` застрял на 24.09 (перечеканки 28.09 и 29.09 писали только `//recut-*`), модель разрешает противоречие в пользу `//date`; факт свежести (`magistralFreshness`, предикат probe) ни в каркас, ни в вечер не подаётся. По симптому 1: очередь review:oversized снимает PR только по host-local артефакту docs/discussions/pr-N-code-review.md (.gitignore) или commit-status review/teamlead=success; #2488 — голова очереди, #2489 снят артефактом, которого нет на других клонах. gh issue list --search \"2488 created:2026-09-27..2026-09-29\" находит #2492/#2493/#2494; по 2489 — #2492/#2495/#2496/#2497/#2498.",
+  "//cutter": "Резчик ozhegov (провода ритуала и скрипты — его земля). BLOCK-условия: b1 — генератор не получает сырого текста файла ассерций; проекция строится ядром без ФС и включает вердикт того же предиката, что у yarn main-day-probe (вторая копия предиката свежести запрещена). b2 — ядро без ФС/сети/часов; «результат разбора» = билет, ссылающийся на PR и созданный НЕ РАНЬШЕ дня мерджа; билет до мерджа результатом не считается. b3 — недоступность gh/сети печатается в блок словами («книга сделанного недоступна: …»), а не пустым блоком; снятие с очереди oversized НЕ переопределяется — блок аннотирует, не снимает. b4 — живая проверка на сегодняшних файлах (main-day-issue:dry, team-evening-feedback:dry), не на синтетике.",
+  "//order": "b1 независим. b2 → b3: провод вечера импортирует ядро книги сделанного, которого до b2 нет. b4 — после всех: гейт, опыт, закрытие. Зоны не пересекаются.",
+  "//dod": "b1: в промпте генератора вместо сырого файла — проекция (магистраль владельца sources[0] дословно, assertions[], строка свежести magistralFreshness(assertions, gate, today), счёт архивных/мета-ключей числом без содержимого); зуб с порчей: фикстура с `//date` 24.09 + sources[0] сегодня + гейт сегодня даёт блок со словом aligned и без «Перечеканено 24.09» — сырой дамп той же фикстуры зуб роняет. b2: ledger(prs, issues, {today}) → для каждого PR список билетов-результатов с датами, либо «разбор не заведён»; зубы: билет до мерджа не результат, PR без билетов остаётся в долге, упоминание чужого номера (#24880) не совпадение. b3: блок «Сделанное, заведённое билетами» и строка свежести посылок стоят в промпте вечера ДО документов дня; зуб с порчей: при входах 27–29.09 промпт несёт «#2488 → билеты #2492 #2493 #2494», и без ядра — нет; зуб на честный отказ порта. b4: живой прогон обоих :dry на сегодняшних документах с выдержками в CLOSURE.md; sprint:gate pass, sprint:experience записан.",
+  "//out-of-scope": "Порядок шагов ritual-day-run.mjs / ritual-evening-run.mjs не трогается. Формат main-day-assertions.json и архивные ключи не меняются (застрявший `//date` — долг чеканщика, названный ведущей отдельно). Промпты персон и регламенты (docs/prompts/TEAM_EVENING_FEEDBACK*.md, docs/virtual-team/PROMPT_*.md) не правятся. Основание снятия PR с очереди review:oversized не расширяется — развилка на слово владельца. DAILY_CODE_REVIEW (code-review-ritual.mjs) книгу сделанного не читает — второй потребитель по отдельному слову.",
+  "//forecast": "b1 даст: каркас дня перестаёт объявлять перечеканку несделанной при aligned. Проверка: main-day-issue:dry на сегодняшних файлах несёт строку «свежесть посылок: aligned» и не несёт «Перечеканено 24.09». Опровержение: если модель по-прежнему пишет «файл несёт снимок 24.09» при проекции без `//date` — корень не в входе, а в RAG/памяти персон; тогда блок miss. b2 даст: чистое ядро, 5 билетов по #2489 и 3 по #2488 на живых данных. Опровержение: билеты без явной ссылки #PR в теле (по названию ветки) — не находятся; это признанный предел. b3 даст: вечер 29.09 видит слот 27.09 сделанным. Опровержение: если фидбек всё равно требует слот — команда судит по RAG прежних протоколов, а не по входам; тогда следующий блок — не здесь. b4 даст: живая приёмка на сегодняшних документах.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-09-29T15:19:14+03:00",
+    "digest": "00524e8355bbf68a11f0dbd42ad705847d217f649f6ace588c8683153aea5465"
+  }
+}

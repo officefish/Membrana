@@ -5,6 +5,42 @@
 
 ---
 
+## 2026-09-29 — `ritual-reads-done-work` — **CLOSED · gate pass 4/4 · experience hit**
+
+- **Closure:** [`local-sprint/ritual-reads-done-work/CLOSURE.md`](./local-sprint/ritual-reads-done-work/CLOSURE.md) —
+  ратификация 15:19+03 инструментом; b1 `b9418242`, b2 `3f1471c9`, b3 `9963fd10`; живая проверка обоих
+  `:dry` на документах 29.09 при ещё не исправленном `//date`; PR `--no-merge`, мердж — слово владельца.
+
+- **Goal:** читатели ритуала судят по предмету, а не по документу: проекция ассерций + строка свежести
+  для каркаса дня; блок «сделанное, заведённое билетами» + свежесть посылок для вечернего фидбека.
+- **Source:** И8, [`PREP_2026-09-28_PRODUCT_AND_TOOLING_WEEK.md`](./PREP_2026-09-28_PRODUCT_AND_TOOLING_WEEK.md) §4
+- **OPEN:** [`local-sprint/ritual-reads-done-work/OPEN.md`](./local-sprint/ritual-reads-done-work/OPEN.md)
+- **Prompt:** [`prompts/RITUAL_READS_DONE_WORK_PROMPT.md`](./prompts/RITUAL_READS_DONE_WORK_PROMPT.md)
+- **Cut:** [`sprint/cut/ritual-reads-done-work.json`](./sprint/cut/ritual-reads-done-work.json) — 4 блока,
+  резчик ozhegov ([конспект](./discussions/cut-ritual-reads-done-work-ozhegov.md)); ратифицирован владельцем 2026-09-29T15:19:14+03:00.
+- **Finding at cut:** гипотеза «генератор читает архивные ключи» опровергнута замером — архив за
+  границей чтения 22k; корень — `//date` застрял на 24.09 и отсутствие факта свежести во входах.
+- **Boundary:** порядок ритуалов, формат `main-day-assertions.json`, промпты персон, основание снятия
+  с очереди `review:oversized`, `DAILY_CODE_REVIEW` как второй потребитель — вне спринта.
+
+## 2026-09-29 — `sample-library-paging-a11y` — **CLOSED (gate pass 3/3 · experience hit)**
+
+- **CLOSURE:** [`local-sprint/sample-library-paging-a11y/CLOSURE.md`](./local-sprint/sample-library-paging-a11y/CLOSURE.md) —
+  прогноз ↔ исход (150/170/50 → 256/306/78, все под порогом), 12 порч красные, ревью Родченко LGTM /
+  Дынин BLOCK→LGTM, gap живого замера 320px.
+
+- **Goal:** доступность органов листания библиотеки проб в Studio и кабинете: индикатор как живой
+  статус (снять пустой `aria-current`), правило фокуса после смены страницы, клавиатура без
+  глобальных слушателей, разметка узкого экрана.
+- **Issue:** — (заведётся с первым PR фазы Б)
+- **OPEN:** [`local-sprint/sample-library-paging-a11y/OPEN.md`](./local-sprint/sample-library-paging-a11y/OPEN.md)
+- **Prompt:** [`prompts/SAMPLE_LIBRARY_PAGING_A11Y_PROMPT.md`](./prompts/SAMPLE_LIBRARY_PAGING_A11Y_PROMPT.md)
+- **Cut:** [`sprint/cut/sample-library-paging-a11y.json`](./sprint/cut/sample-library-paging-a11y.json) — 3 блока
+  (a1 Studio · a2 кабинет · a3 зуб близнецов), резчик rodchenko
+  ([конспект](./discussions/cut-sample-library-paging-a11y-rodchenko.md)); ждёт ратификации владельца.
+- **Boundary:** `MoveAllToCollectionDialog` (проверен 27.09), `OverflowWindow`, общий пакет под `nav`,
+  стрелки и набор страниц, мердж — вне спринта. Узкий экран без браузера — gap.
+
 ## 2026-09-08 — `tariff-matrix-2333` — **OPEN**
 
 - **Goal:** серверная адаптация к матрице тарифов по принятому M1: версия контракта,

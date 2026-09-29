@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-26",
+  "date": "2026-09-29",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -436,6 +436,20 @@
       "url": "https://github.com/advisories/GHSA-jqff-g426-hqxp"
     },
     {
+      "pkg": "fast-uri",
+      "id": "1239942",
+      "severity": "high",
+      "issue": "fast-uri vulnerable to authority injection via an unvalidated port in serialize",
+      "url": "https://github.com/advisories/GHSA-qw65-cvwx-89v3"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1239943",
+      "severity": "high",
+      "issue": "fast-uri vulnerable to authority injection via an unvalidated port in serialize",
+      "url": "https://github.com/advisories/GHSA-qw65-cvwx-89v3"
+    },
+    {
       "pkg": "fastify",
       "id": "1158514",
       "severity": "moderate",
@@ -504,6 +518,20 @@
       "severity": "moderate",
       "issue": "ip-address: misclassification of IPv4-mapped/NAT64 IPv6 addresses can bypass SSRF and trust-boundary checks",
       "url": "https://github.com/advisories/GHSA-22jq-vg5j-6vgg"
+    },
+    {
+      "pkg": "ip-address",
+      "id": "1239948",
+      "severity": "moderate",
+      "issue": "ip-address: Address6.isLinkLocal() recognizes fe80::/64 rather than fe80::/10, allowing SSRF and trust-boundary bypass to on-link hosts",
+      "url": "https://github.com/advisories/GHSA-rpw4-54j3-4h4q"
+    },
+    {
+      "pkg": "ip-address",
+      "id": "1239949",
+      "severity": "moderate",
+      "issue": "ip-address: no classifier recognizes the NAT64 local-use range 64:ff9b:1::/48, allowing SSRF and trust-boundary bypass",
+      "url": "https://github.com/advisories/GHSA-2vr4-cq9g-pvrc"
     },
     {
       "pkg": "js-yaml",
@@ -749,6 +777,20 @@
       "severity": "moderate",
       "issue": "undici vulnerable to cookie attribute injection via unsanitized domain and unparsed setCookie fields",
       "url": "https://github.com/advisories/GHSA-v3r7-h72x-cjcm"
+    },
+    {
+      "pkg": "undici",
+      "id": "1239933",
+      "severity": "moderate",
+      "issue": "undici vulnerable to Denial of Service via unhandled error in WebSocket permessage-deflate decompression",
+      "url": "https://github.com/advisories/GHSA-3wwx-pv8p-q78v"
+    },
+    {
+      "pkg": "undici",
+      "id": "1239934",
+      "severity": "moderate",
+      "issue": "undici vulnerable to Denial of Service via unhandled error in WebSocket permessage-deflate decompression",
+      "url": "https://github.com/advisories/GHSA-3wwx-pv8p-q78v"
     },
     {
       "pkg": "vitest",

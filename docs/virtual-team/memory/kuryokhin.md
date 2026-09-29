@@ -5,8 +5,20 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14374/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 375 (причины в op-log) -->
+Записей: 50 · бюджет 14385/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 377 (причины в op-log) -->
+
+### 2026-09-28 · позиция · team-evening-feedback
+
+> Курёхин. Оценка артефактов: аудио-контур в диффе дня не затронут — `MAIN_DAY_ISSUE` это отражает («DSP-бенчмарки, повтор free-v1, «Этап 1.A» — потолок эшелона 0 зафиксирован; тема закрыта»). По моей зоне ответственности день молчит — и это честно. Итоги дня: по содержанию — «—». […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-28.md#reply-1`
+
+### 2026-09-27 · позиция · team-evening-feedback
+
+> Kuryokhin **Оценка артефактов:** По моему контуру (аудио, Web Audio, DSP) — дифф дня пуст, что стендап и code-review корректно отметили. Не претендую на аудио-суждение по видимому диффу. **Итоги дня:** По аудио-контуру (`packages/services/*` DSP, `audio-engine`, `device-board` […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-27.md#reply-1`
 
 ### 2026-09-26 · позиция · team-evening-feedback
 
@@ -290,20 +302,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`
 
-### 2026-08-27 · позиция · hunt-and-canon-m0-order
+### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 
-> С края тракта: сторож молчания — это «есть ли звук расписания вообще», ложный вещдок — «в ленту кладут студийную фонограмму вчерашнего дня как сегодняшний take». Обходчик — микрофон/измеритель. Канон — партитура, с которой сверяют. Путать «не пришёл сигнал» с «подложили старую […] _(реплик в сеансе: 5)_
+> Preview остаётся производной поверхностью. Он получает original только после `read-bytes` allow, сохраняет class и при любой ошибке возвращает `preview_unavailable`, не меняя original, registry или tip. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/hunt-and-canon-m0-order-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m1-silence-guard
-
-> С края ночного тракта слышу не «упавший curl», а тишину партитуры: три расписания 27.08 просто не вступили. Руками — играют, по cron — пауза без ферматы. Глушение `continue-on-error` плюс `|| echo` — это как выключить лампочку клиппинга и сказать, что эфир чистый. Молчание — […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m1-silence-guard-2026-08-27.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m3-access
-
-> Affine остаётся сменным человеческим движком под контейнером. Его нативные роли не определяют, что пользователь Membrana вправе сделать с материалом. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`

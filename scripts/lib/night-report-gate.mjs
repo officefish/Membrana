@@ -9,12 +9,15 @@
  * ночи: что запускалось, что прошло, что упало и почему. Утро читает именно
  * сводку, а не один tests-report; иначе новый ночной механизм снова может
  * умереть невидимым.
- * Свежесть — по git revision ствола, НЕ по mtime и не по календарной дате.
+ * Свежесть — по вершине ствола НА МОМЕНТ запуска (#2504) и по открытому циклу
+ * ночи из объявленного cron; НЕ по mtime, не по календарной дате чтения и не по
+ * окну в часах. Утренний merge после ночи не делает ночь несвежей, а ручной
+ * перезапуск на устаревшей ссылке не становится свежим от того, что недавний.
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { formatLateness } from './night-summary.mjs';
+import { formatLateness, judgeRunFreshness } from './night-summary.mjs';
 import { execFileSync } from 'node:child_process';
 
 export const NIGHT_REPORT_FRAME_ID = 'night-report';
@@ -81,6 +84,7 @@ export function readNightReport(repoRoot, rel) {
  * @param {string | null} [input.reportProblem]
  * @param {string} input.expectedRevision 40-char SHA or prefix of target origin/main
  * @param {string} [input.today] legacy/log-only day; freshness is not decided by calendar date
+ * @param {string | null} [input.now] время суждения (ISO); по нему находится открытый цикл ночи
  * @returns {{ status: 'pass'|'missing'|'stale'|'pending'|'red'|'invalid', blockers: string[], summary: string[] }}
  */
 export function evaluateNightReport({
@@ -89,6 +93,7 @@ export function evaluateNightReport({
   reportProblem = null,
   expectedRevision,
   today = null,
+  now = null,
 }) {
   /** @type {string[]} */
   const summary = [];
@@ -131,7 +136,7 @@ export function evaluateNightReport({
       summary,
     };
   }
-  summary.push(`вершина ствола: ${wantedRevision}`);
+  summary.push(`текущая вершина ствола: ${wantedRevision}`);
   if (!reportRevision) {
     return {
       status: 'stale',
@@ -142,7 +147,11 @@ export function evaluateNightReport({
     };
   }
   summary.push(`ревизия отчёта: ${reportRevision}`);
-  if (!sameRevision(reportRevision, wantedRevision)) {
+  // Сводку ночи (kind=night-summary) по ТЕКУЩЕЙ вершине сверять нельзя: именно
+  // это красило здоровую ночь после утреннего мерджа (#2501). Её свежесть судит
+  // evaluateNightSummary — по вершине ствола на момент каждого запуска. Для
+  // переходного detailed tests-report другого предмета нет, там сверка остаётся.
+  if (report.kind !== 'night-summary' && !sameRevision(reportRevision, wantedRevision)) {
     return {
       status: 'stale',
       blockers: [
@@ -158,7 +167,7 @@ export function evaluateNightReport({
   if (notRun !== null) summary.push(`не гонялось: ${notRun}`);
   if (report.kit?.id)
     summary.push(`кит: ${report.kit.id} (${report.kit.ok ? 'pinned ok' : 'pinned BLOCKED'})`);
-  const summaryVerdict = evaluateNightSummary(report);
+  const summaryVerdict = evaluateNightSummary(report, now);
   if (summaryVerdict) {
     for (const line of summaryVerdict.summary) summary.push(line);
     if (summaryVerdict.blockers.length > 0) {
@@ -185,9 +194,31 @@ export function evaluateNightReport({
   return { status: 'pass', blockers: [], summary };
 }
 
-function evaluateNightSummary(report) {
+/**
+ * Гейт судит свежесть САМ, по фактам, записанным в сводку, а не верит её статусу.
+ *
+ * Сводка могла быть собрана раньше (утро читает носитель без --pull) или старой
+ * версией прибора — тогда её «pass» ничего не доказывает. Предикат один и тот же
+ * (judgeRunFreshness), стороны только подают факты; отсутствие факта —
+ * fail closed, а не молчаливый пропуск.
+ *
+ * @param {object} report
+ * @param {string | null} now время суждения (ISO)
+ */
+function evaluateNightSummary(report, now = null) {
   if (report.kind !== 'night-summary') return null;
-  const checks = Array.isArray(report.workflows) ? report.workflows : [];
+  const rawChecks = Array.isArray(report.workflows) ? report.workflows : [];
+  const checks = rawChecks.map((check) => {
+    if (check.required === false || check.status !== 'pass') return check;
+    const freshness = judgeRunFreshness({
+      headSha: check.run?.headSha ?? null,
+      trunkRevisionAtStart: check.run?.trunkRevisionAtStart ?? null,
+      createdAt: check.run?.createdAt ?? null,
+      cron: check.cron ?? check.run?.schedule?.cron ?? null,
+      now,
+    });
+    return freshness ? { ...check, ...freshness } : check;
+  });
   const lines = checks.map((check) => {
     const title = check.title ?? check.id ?? check.workflow ?? 'unknown';
     const status = check.status ?? 'unknown';
@@ -254,7 +285,7 @@ function readGitRevision(repoRoot, ref) {
  * Печать + код выхода для morning-care: 0 — зелёная свежая ночь; 2 — STOP.
  *
  * @param {string} repoRoot
- * @param {{ log?: (s: string) => void, today?: string, expectedRevision?: string, expectedRef?: string }} [opts]
+ * @param {{ log?: (s: string) => void, today?: string, now?: string, expectedRevision?: string, expectedRef?: string }} [opts]
  * @returns {number}
  */
 export function runNightReportGate(repoRoot, opts = {}) {
@@ -279,10 +310,11 @@ export function runNightReportGate(repoRoot, opts = {}) {
     reportProblem: problem,
     today,
     expectedRevision,
+    now: opts.now ?? new Date().toISOString(),
   });
   for (const s of verdict.summary) log(`  · ${s}`);
   if (verdict.status === 'pass') {
-    log('✓ night-report: ночь зелёная и совпадает с вершиной ствола');
+    log('✓ night-report: ночь зелёная, вершины ствола на момент запусков подтверждены');
     return 0;
   }
   for (const b of verdict.blockers) log(`  ✗ ${b}`);

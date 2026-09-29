@@ -5,8 +5,20 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14400/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 387 (причины в op-log) -->
+Записей: 50 · бюджет 14394/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 389 (причины в op-log) -->
+
+### 2026-09-28 · позиция · team-evening-feedback
+
+> Тарасов на связи. Оценка артефактов: `MAIN_DAY_ISSUE.md` честно назвал магистралью `pagination-sample-library` со ссылкой на слово владельца (`sources[0]`, author=human) и явно зафиксировал расхождение с `main-day-assertions.json` — это правильный уровень честности. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-28.md#reply-1`
+
+### 2026-09-27 · позиция · team-evening-feedback
+
+> Tarasov **Оценка артефактов:** Стендап и MAIN_DAY_ISSUE согласованы между собой, но оба держатся за owner-choice 24.09 (rollout), пока `morning-gates-state.json` за 27.09 несёт свежее слово владельца — `three-roads-experiment`. Это норма У1 в чистом виде: перечеканка предписана […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-27.md#reply-1`
 
 ### 2026-09-26 · позиция · team-evening-feedback
 
@@ -295,15 +307,3 @@
 > Оценка артефактов: Утренние документы дня согласованы между собой — фокус стендапа (#2204 green + стоп) совпал с MAIN_DAY_ISSUE, где магистралью закреплён `buffer-control-plugin-2204` с чётким DoD и таблицей обоснования. STRATEGY_DAY корректно вынес `secret-parser-built` в […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m0-order
-
-> Положение: четыре вершины, предмет — процесс, не один curl. Планка M0 — DAG и только он; кто начнёт чинить continue-on-error в этой комнате — BLOCK за выход из брифа. Связка: Математик держит инварианты рёбер, Структурщик — границы лемм, Архитектор — несущие, […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/hunt-and-canon-m0-order-2026-08-27.md#reply-1`
-
-### 2026-08-21 · позиция · team-evening-feedback
-
-> Утро зафиксировало противоречие входов (свежий owner-choice 19.08 vs DAY_PLAN «не назначена»), и день не размазался: вместо третьего L-эпика «на всякий случай» команда довела магистраль до архива. Вечером горизонт честно назван в DoD утра — читать review, не запускать […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-21.md#reply-1`

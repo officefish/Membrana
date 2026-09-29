@@ -128,6 +128,9 @@ if (!cli.noRag) {
 let leadBlock = '';
 // Ведущий ревью во внешней области: нужен в мете вердикта шип-гейта (#924).
 let reviewLeadId = null;
+// #2491: «у диффа нет хозяина ревью» — тоже во внешнюю область. Прежде признак жил ОДНОЙ
+// строкой stderr ниже и дальше не ехал: ни в артефакт, ни в статус, ни в глаза ведущему.
+let reviewLeadOutOfConvention = false;
 try {
   const diffPaths = execFileSync(
     'git',
@@ -144,6 +147,7 @@ try {
     activeTasks: listActive(loadRegistry()),
   });
   reviewLeadId = lead?.id ?? lead?.persona ?? null;
+  reviewLeadOutOfConvention = Boolean(lead?.outOfConvention);
   if (lead.outOfConvention) console.error(`[review-lead] ⚠ ${lead.basis}`);
   const bestiaryPath = resolve(process.cwd(), 'docs/bestiary/BESTIARY.md');
   leadBlock = formatLeadBlock({
@@ -240,6 +244,9 @@ try {
         // до маркера вердикта. Без них вердикт заявляет «осмотрено», не называя ЧТО.
         diffSource,
         lead: reviewLeadId,
+        // #2491: признак «ведущий назначен умолчанием, карта скоупов пути не покрыла» едет
+        // в артефакт меткой и громкой строкой, откуда его читает гейт и человек.
+        leadOutOfConvention: reviewLeadOutOfConvention,
         diffScope,
       },
     });

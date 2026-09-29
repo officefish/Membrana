@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { CabinetToast } from '@/components/CabinetToast';
 import { CabinetSampleChartListPanel } from '@/components/sample-library/CabinetSampleChartListPanel';
 import { DeletionConfirmDialog } from '@/components/sample-library/DeletionConfirmDialog';
+import { MoveAllToCollectionDialog } from '@/components/sample-library/MoveAllToCollectionDialog';
 import { CabinetSampleDuplicatesPanel } from '@/components/sample-library/CabinetSampleDuplicatesPanel';
 import { CabinetSampleSessionDigestPanel } from '@/components/sample-library/CabinetSampleSessionDigestPanel';
 import { CabinetSamplePlayerSection } from '@/components/sample-library/CabinetSamplePlayerSection';
@@ -47,6 +48,12 @@ export function SampleLibraryPage() {
     readonly run: () => void | Promise<void>;
   } | null>(null);
   const [deleting, setDeleting] = useState(false);
+  /**
+   * Окно переноса пачкой (заказ владельца 27.09) — близнец Studio. Живёт рядом с воротами
+   * удаления, но воротами удаления НЕ является: перенос обратим, и пугать его галочкой
+   * «понимаю, что удаляю вещдоки» значило бы уравнять обратимое с необратимым.
+   */
+  const [moveAllOpen, setMoveAllOpen] = useState(false);
 
   const askDelete = useCallback(
     (title: string, samples: readonly MediaSample[], run: () => void | Promise<void>, declaredTotal?: number) => {
@@ -307,6 +314,8 @@ export function SampleLibraryPage() {
               handleCreateCollection={lib.handleCreateCollection}
               handleDeleteCollection={lib.handleDeleteCollection}
               handleClearBuffer={clearBufferGated}
+              canMoveAll={lib.canMoveAll}
+              onMoveAll={() => setMoveAllOpen(true)}
             />
         }
       >
@@ -350,6 +359,22 @@ export function SampleLibraryPage() {
               samplesPagination={lib.samplesPagination}
             />
       </PagePluginArea>
+
+      <MoveAllToCollectionDialog
+        open={moveAllOpen}
+        source={{
+          name: lib.selectedCollection?.name ?? '—',
+          /* Тот же вывод, что и у предиката кнопки: второго признака буфера здесь не заводим. */
+          isBuffer: lib.sourceIsBuffer,
+        }}
+        /* Полное число НАБОРА, а не длина страницы: страница держит 40 из 1057 (#2237). */
+        sourceTotal={lib.selectedCollection?.sampleCount ?? lib.nodeSamplesTotal}
+        collections={lib.snapshot.collections}
+        sourceCollectionId={lib.selection.kind === 'node' ? lib.selection.collectionId : ''}
+        port={lib.moveAllPort}
+        onClose={() => setMoveAllOpen(false)}
+        onMoved={() => void lib.reloadSamplesPage()}
+      />
 
       <DeletionConfirmDialog
         open={pending !== null}

@@ -1,15 +1,23 @@
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DeletionConfirmDialog } from '@/components/DeletionConfirmDialog';
+import {
+  MoveAllToCollectionDialog,
+  canOfferMoveAll,
+  isMoveAllSourceBuffer,
+  type MoveAllPort,
+} from '@/components/MoveAllToCollectionDialog';
 import { readPersistedPairedCredentials } from '@/lib/resolveMediaLibraryBackend';
 import { ModuleProps, useMembranaStore } from '@membrana/agenda';
 import { useShallow } from 'zustand/react/shallow';
 import {
   BUFFER_COLLECTION_ID,
+  DEFAULT_SAMPLES_PAGE_SIZE,
   isReadOnlyCollection,
   buildLabelManifest,
   readLabelManifest,
   TARIFF_DATASET_SYSTEM_KEY,
   isQuotaFull,
+  resolveSamplesPageWindow,
   useMediaLibrary,
   type Collection,
   type MediaSample,
@@ -18,7 +26,8 @@ import {
   type UpdateSampleLabelNotes,
 } from '@membrana/media-library-service';
 
-import { SampleLabelEditor, SampleNotesEditor } from '../components/sample-library/SampleLabelNotesEditor';
+import { SampleLibraryPagination } from '../components/sample-library/SampleLibraryPagination';
+import { SampleLibraryTable } from '../components/sample-library/SampleLibraryTable';
 import { MediaLibraryQuotaBanner } from '../components/MediaLibraryQuotaBanner';
 import { SamplePlaybackBar } from '../components/sample-playback/SamplePlaybackBar';
 import { downloadBlob, extensionFromMime } from '../lib/downloadBlob';
@@ -123,7 +132,28 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   /** Именованные состояния сохранения подписи — по каждой пробе (#2110). */
   const [labelStates, setLabelStates] = useState<Record<string, { state: 'idle' | 'saving' | 'saved' | 'error'; detail?: string }>>({});
   const [labelFilter, setLabelFilter] = useState<'all' | SampleLabel>('all');
+  /** Текущая страница списка проб (#2505). Приводится к живому диапазону в `resolveSamplesPageWindow`. */
+  const [samplesPage, setSamplesPage] = useState(1);
   const { busy: clearingBuffer, run: runRemoteMutation } = useRemoteMutation();
+
+  /**
+   * Смена набора и смена фильтра сбрасывают страницу СРАЗУ, в том же движении, а не эффектом
+   * после отрисовки — тот же класс, что #2181 закрыл для отчёта плагина: «прежний номер больше
+   * не про этот список». Оставь номер, и человек попадёт на страницу 27 списка из 40 записей:
+   * пусто, а счётчик уверяет, что где-то есть 27-я страница.
+   *
+   * Одного сброса мало: набор умеет ужиматься БЕЗ участия человека (удалили пробы, очистили
+   * буфер) — там сбрасывать некому, и номер приводит к диапазону сам `resolveSamplesPageWindow`.
+   */
+  const selectCollection = useCallback((collectionId: string) => {
+    setSelectedId(collectionId);
+    setSamplesPage(1);
+  }, []);
+
+  const chooseLabelFilter = useCallback((next: 'all' | SampleLabel) => {
+    setLabelFilter(next);
+    setSamplesPage(1);
+  }, []);
 
   useEffect(() => {
     bindSamplePlaybackBlobReader((sampleId: string) => service.getSampleBlob(sampleId));
@@ -175,6 +205,18 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   // NB3: фильтр по метке + прогресс разметки (HG1-UX).
   const filteredSamples =
     labelFilter === 'all' ? samples : samples.filter((s) => s.label === labelFilter);
+  /**
+   * ЛИСТАЕТСЯ ОТРИСОВКА, А НЕ ЗАГРУЗКА (#2505). Дом по-прежнему держит набор целиком — поэтому
+   * фильтр по метке, экспорт/импорт разметки, счётчик размеченных и поиск пробы по id для панелей
+   * работают по ВСЕМУ набору, как и раньше. На экран уходит окно страницы: 1057 строк разом не
+   * рисуются больше никогда.
+   *
+   * Почему не страницы двери, как в кабинете: снапшот сервиса всё равно загружает набор целиком
+   * (`refresh` → `listSamples` обходит все страницы), и переход дома на страницы двери НЕ убрал бы
+   * ни одного запроса, зато отнял бы у фильтра и у разметки полный набор — то есть купил бы
+   * дешёвую отрисовку ценой тех самых частичных данных, за которые дом уже краснел (#2237).
+   */
+  const pageView = resolveSamplesPageWindow(filteredSamples, samplesPage, DEFAULT_SAMPLES_PAGE_SIZE);
   const labeledCount = samples.filter((s) => s.label !== 'unlabeled').length;
   const quotaBlocked = isQuotaFull(snapshot.quota);
   const isTariffDataset =
@@ -226,27 +268,34 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     (c) => c.id !== selectedId && c.kind !== 'buffer' && c.kind !== 'system',
   );
 
+  /**
+   * МАССОВЫЙ перенос — только из буфера (слово владельца 27.09). Правило не объявляется здесь
+   * заново: его несёт носитель окна, один на два дома (`canOfferMoveAll`). Построчный перенос
+   * остаётся на `canMoveFrom` — он к буферу не привязан (#2249).
+   */
+  const canMoveAll = canMoveFrom && canOfferMoveAll(selectedId, moveTargets);
+
   const handleCreateCollection = useCallback(async () => {
     setError(null);
     try {
       const col = await service.createUserCollection(newCollectionName);
       setNewCollectionName('');
-      setSelectedId(col.id);
+      selectCollection(col.id);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }
-  }, [newCollectionName, service]);
+  }, [newCollectionName, selectCollection, service]);
 
   const handleDeleteCollection = useCallback(async () => {
     if (!selected || selected.kind !== 'user') return;
     setError(null);
     try {
       await service.deleteUserCollection(selected.id);
-      setSelectedId(BUFFER_COLLECTION_ID);
+      selectCollection(BUFFER_COLLECTION_ID);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }
-  }, [selected, service]);
+  }, [selectCollection, selected, service]);
 
   const handleImport = useCallback(
     async (files: readonly File[]) => {
@@ -434,6 +483,29 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     [service, snapshot.collections],
   );
 
+  /**
+   * ПЕРЕНОС ПАЧКОЙ (заказ владельца 27.09) — окно выбора набора, план, подтверждение.
+   *
+   * Перечисление идёт ПОЛНЫМ списком набора (`listSamples` бэкенда обходит все страницы), а
+   * НЕ по `samples`: список в руках дома — это загруженное, а перенести надо набор. В Studio
+   * они сейчас совпадают, в кабинете-близнеце нет, и правило одно на двоих (класс
+   * `docs/field/decisions-on-partial-data.md`).
+   *
+   * Почему через `getBackend()`, а не своим глаголом сервиса: слой доступа к двери приезжает
+   * серверной половиной (#2488, арбитраж ведущей 27.09), и второй раз добавлять в тот же
+   * пакет ничего нельзя — один шов там уже разошёлся на два контракта. `listSamples` у порта
+   * обязательный и публичный, так что новой двери для этого не нужно.
+   */
+  const [moveAllOpen, setMoveAllOpen] = useState(false);
+  const moveAllPort = useMemo<MoveAllPort>(
+    () => ({
+      enumerate: async () => (await service.getBackend().listSamples(selectedId)).map((s) => s.id),
+      run: (sampleIds, toCollectionId, options) =>
+        service.moveSamplesBatch(sampleIds, toCollectionId, options),
+    }),
+    [selectedId, service],
+  );
+
   const handleClearBuffer = useCallback(async () => {
     if (snapshot.quota.backend === 'server' && !snapshot.quota.serverReachable) {
       setError('Media-server недоступен — очистка буфера невозможна.');
@@ -542,6 +614,28 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     }
   }, []);
 
+  /**
+   * Кнопка «играть» у строки: выбрать, если играется другая, и переключить. Порядок тот же, что
+   * был в разметке модуля до выноса таблицы (#2505) — прослушивание НЕ зависит от страницы: проба
+   * играется по id, и уход на другую страницу его не останавливает.
+   */
+  const handleTogglePlay = useCallback(
+    async (sample: MediaSample) => {
+      if (playback.selectedSampleId !== sample.id) {
+        await handleSelectSample(sample);
+      }
+      try {
+        await togglePlayPause();
+      } catch (e) {
+        // Отказ переключения НЕ глотается (ревью #2505, P2). Прежняя разметка звала
+        // `togglePlayPause` из `void (async () => …)()`, и отказ уходил в никуда: кнопка
+        // «играть» молчала, а человек не знал, что проба не загрузилась.
+        setError(e instanceof Error ? e.message : String(e));
+      }
+    },
+    [handleSelectSample, playback.selectedSampleId],
+  );
+
   const handleExportSample = useCallback(
     async (sample: MediaSample) => {
       setError(null);
@@ -612,7 +706,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
               className={`btn btn-sm justify-start truncate ${
                 col.id === selectedId ? 'btn-primary' : 'btn-ghost'
               }`}
-              onClick={() => setSelectedId(col.id)}
+              onClick={() => selectCollection(col.id)}
             >
               {col.name}
               <span className="ml-auto tabular-nums opacity-70">
@@ -650,6 +744,24 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
               onClick={() => void handleDeleteCollection()}
             >
               Удалить коллекцию
+            </button>
+          ) : null}
+
+          {/*
+            «Перенести все» стоит рядом с «Очистить буфер» намеренно: обе — операции над
+            НАБОРОМ ЦЕЛИКОМ, и у полного буфера это две дороги одного решения — вывезти или
+            стереть. И живёт кнопка ТОЛЬКО в буфере (`canMoveAll`, слово владельца 27.09):
+            дверь возит пачкой только из буфера, и вне буфера окно могло сказать человеку
+            ровно одно — «не поедет ничего». Построчный перенос это не затрагивает: он
+            по-прежнему на `canMoveFrom`, из любого набора (#2249).
+          */}
+          {canMoveAll ? (
+            <button
+              type="button"
+              className="btn btn-sm btn-outline"
+              onClick={() => setMoveAllOpen(true)}
+            >
+              Перенести все
             </button>
           ) : null}
 
@@ -749,7 +861,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                       labelFilter === option.value ? 'btn-primary' : 'btn-ghost'
                     }`}
                     aria-pressed={labelFilter === option.value}
-                    onClick={() => setLabelFilter(option.value)}
+                    onClick={() => chooseLabelFilter(option.value)}
                   >
                     {option.title}
                   </button>
@@ -757,10 +869,13 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
               </div>
               <span className="text-xs text-base-content/60 tabular-nums" aria-live="polite">
                 {/* M — полное число набора: доля от страницы показывала «40 из 40»
-                    при 1747 в наборе (#2237). Когда страница не вся, так и сказано. */}
+                    при 1747 в наборе (#2237). Когда загружено не всё, так и сказано.
+                    Слово «страница» здесь больше не годится: с #2505 страница есть у ЭКРАНА, а
+                    эта оговорка — про ЗАГРУЖЕННОЕ. Оставь прежнюю формулировку, и она стала бы
+                    ложью: «на этой странице 1057» при сорока строках перед глазами. */}
                 размечено {labeledCount} из {selected?.sampleCount ?? samples.length}
                 {(selected?.sampleCount ?? samples.length) > samples.length
-                  ? ` (на этой странице ${samples.length})`
+                  ? ` (загружено ${samples.length})`
                   : ''}
               </span>
             </div>
@@ -768,155 +883,38 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
 
           <SamplePlaybackBar playback={playback} compact />
 
-          <div className="overflow-x-auto rounded-lg border border-base-300">
-            <table className="table table-sm">
-              <thead>
-                <tr>
-                  <th>Название</th>
-                  <th>class</th>
-                  <th>label</th>
-                  <th>источник</th>
-                  <th className="text-right">размер</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {filteredSamples.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="text-center text-base-content/50">
-                      {samples.length > 0
-                        ? 'Нет сэмплов с выбранной меткой.'
-                        : isTariffDataset
-                          ? 'Загрузка базового набора… (запустите yarn dataset:sync-free-v1 при dev)'
-                          : 'Нет сэмплов.'}
-                    </td>
-                  </tr>
-                ) : (
-                  filteredSamples.map((s: MediaSample) => {
-                    const isSelected = playback.selectedSampleId === s.id;
-                    const labelState = labelStates[s.id] ?? { state: 'idle' as const };
-                    const saving = labelState.state === 'saving';
-                    return (
-                    <Fragment key={s.id}>
-                    <tr
-                      className={isSelected ? 'bg-primary/10' : undefined}
-                      onClick={() => void handleSelectSample(s)}
-                    >
-                      <td className="max-w-[12rem] align-top">
-                        <p className="truncate cursor-pointer font-medium">{s.title}</p>
-                      </td>
-                      <td>{s.class}</td>
-                      <td className="align-top">
-                        <SampleLabelEditor
-                          sampleId={s.id}
-                          label={s.label}
-                          editable={canLabelAnnotate}
-                          saving={saving}
-                          onSave={handleUpdateLabelNotes}
-                        />
-                        {labelState.state === 'saved' ? (
-                          <span className="text-xs text-success" role="status">сохранено</span>
-                        ) : null}
-                        {labelState.state === 'error' ? (
-                          <span className="text-xs text-error" role="alert" title={labelState.detail}>
-                            не сохранилось: {labelState.detail}
-                          </span>
-                        ) : null}
-                      </td>
-                      <td>{s.source}</td>
-                      <td className="text-right tabular-nums">
-                        {(s.sizeBytes / 1024).toFixed(0)} KB
-                      </td>
-                      <td className="flex flex-wrap justify-end gap-1">
-                        <button
-                          type="button"
-                          className="btn btn-xs btn-ghost"
-                          aria-label={
-                            playback.selectedSampleId === s.id && playback.status === 'playing'
-                              ? 'Пауза'
-                              : 'Воспроизвести'
-                          }
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            void (async () => {
-                              if (playback.selectedSampleId !== s.id) {
-                                await handleSelectSample(s);
-                              }
-                              await togglePlayPause();
-                            })();
-                          }}
-                        >
-                          {playback.selectedSampleId === s.id && playback.status === 'playing'
-                            ? '⏸'
-                            : '▶'}
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-xs btn-ghost"
-                          aria-label="Экспорт"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            void handleExportSample(s);
-                          }}
-                        >
-                          ↓
-                        </button>
-                        {canMoveFrom && moveTargets.length > 0 ? (
-                          <select
-                            className="select select-bordered select-xs max-w-[8rem]"
-                            defaultValue=""
-                            onChange={(e) => {
-                              void handleMove(s.id, e.target.value);
-                              e.target.value = '';
-                            }}
-                          >
-                            <option value="" disabled>
-                              Перенести…
-                            </option>
-                            {moveTargets.map((c) => (
-                              <option key={c.id} value={c.id}>
-                                {c.name}
-                              </option>
-                            ))}
-                          </select>
-                        ) : null}
-                        {!isTariffDataset ? (
-                        <button
-                          type="button"
-                          className="btn btn-xs btn-ghost text-error"
-                          onClick={() => void removeGated(s.id)}
-                        >
-                          Удалить
-                        </button>
-                        ) : null}
-                      </td>
-                    </tr>
-                    {isSelected && canLabelAnnotate ? (
-                      <tr className="bg-primary/10">
-                        <td colSpan={6} className="pt-0">
-                          <div
-                            className="py-2"
-                            onClick={(e) => e.stopPropagation()}
-                            onPointerDown={(e) => e.stopPropagation()}
-                          >
-                            <SampleNotesEditor
-                              sampleId={s.id}
-                              notes={s.notes}
-                              editable
-                              saving={saving}
-                              onSave={handleUpdateLabelNotes}
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    ) : null}
-                    </Fragment>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+          <SampleLibraryTable
+            rows={pageView.items}
+            emptyText={
+              samples.length > 0
+                ? 'Нет сэмплов с выбранной меткой.'
+                : isTariffDataset
+                  ? 'Загрузка базового набора… (запустите yarn dataset:sync-free-v1 при dev)'
+                  : 'Нет сэмплов.'
+            }
+            playback={playback}
+            labelStates={labelStates}
+            canLabelAnnotate={canLabelAnnotate}
+            canMoveFrom={canMoveFrom}
+            moveTargets={moveTargets}
+            isTariffDataset={isTariffDataset}
+            onSelectSample={(s) => void handleSelectSample(s)}
+            onTogglePlay={(s) => void handleTogglePlay(s)}
+            onExportSample={(s) => void handleExportSample(s)}
+            onMove={(id, toId) => void handleMove(id, toId)}
+            onRemove={(id) => void removeGated(id)}
+            onSaveLabelNotes={handleUpdateLabelNotes}
+          />
+
+          {/* Органы листания — ПОД таблицей, как у близнеца в кабинете. */}
+          <SampleLibraryPagination
+            page={pageView.page}
+            totalPages={pageView.totalPages}
+            total={pageView.total}
+            from={pageView.from}
+            to={pageView.to}
+            onPageChange={setSamplesPage}
+          />
         </section>
         )}
       </div>
@@ -965,6 +963,16 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       {localActivePluginIds.includes(NEURAL_DRONE_ANALYZER_PLUGIN_ID) ? (
         <NeuralDroneAnalyzerPanel moduleId={module.id} />
       ) : null}
+
+      <MoveAllToCollectionDialog
+        open={moveAllOpen}
+        source={{ name: selected?.name ?? '—', isBuffer: isMoveAllSourceBuffer(selectedId) }}
+        sourceTotal={selected?.sampleCount ?? samples.length}
+        collections={snapshot.collections}
+        sourceCollectionId={selectedId}
+        port={moveAllPort}
+        onClose={() => setMoveAllOpen(false)}
+      />
 
       <DeletionConfirmDialog
         open={pendingDeletion !== null}

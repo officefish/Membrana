@@ -3,6 +3,7 @@ import {
   BUFFER_COLLECTION_ID,
   DEFAULT_SAMPLES_PAGE_SIZE,
   TARIFF_DATASET_SYSTEM_KEY,
+  clampSamplesPage,
   isQuotaFull,
   isReadOnlyCollection,
   type Collection,
@@ -17,6 +18,12 @@ import {
   useSamplePlayback,
   useSamplePlaybackEscapeKey,
 } from '@membrana/sample-playback-service';
+
+import {
+  canOfferMoveAll,
+  isMoveAllSourceBuffer,
+  type MoveAllPort,
+} from '@/components/sample-library/MoveAllToCollectionDialog';
 
 import {
   fetchMembraneCatalog,
@@ -132,13 +139,36 @@ export function useCabinetSampleLibrary() {
     [collectionPageKey],
   );
 
+  /**
+   * ЗАПОМНЕННАЯ СТРАНИЦА ПЕРЕЖИВАЕТ СПИСОК, О КОТОРОМ БЫЛА (#2505).
+   *
+   * Кабинет помнит номер страницы по набору (`samplesPageByKey`) — это удобно, пока набор не
+   * ужался. Вывезли буфер окном «перенести все», удалили пачку, очистили буфер — страниц стало
+   * меньше, а номер остался. Дверь честно отвечает на запрос: `items: []`, `page: 3`,
+   * `totalPages: 1`. Дом при этом рисовал ПУСТУЮ таблицу, а органы листания скрываются при
+   * `totalPages <= 1` — то есть «Назад» не оставалось вовсе, и выйти из пустоты было нечем.
+   *
+   * Поэтому ответ двери проверяется на связность с номером: номер вне диапазона приводится к
+   * последней живой странице сразу, и эффект перезапрашивается уже за нею. Правило одно и живёт в
+   * ядре библиотеки (`clampSamplesPage`) — второй копии в доме нет.
+   */
+  const reconcileSamplesPage = useCallback(
+    (meta: { readonly page: number; readonly totalPages: number }) => {
+      const fixed = clampSamplesPage(meta.page, meta.totalPages);
+      if (fixed !== meta.page) setSamplesPage(fixed);
+    },
+    [setSamplesPage],
+  );
+
   useEffect(() => {
     if (!membraneId || selection.kind !== 'catalog') return;
     let cancelled = false;
     setSamplesPageLoading(true);
     void fetchMembraneCatalog(membraneId, samplesPage, DEFAULT_SAMPLES_PAGE_SIZE)
       .then((data) => {
-        if (!cancelled) setCatalog(data);
+        if (cancelled) return;
+        setCatalog(data);
+        reconcileSamplesPage({ page: data.page, totalPages: data.totalPages });
       })
       .catch((e) => {
         if (!cancelled) {
@@ -151,7 +181,7 @@ export function useCabinetSampleLibrary() {
     return () => {
       cancelled = true;
     };
-  }, [membraneId, selection.kind, samplesPage]);
+  }, [membraneId, reconcileSamplesPage, selection.kind, samplesPage]);
 
   const activeDeviceId = useMemo(() => {
     if (selection.kind === 'node') return selection.deviceId;
@@ -183,7 +213,9 @@ export function useCabinetSampleLibrary() {
     void service
       .listSamplesPage(collectionId, samplesPage, DEFAULT_SAMPLES_PAGE_SIZE)
       .then((data) => {
-        if (!cancelled) setNodePageData(data);
+        if (cancelled) return;
+        setNodePageData(data);
+        reconcileSamplesPage({ page: data.page, totalPages: data.totalPages });
       })
       .catch((e) => {
         if (!cancelled) {
@@ -197,7 +229,7 @@ export function useCabinetSampleLibrary() {
     return () => {
       cancelled = true;
     };
-  }, [active, samplesPage, selection, service, showError]);
+  }, [active, reconcileSamplesPage, samplesPage, selection, service, showError]);
 
   useEffect(() => {
     if (!playback.selectedSampleId) {
@@ -582,6 +614,51 @@ export function useCabinetSampleLibrary() {
     ],
   );
 
+  /**
+   * ПЕРЕНОС ПАЧКОЙ (заказ владельца 27.09). Близнец Studio: окно, план, подтверждение.
+   *
+   * Перечисление идёт ПОЛНЫМ списком набора (`listSamples` бэкенда обходит все страницы), а
+   * НЕ по `nodeSamples`: в руках кабинета лежит
+   * СТРАНИЦА (40 из 1057), и перенос по ней уехал бы сороковкой — с виду успешно. Это тот
+   * самый класс решений по видимому вместо существующего (`docs/field/decisions-on-partial-data.md`).
+   *
+   * Недоступность media названа словами и здесь: порт обязан ОТКАЗАТЬ, а не вернуть пустой
+   * перечень — пустой перечень окно прочло бы как «в наборе нет проб».
+   */
+  const moveAllPort = useMemo<MoveAllPort>(
+    () => ({
+      enumerate: async () => {
+        if (!service || !active || selection.kind !== 'node') {
+          throw new Error('Media-server недоступен — перечислить пробы набора нечем.');
+        }
+        const all = await service.getBackend().listSamples(selection.collectionId);
+        return all.map((s) => s.id);
+      },
+      run: async (sampleIds, toCollectionId, options) => {
+        if (!service || !active) {
+          throw new Error('Media-server недоступен — перенос невозможен.');
+        }
+        return service.moveSamplesBatch(sampleIds, toCollectionId, options);
+      },
+    }),
+    [active, selection, service],
+  );
+
+  /**
+   * Адрес источника для МАССОВОГО переноса: у вида «каталог»/«узел офлайн» набора нет, и
+   * буфером такой выбор не бывает. Один вывод на два потребителя — предикат кнопки и
+   * `source.isBuffer` окна, — чтобы они не разошлись двумя написаниями одного признака.
+   */
+  const moveAllSourceId = selection.kind === 'node' ? selection.collectionId : null;
+  const sourceIsBuffer = isMoveAllSourceBuffer(moveAllSourceId);
+
+  /**
+   * МАССОВЫЙ перенос — только из буфера (слово владельца 27.09): дверь возит пачкой только
+   * оттуда. Правило не объявляется здесь заново, его несёт носитель окна — один на два дома.
+   * Построчный перенос остаётся на `canMutate`, из любого набора (#2249).
+   */
+  const canMoveAll = canMutate && canOfferMoveAll(moveAllSourceId, moveTargets);
+
   const handleClearBuffer = useCallback(async () => {
     if (selection.kind !== 'node') return;
     await runMediaOp('Очистка буфера', async () => {
@@ -641,6 +718,11 @@ export function useCabinetSampleLibrary() {
     quotaBlocked,
     canMutate,
     moveTargets,
+    canMoveAll,
+    sourceIsBuffer,
+    moveAllPort,
+    /** Перечитать страницу проб — окну переноса после удачного прогона. */
+    reloadSamplesPage,
     selectedPlaybackSample,
     playbackDisabled,
     activeNodeLabel,
