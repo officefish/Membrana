@@ -1,0 +1,57 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "sample-library-paging-a11y",
+  "taskId": "sample-library-paging-a11y",
+  "mode": "explicit-honest",
+  "cutBy": "rodchenko",
+  "//why": "Пагинация библиотеки проб (#2505, 794930f6) влита с критерием про фриз; про доступность критерий молчал — пропуск ведущей в задании, пойман Родченко в вечернем фидбеке 28.09. Чтением найдено: aria-current стоит на индикаторе «2 / 27», который не элемент набора страниц и не живая область (смена страницы читателю экрана не объявляется); кнопка, ставшая disabled под пальцем, в Chromium теряет фокус на body — в Studio на краю диапазона, в кабинете на КАЖДОЙ смене (loading запирает обе кнопки). Клавиатура: родные <button> с текстом, глобальных слушателей нет — Tab/Enter/Space работают, соседний ввод не задет. Органов только с иконкой нет — aria-label добавлять нечему. Оба дома — близнецы: правка в оба, зуб сверки sample-library-paging-twins.",
+  "//order": "a1 (Studio) → a2 (кабинет) → a3 (зуб близнецов). a3 ждёт слов обоих домов; a1 и a2 не пересекаются по файлам и могут идти любым порядком, но тело нава у них обязано совпасть — a3 это и проверяет. Файл, закреплённый за другим блоком, не правится молча: это перерезка и новая ратификация.",
+  "//decisions": "Три решения, вынесенные на ратификацию: (1) aria-current с индикатора СНЯТЬ, индикатор становится role=status aria-live=polite aria-atomic с видимым «2 / 27» и скрытой фразой «Страница 2 из 27, записи 41–80 из 1057» — видимый текст #2237 не меняется; (2) правило фокуса: фокус остаётся на нажатой кнопке, пока она активна; на краю диапазона (кнопка запирается) — переходит на соседнюю кнопку; loading кабинета кнопки НЕ запирает disabled — ставит aria-disabled + btn-disabled, nav получает aria-busy, клик гасится, фокус не двигается (расхождение с конспектом резчика: он предлагал переброс на <nav tabIndex=-1> и возврат по снятии loading — отклонено ради отсутствия тайминга и состояния); (3) стрелок внутри нава НЕ заводить — органов два, оба в Tab-порядке, лишний слушатель конфликтовал бы с полем фильтра меток и Esc воспроизведения.",
+  "//gaps": "Узкий экран: раскладку в jsdom не измерить. В блоках a1/a2 стоит статический предикат разметки (flex-wrap на nav, ни whitespace-nowrap, ни фиксированной ширины) — это про разметку, не про раскладку, и «проверкой узкого экрана» не называется. Живой замер на 320px требует браузера: playwright 1.61 в apps/client есть, chromium не установлен (%LOCALAPPDATA%/ms-playwright пуст). Установка браузера — сетевой шаг по слову владельца; без него замер записывается gap'ом в CLOSURE, не pass'ом.",
+  "//out-of-scope": "MoveAllToCollectionDialog (проверен 27.09); OverflowWindow (образец, не правится); общий пакет под один nav для двух домов (отчёт по #2497 — не заводить); набор страниц «1 2 3 …» и стрелки; изменение видимого текста индикатора; зуб контраста semanticSurfaceContrast.test.ts не трогается и не краснится; мердж (pr:ship --no-merge, слово владельца).",
+  "//review": "Ревью персон с предметом: Родченко — семантика, фокус, разметка узкого экрана; Дынин — каждый зуб с порчей, порча вернулась зелёной → предмет зуба переписан, а не оправдан; Ожегов — слова скрытой фразы и aria-подписей одинаковы у близнецов.",
+  "window": {
+    "from": "2026-09-29T15:10:00+03:00",
+    "to": "2026-09-30T15:10:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "a1-studio-nav-a11y",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/client/src/components/sample-library/SampleLibraryPagination.tsx",
+        "apps/client/src/components/sample-library/sample-library-pagination.test.tsx"
+      ],
+      "estimate": {
+        "changedLines": 150
+      },
+      "//": "Studio: индикатор → role=status с живой фразой, aria-current снят; правило фокуса на краю диапазона (эффект по page + ref последнего нажатия); статический предикат разметки узкого экрана. Зубы в jsdom (// @vitest-environment jsdom уже так живёт): фраза статуса, фокус на соседней кнопке после края, родные button без tabIndex=-1, ни одного слушателя клавиатуры на window/document."
+    },
+    {
+      "blockId": "a2-cabinet-nav-a11y",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/cabinet/src/components/sample-library/CabinetSampleTablePagination.tsx",
+        "apps/cabinet/src/components/sample-library/CabinetSampleTablePagination.test.tsx"
+      ],
+      "estimate": {
+        "changedLines": 170
+      },
+      "//": "Кабинет: то же тело, что в a1, плюс loading: aria-disabled + btn-disabled вместо disabled, aria-busy на nav, клик по запертой кнопке гасится, фокус остаётся на ней. Новый зуб *.test.tsx (jsdom по environmentMatchGlobs кабинета): те же четыре пробы, что у Studio, плюс «loading не роняет фокус» и «loading не листает»."
+    },
+    {
+      "blockId": "a3-twins-tooth",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "apps/client/src/modules/sample-library-paging-twins.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 50
+      },
+      "//": "Зуб близнецов: слово aria-current=\"page\" из списка общих слов уходит и становится ЗАПРЕТОМ у обоих домов; в список входят role=\"status\", aria-live=\"polite\", скрытая фраза «Страница», aria-busy; правило фокуса (имя эффекта/маркер) обязано быть у обоих. Порча — снять role у ОДНОГО дома → красный."
+    }
+  ]
+}

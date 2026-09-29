@@ -5,6 +5,20 @@
 
 ---
 
+## 2026-09-29 — `sample-library-paging-a11y` — **OPEN (фаза А: нарезка)**
+
+- **Goal:** доступность органов листания библиотеки проб в Studio и кабинете: индикатор как живой
+  статус (снять пустой `aria-current`), правило фокуса после смены страницы, клавиатура без
+  глобальных слушателей, разметка узкого экрана.
+- **Issue:** — (заведётся с первым PR фазы Б)
+- **OPEN:** [`local-sprint/sample-library-paging-a11y/OPEN.md`](./local-sprint/sample-library-paging-a11y/OPEN.md)
+- **Prompt:** [`prompts/SAMPLE_LIBRARY_PAGING_A11Y_PROMPT.md`](./prompts/SAMPLE_LIBRARY_PAGING_A11Y_PROMPT.md)
+- **Cut:** [`sprint/cut/sample-library-paging-a11y.json`](./sprint/cut/sample-library-paging-a11y.json) — 3 блока
+  (a1 Studio · a2 кабинет · a3 зуб близнецов), резчик rodchenko
+  ([конспект](./discussions/cut-sample-library-paging-a11y-rodchenko.md)); ждёт ратификации владельца.
+- **Boundary:** `MoveAllToCollectionDialog` (проверен 27.09), `OverflowWindow`, общий пакет под `nav`,
+  стрелки и набор страниц, мердж — вне спринта. Узкий экран без браузера — gap.
+
 ## 2026-09-08 — `tariff-matrix-2333` — **OPEN**
 
 - **Goal:** серверная адаптация к матрице тарифов по принятому M1: версия контракта,
