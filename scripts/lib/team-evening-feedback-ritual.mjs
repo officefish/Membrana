@@ -8,6 +8,9 @@ import { execFileSync } from 'node:child_process';
 import { slugify } from './consilium-paths.mjs';
 import { parseRagCliFlags } from './rag-ritual.mjs';
 import { todaysCommits, todaysChangedFiles } from './git-day-context.mjs';
+// Свежесть посылок — ТЕМ ЖЕ предикатом, что у `yarn main-day-probe` и каркаса дня (b1/b3
+// спринта ritual-reads-done-work): один экспорт, не второй синоним (условие резчика 29.09).
+import { formatFreshness, magistralFreshness } from './main-day-magistral-freshness.mjs';
 
 export const REGULATION_PATH = 'docs/prompts/TEAM_EVENING_FEEDBACK_REGULATION.md';
 export const PROMPT_PATH = 'docs/prompts/TEAM_EVENING_FEEDBACK.md';
@@ -260,8 +263,35 @@ export function collectGateMagistral(opts = {}) {
       lines.push('', `Снимок топ-3 на момент выбора: ${state.magistralOptions.join(' · ')}.`);
     }
   }
-  return { id, author, day, fresh, block: lines.join('\n') };
+
+  // Свежесть вещдока дня — ФАКТОМ, не выводом модели (b3 ritual-reads-done-work, И8).
+  // Вечер 28.09 написал «перечеканить не успели», читая утренний MAIN_DAY_ISSUE, при
+  // перечеканке, сделанной днём: факта свежести во входах не было вовсе. Предикат тот же,
+  // что у probe; строка печатается всегда, включая aligned — молчание на совпадении
+  // неотличимо от «не сверяли».
+  let freshness = null;
+  const assertionsAbs = resolve(cwd, ASSERTIONS_REL);
+  if (!existsSync(assertionsAbs)) {
+    lines.push('', `Свежесть посылок: вещдок дня недоступен (\`${ASSERTIONS_REL}\`) — не судится.`);
+  } else {
+    try {
+      const doc = JSON.parse(readFileSync(assertionsAbs, 'utf8'));
+      freshness = magistralFreshness(doc, state, today);
+      lines.push(
+        '',
+        `**${formatFreshness(freshness)}**`,
+        'Перечеканена ли `main-day-assertions.json` — судить ТОЛЬКО по этой строке (предикат',
+        '`yarn main-day-probe`), не по утреннему MAIN_DAY_ISSUE и не по прежним протоколам.',
+      );
+    } catch (e) {
+      lines.push('', `Свежесть посылок: вещдок дня не разбирается (${e?.message?.split('\n')[0] ?? e}) — не судится.`);
+    }
+  }
+  return { id, author, day, fresh, freshness, block: lines.join('\n') };
 }
+
+/** Вещдок дня — тот же путь, что читают probe, стендап и каркас. */
+export const ASSERTIONS_REL = 'docs/tasks/main-day-assertions.json';
 
 /**
  * @param {{ readonly saveAs: string; readonly date?: Date; readonly out?: string; readonly cwd?: string }} opts
@@ -285,6 +315,8 @@ export function resolveEveningFeedbackOutputPath(opts) {
  *   readonly ragBlock?: string;
  *   readonly focusNote?: string;
  *   readonly freshnessNotice?: string;
+ *   readonly magistralBlock?: string;
+ *   readonly doneWorkBlock?: string;
  *   readonly date?: Date;
  * }} p
  */
@@ -304,6 +336,10 @@ export function buildEveningFeedbackUserMessage(p) {
     '\n\n---\n\n' +
     (p.ragBlock ? `## RAG context\n\n${p.ragBlock}\n\n---\n\n` : '') +
     (p.magistralBlock ? `${p.magistralBlock}\n\n---\n\n` : '') +
+    // b3 ritual-reads-done-work (И8): книга сделанного стоит ДО документов дня. Четыре вечера
+    // команда требовала слот, сделанный 27.09 и заведённый билетами, — потому что судила по
+    // документам, в которых билетов нет. Факт сделанного читается раньше мнения о дне.
+    (p.doneWorkBlock ? `${p.doneWorkBlock}\n\n---\n\n` : '') +
     // #2438: оговорка о свежести стоит ПЕРЕД документами дня, а не после. Команда должна
     // прочитать «вход датирован утром» до того, как начнёт судить по этому входу.
     (p.freshnessNotice ? `## Свежесть входов\n\n${p.freshnessNotice}\n\n---\n\n` : '') +
