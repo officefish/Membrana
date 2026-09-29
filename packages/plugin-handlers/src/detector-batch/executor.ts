@@ -50,9 +50,8 @@ interface BatchPayload {
   readonly sampleIds?: readonly string[];
 }
 
-export interface DetectorBatchRunResult extends RunResult, BatchCollectionRunOutcome {
-  readonly kind: 'report';
-}
+export type DetectorBatchRunResult = RunResult &
+  BatchCollectionRunOutcome & { readonly kind: 'report' };
 
 const emptyAggregate = (): BatchCollectionRunAggregate => ({
   total: 0,
@@ -265,7 +264,6 @@ export function createDetectorBatchExecutor(deps: DetectorBatchDeps): DetectorBa
         inputHash: ctx.fingerprints.inputHash,
         aggregate: aggregateOf(results),
         results,
-        rejection: null,
       };
     },
   };
