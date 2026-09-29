@@ -10,7 +10,7 @@
 | Script tests | `tasks` group: 744/744; `tests-master` pin audit: 0 findings |
 | Architecture | R2 not started; it still requires consilium |
 | Gate | 5/5 `honest_pair`, findings 0; procedure journal closed `pass` |
-| Experience | `cut-1` and final `cut-2`, both outcome `hit` |
+| Experience | `cut-1` and `cut-2` preserved; append-only `cut-3` fixes block-C attribution but exposes the experience adapter's stale recut view |
 | Delivery | Pending non-merged PR, PR review and published review-gate |
 
 ## Verdict
@@ -31,3 +31,17 @@ second, independent source of synchronous work in old builds and has already bee
 - R2 and evidence-sink redesign were not started.
 - `ServerStorageBackend.listSamples` pagination/loading was not redesigned.
 - The PR must remain unmerged.
+
+## Procedure Journal Compatibility
+
+The mixed journal labels are intentional, not schema regression. Under ADR-0026,
+`procedure-run-journal@2` is legal only for the `open` record carrying
+`forecastRequired`; `close` reads that requirement from its matching open record and is
+built as `procedure-run-journal@1`. `validateProcedureRunRecord` and the execution-gate
+tests enforce both halves of this contract, including rejection of `@2` on a close record.
+
+The post-review `cut-3` record attributes the #2505 analysis to block C instead of zero lines.
+It also preserves a tool limitation rather than hiding it: `sprint-experience` reconstructs D as
+`stale_partial`/exit 1, while the canonical execution gate consumes the recut acts and reports
+5/5 `honest_pair`/exit 0. The gate report remains the execution verdict; the divergent experience
+record is append-only evidence for a later adapter repair, outside this freeze sprint.
