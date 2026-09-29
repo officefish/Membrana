@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "sample-library-paging-a11y",
+      "title": "Доступность органов листания библиотеки проб (Studio + кабинет): aria-семантика, клавиатура, фокус после смены страницы, узкий экран",
+      "promptPath": "docs/prompts/SAMPLE_LIBRARY_PAGING_A11Y_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "фаза А — нарезка; Issue заведётся с первым PR фазы Б",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-09-29",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "Спринт по membrana-local-sprint (слово владельца 29.09). Пропуск задания 28.09 (фидбек Родченко): критерий пагинации #2505 назвал фриз, но не доступность. Близнецы: apps/client SampleLibraryPagination и apps/cabinet CabinetSampleTablePagination — правка в оба, зуб сверки sample-library-paging-twins. MoveAllToCollectionDialog проверен 27.09 — вне спринта.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "tariff-matrix-2333",
       "title": "Сервер: адаптация к матрице тарифов",
       "promptPath": "docs/prompts/TARIFF_MATRIX_2333_SERVER_ADAPTATION_PROMPT.md",

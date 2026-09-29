@@ -1,25 +1,21 @@
-// @vitest-environment jsdom
 /**
- * Зубы органов листания библиотеки Studio (#2505). Предмет — `SampleLibraryPagination.tsx`.
+ * Зубы органов листания таблицы проб кабинета. Предмет — `CabinetSampleTablePagination.tsx`.
+ * jsdom — по `environmentMatchGlobs` кабинета (`*.test.tsx`).
+ *
+ * До спринта sample-library-paging-a11y (29.09) у кабинетного нава зуба не было вовсе: его
+ * поведение проверялось только словами через зуб близнецов в Studio. Теперь у каждого дома —
+ * свой зуб на поведение, у близнецов — зуб на одинаковость слов и правила фокуса.
  *
  * Порчи → красный (проверены руками):
- *  • скрыть нав при `totalPages < 1` вместо `<= 1` — красный на «одна страница — органов нет»
- *    (иначе рядом с полным списком висит бессмысленное «1 / 1»);
- *  • НЕ скрывать нав вовсе — красный там же;
- *  • снять `disabled` с «Назад» на первой странице — красный (кнопка предлагала бы страницу 0);
- *  • снять `disabled` с «Вперёд» на последней — красный;
- *  • послать в `onPageChange` номер текущей страницы вместо соседней — красный;
- *  • показать вместо диапазона длину страницы («40 из 1057» → «1–40 из 1057») — красный.
- *
- * Доступность (спринт sample-library-paging-a11y, 29.09) — порчи → красный:
  *  • снять `role="status"` с индикатора — красный («живая область»);
  *  • вернуть `aria-current="page"` — красный (набора страниц нет, атрибут пуст);
  *  • убрать эффект фокуса — после края фокус остаётся на запертой кнопке, не на соседней — красный;
- *  • вернуть `disabled={… || loading}` — красный («loading не роняет фокус»);
+ *  • вернуть `disabled={… || loading}` — прежний дефект кабинета — красный («loading не роняет фокус»);
  *  • снять гашение клика при `loading` — `onPageChange` вызван — красный;
  *  • `tabIndex={-1}` на кнопке или `<div role="button">` вместо `<button>` — красный;
  *  • повесить `window.addEventListener('keydown', …)` — красный (статический предикат);
- *  • снять `flex-wrap` с `nav` — красный (предикат РАЗМЕТКИ, не замер раскладки — см. ниже).
+ *  • снять `flex-wrap` с `nav` — красный (предикат РАЗМЕТКИ, не замер раскладки — см. ниже);
+ *  • посчитать диапазон от нуля (`page * limit`) — красный на «41–80 из 1057».
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -28,19 +24,19 @@ import { useState } from 'react';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { SampleLibraryPagination } from './SampleLibraryPagination';
+import { CabinetSampleTablePagination } from './CabinetSampleTablePagination';
 
 afterEach(cleanup);
 
 /** Живой буфер прибора 28.09: 1057 проб = 27 страниц по 40. */
-const LIVE = { total: 1057, totalPages: 27, pageSize: 40 };
+const LIVE = { total: 1057, totalPages: 27, limit: 40 };
 
 // `__dirname`, не `import.meta.url`: в jsdom адрес модуля не файловый, и `fileURLToPath` его не берёт.
-const SOURCE = readFileSync(join(__dirname, 'SampleLibraryPagination.tsx'), 'utf8');
+const SOURCE = readFileSync(join(__dirname, 'CabinetSampleTablePagination.tsx'), 'utf8');
 /**
- * Отрицательные проверки судят КОД, а не шапку: у близнеца в кабинете шаблон уже ловил собственную
- * прозу о прежнем дефекте — класс ложного красного зуба близнецов переноса (#2497). Комментарии
- * срезаются до сравнения; срез проверен самопроверкой ниже.
+ * Отрицательные проверки судят КОД, а не шапку: без этого шаблон `disabled={… || loading}` ловил
+ * собственную прозу о прежнем дефекте — тот же класс ложного красного, что у зуба близнецов
+ * переноса (#2497). Комментарии срезаются до сравнения; срез проверен самопроверкой ниже.
  */
 const stripComments = (src: string) =>
   src.replace(/\/\*[\s\S]*?\*\//gu, '').replace(/(?:^|[ \t]+)\/\/.*$/gmu, '');
@@ -49,26 +45,26 @@ const CODE = stripComments(SOURCE);
 /** Слушатель клавиатуры на окне/документе — то, чего у нава быть не должно (ввод рядом не задевать). */
 const GLOBAL_KEY_LISTENER = /(window|document)\.addEventListener\(\s*['"]key/u;
 /** Ширина, заданная числом, или запрет переноса — разметка, которая на узком экране вылезет за край. */
-// Просмотр назад `(?<![\w-])`: `min-w-0` — законное «сжимайся», и граница слова после дефиса его
-// ловила бы как ширину. Поймано самопроверкой шаблона ниже, а не глазом.
 const RIGID_WIDTH = /whitespace-nowrap|\bmin-w-\[|(?<![\w-])w-(?:\[|\d)/u;
+/**
+ * `disabled` на время загрузки — прежний дефект кабинета: запертая кнопка роняет фокус на body.
+ * Просмотр назад `(?<![\w-])`: `aria-disabled={loading …}` — законная замена, шаблон без него ловил её.
+ */
+const DISABLED_BY_LOADING = /(?<![\w-])disabled=\{[^}]*loading/u;
 
-/** Дом с состоянием страницы — как Studio: `onPageChange` меняет `page` в том же движении. */
+/** Дом с состоянием страницы — как хук кабинета: `onPageChange` меняет `page`, загрузка едет отдельно. */
 function Harness({ start, loading, onPageChange }: {
   readonly start: number;
   readonly loading?: boolean;
   readonly onPageChange?: (page: number) => void;
 }) {
   const [page, setPage] = useState(start);
-  const from = (page - 1) * LIVE.pageSize + 1;
-  const to = Math.min(page * LIVE.pageSize, LIVE.total);
   return (
-    <SampleLibraryPagination
+    <CabinetSampleTablePagination
       page={page}
       totalPages={LIVE.totalPages}
       total={LIVE.total}
-      from={from}
-      to={to}
+      limit={LIVE.limit}
       loading={loading}
       onPageChange={(next) => {
         onPageChange?.(next);
@@ -86,113 +82,59 @@ const press = (name: 'Назад' | 'Вперёд') => {
   return el;
 };
 
-describe('органы листания: где я и сколько всего', () => {
-  it('одна страница — органов нет: листать некуда', () => {
-    const { container } = render(
-      <SampleLibraryPagination
-        page={1}
-        totalPages={1}
-        total={12}
-        from={1}
-        to={12}
-        onPageChange={() => {}}
-      />,
-    );
-    expect(container.querySelector('nav')).toBeNull();
+describe('органы листания кабинета: где я и сколько всего', () => {
+  it('одна страница и пустой набор — органов нет: листать некуда', () => {
+    for (const totalPages of [1, 0]) {
+      const { container, unmount } = render(
+        <CabinetSampleTablePagination
+          page={1}
+          totalPages={totalPages}
+          total={totalPages * 12}
+          limit={LIVE.limit}
+          onPageChange={() => {}}
+        />,
+      );
+      expect(container.querySelector('nav')).toBeNull();
+      unmount();
+    }
   });
 
-  it('пустой набор — органов нет (нулю страниц листать тоже нечего)', () => {
-    const { container } = render(
-      <SampleLibraryPagination
-        page={1}
-        totalPages={0}
-        total={0}
-        from={0}
-        to={0}
-        onPageChange={() => {}}
-      />,
-    );
-    expect(container.querySelector('nav')).toBeNull();
-  });
-
-  it('27 страниц: видно И диапазон записей, И номер страницы', () => {
-    render(
-      <SampleLibraryPagination
-        page={2}
-        totalPages={LIVE.totalPages}
-        total={LIVE.total}
-        from={41}
-        to={80}
-        onPageChange={() => {}}
-      />,
-    );
-    // «41–80 из 1057» отвечает на «сколько всего», «2 / 27» — на «где я».
+  it('диапазон считается от единицы и обрезается по набору', () => {
+    const { unmount } = render(<Harness start={2} />);
     expect(screen.getByText('41–80 из 1057')).toBeTruthy();
     expect(screen.getByText('2 / 27')).toBeTruthy();
-  });
-
-  it('на первой странице «Назад» заперт, на последней — «Вперёд»', () => {
-    const { unmount } = render(
-      <SampleLibraryPagination
-        page={1}
-        totalPages={LIVE.totalPages}
-        total={LIVE.total}
-        from={1}
-        to={40}
-        onPageChange={() => {}}
-      />,
-    );
-    expect(button('Назад')).toHaveProperty('disabled', true);
-    expect(button('Вперёд')).toHaveProperty('disabled', false);
     unmount();
 
-    render(
-      <SampleLibraryPagination
-        page={27}
-        totalPages={LIVE.totalPages}
-        total={LIVE.total}
-        from={1041}
-        to={1057}
-        onPageChange={() => {}}
-      />,
-    );
-    expect(button('Назад')).toHaveProperty('disabled', false);
-    expect(button('Вперёд')).toHaveProperty('disabled', true);
+    render(<Harness start={27} />);
+    expect(screen.getByText('1041–1057 из 1057')).toBeTruthy();
   });
 
-  it('кнопки просят СОСЕДНЮЮ страницу, а не свою', () => {
+  it('на первой странице «Назад» заперт, на последней — «Вперёд»; кнопки просят соседнюю', () => {
     const onPageChange = vi.fn();
-    render(
-      <SampleLibraryPagination
-        page={5}
-        totalPages={LIVE.totalPages}
-        total={LIVE.total}
-        from={161}
-        to={200}
-        onPageChange={onPageChange}
-      />,
-    );
+    const { unmount } = render(<Harness start={1} onPageChange={onPageChange} />);
+    expect(button('Назад')).toHaveProperty('disabled', true);
     fireEvent.click(button('Вперёд'));
-    expect(onPageChange).toHaveBeenLastCalledWith(6);
+    expect(onPageChange).toHaveBeenLastCalledWith(2);
+    unmount();
+
+    render(<Harness start={27} onPageChange={onPageChange} />);
+    expect(button('Вперёд')).toHaveProperty('disabled', true);
     fireEvent.click(button('Назад'));
-    expect(onPageChange).toHaveBeenLastCalledWith(4);
+    expect(onPageChange).toHaveBeenLastCalledWith(26);
   });
 });
 
-describe('доступность органов листания', () => {
+describe('доступность органов листания кабинета', () => {
   it('индикатор — живая область: смена страницы объявляется фразой, а не пустым aria-current', () => {
     const { container } = render(<Harness start={1} />);
     const status = screen.getByRole('status');
     expect(status.getAttribute('aria-live')).toBe('polite');
     expect(status.getAttribute('aria-atomic')).toBe('true');
     expect(status.textContent).toContain('Страница 1 из 27, записи 1–40 из 1057');
-    // Видимое «1 / 27» остаётся (#2237): фраза — ДОБАВКА для читателя экрана, не замена.
     expect(screen.getByText('1 / 27')).toBeTruthy();
 
     press('Вперёд');
     expect(screen.getByRole('status').textContent).toContain('Страница 2 из 27, записи 41–80 из 1057');
-
-    // Набора страниц нет — «текущий элемент набора» здесь нечем обозначать.
     expect(container.querySelector('[aria-current]')).toBeNull();
   });
 
@@ -201,7 +143,6 @@ describe('доступность органов листания', () => {
     const next = press('Вперёд');
     expect(screen.getByText('6 / 27')).toBeTruthy();
     expect(document.activeElement).toBe(next);
-    expect(next).toHaveProperty('disabled', false);
   });
 
   it('на краю диапазона фокус переходит на соседнюю кнопку, а не падает на body', () => {
@@ -218,6 +159,7 @@ describe('доступность органов листания', () => {
   });
 
   it('loading не роняет фокус: кнопки не заперты disabled, клик гасится, nav занят', () => {
+    // Прежний дефект кабинета: `disabled={… || loading}` на КАЖДОЙ смене страницы отдавал фокус body.
     const onPageChange = vi.fn();
     const { container } = render(<Harness start={5} loading onPageChange={onPageChange} />);
     const next = press('Вперёд');
@@ -229,6 +171,7 @@ describe('доступность органов листания', () => {
       expect(button(name).getAttribute('aria-disabled')).toBe('true');
     }
     expect(container.querySelector('nav')?.getAttribute('aria-busy')).toBe('true');
+    expect(CODE).not.toMatch(DISABLED_BY_LOADING);
   });
 
   it('клавиатура: родные кнопки в Tab-порядке, слушателей на окне нет — ввод рядом не задет', () => {
@@ -248,22 +191,23 @@ describe('доступность органов листания', () => {
 
   it('разметка переносится на узком экране — предикат РАЗМЕТКИ, не замер раскладки', () => {
     // jsdom раскладку не считает; живой замер на 320px — отдельный gap спринта (без браузера).
-    // Здесь проверяется лишь то, что разметка не запрещает перенос и не задаёт жёсткой ширины.
     const { container } = render(<Harness start={27} />);
-    const nav = container.querySelector('nav');
-    expect(nav?.className.split(/\s+/u)).toContain('flex-wrap');
+    expect(container.querySelector('nav')?.className.split(/\s+/u)).toContain('flex-wrap');
     expect(CODE).not.toMatch(RIGID_WIDTH);
   });
 
   it('шаблоны отрицательных проверок ловят то, что обещают', () => {
-    // Без этой пробы отрицательные проверки выше зелены и при сломанном шаблоне.
-    expect(stripComments('/** window.addEventListener("keydown", x) */\nconst a = 1; // w-[3px]\n')).toBe('\nconst a = 1;\n');
+    // Срез комментариев: проза уходит, код остаётся — иначе отрицательные проверки выше судят шапку.
+    expect(stripComments('/** прежнее disabled={x || loading} */\nconst a = 1; // disabled={loading}\n')).toBe('\nconst a = 1;\n');
+    expect(stripComments('disabled={page <= 1 || loading}')).toMatch(DISABLED_BY_LOADING);
     expect("window.addEventListener('keydown', onKey)").toMatch(GLOBAL_KEY_LISTENER);
-    expect('document.addEventListener("keyup", onKey)').toMatch(GLOBAL_KEY_LISTENER);
     expect("window.addEventListener('resize', onResize)").not.toMatch(GLOBAL_KEY_LISTENER);
     expect('className="whitespace-nowrap"').toMatch(RIGID_WIDTH);
     expect('className="w-[320px]"').toMatch(RIGID_WIDTH);
     expect('className="w-48"').toMatch(RIGID_WIDTH);
     expect('className="min-w-0 flex-wrap"').not.toMatch(RIGID_WIDTH);
+    expect('disabled={page <= 1 || loading}').toMatch(DISABLED_BY_LOADING);
+    expect('disabled={lockedPrev}').not.toMatch(DISABLED_BY_LOADING);
+    expect('aria-disabled={loading || undefined}').not.toMatch(DISABLED_BY_LOADING);
   });
 });
