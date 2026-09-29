@@ -72,6 +72,13 @@ beforeAll(async () => {
 });
 
 describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
+  it('declares the deferred drone orchestrator import as a runtime dependency', () => {
+    const pkg = JSON.parse(
+      readFileSync(join(__dirname, '../../../package.json'), 'utf8'),
+    ) as { dependencies?: Record<string, string> };
+    expect(pkg.dependencies?.['@membrana/drone-detection-orchestrator-service']).toBe('*');
+  });
+
   it('на старте модуля хост collections держит шесть детекторов, batch, свод, измеритель и витрины', async () => {
     const host = new CollectionsPluginHostService();
     await host.onModuleInit();
