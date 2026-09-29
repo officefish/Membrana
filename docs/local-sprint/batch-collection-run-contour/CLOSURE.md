@@ -2,10 +2,10 @@
 
 | Поле | Значение |
 |------|----------|
-| PR stack | [#2517](https://github.com/officefish/Membrana/pull/2517) contract → [#2518](https://github.com/officefish/Membrana/pull/2518) runner → [#2519](https://github.com/officefish/Membrana/pull/2519) registration → [#2520](https://github.com/officefish/Membrana/pull/2520) cabinet → final evidence PR |
+| PR stack | [#2517](https://github.com/officefish/Membrana/pull/2517) contract → [#2518](https://github.com/officefish/Membrana/pull/2518) runner → [#2519](https://github.com/officefish/Membrana/pull/2519) registration → [#2520](https://github.com/officefish/Membrana/pull/2520) cabinet → [#2521](https://github.com/officefish/Membrana/pull/2521) evidence |
 | Гейт | 4/4 `honest_pair`, находок 0, журнал `pass` 29.09 |
 | Опыт | `vesnin-batch-collection-run-contour-cut-1` · **miss** · точность 75% (3/4), overflow 25% (1/4) |
-| Review | pending per-PR `code-review:pr` + published review-gate |
+| Review | #2517–#2520: LGTM и опубликованный `review/teamlead=success`; #2521: итоговый check на точном SHA — источник статуса |
 | Merge | запрещён заказом владельца |
 
 ## Что доставлено
