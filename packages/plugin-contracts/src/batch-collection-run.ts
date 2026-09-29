@@ -44,11 +44,22 @@ export interface BatchCollectionRunRejection {
   readonly detail: string;
 }
 
-/** JSON-safe result returned by the collections plugin request. */
-export interface BatchCollectionRunOutcome {
-  readonly status: 'completed' | 'rejected';
+interface BatchCollectionRunOutcomeBase {
   readonly inputHash: string;
   readonly aggregate: BatchCollectionRunAggregate;
   readonly results: readonly BatchCollectionSampleResult[];
-  readonly rejection: BatchCollectionRunRejection | null;
 }
+
+export interface BatchCollectionRunCompleted extends BatchCollectionRunOutcomeBase {
+  readonly status: 'completed';
+}
+
+export interface BatchCollectionRunRejected extends BatchCollectionRunOutcomeBase {
+  readonly status: 'rejected';
+  readonly rejection: BatchCollectionRunRejection;
+}
+
+/** JSON-safe result returned by the collections plugin request. */
+export type BatchCollectionRunOutcome =
+  | BatchCollectionRunCompleted
+  | BatchCollectionRunRejected;
