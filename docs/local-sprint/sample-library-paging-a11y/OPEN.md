@@ -6,11 +6,11 @@
 | Procedure | `membrana-local-sprint` |
 | Registry epic | `sample-library-paging-a11y` (M, без Issue до первого PR фазы Б) |
 | Prompt | [`SAMPLE_LIBRARY_PAGING_A11Y_PROMPT.md`](../../prompts/SAMPLE_LIBRARY_PAGING_A11Y_PROMPT.md) |
-| Cut | [`sample-library-paging-a11y.json`](../../sprint/cut/sample-library-paging-a11y.json) (v1, ждёт ратификации) |
+| Cut | [`sample-library-paging-a11y.json`](../../sprint/cut/sample-library-paging-a11y.json) (v1, ратифицирован владельцем 2026-09-29T15:13:04+03:00) |
 | Cutter | rodchenko ([конспект прогона контекста](../../discussions/cut-sample-library-paging-a11y-rodchenko.md), лента актов [`trail/sample-library-paging-a11y.jsonl`](../../sprint/cut/trail/sample-library-paging-a11y.jsonl)) |
 | Blocks | a1-studio-nav-a11y (rodchenko) · a2-cabinet-nav-a11y (rodchenko) · a3-twins-tooth (dynin) |
 | Branch / tree | `feat/pagination-a11y` от `origin/main` `caf73ab5` · `Membrana-hunt-ground` |
-| Status | OPEN — фаза А (нарезка), исполнение не начато |
+| Status | CLOSED 29.09 — gate pass 3/3 `honest_pair`, experience `hit`; итог — [`CLOSURE.md`](./CLOSURE.md) |
 
 ## Зачем
 

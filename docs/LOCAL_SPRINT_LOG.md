@@ -5,7 +5,11 @@
 
 ---
 
-## 2026-09-29 — `sample-library-paging-a11y` — **OPEN (фаза А: нарезка)**
+## 2026-09-29 — `sample-library-paging-a11y` — **CLOSED (gate pass 3/3 · experience hit)**
+
+- **CLOSURE:** [`local-sprint/sample-library-paging-a11y/CLOSURE.md`](./local-sprint/sample-library-paging-a11y/CLOSURE.md) —
+  прогноз ↔ исход (150/170/50 → 256/306/78, все под порогом), 12 порч красные, ревью Родченко LGTM /
+  Дынин BLOCK→LGTM, gap живого замера 320px.
 
 - **Goal:** доступность органов листания библиотеки проб в Studio и кабинете: индикатор как живой
   статус (снять пустой `aria-current`), правило фокуса после смены страницы, клавиатура без

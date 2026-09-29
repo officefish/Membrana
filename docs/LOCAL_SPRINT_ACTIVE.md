@@ -4,12 +4,13 @@
 
 ## Focus
 
-- **sample-library-paging-a11y** (без Issue до первого PR фазы Б) ·
-  cut v1 awaiting owner ratification · [`OPEN.md`](./local-sprint/sample-library-paging-a11y/OPEN.md) —
+- **sample-library-paging-a11y** (Issue — с PR) ·
+  ратифицирован 29.09 15:13+03 · gate pass 3/3 `honest_pair` · experience `hit` (3/3) ·
+  [`OPEN.md`](./local-sprint/sample-library-paging-a11y/OPEN.md) · [`CLOSURE.md`](./local-sprint/sample-library-paging-a11y/CLOSURE.md) —
   доступность органов листания библиотеки проб в обоих домах: индикатор → живой статус вместо
-  пустого `aria-current`, правило фокуса после смены страницы (край диапазона, `loading` кабинета),
-  клавиатура без глобальных слушателей, статический предикат узкого экрана + gap живого замера.
-  Три решения вынесены на ратификацию; узкий экран без браузера — gap, не pass.
+  пустого `aria-current`, фокус не падает на `body` (край → соседняя кнопка; `loading` кабинета без
+  `disabled`), клавиатура без глобальных слушателей; 12 порч красные. Gap: живой замер 320px без
+  браузера. Сдача `pr:ship --no-merge`; мердж — слово владельца.
 - **tariff-matrix-2333** ([#2333](https://github.com/officefish/Membrana/issues/2333)) ·
   implementation checks pass, awaiting review/PR · [`OPEN.md`](./local-sprint/tariff-matrix-2333/OPEN.md) —
   серверная адаптация к матрице тарифов по принятому M1: версия контракта на `Tariff`/`Device`,
