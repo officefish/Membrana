@@ -5,6 +5,24 @@
 
 ---
 
+## 2026-09-29 — `ritual-reads-done-work` — **CLOSED · gate pass 4/4 · experience hit**
+
+- **Closure:** [`local-sprint/ritual-reads-done-work/CLOSURE.md`](./local-sprint/ritual-reads-done-work/CLOSURE.md) —
+  ратификация 15:19+03 инструментом; b1 `b9418242`, b2 `3f1471c9`, b3 `9963fd10`; живая проверка обоих
+  `:dry` на документах 29.09 при ещё не исправленном `//date`; PR `--no-merge`, мердж — слово владельца.
+
+- **Goal:** читатели ритуала судят по предмету, а не по документу: проекция ассерций + строка свежести
+  для каркаса дня; блок «сделанное, заведённое билетами» + свежесть посылок для вечернего фидбека.
+- **Source:** И8, [`PREP_2026-09-28_PRODUCT_AND_TOOLING_WEEK.md`](./PREP_2026-09-28_PRODUCT_AND_TOOLING_WEEK.md) §4
+- **OPEN:** [`local-sprint/ritual-reads-done-work/OPEN.md`](./local-sprint/ritual-reads-done-work/OPEN.md)
+- **Prompt:** [`prompts/RITUAL_READS_DONE_WORK_PROMPT.md`](./prompts/RITUAL_READS_DONE_WORK_PROMPT.md)
+- **Cut:** [`sprint/cut/ritual-reads-done-work.json`](./sprint/cut/ritual-reads-done-work.json) — 4 блока,
+  резчик ozhegov ([конспект](./discussions/cut-ritual-reads-done-work-ozhegov.md)); ратифицирован владельцем 2026-09-29T15:19:14+03:00.
+- **Finding at cut:** гипотеза «генератор читает архивные ключи» опровергнута замером — архив за
+  границей чтения 22k; корень — `//date` застрял на 24.09 и отсутствие факта свежести во входах.
+- **Boundary:** порядок ритуалов, формат `main-day-assertions.json`, промпты персон, основание снятия
+  с очереди `review:oversized`, `DAILY_CODE_REVIEW` как второй потребитель — вне спринта.
+
 ## 2026-09-29 — `sample-library-paging-a11y` — **CLOSED (gate pass 3/3 · experience hit)**
 
 - **CLOSURE:** [`local-sprint/sample-library-paging-a11y/CLOSURE.md`](./local-sprint/sample-library-paging-a11y/CLOSURE.md) —

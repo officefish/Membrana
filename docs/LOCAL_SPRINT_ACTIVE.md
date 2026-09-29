@@ -4,6 +4,14 @@
 
 ## Focus
 
+- **ritual-reads-done-work** (И8 недельного плана 28.09; Issue с первым PR) ·
+  ратифицирован 29.09 15:19+03 · **gate pass 4/4 honest_pair** · прогноз↔исход **hit** (4/4) ·
+  [`OPEN.md`](./local-sprint/ritual-reads-done-work/OPEN.md) · [`CLOSURE.md`](./local-sprint/ritual-reads-done-work/CLOSURE.md) —
+  два читателя ритуала судят по документу, а не по предмету: каркас дня получает проекцию ассерций
+  со строкой свежести предикатом probe (вместо сырого файла, обрезанного 22k из 115k); вечер получает
+  блок «сделанное, заведённое билетами» (архитектурные слоты 27.09 по #2488/#2489 → #2492–#2498).
+  Порядок ритуалов, формат ассерций, промпты персон и основание снятия с очереди oversized — вне спринта.
+
 - **sample-library-paging-a11y** (Issue — с PR) ·
   ратифицирован 29.09 15:13+03 · gate pass 3/3 `honest_pair` · experience `hit` (3/3) ·
   [`OPEN.md`](./local-sprint/sample-library-paging-a11y/OPEN.md) · [`CLOSURE.md`](./local-sprint/sample-library-paging-a11y/CLOSURE.md) —
