@@ -28,6 +28,8 @@ import type {
   PaginatedSamples,
 } from '../types.js';
 
+type WithoutRunId<T> = T extends unknown ? Omit<T, 'runId'> : never;
+
 export interface ServerStorageBackendConfig {
   baseUrl: string;
   deviceId: string;
@@ -460,7 +462,7 @@ export class ServerStorageBackend implements IStorageBackend {
   ): Promise<CollectionDetectorBatchRunOutcome> {
     const row = await this.requestJson<{
       runId: string;
-      result?: Omit<CollectionDetectorBatchRunOutcome, 'runId'>;
+      result?: WithoutRunId<CollectionDetectorBatchRunOutcome>;
     }>(
       `/collections/${encodeURIComponent(collectionId)}/plugins/membrana.report.detector-batch/request`,
       {

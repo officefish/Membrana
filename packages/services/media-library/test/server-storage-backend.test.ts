@@ -192,7 +192,6 @@ describe('ServerStorageBackend', () => {
               latencyP95Ms: 4,
             },
             results: [{ sampleId: 's1', title: 'one', status: 'ok', detected: true }],
-            rejection: null,
           },
         });
       }
