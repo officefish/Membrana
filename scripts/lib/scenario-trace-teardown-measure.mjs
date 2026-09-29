@@ -230,3 +230,37 @@ export const PROBE_UNMODELLED_EXPORTS = Object.freeze({
   copyScenarioTraceToClipboard: 'требует navigator.clipboard, недоступен в node',
   downloadScenarioTraceFile: 'требует Blob/DOM, недоступен в node',
 });
+
+/**
+ * Несущие выражения продуктового модуля, которые копия воспроизводит ДОСЛОВНО.
+ * Зуб ищет их в исходнике: правка любой из этих строк краснит прибор и заставляет
+ * сверить копию. Это переносимая половина зуба — ей не нужен загрузчик TypeScript,
+ * поэтому она работает на любом Node (в CI это Node 20).
+ */
+export const PROBE_CARRYING_EXPRESSIONS = Object.freeze([
+  'lines.push(formatScenarioTraceLine(message, context));',
+  'lines.splice(0, lines.length - MAX_TRACE_LINES);',
+  'linesSnapshot = lines.slice();',
+  String.raw`return lines.join('\n');`,
+  'return `[INFO] ${message}`;',
+  "return `${key}: '${value}'`;",
+  'return `${key}: null`;',
+  'return `${key}: ${String(value)}`;',
+  'return `[INFO] ${message} {${body}}`;',
+]);
+
+export function readScenarioTraceBufferSource(repoRoot) {
+  return readFileSync(scenarioTraceBufferSourcePath(repoRoot), 'utf8');
+}
+
+/** Имена экспортов продуктового модуля, прочитанные из текста (без загрузки модуля). */
+export function readScenarioTraceBufferExports(repoRoot) {
+  const source = readScenarioTraceBufferSource(repoRoot);
+  const names = [...source.matchAll(/^export\s+(?:async\s+)?function\s+([A-Za-z0-9_$]+)/gm)].map(
+    (match) => match[1],
+  );
+  if (names.length === 0) {
+    throw new Error('в scenarioTraceBuffer.ts не найдено ни одного export function — зуб ослеп');
+  }
+  return names;
+}

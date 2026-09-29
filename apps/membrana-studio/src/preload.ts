@@ -1,17 +1,35 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 import type { NewSampleMeta, UpdateSampleLabelNotes } from './media-library/types';
-import {
-  formatTraceFlushTiming,
-  isTraceFlushTimingEnabled,
-  traceFlushTimingLevel,
-} from './logging/trace-flush-timing';
-
 const ML = 'membrana:media-library';
 const JL = 'membrana:journal';
 const TT = 'membrana:trends-templates';
 const LG = 'membrana:logging';
 const SS = 'membrana:secure-storage';
+const TRACE_FLUSH_FRAME_BUDGET_MS = 16;
+
+// Sandboxed Electron preloads cannot load relative runtime modules. Keep these tiny helpers
+// local; trace-flush-timing.test.ts carries a source tooth against their canonical module.
+function isTraceFlushTimingEnabled(env: Record<string, string | undefined>): boolean {
+  return env.MEMBRANA_TRACE_FLUSH_TIMING === '1';
+}
+
+function traceFlushTimingLevel(blockedMs: number): 'info' | 'warn' {
+  return blockedMs >= TRACE_FLUSH_FRAME_BUDGET_MS ? 'warn' : 'info';
+}
+
+function formatTraceFlushTiming(input: {
+  blockedMs: number;
+  chars: number;
+  runId: string | null;
+}): string {
+  const frames = input.blockedMs / TRACE_FLUSH_FRAME_BUDGET_MS;
+  const runId = input.runId === null || input.runId.length === 0 ? 'none' : input.runId;
+  return (
+    `scenario trace flush blocked renderer ${input.blockedMs.toFixed(1)} ms ` +
+    `(${frames.toFixed(1)} frames @60Hz, chars=${input.chars}, runId=${runId})`
+  );
+}
 
 /** Доступность шифрования у платформы узла; отказ канала читается как «шифровать нечем». */
 function secureStorageAvailable(): boolean {

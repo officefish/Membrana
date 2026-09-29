@@ -1,6 +1,132 @@
 {
   "tasks": [
     {
+      "id": "trace-freeze-e-adr-gate-pr",
+      "title": "Фаза E: ADR различает кандидатов, gate и PR без merge",
+      "promptPath": "docs/local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md",
+      "githubIssue": null,
+      "noIssueReason": "Фаза родительского спринта trace-freeze-dual-candidate-sprint; GitHub Issue несёт эпик #2476.",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-09-29",
+      "archivedAt": null,
+      "leadPersona": "angelina",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ],
+      "notes": "После ратификации и исполнения: ADR честно называет исключение/подтверждение, sprint:gate/experience, pr:ship --no-merge, code-review:pr и review-gate --publish.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "trace-freeze-dual-candidate-sprint"
+    },
+    {
+      "id": "trace-freeze-d-probe-truth-tooth",
+      "title": "Фаза D: прибор трейса перестаёт судить копию без зуба",
+      "promptPath": "docs/local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md",
+      "githubIssue": 2485,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-09-29",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "После ратификации: разобрать незакоммиченный хвост — текущий split Node20/Node22 зуба, импорт подлинного module/или переносимый tooth на совпадение, NaN закрыт.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "trace-freeze-dual-candidate-sprint"
+    },
+    {
+      "id": "trace-freeze-c-library-render",
+      "title": "Фаза C: проверить DOM-кандидат библиотеки после #2505",
+      "promptPath": "docs/local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md",
+      "githubIssue": null,
+      "noIssueReason": "Фаза родительского спринта trace-freeze-dual-candidate-sprint; GitHub Issue несёт эпик #2476.",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-09-29",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "После ратификации: учесть #2505, сравнить фризы остановки/выхода с ценой отрисовки списка; не начинать развилку ServerStorageBackend без отдельного решения.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "trace-freeze-dual-candidate-sprint"
+    },
+    {
+      "id": "trace-freeze-b-live-sendsync",
+      "title": "Фаза B: живой замер sendSync в Studio на остановке и выходе",
+      "promptPath": "docs/local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md",
+      "githubIssue": null,
+      "noIssueReason": "Фаза родительского спринта trace-freeze-dual-candidate-sprint; GitHub Issue несёт эпик #2476.",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-09-29",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "После ратификации: снять живое число вокруг ipcRenderer.sendSync под диагностическим флагом; не менять продуктовый контракт без слова владельца.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "trace-freeze-dual-candidate-sprint"
+    },
+    {
+      "id": "trace-freeze-a-cut",
+      "title": "Фаза A: нарезка спринта фризов трейса и прогнозы до исполнения",
+      "promptPath": "docs/local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md",
+      "githubIssue": null,
+      "noIssueReason": "Фаза родительского спринта trace-freeze-dual-candidate-sprint; GitHub Issue несёт эпик #2476.",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-09-29",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "angelina"
+      ],
+      "notes": "Стоп-фаза: зарегистрировать, нарезать, выписать прогнозы, прогнать sprint:cut и вернуть владельцу на ратификацию; без исполнения.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "trace-freeze-dual-candidate-sprint"
+    },
+    {
+      "id": "trace-freeze-dual-candidate-sprint",
+      "title": "Спринт: разбор фризов трейса — sendSync и отрисовка библиотеки",
+      "promptPath": "docs/local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md",
+      "githubIssue": 2476,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-09-29",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov",
+        "angelina"
+      ],
+      "notes": "Слово владельца 29.09: задачи решаются спринтами; предмет #2476/#2485. Фаза А только нарезка и прогнозы; исполнение после ратификации владельца.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "tariff-matrix-2333",
       "title": "Сервер: адаптация к матрице тарифов",
       "promptPath": "docs/prompts/TARIFF_MATRIX_2333_SERVER_ADAPTATION_PROMPT.md",

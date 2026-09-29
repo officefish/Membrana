@@ -1,17 +1,19 @@
 import assert from 'node:assert/strict';
 import { dirname, join } from 'node:path';
 import test from 'node:test';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 
 import {
+  PROBE_CARRYING_EXPRESSIONS,
   PROBE_MODELLED_EXPORTS,
   PROBE_UNMODELLED_EXPORTS,
   ScenarioTraceProbe,
   fillSyntheticTrace,
   makeCountingSink,
   readMaxTraceLines,
+  readScenarioTraceBufferExports,
+  readScenarioTraceBufferSource,
   runScenarioTraceTeardownBenchmark,
-  scenarioTraceBufferSourcePath,
 } from './lib/scenario-trace-teardown-measure.mjs';
 
 test('synthetic trace probe keeps the same ring cap semantics as scenarioTraceBuffer', () => {
@@ -57,91 +59,35 @@ test('benchmark returns rows for every requested size', () => {
   assert.equal(rows[1].exitBoard.sinkWrites, 1);
 });
 
-
-// --- Зуб на предмет прибора (#2485) ---------------------------------------------------------
-// Прибор воспроизводит логику scenarioTraceBuffer КОПИЕЙ. Копия молча разойдётся с оригиналом,
-// и прибор начнёт мерить прошлое. Поэтому ниже подлинный модуль ИМПОРТИРУЕТСЯ и сверяется с
-// копией: формовка строки, потолок кольца, вытеснение, склейка текста, поверхность экспортов.
-// Импорт .ts работает на стирании типов (Node ≥ 22.18); модуль не имеет своих импортов.
+// --- Зуб на предмет прибора, переносимая половина (#2485) ------------------------------------
+// Прибор воспроизводит логику scenarioTraceBuffer КОПИЕЙ (класс ScenarioTraceProbe). Копия
+// молча разойдётся с оригиналом, и прибор начнёт мерить прошлое. Здесь предмет сверяется по
+// ИСХОДНИКУ продуктового модуля: загрузчик TypeScript не нужен, поэтому зуб работает всюду,
+// где идёт `yarn test:scripts` (в CI это Node 20 — он .ts не грузит вовсе).
+// Поведенческая половина — scripts/scenario-trace-buffer-parity.test.mjs (нужен Node ≥ 22).
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const real = await import(pathToFileURL(scenarioTraceBufferSourcePath(REPO_ROOT)).href);
 
-test('parity: потолок прибора читается из продуктового модуля и совпадает с его поведением', () => {
-  const declared = readMaxTraceLines(REPO_ROOT);
-
-  real.clearScenarioTraceBuffer();
-  for (let i = 0; i < declared + 25; i += 1) {
-    real.appendScenarioTraceLine('tick', { tick: i });
-  }
-  const observed = real.getScenarioTraceLineCount();
-  real.clearScenarioTraceBuffer();
-
-  assert.equal(observed, declared, 'MAX_TRACE_LINES из текста не совпал с наблюдаемым потолком');
-  assert.equal(new ScenarioTraceProbe().maxLines, declared, 'умолчание прибора отстало от модуля');
+test('parity: потолок прибора читается из продуктового модуля, а не дублируется', () => {
+  assert.equal(new ScenarioTraceProbe().maxLines, readMaxTraceLines(REPO_ROOT));
 });
 
-test('parity: копия формует строку байт в байт как продуктовый модуль', () => {
-  const probe = new ScenarioTraceProbe();
-  const cases = [
-    ['no ctx', undefined],
-    ['empty ctx', {}],
-    ['string', { runId: 'abc' }],
-    ['null', { nodeId: null }],
-    ['mixed', { runId: 'r', tick: 7, branch: 'main', ok: true, ratio: 0.5 }],
-  ];
+test('parity: несущие выражения модуля присутствуют дословно', () => {
+  const source = readScenarioTraceBufferSource(REPO_ROOT);
+  const missing = PROBE_CARRYING_EXPRESSIONS.filter((expression) => !source.includes(expression));
 
-  for (const [message, context] of cases) {
-    assert.equal(
-      probe.formatScenarioTraceLine(message, context),
-      real.formatScenarioTraceLine(message, context),
-      `формовка разошлась на «${message}»`,
-    );
-  }
-});
-
-test('parity: вытеснение и склейка текста совпадают на переполненном кольце', () => {
-  const cap = readMaxTraceLines(REPO_ROOT);
-  const probe = new ScenarioTraceProbe({ maxLines: cap });
-
-  real.clearScenarioTraceBuffer();
-  for (let i = 0; i < cap + 137; i += 1) {
-    real.appendScenarioTraceLine('[device-board] main-tick-done', { tick: i, nodeId: `node-${i % 37}` });
-    probe.appendScenarioTraceLine('[device-board] main-tick-done', { tick: i, nodeId: `node-${i % 37}` });
-  }
-
-  const realText = real.getScenarioTraceText();
-  const probeText = probe.getScenarioTraceText();
-  real.clearScenarioTraceBuffer();
-
-  assert.equal(probe.getScenarioTraceLines().length, cap);
-  assert.equal(probeText, realText, 'текст копии разошёлся с текстом модуля');
-  assert.equal(Buffer.byteLength(probeText, 'utf8'), Buffer.byteLength(realText, 'utf8'));
-});
-
-test('parity: снапшот держит ссылку между мутациями у копии и у модуля одинаково', () => {
-  const probe = new ScenarioTraceProbe();
-  real.clearScenarioTraceBuffer();
-
-  real.appendScenarioTraceLine('a');
-  probe.appendScenarioTraceLine('a');
-  const realFirst = real.getScenarioTraceLines();
-  const probeFirst = probe.getScenarioTraceLines();
-
-  assert.equal(real.getScenarioTraceLines(), realFirst, 'модуль пересобрал снапшот без мутации');
-  assert.equal(probe.getScenarioTraceLines(), probeFirst, 'копия пересобрала снапшот без мутации');
-
-  real.appendScenarioTraceLine('b');
-  probe.appendScenarioTraceLine('b');
-
-  assert.notEqual(real.getScenarioTraceLines(), realFirst);
-  assert.notEqual(probe.getScenarioTraceLines(), probeFirst);
-  real.clearScenarioTraceBuffer();
+  assert.deepEqual(
+    missing,
+    [],
+    'scenarioTraceBuffer.ts изменил несущие выражения — сверьте копию ScenarioTraceProbe с оригиналом: ' +
+      missing.join(' · '),
+  );
 });
 
 test('parity: новый экспорт продуктового модуля краснит прибор', () => {
   const declared = new Set([...PROBE_MODELLED_EXPORTS, ...Object.keys(PROBE_UNMODELLED_EXPORTS)]);
-  const unknown = Object.keys(real).filter((name) => !declared.has(name));
+  const actual = readScenarioTraceBufferExports(REPO_ROOT);
+  const unknown = actual.filter((name) => !declared.has(name));
 
   assert.deepEqual(
     unknown,
@@ -151,11 +97,7 @@ test('parity: новый экспорт продуктового модуля к
   );
 
   for (const name of PROBE_MODELLED_EXPORTS) {
-    assert.equal(typeof real[name], 'function', `модуль потерял ${name}`);
-    assert.equal(
-      typeof new ScenarioTraceProbe()[name],
-      'function',
-      `прибор не воспроизводит ${name}`,
-    );
+    assert.ok(actual.includes(name), `модуль потерял ${name}`);
+    assert.equal(typeof new ScenarioTraceProbe()[name], 'function', `прибор не воспроизводит ${name}`);
   }
 });

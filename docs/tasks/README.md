@@ -20,6 +20,12 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `trace-freeze-e-adr-gate-pr` | Фаза E: ADR различает кандидатов, gate и PR без merge | S | [`OPEN.md`](../local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md) | — |
+| `trace-freeze-d-probe-truth-tooth` | Фаза D: прибор трейса перестаёт судить копию без зуба | S | [`OPEN.md`](../local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md) | [#2485](https://github.com/officefish/Membrana/issues/2485) |
+| `trace-freeze-c-library-render` | Фаза C: проверить DOM-кандидат библиотеки после #2505 | M | [`OPEN.md`](../local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md) | — |
+| `trace-freeze-b-live-sendsync` | Фаза B: живой замер sendSync в Studio на остановке и выходе | M | [`OPEN.md`](../local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md) | — |
+| `trace-freeze-a-cut` | Фаза A: нарезка спринта фризов трейса и прогнозы до исполнения | S | [`OPEN.md`](../local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md) | — |
+| `trace-freeze-dual-candidate-sprint` | Спринт: разбор фризов трейса — sendSync и отрисовка библиотеки | L | [`OPEN.md`](../local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md) | [#2476](https://github.com/officefish/Membrana/issues/2476) |
 | `cowork-library-open-api` | Cowork Sprint: Открытое API библиотеки | L | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md) | — |
 | `node-duty-ready-predicate` | Узел к дежурству: предикат готовности Firebat — сон/гибернация/автовход/служба (Г4) | S | [`NODE_DUTY_READY_PREDICATE_PROMPT.md`](../prompts/NODE_DUTY_READY_PREDICATE_PROMPT.md) | [#2049](https://github.com/officefish/Membrana/issues/2049) |
 | `studio-package-av-refusal` | Установщик Studio: честный отказ при AV-блокировке + fallback на артефакт CI (Г3) | S | [`STUDIO_PACKAGE_AV_REFUSAL_PROMPT.md`](../prompts/STUDIO_PACKAGE_AV_REFUSAL_PROMPT.md) | — |

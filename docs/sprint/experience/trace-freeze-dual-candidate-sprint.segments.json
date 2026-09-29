@@ -1,0 +1,12 @@
+{
+  "//": "Measured from the working diff and complete new files before delivery. Values are intentionally not fitted to the estimates; block A includes registry/cut registration, and E includes the ADR rewrite and closure evidence.",
+  "sprintId": "trace-freeze-dual-candidate-sprint",
+  "measuredAt": "2026-09-29T15:44:58+03:00",
+  "segments": [
+    { "blockId": "a-cut-contract", "changedLines": 372 },
+    { "blockId": "b-live-sendsync-measure", "changedLines": 67 },
+    { "blockId": "c-library-render-candidate", "changedLines": 0 },
+    { "blockId": "d-probe-truth-tooth", "changedLines": 272 },
+    { "blockId": "e-adr-gate-pr", "changedLines": 180 }
+  ]
+}

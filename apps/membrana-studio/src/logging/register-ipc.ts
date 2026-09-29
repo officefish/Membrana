@@ -34,12 +34,16 @@ export function registerLoggingIpc(): void {
 
   ipcMain.handle(`${PREFIX}:getLogsDir`, () => getShellLogsDir());
 
-  ipcMain.on(`${PREFIX}:flushScenarioTrace`, (_event, text: unknown, runId: unknown) => {
+  ipcMain.on(`${PREFIX}:flushScenarioTrace`, (event, text: unknown, runId: unknown) => {
     if (typeof text !== 'string' || text.length === 0) {
+      event.returnValue = null;
       return;
     }
     const id = typeof runId === 'string' && runId.length > 0 ? runId : null;
     writeScenarioTraceLatest(getShellLogsDir(), text, id);
+    // `sendSync` waits for a reply, not merely for the listener to return. Reply only after the
+    // write so the existing beforeunload durability guarantee remains intact.
+    event.returnValue = null;
   });
 }
 
