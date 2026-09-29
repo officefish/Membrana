@@ -80,7 +80,7 @@
       "id": "ritual-reads-done-work",
       "title": "Ритуал читает сделанное: проекция ассерций для каркаса дня, билеты-результаты для вечернего фидбека",
       "promptPath": "docs/prompts/RITUAL_READS_DONE_WORK_PROMPT.md",
-      "githubIssue": null,
+      "githubIssue": 2516,
       "noIssueReason": "И8 недельного плана 28.09; Issue заведётся с первым PR после ратификации нарезки владельцем",
       "linearId": null,
       "size": "M",

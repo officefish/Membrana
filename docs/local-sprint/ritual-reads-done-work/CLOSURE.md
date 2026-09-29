@@ -9,7 +9,8 @@
 | Segments | [`segments-ritual-reads-done-work.json`](../../sprint/experience/segments-ritual-reads-done-work.json) |
 | Gate | **pass** 4/4 `honest_pair`, находок 0 (13:07Z); журнал: close-запись `pass` в `docs/procedure-runs/trail/2026-09-29.jsonl` |
 | Experience | `ozhegov-ritual-reads-done-work-cut-1` · исход **hit** · точность нарезки 100% (4/4) · overflow 0/4 · архив персоны ozhegov +1 |
-| PR | __PR__ |
+| PR | [#2514](https://github.com/officefish/Membrana/pull/2514) · `--no-merge`, не черновик · `--size-reason`: нарезка на 4 блока ≤400 · мердж — слово владельца |
+| Issues | эпик [#2516](https://github.com/officefish/Membrana/issues/2516) (карточка реестра связана) · находка прогона [#2515](https://github.com/officefish/Membrana/issues/2515) — строковое сравнение `predictedAt < observedAt` |
 
 ## Что оказалось предметом
 

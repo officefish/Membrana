@@ -24,7 +24,7 @@
 | `ritual-reads-done-work-b3` | b3: Вечер читает сделанное: блок билетов и свежесть посылок в промпте | S | [`RITUAL_READS_DONE_WORK_PROMPT.md`](../prompts/RITUAL_READS_DONE_WORK_PROMPT.md) | — |
 | `ritual-reads-done-work-b2` | b2: Ядро «книга сделанного»: PR oversized ↔ билеты-результаты | S | [`RITUAL_READS_DONE_WORK_PROMPT.md`](../prompts/RITUAL_READS_DONE_WORK_PROMPT.md) | — |
 | `ritual-reads-done-work-b1` | b1: Проекция ассерций для каркаса дня + строка свежести предикатом probe | S | [`RITUAL_READS_DONE_WORK_PROMPT.md`](../prompts/RITUAL_READS_DONE_WORK_PROMPT.md) | — |
-| `ritual-reads-done-work` | Ритуал читает сделанное: проекция ассерций для каркаса дня, билеты-результаты для вечернего фидбека | M | [`RITUAL_READS_DONE_WORK_PROMPT.md`](../prompts/RITUAL_READS_DONE_WORK_PROMPT.md) | — |
+| `ritual-reads-done-work` | Ритуал читает сделанное: проекция ассерций для каркаса дня, билеты-результаты для вечернего фидбека | M | [`RITUAL_READS_DONE_WORK_PROMPT.md`](../prompts/RITUAL_READS_DONE_WORK_PROMPT.md) | [#2516](https://github.com/officefish/Membrana/issues/2516) |
 | `cowork-library-open-api` | Cowork Sprint: Открытое API библиотеки | L | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md) | — |
 | `node-duty-ready-predicate` | Узел к дежурству: предикат готовности Firebat — сон/гибернация/автовход/служба (Г4) | S | [`NODE_DUTY_READY_PREDICATE_PROMPT.md`](../prompts/NODE_DUTY_READY_PREDICATE_PROMPT.md) | [#2049](https://github.com/officefish/Membrana/issues/2049) |
 | `studio-package-av-refusal` | Установщик Studio: честный отказ при AV-блокировке + fallback на артефакт CI (Г3) | S | [`STUDIO_PACKAGE_AV_REFUSAL_PROMPT.md`](../prompts/STUDIO_PACKAGE_AV_REFUSAL_PROMPT.md) | — |
