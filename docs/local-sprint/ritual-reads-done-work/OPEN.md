@@ -6,12 +6,12 @@
 | Procedure | `membrana-local-sprint` |
 | Registry epic | `ritual-reads-done-work` (M; Issue с первым PR) · фазы `ritual-reads-done-work-b1…b4` |
 | Prompt | [`RITUAL_READS_DONE_WORK_PROMPT.md`](../../prompts/RITUAL_READS_DONE_WORK_PROMPT.md) |
-| Cut | [`ritual-reads-done-work.json`](../../sprint/cut/ritual-reads-done-work.json) — **ждёт ратификации владельца** |
+| Cut | [`ritual-reads-done-work.json`](../../sprint/cut/ritual-reads-done-work.json) — ратифицирован владельцем 2026-09-29T15:19:14+03:00 инструментом (дайджест `00524e83…`), `sprint:cut` → `contract` |
 | Cutter context | ozhegov → [`cut-ritual-reads-done-work-ozhegov.md`](../../discussions/cut-ritual-reads-done-work-ozhegov.md) |
 | Lead | ozhegov |
 | Support | vesnin · dynin · angelina (гейт) |
 | Source | И8, [`PREP_2026-09-28_PRODUCT_AND_TOOLING_WEEK.md`](../../PREP_2026-09-28_PRODUCT_AND_TOOLING_WEEK.md) §4 |
-| Status | **фаза А — нарезка выписана, исполнение не начато** |
+| Status | фаза Б исполнена: b1 `b9418242` · b2 `3f1471c9` · b3 `9963fd10` · b4 — гейт и закрытие, см. [`CLOSURE.md`](./CLOSURE.md) |
 
 ## Зачем
 

@@ -1,0 +1,13 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "ritual-reads-done-work",
+  "forTask": "ritual-reads-done-work — читатели ритуала судят по предмету, а не по документу (И8 недельного плана 28.09)",
+  "note": "Замер объёма по блокам: git diff --numstat origin/main..HEAD по зонам плана после коммитов b1–b3 (b9418242, 3f1471c9, 9963fd10). Строки b4 — документы прогона и замер, сняты при закрытии.",
+  "measuredAt": "2026-09-29T12:39:00+00:00",
+  "segments": [
+    { "cutBlockId": "b1-assertions-projection", "changedLines": 315, "evidence": "scripts/lib/main-day-assertions-view.mjs 157 · .test.mjs 120 · scripts/_main-day-issue.mjs 38" },
+    { "cutBlockId": "b2-done-ledger-core", "changedLines": 258, "evidence": "scripts/lib/review-done-ledger.mjs 163 · .test.mjs 95" },
+    { "cutBlockId": "b3-evening-reads-done-work", "changedLines": 323, "evidence": "scripts/lib/review-done-ledger-port.mjs 136 · scripts/lib/team-evening-feedback-ritual.mjs 38 · scripts/team-evening-feedback-ritual.test.mjs 138 · scripts/team-evening-feedback.mjs 11" },
+    { "cutBlockId": "b4-live-check-closure", "changedLines": 294, "evidence": "CLOSURE.md 149 · reviews/*.md 105 · execution-traces.jsonl 8 · segments 13 · OPEN.md 4 · LOCAL_SPRINT_ACTIVE/LOG ~15 (wc -l новых файлов + git diff --numstat правок), снято 13:05Z до записи опыта" }
+  ]
+}
