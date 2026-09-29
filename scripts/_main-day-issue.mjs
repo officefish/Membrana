@@ -27,6 +27,7 @@ import { headRevision } from './lib/git-day-context.mjs';
 import { provenanceHeader, readEntry, gitFsIo } from './lib/angelina-adapter.mjs';
 import { frame } from './lib/day-plan-frame.mjs';
 import { readDated } from './lib/read-dated.mjs';
+import { ASSERTIONS_REL, assertionsDocBlock } from './lib/main-day-assertions-view.mjs';
 import { REPO } from './lib/github-issues-audit.mjs';
 import { normalizeRepoLinks, rewrittenLinksNote } from './lib/repo-links.mjs';
 import {
@@ -47,6 +48,8 @@ import {
 
 const MAX_CONTEXT_CHARS = 95_000;
 const MAX_DOC_CHARS = 22_000;
+/** Путь состояния гейта — тот же, что у `main-day-probe` (второго читателя свежести). */
+const GATES_STATE_REL = 'docs/tasks/morning-gates-state.json';
 const MAX_BUFFER_CHARS = 8_000;
 const MAX_PROMPT_EXCERPT = 10_000;
 
@@ -99,6 +102,17 @@ const INPUT_DOCS = [
   },
 ];
 
+/** Состояние утреннего гейта значением для предиката свежести; нет/битое — null (как у probe). */
+function readGatesStateValue() {
+  const p = resolve(process.cwd(), GATES_STATE_REL);
+  if (!existsSync(p)) return null;
+  try {
+    return JSON.parse(readFileSync(p, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
 /** Локальный календарный день — «сегодня» для гейта свежести входов. */
 function localDayKey() {
   const d = new Date();
@@ -113,6 +127,30 @@ function collectDocBlocks() {
 
   for (const { rel, required, label, maxAgeDays } of INPUT_DOCS) {
     const abs = resolve(process.cwd(), rel);
+
+    // Вещдок дня идёт ПРОЕКЦИЕЙ, не текстом (b1 спринта ritual-reads-done-work, И8).
+    // 29.09: файл 115 531 байт резался окном 22k — модель видела застрявший `//date` (24.09)
+    // и не видела `//recut-29-09`; каркас объявил перечеканку несделанной при probe «aligned».
+    // Свежесть теперь судит тот же предикат, что у probe, и печатается фактом; комментарии
+    // чеканщика в промпт не входят. День — как у probe (UTC), чтобы вердикты совпадали буквально.
+    if (rel === ASSERTIONS_REL) {
+      const text = existsSync(abs) ? readFileSync(abs, 'utf8') : null;
+      if (text === null) {
+        blocks.push(`### ${label}\n\n(\`${rel}\` отсутствует)\n`);
+        continue;
+      }
+      const view = assertionsDocBlock({
+        text,
+        gate: readGatesStateValue(),
+        today: new Date().toISOString().slice(0, 10),
+        label,
+        rel,
+      });
+      if (!view.ok) console.warn(`[main-day-issue] ⚠ ${rel}: проекция не построена, сырой текст не подан`);
+      blocks.push(view.block);
+      continue;
+    }
+
     const maxChars = rel === CURRENT_TASK_BUFFER_REL ? MAX_BUFFER_CHARS : MAX_DOC_CHARS;
     const text = readBounded(abs, maxChars);
     if (!text) {
