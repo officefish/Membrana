@@ -1,3 +1,12 @@
+<!--
+  archive-role: archive-snapshot
+  archive-day: 2026-09-28
+  archived-at: 2026-09-28T17:31:07.105Z
+  source: docs/MAIN_DAY_ISSUE.md
+  canonical: docs/MAIN_DAY_ISSUE.md (перезаписывается yarn plan:day / standup / main-day-issue)
+  Не использовать как основной документ дня — побочный снимок для ретроспективы и анализа.
+-->
+
 <!-- Сгенерировано: 2026-09-28T10:51:49.133Z (yarn main-day-issue@369cd8b9) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->

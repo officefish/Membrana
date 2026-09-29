@@ -1,3 +1,12 @@
+<!--
+  archive-role: archive-snapshot
+  archive-day: 2026-09-28
+  archived-at: 2026-09-28T17:31:07.105Z
+  source: docs/STRATEGY_DAY.md
+  canonical: docs/STRATEGY_DAY.md (перезаписывается yarn plan:day / standup / main-day-issue)
+  Не использовать как основной документ дня — побочный снимок для ретроспективы и анализа.
+-->
+
 <!-- Сгенерировано: 2026-09-28T10:27:36.014Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
