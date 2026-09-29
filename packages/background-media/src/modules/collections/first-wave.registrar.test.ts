@@ -97,6 +97,7 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
     expect(registered.filter((m) => m.kind === 'handler')).toHaveLength(6);
     expect(registered.filter((m) => m.kind === 'report')).toHaveLength(3);
     expect(registered.filter((m) => m.kind === 'showcase')).toHaveLength(2);
+    expect(new Set(registered.map((m) => m.id)).size).toBe(registered.length);
   });
 
   it('читатель проб — только чтение в устройстве: одноимённая коллекция другого узла не видна', async () => {
