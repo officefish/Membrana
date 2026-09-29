@@ -23,6 +23,21 @@
 - **Boundary:** `MoveAllToCollectionDialog` (проверен 27.09), `OverflowWindow`, общий пакет под `nav`,
   стрелки и набор страниц, мердж — вне спринта. Узкий экран без браузера — gap.
 
+## 2026-09-29 — `batch-collection-run-contour` — **IMPLEMENTED (gate pass 4/4 · experience miss)**
+
+- **Goal:** прогон детекторов по коллекции как отдельный live↔batch контур, без повторного
+  строительства уже закрытых массового переноса из буфера и пагинации библиотеки.
+- **Issue:** [#494](https://github.com/officefish/Membrana/issues/494)
+- **OPEN:** [`local-sprint/batch-collection-run-contour/OPEN.md`](./local-sprint/batch-collection-run-contour/OPEN.md)
+- **Prompt:** [`prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md`](./prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md)
+- **CLOSURE:** [`local-sprint/batch-collection-run-contour/CLOSURE.md`](./local-sprint/batch-collection-run-contour/CLOSURE.md)
+- **Cut:** [`sprint/cut/batch-collection-run-contour.json`](./sprint/cut/batch-collection-run-contour.json) ·
+  ратифицирован владельцем; architecture verdict принят без recut.
+- **Gate:** 4/4 `honest_pair`; experience `miss`, runner 514 строк против 390.
+- **Delivery:** stacked PR #2517 → #2518 → #2519 → #2520 → evidence; везде `--no-merge`.
+- **Boundary:** новый `SampleCollectionRef` / batch-runtime не введён; перенос и пагинация не
+  переисполнялись; merge запрещён заказом владельца.
+
 ## 2026-09-08 — `tariff-matrix-2333` — **OPEN**
 
 - **Goal:** серверная адаптация к матрице тарифов по принятому M1: версия контракта,
