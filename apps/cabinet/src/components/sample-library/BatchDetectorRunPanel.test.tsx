@@ -35,7 +35,6 @@ const completed: CollectionDetectorBatchRunOutcome = {
       reason: 'WAV decode failed',
     },
   ],
-  rejection: null,
 };
 
 describe('BatchDetectorRunPanel', () => {

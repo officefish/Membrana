@@ -121,9 +121,8 @@ export interface CollectionDetectorBatchSampleResult {
   readonly reason?: string;
 }
 
-export interface CollectionDetectorBatchRunOutcome {
+interface CollectionDetectorBatchRunOutcomeBase {
   readonly runId: string;
-  readonly status: 'completed' | 'rejected';
   readonly inputHash: string;
   readonly aggregate: {
     readonly total: number;
@@ -135,11 +134,23 @@ export interface CollectionDetectorBatchRunOutcome {
     readonly latencyP95Ms: number;
   };
   readonly results: readonly CollectionDetectorBatchSampleResult[];
+}
+
+export interface CollectionDetectorBatchRunCompleted extends CollectionDetectorBatchRunOutcomeBase {
+  readonly status: 'completed';
+}
+
+export interface CollectionDetectorBatchRunRejected extends CollectionDetectorBatchRunOutcomeBase {
+  readonly status: 'rejected';
   readonly rejection: {
     readonly reason: 'empty' | 'reader-failed' | 'detector-unavailable' | 'limit-exceeded';
     readonly detail: string;
-  } | null;
+  };
 }
+
+export type CollectionDetectorBatchRunOutcome =
+  | CollectionDetectorBatchRunCompleted
+  | CollectionDetectorBatchRunRejected;
 
 export interface PaginatedSamples<T = MediaSample> {
   items: T[];
