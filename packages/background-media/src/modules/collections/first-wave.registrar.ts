@@ -42,6 +42,7 @@ export const MFCC_GATES_PRESET_FILE = join('reports', 'mfcc-gates-first-cut.json
 
 type Handlers = Awaited<ReturnType<typeof loadHandlers>>;
 const loadHandlers = () => import('@membrana/plugin-handlers');
+// Declared in background-media dependencies; deferred only to bridge this CJS package to its ESM build.
 const loadDroneDetectionOrchestrator = () => import('@membrana/drone-detection-orchestrator-service');
 
 /** Порт чтения проб поверх Prisma и блобов: два члена, оба читают. */
