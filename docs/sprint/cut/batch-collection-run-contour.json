@@ -38,14 +38,22 @@
         "packages/plugin-contracts/src/batch-collection-run.test.ts",
         "packages/plugin-handlers/src/batch-run/",
         "packages/background-media/src/modules/collections/batch-run.contract.ts",
-        "packages/background-media/src/modules/collections/batch-run.contract.test.ts"
+        "packages/background-media/src/modules/collections/batch-run.contract.test.ts",
+        "packages/plugin-contracts/src/index.ts",
+        "packages/background-media/src/modules/collections/first-wave.registrar.test.ts",
+        "packages/services/media-library/src/index.ts",
+        "packages/services/media-library/src/media-library-service.ts",
+        "packages/services/media-library/src/ports/storage-backend.ts",
+        "packages/services/media-library/test/server-storage-backend.test.ts",
+        "apps/cabinet/src/components/sample-library/SampleLibraryMainPanel.tsx",
+        "apps/cabinet/src/components/sample-library/BatchDetectorRunPanel.test.tsx"
       ],
       "estimate": {
         "changedLines": 300
       },
       "//": "Форма входа/выхода, inputHash по всем пробам, отказов и лимитов. Не дублировать listSamplesPage/move-batch; read-only порт остаётся исходной посылкой, если a1 не решит иначе.",
-      "revisionAt": "2026-09-29T15:17:33.2162370+03:00",
-      "revisionOf": "70665d191e5618cf7425dcfe97627cace502effe1c789f35f3960dbb998db5ad"
+      "revisionAt": "2026-09-29T19:46:07+03:00",
+      "revisionOf": "603be2411fcfabc245b0ef123a3c4c6f6db39b3a39281482476e39259697936e"
     },
     {
       "blockId": "detector-runner",
@@ -56,14 +64,15 @@
         "packages/plugin-handlers/src/detector-batch.test.ts",
         "packages/services/detectors/",
         "packages/background-media/src/modules/collections/first-wave.registrar.ts",
-        "packages/background-media/src/modules/collections/first-wave.registrar.spec.ts"
+        "packages/background-media/src/modules/collections/first-wave.registrar.spec.ts",
+        "packages/plugin-handlers/src/index.ts"
       ],
       "estimate": {
         "changedLines": 390
       },
       "//": "Исполнитель гонит detector по N пробам коллекции, собирает агрегат и не пишет в samples/collections. Порог 400 держится впритык; рост зоны после a1 — recut.",
-      "revisionAt": "2026-09-29T15:17:33.2162370+03:00",
-      "revisionOf": "43be23a3ee4ac863678b276a62f495fe35f8f4d89fccfc8143539fbd9e4cb894"
+      "revisionAt": "2026-09-29T19:46:07+03:00",
+      "revisionOf": "6f5bd83ad2d916bb32ee368a1ca5a31e1ca64aa1606b310373001bc1cbc69b52"
     },
     {
       "blockId": "cabinet-entry",
@@ -86,9 +95,10 @@
       "revisionOf": "72a7128d95f1162d83639de7698558cbcf143fc340fd206e9f01215fb5efc786"
     }
   ],
+  "//recut-29-09-retro": "Перерезка в работе по слову владельца 29.09: девять файлов вне ратифицированных зон добавлены в зоны блоков-владельцев. Три — реэкспорты бочек пакетов, без которых новый контракт не виден снаружи. Существенный — порт packages/services/media-library/src/ports/storage-backend.ts: опциональный позиционный метод requestCollectionDetectorBatch, только для серверного бэкенда — образец, закреплённый арбитражем 27.09; место санкционировано консилиумом (docs/seanses/batch-collection-run-contour-architecture-gate-2026-09-29.md, строка 83, Структурщик). ПРИЧИНА СТРУКТУРНАЯ: консилиум был первым блоком нарезки, а зоны остальных блоков нарисованы ДО него; консилиум определил, куда ляжет код, и перерезка после консилиума была нужна, но не сделана. Отчёт о сдаче выход не называл — нашла ведущая сверкой файлов стека с зонами. ПРОБЕЛ ВЕДУЩЕЙ: сессиям Claude после ратификации ведущая писала «зоны — контракт», а сессии Codex, ратифицированные владельцем напрямую, этого указания не получали.",
   "ratification": {
     "by": "owner",
-    "at": "2026-09-29T15:17:33.2162370+03:00",
-    "digest": "43e6934ea322b82c7fa6a9c12c9aa3fc33a2632d914a0d4c0b5a5a8350c73ea6"
+    "at": "2026-09-29T19:46:07+03:00",
+    "digest": "78580290a5d3c2641b80399f5629036d248080e97fa894e347c7a52a4ad9725b"
   }
 }

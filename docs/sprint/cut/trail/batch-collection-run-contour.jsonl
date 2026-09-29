@@ -1,2 +1,3 @@
 {"kind":"cut_context_run","sprintId":"batch-collection-run-contour","subject":"vesnin","at":"2026-09-29T14:58:19+03:00","ref":"docs/local-sprint/batch-collection-run-contour/OPEN.md","planDigest":null}
 {"kind":"cut_act","sprintId":"batch-collection-run-contour","subject":"vesnin","at":"2026-09-29T15:05:00+03:00","ref":"docs/sprint/cut/batch-collection-run-contour.json","planDigest":null}
+{"kind":"recut_act","sprintId":"batch-collection-run-contour","subject":"angelina","at":"2026-09-29T19:46:06+03:00","ref":"docs/sprint/cut/batch-collection-run-contour.json","planDigest":"78580290a5d3c2641b80399f5629036d248080e97fa894e347c7a52a4ad9725b"}
