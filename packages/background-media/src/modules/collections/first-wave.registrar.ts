@@ -42,6 +42,8 @@ export const MFCC_GATES_PRESET_FILE = join('reports', 'mfcc-gates-first-cut.json
 
 type Handlers = Awaited<ReturnType<typeof loadHandlers>>;
 const loadHandlers = () => import('@membrana/plugin-handlers');
+// Declared in background-media dependencies; deferred only to bridge this CJS package to its ESM build.
+const loadDroneDetectionOrchestrator = () => import('@membrana/drone-detection-orchestrator-service');
 
 /** Порт чтения проб поверх Prisma и блобов: два члена, оба читают. */
 export function prismaSampleReader(prisma: PrismaService, blobs: BlobStorageService, sha256Hex: Handlers['sha256Hex']): CollectionSampleReader {
@@ -196,6 +198,54 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
       // здесь), сид тот же (единственная точка выхода результата из media), но словарь родов
       // не смешивается. Пороги отбора остаются рабочей точкой пакета до слуховой калибровки.
       handlers.registerReportWave(this.host, { reader: mfcc.reader, onResult: onReportResult });
+
+      const detectorBatchManifest = handlers.DETECTOR_BATCH_MANIFEST;
+      const { analyzeDroneDetectionDetailed } = await loadDroneDetectionOrchestrator();
+      const detectorBatchExecutor = handlers.createDetectorBatchExecutor({
+        reader: mfcc.reader,
+        analyzer: {
+          analyze: async (sample, audio) => {
+            const detailed = await analyzeDroneDetectionDetailed(audio.samples, audio.sampleRate, {
+              sampleId: sample.id,
+              sampleTitle: sample.title,
+            });
+            return {
+              verdicts: detailed.verdicts.map((verdict) => ({
+                detectorId: verdict.detectorName,
+                isDrone: verdict.isDrone,
+                confidence: verdict.confidence,
+                latencyMs: verdict.latencyMsTotal,
+              })),
+            };
+          },
+        },
+      });
+      this.host.registerPlugin(detectorBatchManifest, {
+        execute: async (ctx) => {
+          const result = await detectorBatchExecutor.execute(ctx);
+          this.results.set(ctx.address.runId, result);
+          await toBridge(ctx, result);
+          return result;
+        },
+      });
+
+      this.contextBuilders.set(detectorBatchManifest.id, async (req) => ({
+        address: this.addressOf(detectorBatchManifest, req, handlers.uuidV7()),
+        fingerprints: await handlers.detectorBatchFingerprintsOf(
+          mfcc.reader,
+          req.deviceId,
+          req.collectionId,
+          req.sampleIds,
+        ),
+        resumeMode: 'fresh',
+        trigger: req.trigger ?? detectorBatchManifest.triggers[0]!,
+        payload: {
+          deviceId: req.deviceId,
+          collectionId: req.collectionId,
+          ...(req.sampleIds ? { sampleIds: req.sampleIds } : {}),
+          occurredAt: new Date(),
+        },
+      }));
 
       const mfccManifest = handlers.MFCC_HANDLER_MANIFEST;
       this.contextBuilders.set(mfccManifest.id, async (req) => ({

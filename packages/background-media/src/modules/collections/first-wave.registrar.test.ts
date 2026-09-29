@@ -72,7 +72,14 @@ beforeAll(async () => {
 });
 
 describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
-  it('на старте модуля хост collections держит шесть детекторов, свод сеанса, измеритель и витрину отбора', async () => {
+  it('declares the deferred drone orchestrator import as a runtime dependency', () => {
+    const pkg = JSON.parse(
+      readFileSync(join(__dirname, '../../../package.json'), 'utf8'),
+    ) as { dependencies?: Record<string, string> };
+    expect(pkg.dependencies?.['@membrana/drone-detection-orchestrator-service']).toBe('*');
+  });
+
+  it('на старте модуля хост collections держит шесть детекторов, batch, свод, измеритель и витрины', async () => {
     const host = new CollectionsPluginHostService();
     await host.onModuleInit();
     await new FirstWavePluginsRegistrar(host, prisma, blobs, config, spyBridge().bridge).onModuleInit();
@@ -82,6 +89,8 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
       'membrana.handler.spectral-flux', 'membrana.handler.template-match', 'membrana.handler.yamnet',
       // Свод сеанса смонтирован в том же доме отдельной волной — род report, не детектор (j2, #1961).
       'membrana.report.session-digest',
+      // Batch использует тот же read-only reader и живой detector orchestrator, не новый runtime.
+      'membrana.report.detector-batch',
       // Измеритель чарт-листа — ВТОРОЕ внедрение одного функционала (Т6, c5b): показывает
       // человеку чарт-лист в доме журнала, а меряет здесь, где звук лежит локально.
       'membrana.report.chart-list-measure',
@@ -93,8 +102,9 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
       'membrana.showcase.library-duplicates',
     ]);
     expect(registered.filter((m) => m.kind === 'handler')).toHaveLength(6);
-    expect(registered.filter((m) => m.kind === 'report')).toHaveLength(2);
+    expect(registered.filter((m) => m.kind === 'report')).toHaveLength(3);
     expect(registered.filter((m) => m.kind === 'showcase')).toHaveLength(2);
+    expect(new Set(registered.map((m) => m.id)).size).toBe(registered.length);
   });
 
   it('читатель проб — только чтение в устройстве: одноимённая коллекция другого узла не видна', async () => {
@@ -199,6 +209,29 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
           }),
         ).rejects.toMatchObject({ status: 400 });
       });
+    });
+
+    it('detector batch идёт по read-only снимку коллекции и возвращает агрегат вызывающему', async () => {
+      const { bridge, sent } = spyBridge();
+      const { reg } = await registrar(config, bridge);
+      const out = await reg.requestRun({
+        pluginId: 'membrana.report.detector-batch' as PluginId,
+        deviceId: 'dev-1',
+        collectionId: 'c1',
+      });
+      const result = out.result as {
+        status: string;
+        aggregate: { total: number; ok: number; failed: number; skipped: number };
+        results: Array<{ sampleId: string; status: string }>;
+      };
+      expect(result.status).toBe('completed');
+      expect(result.aggregate.total).toBe(2);
+      expect(result.aggregate.total).toBe(
+        result.aggregate.ok + result.aggregate.failed + result.aggregate.skipped,
+      );
+      expect(result.results.map((row) => row.sampleId).sort()).toEqual(['a', 'b']);
+      expect(result.results.every((row) => row.status === 'skipped')).toBe(true);
+      expect(sent.at(-1)?.kind).toBe('report');
     });
 
   });
