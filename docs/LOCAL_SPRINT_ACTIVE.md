@@ -11,6 +11,14 @@
   со строкой свежести предикатом probe (вместо сырого файла, обрезанного 22k из 115k); вечер получает
   блок «сделанное, заведённое билетами» (архитектурные слоты 27.09 по #2488/#2489 → #2492–#2498).
   Порядок ритуалов, формат ассерций, промпты персон и основание снятия с очереди oversized — вне спринта.
+
+- **sample-library-paging-a11y** (Issue — с PR) ·
+  ратифицирован 29.09 15:13+03 · gate pass 3/3 `honest_pair` · experience `hit` (3/3) ·
+  [`OPEN.md`](./local-sprint/sample-library-paging-a11y/OPEN.md) · [`CLOSURE.md`](./local-sprint/sample-library-paging-a11y/CLOSURE.md) —
+  доступность органов листания библиотеки проб в обоих домах: индикатор → живой статус вместо
+  пустого `aria-current`, фокус не падает на `body` (край → соседняя кнопка; `loading` кабинета без
+  `disabled`), клавиатура без глобальных слушателей; 12 порч красные. Gap: живой замер 320px без
+  браузера. Сдача `pr:ship --no-merge`; мердж — слово владельца.
 - **tariff-matrix-2333** ([#2333](https://github.com/officefish/Membrana/issues/2333)) ·
   implementation checks pass, awaiting review/PR · [`OPEN.md`](./local-sprint/tariff-matrix-2333/OPEN.md) —
   серверная адаптация к матрице тарифов по принятому M1: версия контракта на `Tariff`/`Device`,
