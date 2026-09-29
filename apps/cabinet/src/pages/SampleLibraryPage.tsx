@@ -357,6 +357,8 @@ export function SampleLibraryPage() {
               setSamplesPage={lib.setSamplesPage}
               samplesPageLoading={lib.samplesPageLoading}
               samplesPagination={lib.samplesPagination}
+              detectorBatch={lib.detectorBatch}
+              handleRunDetectorBatch={lib.handleRunDetectorBatch}
             />
       </PagePluginArea>
 

@@ -1,3 +1,10 @@
+import type {
+  BatchCollectionDetectorVerdict,
+  BatchCollectionRunOutcome,
+  BatchCollectionRunRequest,
+  BatchCollectionSampleResult,
+} from '@membrana/plugin-contracts';
+
 export type CollectionKind = 'buffer' | 'user' | 'system';
 
 export type SampleLabel = 'drone' | 'not-drone' | 'unlabeled';
@@ -97,6 +104,14 @@ export interface MediaPluginState {
   manifest: MediaPluginManifest;
   enabled: boolean;
 }
+
+export type CollectionDetectorBatchRequest = BatchCollectionRunRequest;
+export type CollectionDetectorBatchVerdict = BatchCollectionDetectorVerdict;
+export type CollectionDetectorBatchSampleResult = BatchCollectionSampleResult;
+
+type WithRunId<T> = T extends unknown ? T & { readonly runId: string } : never;
+
+export type CollectionDetectorBatchRunOutcome = WithRunId<BatchCollectionRunOutcome>;
 
 export interface PaginatedSamples<T = MediaSample> {
   items: T[];
