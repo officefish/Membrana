@@ -59,8 +59,14 @@ const WHOLE_LIST_INTO_TABLE = /rows=\{(filteredSamples|samples)\}/u;
 /** «Кнопка запирается на время загрузки» — прежний дефект кабинета: запертая кнопка роняет фокус. */
 // Просмотр назад: `aria-disabled={loading …}` — законная замена, а не запертость.
 const DISABLED_BY_LOADING = /(?<![\w-])disabled=\{[^}]*loading/u;
-/** Тело правила фокуса — от объявления хука до закрывающей скобки верхнего уровня. */
-const FOCUS_RULE = /function useFocusAfterPageChange\([\s\S]*?\n\}\n/u;
+/**
+ * Тело правила фокуса — от объявления хука до закрывающей скобки верхнего уровня.
+ * `(?:\n|$)`: хук последним в файле без перевода строки — иначе «правила нет» вместо расхождения
+ * (находка Дынина в ревью a3, 29.09).
+ */
+const FOCUS_RULE = /function useFocusAfterPageChange\([\s\S]*?\n\}(?:\n|$)/u;
+/** Слушатель клавиатуры на окне/документе — у нава его быть не должно ни в одном доме. */
+const GLOBAL_KEY_LISTENER = /(window|document)\.addEventListener\(\s*['"]key/u;
 /** Отрицательные проверки судят код, не прозу шапки (класс ложного красного #2497). */
 const stripComments = (src: string) =>
   src.replace(/\/\*[\s\S]*?\*\//gu, '').replace(/(?:^|[ \t]+)\/\/.*$/gmu, '');
@@ -173,14 +179,18 @@ describe('листание: одно правило, два дома', () => {
    *  • `aria-current` — снят 29.09: набора страниц нет, «текущий элемент набора» обозначать нечем,
    *    а атрибут создавал видимость доступности, не объявляя смену страницы;
    *  • `disabled={… || loading}` — прежний дефект кабинета: запертая под пальцем кнопка роняла
-   *    фокус на `body` при каждой смене страницы.
-   * Порча — вернуть любое из двух в ОДИН дом → красный.
+   *    фокус на `body` при каждой смене страницы;
+   *  • слушатель клавиатуры на `window`/`document` — стрелок решено не заводить (29.09), а
+   *    глобальный слушатель задел бы ввод в поле фильтра меток. Зубы домов это ловят каждый у
+   *    себя; здесь — чтобы ни один дом не завёл его в одиночку (находка Дынина в ревью a3).
+   * Порча — вернуть любое из трёх в ОДИН дом → красный.
    */
-  it('оба дома не несут пустой aria-current и не запирают кнопки disabled на время загрузки', () => {
+  it('оба дома не несут пустой aria-current, не запирают кнопки на время загрузки и не слушают окно', () => {
     for (const house of [STUDIO_NAV, CABINET_NAV]) {
       const code = stripComments(read(house));
       expect(code, `${house}: aria-current вернулся`).not.toContain('aria-current');
       expect(code, `${house}: disabled зависит от loading`).not.toMatch(DISABLED_BY_LOADING);
+      expect(code, `${house}: слушатель клавиатуры на окне`).not.toMatch(GLOBAL_KEY_LISTENER);
     }
   });
 
@@ -223,6 +233,12 @@ describe('листание: одно правило, два дома', () => {
     expect(FOCUS_RULE.exec('function useFocusAfterPageChange(a) {\n  x();\n}\n')?.[0]).toBe(
       'function useFocusAfterPageChange(a) {\n  x();\n}\n',
     );
+    // Хук последним в файле, без перевода строки в конце — тело всё равно находится.
+    expect(FOCUS_RULE.exec('function useFocusAfterPageChange(a) {\n  x();\n}')?.[0]).toBe(
+      'function useFocusAfterPageChange(a) {\n  x();\n}',
+    );
+    expect("window.addEventListener('keydown', onKey)").toMatch(GLOBAL_KEY_LISTENER);
+    expect("window.addEventListener('resize', onResize)").not.toMatch(GLOBAL_KEY_LISTENER);
   });
 });
 
