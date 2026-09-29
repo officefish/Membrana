@@ -12,6 +12,11 @@
  *  • сбросить страницу эффектом после отрисовки вместо сброса в том же движении — красный;
  *  • убрать приведение номера у кабинета (`clampSamplesPage`) — красный;
  *  • вернуть оговорку «на этой странице N» к числу ЗАГРУЖЕННОГО — красный.
+ * Доступность (спринт sample-library-paging-a11y, 29.09):
+ *  • снять `role="status"` у одного дома — красный на «одними словами»;
+ *  • вернуть `aria-current` в один дом — красный на «запретах»;
+ *  • вернуть кабинету `disabled={… || loading}` — красный там же;
+ *  • изменить тело правила фокуса у одного дома — красный на «одно тело».
  *
  * Шаблоны отрицательных проверок вынесены именами и проверены САМИМ ЗУБОМ (см. последнюю пробу):
  * отрицательная проверка со сломанным шаблоном зелена всегда и потому ничего не сторожит — этот
@@ -50,6 +55,15 @@ const PAGE_SIZE_DECLARED_IN_HOUSE =
 
 /** «Таблице отдали весь список» — прежнее поведение Studio, из-за которого дом и подвисал. */
 const WHOLE_LIST_INTO_TABLE = /rows=\{(filteredSamples|samples)\}/u;
+
+/** «Кнопка запирается на время загрузки» — прежний дефект кабинета: запертая кнопка роняет фокус. */
+// Просмотр назад: `aria-disabled={loading …}` — законная замена, а не запертость.
+const DISABLED_BY_LOADING = /(?<![\w-])disabled=\{[^}]*loading/u;
+/** Тело правила фокуса — от объявления хука до закрывающей скобки верхнего уровня. */
+const FOCUS_RULE = /function useFocusAfterPageChange\([\s\S]*?\n\}\n/u;
+/** Отрицательные проверки судят код, не прозу шапки (класс ложного красного #2497). */
+const stripComments = (src: string) =>
+  src.replace(/\/\*[\s\S]*?\*\//gu, '').replace(/(?:^|[ \t]+)\/\/.*$/gmu, '');
 
 describe('листание: одно правило, два дома', () => {
   it('дома НЕ объявляют размер страницы заново — зовут его из слоя доступа', () => {
@@ -137,13 +151,52 @@ describe('листание: одно правило, два дома', () => {
       'aria-label="Пагинация таблицы сэмплов"',
       'Назад',
       'Вперёд',
-      'aria-current="page"',
       '{page} / {totalPages}',
       '{from}–{to} из {total}',
+      // Доступность (спринт sample-library-paging-a11y, 29.09): индикатор — живая область, фраза
+      // для читателя экрана одна на двоих; loading — занятость, не запертость.
+      'role="status"',
+      'aria-live="polite"',
+      'aria-atomic="true"',
+      'Страница {page} из {totalPages}, записи {from}–{to} из {total}',
+      'aria-busy={loading || undefined}',
+      'aria-disabled={loading || undefined}',
     ]) {
       expect(studioNav).toContain(word);
       expect(cabinetNav).toContain(word);
     }
+  });
+
+  /**
+   * ЗАПРЕТЫ доступности — у обоих домов, на КОДЕ без комментариев (проза о прежнем дефекте в
+   * шапке компонента иначе красит зуб — класс #2497).
+   *  • `aria-current` — снят 29.09: набора страниц нет, «текущий элемент набора» обозначать нечем,
+   *    а атрибут создавал видимость доступности, не объявляя смену страницы;
+   *  • `disabled={… || loading}` — прежний дефект кабинета: запертая под пальцем кнопка роняла
+   *    фокус на `body` при каждой смене страницы.
+   * Порча — вернуть любое из двух в ОДИН дом → красный.
+   */
+  it('оба дома не несут пустой aria-current и не запирают кнопки disabled на время загрузки', () => {
+    for (const house of [STUDIO_NAV, CABINET_NAV]) {
+      const code = stripComments(read(house));
+      expect(code, `${house}: aria-current вернулся`).not.toContain('aria-current');
+      expect(code, `${house}: disabled зависит от loading`).not.toMatch(DISABLED_BY_LOADING);
+    }
+  });
+
+  /**
+   * ПРАВИЛО ФОКУСА — ОДНО ТЕЛО, ДВА НОСИТЕЛЯ. Сравнивается не имя хука («есть где-то»), а его
+   * тело побайтно: разошедшееся правило («на краю — соседняя кнопка») у одного дома делало бы
+   * человека с клавиатуры заложником того, в каком доме он листает. Порча — сменить у одного дома
+   * `sibling?.focus()` на что угодно → красный.
+   */
+  it('правило фокуса после смены страницы — одно тело у обоих близнецов', () => {
+    const studioRule = FOCUS_RULE.exec(read(STUDIO_NAV))?.[0];
+    const cabinetRule = FOCUS_RULE.exec(read(CABINET_NAV))?.[0];
+    expect(studioRule, 'у Studio нет правила фокуса').toBeTruthy();
+    expect(cabinetRule, 'у кабинета нет правила фокуса').toBeTruthy();
+    expect(studioRule).toContain('sibling?.focus()');
+    expect(cabinetRule).toBe(studioRule);
   });
 
   it('оговорка о неполноте говорит о ЗАГРУЖЕННОМ, а не о странице экрана', () => {
@@ -163,6 +216,13 @@ describe('листание: одно правило, два дома', () => {
     expect('rows={filteredSamples}').toMatch(WHOLE_LIST_INTO_TABLE);
     expect('rows={samples}').toMatch(WHOLE_LIST_INTO_TABLE);
     expect('rows={pageView.items}').not.toMatch(WHOLE_LIST_INTO_TABLE);
+    expect('disabled={page <= 1 || loading}').toMatch(DISABLED_BY_LOADING);
+    expect('disabled={lockedPrev}').not.toMatch(DISABLED_BY_LOADING);
+    expect('aria-disabled={loading || undefined}').not.toMatch(DISABLED_BY_LOADING);
+    expect(stripComments('/** disabled={x || loading} */\nconst a = 1; // aria-current\n')).toBe('\nconst a = 1;\n');
+    expect(FOCUS_RULE.exec('function useFocusAfterPageChange(a) {\n  x();\n}\n')?.[0]).toBe(
+      'function useFocusAfterPageChange(a) {\n  x();\n}\n',
+    );
   });
 });
 
