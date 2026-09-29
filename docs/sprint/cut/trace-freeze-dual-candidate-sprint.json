@@ -17,14 +17,15 @@
         "docs/local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md",
         "docs/sprint/cut/trace-freeze-dual-candidate-sprint.json",
         "docs/sprint/cut/trail/trace-freeze-dual-candidate-sprint.jsonl",
-        "docs/tasks/registry.json"
+        "docs/tasks/registry.json",
+        "docs/tasks/README.md"
       ],
       "estimate": {
         "changedLines": 180
       },
       "note": "Register the sprint family, name both freeze candidates before execution, write predictions and falsifiers, run sprint:cut equivalent without Yarn, and stop for owner ratification.",
-      "revisionAt": "2026-09-29T15:15:45+03:00",
-      "revisionOf": "07e27163621bd51b62cfe1cf40eb21c0d6a37c4a57bd34ac3e8abe956faf818e"
+      "revisionAt": "2026-09-29T21:14:40+03:00",
+      "revisionOf": "edf029566a328dbad3b91c28a2f9ba3faf3a96ce4add69934420af337c31dbf9"
     },
     {
       "blockId": "b-live-sendsync-measure",
@@ -110,9 +111,10 @@
   "//cutter": "Context: owner assignment 2026-09-29 plus GitHub issue #2476 comments from 2026-09-27 and 2026-09-28. Worktree: C:/Users/user190825/practice/Membrana/.worktrees/trace-run-2476-rethink. Dependencies absent; phase A uses node/static checks only.",
   "//out-of-scope": "No yarn install in this worktree. No product fix before owner ratification. No R2 evidence-sink redesign before consilium. No merge; PR must be shipped with --no-merge.",
   "//recut-29-09-retro": "Перерезка в работе по слову владельца 29.09: зона блока замеров (vesnin) расширена на шесть файлов — приборы, давшие живой замер sendSync (20.5–34.2 мс после починки). Исполнитель вышел за ратифицированные зоны МОЛЧА — отчёт о сдаче этого не называл, выход нашла ведущая сверкой файлов PR с зонами. Процедура велит перерезку с новой ратификацией ДО выхода; здесь оформлено ПОСЛЕ. Это нарушение, записанное по решению владельца, а не образец.",
+  "//recut-29-09-readme": "Вторая перерезка 29.09 по слову владельца: в зону блока реестра добавлен docs/tasks/README.md — производный файл, его пересобирает task:sync-readme из registry.json, который в зоне. На вершине 922c2d75 README терял шесть АКТИВНЫХ карточек ствола (ritual-reads-done-work ×5, sample-library-paging-a11y) — они выпали при разрешении конфликта слияния. Нашло ревью (BLOCK, P1), но под неверной формулировкой «правка вне авторства»; настоящий дефект — потеря строк производного файла. Сведено к командам сессией-доводчицей; вторая претензия того же ревью (порядок журналов) — ложная посылка, журналы не пересортированы.",
   "ratification": {
     "by": "owner",
-    "at": "2026-09-29T18:15:01+03:00",
-    "digest": "abaf8465adc74359ad43cdda9ca75c1252a3b630cfbeb8a9d61bc51139d0d195"
+    "at": "2026-09-29T21:14:40+03:00",
+    "digest": "3303294b81323b40b303e5531b549aab58d006beaacc23de4e1d522b6d2a3f00"
   }
 }
