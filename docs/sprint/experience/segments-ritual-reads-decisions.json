@@ -1,0 +1,14 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "ritual-reads-decisions",
+  "forTask": "ritual-reads-decisions — решения, принятые в спринтах, доходят до читателей ритуала (остаток ritual-reads-done-work #2514)",
+  "note": "Замер объёма по блокам: git diff --numstat origin/main..HEAD по зонам плана после коммитов b1–b4 и правок по ревью (9b3a5abc, 85bf1bce, 1663f4ca, ecfdbb83, 91e28d71, 0262e151). Строки b5 — документы прогона (CLOSURE, reviews/*, traces, segments, OPEN-статус, ACTIVE/LOG), сняты wc -l до записи опыта.",
+  "measuredAt": "2026-09-30T12:40:00+00:00",
+  "segments": [
+    { "cutBlockId": "b1-decisions-ledger-core", "changedLines": 495, "evidence": "scripts/lib/decisions-ledger.mjs 263 · decisions-ledger.test.mjs 232 — переполнение против порога 400, названо в CLOSURE" },
+    { "cutBlockId": "b2-evening-reads-decisions", "changedLines": 222, "evidence": "scripts/lib/decisions-ledger-port.mjs 109 · team-evening-feedback-ritual.mjs 6 · team-evening-feedback.mjs 11 · team-evening-feedback-ritual.test.mjs 96" },
+    { "cutBlockId": "b3-day-plan-reads-closures", "changedLines": 138, "evidence": "scripts/lib/day-plan-frame.mjs 31 · day-plan-frame.test.mjs 49 · day-plan.mjs 58" },
+    { "cutBlockId": "b4-claims-probe-reads-decisions", "changedLines": 176, "evidence": "feedback-claims/atoms.mjs 25 · atoms.test.mjs 20 · verdict.mjs 55 · verdict.test.mjs 42 · feedback-claims-probe.mjs 16 · feedback-claims-probe.test.mjs 18" },
+    { "cutBlockId": "b5-live-check-closure", "changedLines": 383, "evidence": "CLOSURE.md ~204 · reviews/*.md 136 · execution-traces.jsonl 10 · segments 13 · OPEN.md 2 · LOCAL_SPRINT_ACTIVE/LOG ~18" }
+  ]
+}

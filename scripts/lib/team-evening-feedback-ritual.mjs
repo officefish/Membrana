@@ -317,6 +317,7 @@ export function resolveEveningFeedbackOutputPath(opts) {
  *   readonly freshnessNotice?: string;
  *   readonly magistralBlock?: string;
  *   readonly doneWorkBlock?: string;
+ *   readonly decisionsBlock?: string;
  *   readonly date?: Date;
  * }} p
  */
@@ -340,6 +341,11 @@ export function buildEveningFeedbackUserMessage(p) {
     // команда требовала слот, сделанный 27.09 и заведённый билетами, — потому что судила по
     // документам, в которых билетов нет. Факт сделанного читается раньше мнения о дне.
     (p.doneWorkBlock ? `${p.doneWorkBlock}\n\n---\n\n` : '') +
+    // b2 ritual-reads-decisions: решённое стоит ПОСЛЕ сделанного и ДО документов дня. Вечер
+    // 29.09 просил тест на снятое #2506 окно и проверку снятого #2513 aria-current — судил по
+    // ревью и прежнему протоколу, написанным ДО решения. Ратифицированные решения и закрытые
+    // прогоны спринтов читаются с их машинных носителей раньше документов дня.
+    (p.decisionsBlock ? `${p.decisionsBlock}\n\n---\n\n` : '') +
     // #2438: оговорка о свежести стоит ПЕРЕД документами дня, а не после. Команда должна
     // прочитать «вход датирован утром» до того, как начнёт судить по этому входу.
     (p.freshnessNotice ? `## Свежесть входов\n\n${p.freshnessNotice}\n\n---\n\n` : '') +

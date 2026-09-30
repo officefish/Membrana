@@ -1,0 +1,7 @@
+{"ts":"2026-09-30T12:02:41.712Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-09-30T12:01:58.973Z","origin":"ask-persona"}
+{"ts":"2026-09-30T12:02:41.714Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-09-30T12:01:58.973Z","origin":"ask-persona"}
+{"ts":"2026-09-30T12:02:41.715Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-ritual-reads-done-work-cut-1","reason":"тот же класс: нарезка ритуального спринта на блоки b1..b4 с прогнозом объёмов; там я недооценил живую приёмку в 2.5 раза (b4: 120→294). Для b5 live-check-closure оценка 140 — та же ловушка, поднимаю флаг.","origin":"ask-persona"}
+{"ts":"2026-09-30T12:02:41.724Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-09-06-buffer-full-stop-m2-refusal-code","reason":"прецедент про закрытый словарь на границе трёх потребителей: OUTCOMES зуба здесь — ровно такой словарь, и «не расширяется» должно быть BLOCK-условием b4, а не пожеланием.","origin":"ask-persona"}
+{"ts":"2026-09-30T12:02:41.727Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-14-cowork-sprint-format","reason":"норма резки: швы по естественным границам (порт/носитель), а не по объёму. Порт ведомости — как раз естественный шов между b1 и b2-b4.","origin":"ask-persona"}
+{"ts":"2026-09-30T12:33:16.408Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-09-30T12:32:44.052Z","origin":"ask-persona"}
+{"ts":"2026-09-30T12:33:16.410Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-09-30T12:32:44.052Z","origin":"ask-persona"}

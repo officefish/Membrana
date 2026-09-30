@@ -15,6 +15,7 @@ import {
   runEveningFeedbackLlm,
 } from './lib/team-evening-feedback-ritual.mjs';
 import { collectDoneLedgerBlock, parseGitLogNumstat, prOfSubject, sinceDayOf } from './lib/review-done-ledger-port.mjs';
+import { collectDecisionsLedger, daysOfWindow } from './lib/decisions-ledger-port.mjs';
 import {
   loadProcedureDefaults,
   loadProcedureRegistry,
@@ -319,4 +320,99 @@ test('b3: блок гейта несёт строку свежести посы�
   const none = collectGateMagistral({ cwd: empty, day: '2026-09-29' });
   assert.equal(none.freshness, null);
   assert.match(none.block, /вещдок дня недоступен/u);
+});
+
+// ---------------------------------------------------------------------------------------------
+// b2 ritual-reads-decisions: вечер читает решённое — ратифицированные решения планов нарезки и
+// закрытые прогоны спринтов со сверкой карточек. Фикстуры — живой случай 29.09.
+
+function decisionsFixture({ brokenPlan = false, noRegistry = false } = {}) {
+  const dir = mkdtempSync(join(tmpdir(), 'evening-decisions-'));
+  mkdirSync(join(dir, 'docs/sprint/cut/trail'), { recursive: true });
+  mkdirSync(join(dir, 'docs/sprint/cut/fixtures'), { recursive: true });
+  mkdirSync(join(dir, 'docs/procedure-runs/trail'), { recursive: true });
+  mkdirSync(join(dir, 'docs/tasks'), { recursive: true });
+  writeFileSync(join(dir, 'docs/sprint/cut/sample-library-paging-a11y.json'), JSON.stringify({
+    schema: 'sprint-cut/1', sprintId: 'sample-library-paging-a11y', cutBy: 'rodchenko', blocks: [],
+    '//decisions': 'Три решения: (1) aria-current с индикатора СНЯТЬ, индикатор становится role=status aria-live=polite; (2) правило фокуса; (3) стрелок не заводить.',
+    ratification: { by: 'owner', at: '2026-09-29T15:13:04+03:00', digest: 'd' },
+  }));
+  writeFileSync(join(dir, 'docs/sprint/cut/ritual-reads-done-work.json'), JSON.stringify({
+    schema: 'sprint-cut/1', sprintId: 'ritual-reads-done-work', cutBy: 'ozhegov', blocks: [],
+    '//why': 'заметка резчика, не решение',
+    ratification: { by: 'owner', at: '2026-09-29T15:19:14+03:00', digest: 'e' },
+  }));
+  writeFileSync(join(dir, 'docs/sprint/cut/unratified.json'), JSON.stringify({
+    sprintId: 'unratified', '//decisions': 'НЕ РАТИФИЦИРОВАНО — в блок попасть не должно',
+  }));
+  // Каталоги-соседи планами не являются: файл в fixtures/ не читается как план.
+  writeFileSync(join(dir, 'docs/sprint/cut/fixtures/ghost.json'), JSON.stringify({
+    sprintId: 'ghost', '//decisions': 'ПРИЗРАК ИЗ FIXTURES', ratification: { by: 'owner', at: '2026-09-29T10:00:00Z' },
+  }));
+  if (brokenPlan) writeFileSync(join(dir, 'docs/sprint/cut/broken.json'), '{ не json');
+  writeFileSync(join(dir, 'docs/procedure-runs/trail/2026-09-29.jsonl'), [
+    JSON.stringify({ schema: 'procedure-run-journal@2', sequence: 1, runId: 'batch-collection-run-contour', procedureId: 'membrana-local-sprint', status: 'started', at: '2026-09-29T15:00:00+03:00', runPhase: 'open' }),
+    JSON.stringify({ schema: 'procedure-run-journal@1', sequence: 2, runId: 'batch-collection-run-contour', procedureId: 'membrana-local-sprint', status: 'pass', at: '2026-09-29T16:22:00+03:00', runPhase: 'close', subject: 'спринт batch-collection-run-contour: гейт зелёный' }),
+    JSON.stringify({ schema: 'procedure-run-journal@1', sequence: 2, runId: 'ritual-day-2026-09-29', procedureId: 'ritual-day', status: 'pass', at: '2026-09-29T11:26:16Z', runPhase: 'close' }),
+  ].join('\n') + '\n');
+  // Лента за пределами окна не читается вовсе (день 15.09 при окне с 22.09).
+  writeFileSync(join(dir, 'docs/procedure-runs/trail/2026-09-15.jsonl'), JSON.stringify({ runId: 'ancient', procedureId: 'membrana-local-sprint', status: 'pass', at: '2026-09-15T10:00:00Z', runPhase: 'close' }) + '\n');
+  if (!noRegistry) {
+    writeFileSync(join(dir, 'docs/tasks/registry.json'), JSON.stringify({ tasks: [
+      { id: 'batch-collection-run-contour', status: 'active', size: 'L' },
+      { id: 'batch-collection-run-contour-a1', status: 'active', size: 'S', parentEpic: 'batch-collection-run-contour' },
+      { id: 'sample-library-paging-a11y', status: 'active', size: 'M' },
+    ] }));
+  }
+  return dir;
+}
+
+test('b2: ведомость решённого на живом случае 29.09 — aria-current снят, batch закрыт и не архивирован; призраки не читаются', () => {
+  const dir = decisionsFixture();
+  const res = collectDecisionsLedger({ cwd: dir, today: '2026-09-29' });
+  assert.equal(res.ok, true);
+  assert.equal(res.sinceDay, '2026-09-22');
+  assert.deepEqual(res.decisions.map((d) => [d.sprintId, d.key]), [['sample-library-paging-a11y', '//decisions']]);
+  assert.match(res.block, /aria-current с индикатора СНЯТЬ/u);
+  assert.match(res.block, /docs\/sprint\/cut\/sample-library-paging-a11y\.json#\/\/decisions/u);
+  assert.doesNotMatch(res.block, /НЕ РАТИФИЦИРОВАНО/u, 'план без ратификации — не решение');
+  assert.doesNotMatch(res.block, /ПРИЗРАК/u, 'fixtures/ — не планы');
+  assert.doesNotMatch(res.block, /ancient/u, 'лента вне окна не читается');
+  assert.deepEqual(res.closedSprints.map((c) => [c.sprintId, c.card, c.phasesActive, c.stale]), [['batch-collection-run-contour', 'active', 1, true]]);
+  assert.match(res.block, /\*\*batch-collection-run-contour\*\* — прогон закрыт 2026-09-29 \(гейт pass\); карточка НЕ архивирована \(active, фаз active 1\/1\) — долг закрытия/u);
+  assert.doesNotMatch(res.block, /ritual-day-2026-09-29/u, 'чужая процедура — не спринт');
+});
+
+test('b2 ПОРЧА: битый план и отсутствующий реестр — словами в блоке, не исключением и не пустотой', () => {
+  const dir = decisionsFixture({ brokenPlan: true, noRegistry: true });
+  const res = collectDecisionsLedger({ cwd: dir, today: '2026-09-29' });
+  assert.equal(res.ok, false);
+  assert.equal(res.unreadable.length, 2);
+  assert.match(res.block, /Не прочитано \(2\): docs\/sprint\/cut\/broken\.json: /u);
+  assert.match(res.block, /docs\/tasks\/registry\.json: [^\n]*состояние карточек не сверено/u);
+  // Решение из читаемого плана всё равно на месте: одна порча не гасит всю ведомость.
+  assert.match(res.block, /aria-current с индикатора СНЯТЬ/u);
+  // Без реестра карточка «absent» — сказано словом, а не подделано под архив.
+  assert.match(res.block, /batch-collection-run-contour[^\n]*карточки в реестре нет/u);
+});
+
+test('b2: окно ведомости — семь дней; ратификация за окном не входит', () => {
+  const dir = decisionsFixture();
+  const res = collectDecisionsLedger({ cwd: dir, today: '2026-10-07' });
+  assert.equal(res.decisions.length, 0);
+  assert.equal(res.closedSprints.length, 0);
+  assert.match(res.block, /за окно ратифицированных решений нет/u);
+  assert.deepEqual(daysOfWindow('2026-09-28', '2026-10-01'), ['2026-09-28', '2026-09-29', '2026-09-30', '2026-10-01']);
+});
+
+test('b2: блок «Решённое» стоит в промпте ПОСЛЕ книги сделанного и ДО свежести входов и документов дня', () => {
+  const msg = buildEveningFeedbackUserMessage({
+    regulation: 'REG', prompt: 'PROMPT', virtualTeam: 'VT', dayDocs: 'DOCS', gitSummary: 'GIT',
+    magistralBlock: 'MAGISTRAL', doneWorkBlock: 'DONE-LEDGER', decisionsBlock: 'DECISIONS-LEDGER', freshnessNotice: 'FRESH',
+    date: new Date('2026-09-30T18:00:00.000Z'),
+  });
+  assert.ok(msg.indexOf('DONE-LEDGER') < msg.indexOf('DECISIONS-LEDGER'));
+  assert.ok(msg.indexOf('DECISIONS-LEDGER') < msg.indexOf('## Свежесть входов'));
+  assert.ok(msg.indexOf('DECISIONS-LEDGER') < msg.indexOf('## Документы дня'));
+  assert.doesNotMatch(buildEveningFeedbackUserMessage({ regulation: 'R', prompt: 'P', virtualTeam: 'V', dayDocs: 'D', gitSummary: 'G' }), /DECISIONS-LEDGER/u);
 });
