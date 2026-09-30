@@ -7,6 +7,8 @@
  * (анти-«молчун»). Топ-3 — детерминированный балансирующий ранжировщик, НЕ модель.
  */
 
+import { staleCandidates } from './decisions-ledger.mjs';
+
 /** Пять слотов плана дня. Порядок константный — каркас не плавает от прогона к прогону. */
 export const SLOT_DEFS = Object.freeze([
   { id: 'magistral', order: 1, title: 'Магистраль', kind: 'magistral', cardinality: 1 },
@@ -108,13 +110,35 @@ export function fillInput(slot, tasks) {
  * / `tooling` / `business`); карточка без зоны получает `zone=null` → `rank` кладёт её в
  * хвост (не в балансируемую тройку). Так балансировка активируется по мере разметки зон,
  * а до разметки топ-3 честно берётся по силе. Реестр читает вызывающий (fs снаружи ядра).
+ *
+ * b3 `ritual-reads-decisions`: карточка `active` — ещё не кандидат. Утро 30.09 третий день
+ * клало в top-3 `batch-collection-run-contour`, чей прогон спринта закрыт 29.09 (close-запись
+ * ленты), — реестр подтверждал состояние ДО решения. Закрытые прогоны подаются значением
+ * (`closedSprints`, из ведомости решённого), их карточки исключаются из кандидатов; кого и за
+ * что исключили — отдаёт `excludedCandidates`, и посылка плана называет их поимённо (слово
+ * владельца 30.09: исключать И помечать). Суждение «закрыт ↔ карточка» — в ядре ведомости,
+ * здесь только его применение.
  * @param {Array<{id: string, status?: string, size?: string, zone?: string}>} tasks
- * @param {{size?: string}} [opts]
+ * @param {{size?: string, closedSprints?: ReadonlyArray<{sprintId: string}>}} [opts]
  * @returns {Array<{id: string, zone: string|null, size: string}>}
  */
 export function candidatesFromRegistry(tasks, opts = {}) {
   const size = opts.size ?? 'L';
-  return (tasks ?? [])
+  const all = (tasks ?? [])
     .filter((t) => t && t.status === 'active' && t.size === size)
     .map((t) => ({ id: t.id, zone: t.zone ?? null, size: t.size }));
+  return opts.closedSprints ? staleCandidates(all, opts.closedSprints).kept : all;
+}
+
+/**
+ * Исключённые кандидаты того же отбора — с причиной, для посылки плана. Возвращается только
+ * то, что `candidatesFromRegistry` с теми же `opts` отбросило; без `closedSprints` — пусто.
+ * @param {Array<{id: string, status?: string, size?: string, zone?: string}>} tasks
+ * @param {{size?: string, closedSprints?: ReadonlyArray<{sprintId: string}>}} [opts]
+ * @returns {Array<{id: string, closedDay: string, status: string, reason: string}>}
+ */
+export function excludedCandidates(tasks, opts = {}) {
+  if (!opts.closedSprints) return [];
+  const all = candidatesFromRegistry(tasks, { size: opts.size });
+  return staleCandidates(all, opts.closedSprints).excluded;
 }
