@@ -4,6 +4,16 @@
 
 ## Focus
 
+- **ritual-reads-decisions** (продолжение ritual-reads-done-work #2514; Issue с первым PR) ·
+  ратифицирован 30.09 15:14+03 инструментом · **gate pass 5/5 honest_pair** · прогноз↔исход **miss** по объёму b1
+  (495/400), по предмету 5/5 · [`OPEN.md`](./local-sprint/ritual-reads-decisions/OPEN.md) ·
+  [`CLOSURE.md`](./local-sprint/ritual-reads-decisions/CLOSURE.md) — решённое доходит до читателей ритуала по
+  машинным носителям: ведомость решённого (ядро + один порт) даёт вечеру блок «Решённое» после книги сделанного,
+  каркасу дня — исключение карточек закрытых спринтов с посылкой «долг закрытия», зубу утверждений — голову
+  выражения как символ и «решено: …» в причине. Живьём 30.09 при активных карточках: batch и trace-freeze вне top-3,
+  `aria-current` несёт якорь решения, `NIGHT_RUN_MAX_AGE_MS = 36 ч` → не подтверждено. Четыре карточки закрытых
+  спринтов — архивировать ведущей. Сдача `pr:ship --no-merge`; мердж — слово владельца.
+
 - **ritual-reads-done-work** (И8 недельного плана 28.09; Issue с первым PR) ·
   ратифицирован 29.09 15:19+03 · **gate pass 4/4 honest_pair** · прогноз↔исход **hit** (4/4) ·
   [`OPEN.md`](./local-sprint/ritual-reads-done-work/OPEN.md) · [`CLOSURE.md`](./local-sprint/ritual-reads-done-work/CLOSURE.md) —

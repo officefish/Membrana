@@ -38,6 +38,7 @@ import {
 } from './lib/team-evening-feedback-ritual.mjs';
 import { gitFsIo, readEntry } from './lib/angelina-adapter.mjs';
 import { collectDoneLedgerBlock } from './lib/review-done-ledger-port.mjs';
+import { collectDecisionsLedger } from './lib/decisions-ledger-port.mjs';
 import {
   formatRagContextBlock,
   logRagStatus,
@@ -78,6 +79,15 @@ console.error(
     ? `[done-ledger] oversized-PR за окно: ${doneWork.oversized}, разбор заведён у ${doneWork.ticketed}`
     : `[done-ledger] книга сделанного недоступна: ${doneWork.reason}`,
 );
+// b2 ritual-reads-decisions: ведомость решённого — ратифицированные //decisions и //recut-* планов
+// нарезки и закрытые прогоны спринтов (ленты) со сверкой карточек реестра. Нечитаемые носители
+// перечислены в блоке словами, вечер из-за них не падает.
+const decisions = collectDecisionsLedger({ cwd: process.cwd(), today });
+console.error(
+  `[decisions-ledger] с ${decisions.sinceDay}: решений ${decisions.decisions.length}, закрытых прогонов ${decisions.closedSprints.length}` +
+    ` (карточка не архивирована у ${decisions.closedSprints.filter((c) => c.stale).length})` +
+    (decisions.ok ? '' : `; не прочитано: ${decisions.unreadable.length}`),
+);
 // #2107: readAt — версия+отпечаток каждого входа на момент генерации (форма утра).
 const readAt = buildEveningReadAt(
   gitFsIo(process.cwd(), { execFileSync, readFileSync, existsSync, join }),
@@ -115,6 +125,7 @@ const bodyText = buildEveningFeedbackUserMessage({
   ragBlock,
   magistralBlock: gate.block,
   doneWorkBlock: doneWork.block,
+  decisionsBlock: decisions.block,
   freshnessNotice,
   focusNote: cli.focusNote,
 });

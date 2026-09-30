@@ -208,6 +208,21 @@ export function claimLines(markdown) {
 }
 
 /**
+ * Голова выражения-присваивания: идентификатор до `=` / `==` / `===` при непустом значении
+ * (`NIGHT_RUN_MAX_AGE_MS = 36 ч` → `NIGHT_RUN_MAX_AGE_MS`, `state.day = pass` → `state.day`).
+ * Не выражение — `null`. Двоеточие намеренно НЕ оператор: `kind: close` в протоколе — проза
+ * о значении поля, и ловить по ней символ `kind` значило бы подтверждать утверждение чем попало.
+ *
+ * @param {string} token
+ * @returns {string | null}
+ */
+export function symbolHeadOf(token) {
+  const t = typeof token === 'string' ? token.trim() : '';
+  const m = /^([A-Za-z_$][A-Za-z0-9_$]*(?:\.[A-Za-z_$][A-Za-z0-9_$]*)*)\s*={1,3}\s*\S/u.exec(t);
+  return m ? m[1] : null;
+}
+
+/**
  * Классы-кандидаты токена.
  *
  * Возвращается МНОЖЕСТВО, а не один класс: формы пересекаются неустранимо (kebab-case —
@@ -226,6 +241,16 @@ export function classifyToken(token) {
   if (/^(yarn|npm run|npx|pnpm)\s+\S/.test(t)) return [ATOM_CLASSES.VERB];
 
   const bare = t.replace(LINE_SUFFIX, '');
+
+  // Выражение «имя = значение» (`NIGHT_RUN_MAX_AGE_MS = 36 ч`): значение бывает только у
+  // символа кода, документ и карточка присваивания не знают. Судится ГОЛОВА — и только как
+  // символ. Вещдок 28.09 (b4 ritual-reads-decisions): протокол просил тест «ровно на
+  // `NIGHT_RUN_MAX_AGE_MS = 36 ч`» через три часа после того, как #2506 снял константу из
+  // ствола; форма не опозналась, вердикт — «не проверено», и решение прошло мимо читателя.
+  const head = symbolHeadOf(bare);
+  if (head !== null) {
+    return classifyToken(head).includes(ATOM_CLASSES.SYMBOL) ? [ATOM_CLASSES.SYMBOL] : [ATOM_CLASSES.OPAQUE];
+  }
 
   // Путь предъявляет себя разделителем И расширением: `docs/HANDOFF.md`. Одного слэша мало —
   // `holder`/`moderator` в прозе тоже несут его.

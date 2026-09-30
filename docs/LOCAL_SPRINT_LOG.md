@@ -5,6 +5,29 @@
 
 ---
 
+## 2026-09-30 — `ritual-reads-decisions` — **CLOSED · gate pass 5/5 · experience miss (overflow b1, предмет 5/5)**
+
+- **Closure:** [`local-sprint/ritual-reads-decisions/CLOSURE.md`](./local-sprint/ritual-reads-decisions/CLOSURE.md) —
+  ратификация 30.09 15:14+03 инструментом; b1 `9b3a5abc` (+`91e28d71`, `0262e151` по ревью), b2 `85bf1bce`,
+  b3 `1663f4ca`, b4 `ecfdbb83`; живая проверка трёх читателей на файлах 28–30.09 при ещё активных карточках
+  закрытых спринтов; PR `--no-merge`, мердж — слово владельца.
+
+- **Goal:** решения, принятые в спринтах, доходят до читателей ритуала по машинному носителю: ведомость
+  решённого (ратифицированные `//decisions` / `//recut-*` планов нарезки + закрытые прогоны лент ↔ карточки
+  реестра) для вечернего фидбека, каркаса дня и зуба утверждений; голова выражения как символ в зубе.
+- **Source:** остаток [`ritual-reads-done-work`](./local-sprint/ritual-reads-done-work/CLOSURE.md) (#2514) по
+  первому боевому прогону 29.09 (протокол `team-evening-feedback-2026-09-29.md`, утро 30.09).
+- **OPEN:** [`local-sprint/ritual-reads-decisions/OPEN.md`](./local-sprint/ritual-reads-decisions/OPEN.md)
+- **Prompt:** [`prompts/RITUAL_READS_DECISIONS_PROMPT.md`](./prompts/RITUAL_READS_DECISIONS_PROMPT.md)
+- **Cut:** [`sprint/cut/ritual-reads-decisions.json`](./sprint/cut/ritual-reads-decisions.json) — 5 блоков
+  (b1 ядро/dynin · b2 порт+вечер/vesnin · b3 каркас дня/ozhegov · b4 зуб утверждений/tarasov · b5 приёмка/angelina),
+  резчик ozhegov ([конспект](./discussions/cut-ritual-reads-decisions-ozhegov.md)); ратифицирован владельцем 2026-09-30T15:14:18+03:00.
+- **Finding at cut:** за 16–30.09 закрыто 4 прогона спринтов, архивировано 0 карточек — каркас дня читает только
+  `status === 'active'`; зуб утверждений видит `NIGHT_RUN_MAX_AGE_MS = 36 ч` как непрозрачную форму при нуле
+  вхождений символа в стволе; тело PR (#2506) — не машинный носитель, признанный предел.
+- **Boundary:** порядок ритуалов, промпты персон и регламенты, список OUTCOMES зуба, архивация карточек ритуалом,
+  тело PR как носитель решений — вне спринта.
+
 ## 2026-09-29 — `ritual-reads-done-work` — **CLOSED · gate pass 4/4 · experience hit**
 
 - **Closure:** [`local-sprint/ritual-reads-done-work/CLOSURE.md`](./local-sprint/ritual-reads-done-work/CLOSURE.md) —

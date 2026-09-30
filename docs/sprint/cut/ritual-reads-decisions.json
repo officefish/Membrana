@@ -1,0 +1,106 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "ritual-reads-decisions",
+  "taskId": "ritual-reads-decisions",
+  "mode": "explicit-honest",
+  "cutBy": "ozhegov",
+  "window": {
+    "from": "2026-09-30T12:30:00+00:00",
+    "to": "2026-10-01T20:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-decisions-ledger-core",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/decisions-ledger.mjs",
+        "scripts/lib/decisions-ledger.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 240
+      },
+      "revisionAt": "2026-09-30T15:14:18+03:00",
+      "revisionOf": "91298a145474974be8b66cd14c583eea6c902f720d42bb74ffb18cb209d1fe0d"
+    },
+    {
+      "blockId": "b2-evening-reads-decisions",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/decisions-ledger-port.mjs",
+        "scripts/lib/team-evening-feedback-ritual.mjs",
+        "scripts/team-evening-feedback.mjs",
+        "scripts/team-evening-feedback-ritual.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionAt": "2026-09-30T15:14:18+03:00",
+      "revisionOf": "4ada9996060dd3d1cce2859a39d79ef2e12d8597be89b1750255fc5c084a50ae"
+    },
+    {
+      "blockId": "b3-day-plan-reads-closures",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/lib/day-plan-frame.mjs",
+        "scripts/day-plan-frame.test.mjs",
+        "scripts/day-plan.mjs"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "revisionAt": "2026-09-30T15:14:18+03:00",
+      "revisionOf": "63b779ecd54a818822eb1d6351caa5114c3da94ec5c7f6522d9e2651ae04bd61"
+    },
+    {
+      "blockId": "b4-claims-probe-reads-decisions",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "scripts/lib/feedback-claims/atoms.mjs",
+        "scripts/lib/feedback-claims/atoms.test.mjs",
+        "scripts/lib/feedback-claims/verdict.mjs",
+        "scripts/lib/feedback-claims/verdict.test.mjs",
+        "scripts/feedback-claims-probe.mjs",
+        "scripts/feedback-claims-probe.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionAt": "2026-09-30T15:14:18+03:00",
+      "revisionOf": "9d8a6dbd121fc2193ec5038ab05ef941a54b2fc6b1a9e6b932fac19aa4ec1352"
+    },
+    {
+      "blockId": "b5-live-check-closure",
+      "persona": "angelina",
+      "context": "angelina",
+      "zone": [
+        "docs/local-sprint/ritual-reads-decisions/",
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/sprint/experience/segments-ritual-reads-decisions.json"
+      ],
+      "estimate": {
+        "changedLines": 280
+      },
+      "revisionAt": "2026-09-30T15:14:18+03:00",
+      "revisionOf": "49823759727d81c5c2d0d6ee94236bee039ff5f325eb8bfb1aeaadca3eb854f9"
+    }
+  ],
+  "//why": "Продолжение ritual-reads-done-work (#2514, И8): вечер научился видеть сделанное, заведённое билетами. Первый боевой прогон 29.09 показал остаток того же класса — читатель судит по тексту, написанному ДО решения (ревью PR, карточка реестра), и не видит решения, принятого ПОСЛЕ. Три симптома: (1) Дынин просит «граничный тест на 36-часовое окно свежести (P2 из ревью #2506)» — окно снято самим #2506 (d3be15f1); (2) Родченко просит живьём проверить `aria-current` — снят в #2513 (dfaac9f3), решение (1) из //decisions плана sample-library-paging-a11y, ратифицировано владельцем 29.09 15:13+03; (3) утро 30.09 — day-plan третий день кладёт в top-3 batch-collection-run-contour, спринт закрыт 29.09 (close-запись pass в ленте, стек #2517–#2521 влит), карточка active.",
+  "//measure": "Замер 30.09. Закрытых прогонов membrana-local-sprint (runPhase=close) за 16–30.09: 4 (trace-freeze-dual-candidate-sprint, ritual-reads-done-work, sample-library-paging-a11y, batch-collection-run-contour); карточек архивировано: 0; фазы active 5/5, 4/4, —, 4/4. Планов с ратифицированными //decisions или //recut-* за окно 7 дней: 3 (a11y //decisions 838 зн.; batch //recut-29-09-retro 986; trace-freeze два //recut-*). candidatesFromRegistry берёт только status==='active' по размеру L: 41 кандидат, зоны не размечены → ранг по id, top-3 = angelina-hostess-impl, assets-container, batch-collection-run-contour. git grep NIGHT_RUN_MAX_AGE_MS origin/main → 0 (в d3be15f1~1 — night-summary.mjs:8). classifyToken('NIGHT_RUN_MAX_AGE_MS = 36 ч') → opaque; 'aria-current' → card|doc (зуб 29.09: «сомнение: карточки нет» — адрес не тот). Вечер 28.09 (18:05Z, после мерджа #2506 в 15:50Z) уже просил тест «ровно на NIGHT_RUN_MAX_AGE_MS = 36 ч» по ревью 13:04+03 — до мерджа.",
+  "//carriers": "Машинные носители решений, которые читает спринт: docs/sprint/cut/<id>.json (ключи //decisions и //recut-*, узел ratification{by:owner,at,digest}); docs/procedure-runs/trail/<day>.jsonl (procedureId=membrana-local-sprint, runPhase=close, status); docs/tasks/registry.json (status карточки, фазы через parentEpic); ствол — символ есть/нет (git grep, адрес зуба утверждений для класса symbol). НЕ машинный носитель и потому ВНЕ спринта: тело PR (#2506 «окно снято» — проза), CLOSURE.md — признанный предел.",
+  "//cutter": "Резчик ozhegov (провода ритуала и швы по носителям — его земля; конспект docs/discussions/cut-ritual-reads-decisions-ozhegov.md). Вердикт: контракт, с двумя правками — b5 поднят 140→280 (урок ritual-reads-done-work: живая приёмка +100–150%); точка перерезки после b1 вынесена в BLOCK. BLOCK-условия: b1 — ядро без ФС/сети/часов; решение = ключ //decisions или //recut-* плана с ratification.by==='owner' (различать по имени ключа — искусственная синонимия; в вещдоке печатать полный якорь #//recut-29-09-retro); если форма ведомости требует читателя окна лент вне зон b2–b4 (procedure-run-journal.mjs) — СТОП и перерезка до старта b2, не задним числом. b2 — блок «Решённое» стоит ПОСЛЕ книги сделанного и ДО документов дня; нечитаемый план/лента — счётом с причиной, не исключением и не пустотой; порт один на трёх читателей (b2/b3/b4), вторая копия чтения планов или лент запрещена. b3 — карточки закрытых спринтов ИСКЛЮЧАЮТСЯ из top-3 И называются посылкой поимённо («карточка не архивирована — долг закрытия»): только пометка вернёт баг 30.09, только исключение скроет долг. b4 — classifyToken головы выражения → symbol; вещдок decidedIn печатается в причине вердикта полным якорем носителя; закрытый список OUTCOMES не изменён (diff по enum = 0 строк). b5 — живые прогоны на файлах 28.09 и 29.09, не на синтетике. Правка резчика ОТКЛОНЕНА по замеру: «dry-run на 28.09 показывает NIGHT_RUN_MAX_AGE_MS в Решённом» — #2506 не спринт и ратифицированного носителя не имеет; этот символ ловит b4 по стволу, ведомость b2 его показать не может (предел //carriers).",
+  "//order": "b1 → b2 → {b3, b4} → b5. b2 импортирует ядро b1; b3 и b4 импортируют порт b2. Зоны не пересекаются. Зоны b2–b4 нарисованы по файлам ДО исполнения b1: от формы записи ведомости они не зависят (импорт — единственная связь). Точка перерезки — после b1, явно (см. //cutter).",
+  "//dod": "b1: ratifiedDecisionsOf(plans, {sinceDay}) → записи {sprintId, key, ratifiedAt, by, text}; closedSprintRunsOf(records) → {sprintId, status, closedAt}; joinClosedSprintsWithCards(closed, tasks) → {…, card: active|archived|absent, phasesActive}; staleCandidates(candidates, closed); formatDecisionsBlock. Зубы с порчей: план без ratification или by≠owner — не решение; //recut-* с ратификацией — решение; close-запись fail — «закрыт красным», отдельно от pass; карточка archived — не stale; фаза active при архивном эпике — stale по фазе. b2: порт читает docs/sprint/cut/*.json, ленты docs/procedure-runs/trail/<day>.jsonl за окно 7 дней, реестр; в промпте вечера блок «Решённое (ратифицированные решения и закрытые спринты)» после doneWorkBlock и до freshnessNotice; зуб: на фикстурах 29.09 промпт несёт «aria-current … снят» из //decisions a11y и «batch-collection-run-contour: прогон закрыт 29.09, карточка не архивирована»; битый план → строка «не прочитан: <файл>». b3: candidatesFromRegistry(tasks, {size, closedSprints}) исключает карточки закрытых спринтов; gatherPremises называет исключённых поимённо; day-plan --dry-run печатает кандидатов и посылки без LLM; зуб: карточка active L + close-запись → не в top-3 и в посылке; без записи → в top-3; порядок остальных не меняется. b4: classifyToken('NIGHT_RUN_MAX_AGE_MS = 36 ч') → symbol, при нуле вхождений — «не подтверждено»; вещдок decidedIn для card/doc/symbol/opaque: токен в тексте ратифицированного решения или id закрытого спринта за окно → причина несёт «решение: <план>#<ключ>, ратифицировано <at>» / «спринт закрыт <день>»; порча: убрать decidedIn → строки нет; OUTCOMES без изменений. b5: живые team-evening-feedback:dry --no-rag --no-save, day-plan --dry-run, feedback:claims на протоколах 28.09 и 29.09 с выдержками в CLOSURE.md; sprint:gate pass, sprint:experience записан.",
+  "//out-of-scope": "Порядок шагов ritual-day-run.mjs / ritual-evening-run.mjs не трогается. Промпты персон и регламенты (docs/prompts/TEAM_EVENING_FEEDBACK*.md, docs/virtual-team/PROMPT_*.md) не правятся. Список OUTCOMES зуба утверждений не расширяется (новый исход тронул бы предикат вечернего гейта — отдельный спринт). Архивация карточек закрытых спринтов ритуалом не делается — ритуал сообщает долг; кто и когда архивирует — слово владельца. Тело PR и CLOSURE.md как носители решений не читаются. Состав DAY_DOC_INPUTS не меняется (добавляется вычисляемый блок, не документ).",
+  "//forecast": "b1 даст: чистое ядро; на живых планах 29.09 — 3 плана с решениями (a11y //decisions; batch и trace-freeze //recut-*), на живых лентах 16–30.09 — 4 закрытых прогона, все с карточкой active. Опровержение: если ratification у batch/trace-freeze окажется не owner — записей меньше, это факт, не дефект. b2 даст: вечер 30.09 видит «aria-current снят» и «batch-collection-run-contour закрыт, карточка не архивирована» ДО документов дня. Опровержение: если команда всё равно просит проверить aria-current — судит по RAG прежних протоколов, чинить RAG-вход, не здесь; 36-часовое окно (#2506) ведомость показать НЕ может — предел носителя, не блока. b3 даст: day-plan --dry-run 30.09 без batch-collection-run-contour и trace-freeze-dual-candidate-sprint в top-3; посылка называет обоих с «карточка не архивирована — долг закрытия». Опровержение: если владелец скажет «только помечать» — блок перерезается, не miss. b4 даст: на протоколе 28.09 строка NIGHT_RUN_MAX_AGE_MS = 36 ч → НЕ ПОДТВЕРЖДЕНО (ноль вхождений); на протоколе 29.09 aria-current несёт decidedIn a11y#//decisions. Опровержение: фраза «36-часовое окно» без токена в бэктиках зубом не ловится — признанный предел (проза). b5 даст: живая приёмка; ожидаемый объём 280 по уроку 29.09 (120→294).",
+  "//forks": "1. Исключать карточки закрытых спринтов из кандидатов магистрали (умолчание — исключать И помечать) или только помечать. 2. Кто архивирует карточки закрытых спринтов: 4 закрытых прогона, 0 архивных карточек. 3. //recut-* = решение владельца наравне с //decisions (умолчание — да, при ratification.by===owner). 4. Носитель решений вне спринтов (тело PR #2506): нужна ли машинная форма («## Решения» в теле PR) или остаётся прозой. 5. Новый исход «противоречит решённому» в зубе утверждений — тронет предикат вечернего гейта; спринт только аннотирует причину. 6. От резчика: образец текста блока «Решённое» и формулировка посылки b3 («долг закрытия»).",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-09-30T15:14:18+03:00",
+    "digest": "f8a5334085b0338d1af465b9801e9204dd5ebb942192e2ea0d2ff5bc02e30f35"
+  }
+}
