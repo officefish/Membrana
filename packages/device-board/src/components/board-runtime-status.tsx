@@ -62,13 +62,14 @@ export const BoardRuntimeStatus: React.FC<BoardRuntimeStatusProps> = ({ state, o
       {state.lastError ? <p className="mt-1 text-error">{state.lastError}</p> : null}
       {overflowHold ? (
         <p
-          className="mt-1 text-error"
+          className={`mt-1 ${overflowHold.tone === 'warning' ? 'text-warning' : 'text-error'}`}
           role="status"
           aria-live="polite"
           data-testid="board-overflow-hold-status"
           data-overflow-key={overflowHold.overflowKey}
+          data-overflow-tone={overflowHold.tone}
         >
-          {[overflowHold.phaseText, overflowHold.reasonText, overflowHold.aliveText].join(' · ')}
+          {[overflowHold.headline, overflowHold.phaseText, overflowHold.aliveText].join(' · ')}
         </p>
       ) : null}
     </div>
