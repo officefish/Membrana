@@ -17,6 +17,11 @@ import { access, readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
+import {
+  benchmarkEnsembles,
+  ensemblePredicate,
+  heldOutSelection,
+} from './lib/benchmark-ensemble.mjs';
 import { detectorMetrics, sortNumbers } from './lib/benchmark-metrics.mjs';
 import { patchDetectorBenchmarkMd } from './lib/benchmark-report-md.mjs';
 import { loadCalibrationPreset } from './lib/calibration-preset.mjs';
@@ -121,6 +126,12 @@ export const TEMPLATE_MATCH_DIST = join(
 // Шаблоны — конфиг детектора, не корпус: всегда из канонического v0.2.
 export const CURATED_TEMPLATES_JSON = join(DEFAULT_DATASET_DIR, 'curated-drone-templates.json');
 const DETECTOR_BASE_DIST = join(ROOT, 'packages', 'services', 'detectors', 'base', 'dist', 'index.js');
+/**
+ * Судья строки «ансамбль» — ядро слияния живого combined-контура, из dist `@membrana/core`
+ * (собирается `detectors:build`). Второй реализации в измерителе нет: замок в
+ * `lib/benchmark-ensemble.mjs` не пустит ни `max`, ни OR, ни среднее без весов.
+ */
+export const CORE_FUSION_DIST = join(ROOT, 'packages', 'core', 'dist', 'contracts', 'detection-fusion.js');
 
 export const DSP_DETECTORS = [
   {
@@ -499,6 +510,23 @@ const SCAFFOLD_DETECTORS = [
   { name: 'agentic-claude', family: 'agentic', status: 'scaffold' },
 ];
 
+/**
+ * Строки ансамбля по уже снятым perSample. Судья — живой `fuseDetectorConfidences` из dist
+ * ядра; замок на него стоит внутри `benchmarkEnsembles` на каждом прогоне.
+ *
+ * @param {{ name: string; family: string; perSample: object[] | null }[]} detectors
+ * @param {{ id: string; split?: string }[]} measuredSamples
+ */
+export async function runEnsembles(detectors, measuredSamples) {
+  await ensureBuilt(CORE_FUSION_DIST, '@membrana/core (dist/contracts/detection-fusion.js)');
+  const { fuseDetectorConfidences } = await import(pathToFileURL(CORE_FUSION_DIST).href);
+  return benchmarkEnsembles({
+    detectors,
+    fuse: fuseDetectorConfidences,
+    heldOut: heldOutSelection(measuredSamples),
+  });
+}
+
 async function main() {
   const options = parseArgs(process.argv.slice(2));
   const datasetDir = dirname(options.manifestPath);
@@ -625,6 +653,30 @@ async function main() {
     ...SCAFFOLD_DETECTORS.map((d) => ({ ...d, metrics: null, perSample: null })),
   ];
 
+  // Строка «ансамбль» (DETECTOR_FUSION_SKETCH §5): слияние ПОСТ-ФАКТУМ над perSample строк
+  // выше тем же ядром, что живой ансамбль Студии. Детекторы заново не гоняются. Отложенная
+  // часть — split: val манифеста (калибровка DSP и шаблон сняты на train); ROC-AUC порога не
+  // требует, F1 — на пороге моста device-board.
+  const ensembles = await runEnsembles(detectors, testSamples);
+  const predicate = ensemblePredicate(ensembles);
+  {
+    const heldOutLabel = ensembles[0].heldOut
+      ? `${ensembles[0].heldOut.label} (${ensembles[0].heldOut.sampleCount} файлов)`
+      : 'нет';
+    console.log(`Ансамбль (fuseDetectorConfidences, порог ${ensembles[0].threshold}) · отложенная часть: ${heldOutLabel}`);
+    for (const e of ensembles) {
+      const auc = (m) => m?.rocAuc?.toFixed(3) ?? '—';
+      const f1 = (m) => m?.f1?.toFixed(3) ?? '—';
+      console.log(
+        `  ${e.name}: ROC-AUC=${auc(e.metrics)} F1=${f1(e.metrics)}` +
+          (e.heldOut ? ` · ${e.heldOut.label}: ROC-AUC=${auc(e.heldOut.metrics)} F1=${f1(e.heldOut.metrics)}` : ''),
+      );
+    }
+    const verdict = (c) =>
+      c == null ? '—' : c.liveBeatsSolo === null ? 'не посчитан' : c.liveBeatsSolo ? 'live БЬЁТ solo' : 'live НЕ бьёт solo';
+    console.log(`  предикат «${predicate.rule}»: весь корпус — ${verdict(predicate.all)}; отложенная — ${verdict(predicate.heldOut)}`);
+  }
+
   const report = {
     generatedAt: new Date().toISOString(),
     datasetVersion: `v${manifest.version}`,
@@ -639,6 +691,8 @@ async function main() {
     splitFallback,
     manifestPath: options.manifestPath.replace(`${ROOT}`, '').replace(/^[/\\]/, '').replace(/\\/g, '/'),
     detectors,
+    ensembles,
+    ensemblePredicate: predicate,
   };
 
   await mkdir(dirname(reportJson), { recursive: true });

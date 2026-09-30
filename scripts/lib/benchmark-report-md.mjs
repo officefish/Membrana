@@ -115,6 +115,76 @@ function renderAutoBlock(report) {
     }
   }
 
+  if (Array.isArray(report.ensembles) && report.ensembles.length > 0) {
+    lines.push(...renderEnsembleSection(report));
+  }
+
   lines.push('', AUTO_END, '');
   return lines.join('\n');
+}
+
+/**
+ * Строки ансамбля — отдельным блоком, а не строками общей таблицы: у них нет задержек
+ * (слияние пост-фактум) и другой порог (combinedScore ≥ 0.5 моста, а не собственный
+ * порог детектора), и класть их в одну таблицу с одиночными значило бы сравнивать F1 по
+ * разным правилам вердикта. ROC-AUC порога не требует — по нему и предикат.
+ */
+function renderEnsembleSection(report) {
+  const ensembles = report.ensembles;
+  const num = (v) => (v == null ? '—' : v.toFixed(3));
+  const threshold = ensembles[0].threshold;
+  const heldOut = ensembles[0].heldOut;
+  const lines = [
+    '',
+    '### Ансамбль — слияние пост-фактум (`fuseDetectorConfidences`)',
+    '',
+    '> Строки ниже НЕ гоняют детекторы заново: сырые confidence одиночных строк выше сливаются',
+    '> тем же ядром, что живой ансамбль Студии (`createCombinedStreamDetectors` → `EnsembleProducer`),',
+    '> веса 1 у каждого источника — как в живом коде. `live` = harmonic + cepstral + spectral-flux + yamnet.',
+    `> Вердикт для F1 — \`combinedScore ≥ ${threshold}\` (порог моста device-board); \`ROC-AUC\` порога не требует.`,
+    '> F1 у `yamnet solo` на этом пороге — не его рабочая точка (clip-score yamnet ≈ 0.004–0.06,',
+    '> собственный порог 0.01, строка yamnet выше); сравнимая величина между строками — ROC-AUC.',
+    '',
+    `#### Весь тот же корпус, что у одиночных строк (${report.sampleCount} файлов)`,
+    '',
+    '| ансамбль | источники | ROC-AUC | PR-AUC | F1 | P_d | P_fa | TP | FP | FN | TN |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
+  ];
+  const row = (e, m) =>
+    `| ${e.name} | ${e.sources.join(' + ')} | ${num(m.rocAuc)} | ${num(m.prAuc)} | ${formatPct(m.f1)} | ${formatPct(m.pd)} | ${formatPct(m.pfa)} | ${m.tp} | ${m.fp} | ${m.fn} | ${m.tn} |`;
+  for (const e of ensembles) lines.push(row(e, e.metrics));
+
+  if (heldOut) {
+    lines.push(
+      '',
+      `#### Отложенная часть — split: ${heldOut.label} (${heldOut.sampleCount} файлов)`,
+      '',
+      '> Калибровка DSP (`calibrate-detectors.mjs`) и шаблон DRONE_TIGHT сняты на `train`; эту часть',
+      '> они не видели. Порог yamnet 0.01 выбирался по всему корпусу (ND3) — на ROC-AUC это не влияет.',
+      '> Веса ансамбля не настраивались ни на чём.',
+      '',
+      '| ансамбль | источники | ROC-AUC | PR-AUC | F1 | P_d | P_fa | TP | FP | FN | TN |',
+      '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
+    );
+    for (const e of ensembles) lines.push(row(e, e.heldOut.metrics));
+  } else {
+    lines.push('', '> Отложенной части нет: в манифесте ни одной записи со `split: val`.');
+  }
+
+  const p = report.ensemblePredicate;
+  if (p) {
+    const verdict = (c) =>
+      c == null
+        ? '—'
+        : c.liveBeatsSolo === null
+          ? 'не посчитан'
+          : `live ${num(c.live)} vs yamnet solo ${num(c.yamnetSolo)} → **${c.liveBeatsSolo ? 'live бьёт solo' : 'live НЕ бьёт solo'}**`;
+    lines.push(
+      '',
+      `**Предикат** (назван до чисел, прикидка §5): «${p.rule}». Весь корпус: ${verdict(p.all)}. ` +
+        `Отложенная часть: ${verdict(p.heldOut)}. Не бьёт — состав живого списка меняется вторым PR ` +
+        '(решение владельца); бьёт — веса остаются, следующий шаг — разметка своих записей.',
+    );
+  }
+  return lines;
 }
