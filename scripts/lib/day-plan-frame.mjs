@@ -133,6 +133,9 @@ export function candidatesFromRegistry(tasks, opts = {}) {
 /**
  * Исключённые кандидаты того же отбора — с причиной, для посылки плана. Возвращается только
  * то, что `candidatesFromRegistry` с теми же `opts` отбросило; без `closedSprints` — пусто.
+ * `size` подаётся ТОТ ЖЕ, что в итоге сработал у `candidatesFromRegistry` (фолбэк L → M живёт у
+ * вызывающего, `buildContext`, не здесь) — иначе исключённые окажутся из другой выборки
+ * (ревью Ожегова b3).
  * @param {Array<{id: string, status?: string, size?: string, zone?: string}>} tasks
  * @param {{size?: string, closedSprints?: ReadonlyArray<{sprintId: string}>}} [opts]
  * @returns {Array<{id: string, closedDay: string, status: string, reason: string}>}

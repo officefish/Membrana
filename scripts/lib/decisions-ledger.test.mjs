@@ -206,22 +206,22 @@ test('b1 блок: закрытые прогоны с карточкой, реш
 });
 
 test('b1 по ревью Дынина: моменты сравниваются по значению, не строкой — смешанные смещения не путают порядок', () => {
-  // 14:22Z и 16:22+03:00 — один момент; 17:00Z позже обоих, хотя строка «…+03:00» лексикографически больше.
+  // 16:22+03:00 = 13:22Z. 14:22Z позже по значению, хотя строка «…16:22…+03:00» лексикографически больше.
   const records = [
-    closeRecord('later', 'pass', '2026-09-29T17:00:00Z'),
+    closeRecord('later', 'pass', '2026-09-29T14:22:00Z'),
     closeRecord('same', 'pass', '2026-09-29T16:22:00+03:00'),
     closeRecord('same', 'fail', '2026-09-29T13:22:00Z'),
   ];
   const out = closedSprintRunsOf(records);
   assert.deepEqual(out.map((c) => c.sprintId), ['later', 'same'], 'свежее выше по значению');
-  assert.equal(out[1].status, 'pass', 'при повторном закрытии берётся более поздний МОМЕНТ, а не большая строка');
+  assert.equal(out[1].status, 'pass', 'тот же момент в другой записи — не «позже»: первое закрытие остаётся');
   const plans = [
-    { plan: { sprintId: 'p-utc', '//decisions': 'позже', ratification: { by: 'owner', at: '2026-09-29T17:00:00Z' } } },
+    { plan: { sprintId: 'p-utc', '//decisions': 'позже', ratification: { by: 'owner', at: '2026-09-29T14:22:00Z' } } },
     { plan: { sprintId: 'p-msk', '//decisions': 'раньше', ratification: { by: 'owner', at: '2026-09-29T16:22:00+03:00' } } },
   ];
   assert.deepEqual(ratifiedDecisionsOf(plans).map((d) => d.sprintId), ['p-utc', 'p-msk']);
   // ПОРЧА: строковое сравнение дало бы обратный порядок.
-  assert.equal('2026-09-29T16:22:00+03:00' > '2026-09-29T17:00:00Z', true, 'строка врёт — потому и парсим');
+  assert.equal('2026-09-29T16:22:00+03:00' > '2026-09-29T14:22:00Z', true, 'строка врёт — потому и парсим');
 });
 
 test('b1 ПОРЧА: пустая ведомость говорит «нет», а не молчит', () => {
