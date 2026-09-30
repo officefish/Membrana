@@ -86,7 +86,28 @@ export function ratifiedDecisionsOf(plans, opts = {}) {
     }
   }
   // Свежее — выше; внутри одного момента — порядок ключей плана.
-  return out.sort((a, b) => (a.ratifiedAt < b.ratifiedAt ? 1 : a.ratifiedAt > b.ratifiedAt ? -1 : 0));
+  return out.sort((a, b) => compareMomentsDesc(a.ratifiedAt, b.ratifiedAt));
+}
+
+/**
+ * Сравнение моментов по значению, не по строке (ревью Дынина b1; тот же класс, что #2515):
+ * `…T16:22:00+03:00` лексикографически позже `…T14:22:00Z`, хотя это один и тот же миг.
+ * Нечитаемый момент уходит в хвост. Парсинг строки чист — часов здесь нет.
+ */
+function compareMomentsDesc(a, b) {
+  const ta = Date.parse(a);
+  const tb = Date.parse(b);
+  const na = Number.isNaN(ta);
+  const nb = Number.isNaN(tb);
+  if (na || nb) return na === nb ? 0 : na ? 1 : -1;
+  return tb - ta;
+}
+
+/** Позже ли момент `a` момента `b` — по значению; нечитаемое никогда не «позже». */
+function isLaterMoment(a, b) {
+  const ta = Date.parse(a);
+  const tb = Date.parse(b);
+  return !Number.isNaN(ta) && (Number.isNaN(tb) || ta > tb);
 }
 
 /**
@@ -119,9 +140,9 @@ export function closedSprintRunsOf(records, opts = {}) {
       subject: typeof r.subject === 'string' ? r.subject : null,
     };
     const prev = byId.get(sprintId);
-    if (!prev || prev.closedAt < entry.closedAt) byId.set(sprintId, entry);
+    if (!prev || isLaterMoment(entry.closedAt, prev.closedAt)) byId.set(sprintId, entry);
   }
-  return [...byId.values()].sort((a, b) => (a.closedAt < b.closedAt ? 1 : a.closedAt > b.closedAt ? -1 : 0));
+  return [...byId.values()].sort((a, b) => compareMomentsDesc(a.closedAt, b.closedAt));
 }
 
 /**
