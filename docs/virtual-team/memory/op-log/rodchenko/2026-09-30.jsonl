@@ -2,3 +2,8 @@
 {"ts":"2026-09-30T14:43:26.138Z","persona":"rodchenko","verb":"surface_invoke","ref":"rodchenko-2026-09-30T14:42:56.522Z","origin":"ask-persona"}
 {"ts":"2026-09-30T14:43:26.139Z","persona":"rodchenko","verb":"emerge","ref":"rodchenko-2026-07-29-tariff-grid-m6-switch","reason":"там я уже держал линию: витрина показывает живой статус, а не декоративное «ещё не подтверждено»; здесь та же болезнь — слова окна отстают от живой оси.","origin":"ask-persona"}
 {"ts":"2026-09-30T14:43:26.141Z","persona":"rodchenko","verb":"emerge","ref":"rodchenko-2026-09-08-tariff-single-truth-m1-reseed","reason":"про «честный статус расхождения, данные не декорация»: заголовок «Буфер полон» при 0 B — ровно декорация; b2 обязан читать живую ось, а не снимок эпизода.","origin":"ask-persona"}
+{"ts":"2026-09-30T16:20:24.028Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-09-29-batch-collection-run-contour-architecture-gate","origin":"persona-extract"}
+{"ts":"2026-09-30T16:20:24.028Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-09-30-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-30T16:20:24.028Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-29-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-30T16:20:24.028Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-28-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-30T16:20:24.028Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

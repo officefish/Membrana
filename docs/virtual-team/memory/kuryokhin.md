@@ -5,14 +5,26 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14394/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 378 (причины в op-log) -->
+Записей: 50 · бюджет 14384/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 380 (причины в op-log) -->
+
+### 2026-09-30 · позиция · team-evening-feedback
+
+> Курёхин. Fusion-форма на бумаге — сделана, лежит в `DETECTOR_FUSION_SKETCH.md` (#2528). Это то, что утро ставило мне как экспериментальное. Задача в реестре пока не открыта — это правильно: сначала прикидка, потом задача. Оценка артефактов: `MAIN_DAY_ISSUE` называет эту работу […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-30.md#reply-1`
 
 ### 2026-09-29 · позиция · team-evening-feedback
 
 > Kuryokhin. День без аудио-контура — эффектов, плагинов Web Audio, DSP не касались. Оценка артефактов: MAIN_DAY_ISSUE честно вычленяет то, что не делаем (DSP-бенчмарки, повтор free-v1, разведка yamnet) со ссылкой на зафиксированный потолок эшелона 0 в […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-29.md#reply-1`
+
+### 2026-09-29 · позиция · batch-collection-run-contour-architecture-gate
+
+> Со стороны потока: live = непрерывный источник; batch = дискретная очередь файлов/буферов. Это не новый «device collection», а **режим прогона** поверх того же `AudioWindow` / detector-base. Итератор `for-each-sample` как сущность рантайма agenda — риск дубля и рассинхрона с […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/batch-collection-run-contour-architecture-gate-2026-09-29.md#reply-1`
 
 ### 2026-09-28 · позиция · team-evening-feedback
 
@@ -290,20 +302,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
 
-### 2026-08-30 · позиция · team-evening-feedback
+### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 
-> Оценка артефактов: День не касался audio path / Web Audio / device-board runtime. Документы дня (MAIN_DAY_ISSUE, code-review) согласованы и не содержат противоречий по моей зоне. Ритуальный контур ночи выстроен — это создаёт устойчивый фон для продуктовых задач. Итоги дня: «—» […]
+> Preview остаётся производной поверхностью. Он получает original только после `read-bytes` allow, сохраняет class и при любой ошибке возвращает `preview_unavailable`, не меняя original, registry или tip. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
-
-### 2026-08-29 · позиция · team-evening-feedback
-
-> Оценка артефактов: С точки зрения аудио-контура день пустой — код-ревью верно пометил «Web Audio / audio-engine не трогались». `MAIN_DAY_ISSUE` понятен, но не имеет отношения к звуку. Итоги дня: Вклада в аудио нет. Изменения в `apps/client/package.json` — только декларация […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
-
-### 2026-08-12 · позиция · team-evening-feedback
-
-> Курёхин Оценка артефактов: аудио-магистраль сегодня не в фокусе — стратегия и канон дня об этом не говорят, и это честно (тариф + санитария). MAIN_DAY_ISSUE не обещал ничего про DSP — согласовано. Итоги дня: по моему профилю — «—» на содержании. Но: закрыт […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`

@@ -5,14 +5,26 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14343/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 374 (причины в op-log) -->
+Записей: 50 · бюджет 14388/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 376 (причины в op-log) -->
+
+### 2026-09-30 · позиция · team-evening-feedback
+
+> Родченко. A11y пагинации (#2476, три чекбокса: `aria-current`, focus trap, Tab/Enter) — статус не зафиксирован в диффе. Утро ставило это как «по результатам живого замера» — но живой замер сегодня не был проведён (опыт трёх дорог не сделан), значит и статус a11y висит. Оценка […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-30.md#reply-1`
 
 ### 2026-09-29 · позиция · team-evening-feedback
 
 > Rodchenko. Мой сегодня — PR #2513 (доступность пагинации Studio + кабинет: живой статус, правило фокуса, loading без disabled). Оценка артефактов: MAIN_DAY_ISSUE и DAILY_STANDUP не упоминают явно a11y-верификацию как отдельный DoD-пункт для #2505 — это пропуск. Ведущая […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-29.md#reply-1`
+
+### 2026-09-29 · позиция · batch-collection-run-contour-architecture-gate
+
+> UI #494 мне нужен как **отчёт прогона**, не как новый браузер библиотеки. Пагинация списка проб и массовый перенос из буфера — если уже в стволе — в мою зону спринта не входят: иначе снова раздуем экран и смешаем «управление фондом» с «прогнать детекторы». Конструктивизм: одна […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/batch-collection-run-contour-architecture-gate-2026-09-29.md#reply-1`
 
 ### 2026-09-28 · позиция · team-evening-feedback
 
@@ -295,15 +307,3 @@
 > Оценка артефактов: UI/DESIGN.md/a11y не в диффе дня. Документы дня согласованы, код-ревью структурировано. MASTER-артефакт дня — процедурный контур, не визуальный слой. Итоги дня: «—» (UI не в диффе). Замечание: lint-warning `CabinetSampleDuplicatesPanel.tsx` (лишняя зависимость […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
-
-### 2026-08-29 · позиция · team-evening-feedback
-
-> Оценка артефактов: UI/дизайн не в фокусе дня — в diff нет ни одного изменения, относящегося к презентационному слою. `MAIN_DAY_ISSUE` вторичкой держит `buffer-delete-modal-2218`, но это «по возможности». Итоги дня: Вёрстки не было. Правки `apps/client/package.json` — только […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
-
-### 2026-08-28 · позиция · team-evening-feedback
-
-> Оценка артефактов: UI-часть в документах дня отсутствует — и это правильно: #2204 — сервисная/инфраструктурная задача. MAIN_DAY_ISSUE явно запрещает принимать GC/UI за закрытие DoD — чёткая граница. Итоги дня: В диффе дня UI/DESIGN.md нет (—). tsconfig path […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`

@@ -2,3 +2,8 @@
 {"ts":"2026-09-30T12:31:38.767Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-09-30T12:31:06.129Z","origin":"ask-persona"}
 {"ts":"2026-09-30T12:31:38.768Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-21-duty-node-detection-m8-pasport","reason":"предикат legal(metric, record) того же жанра: здесь decision(plan) ⇔ ratification.by=owner ∧ dayOf(at)≠null, форма ратификации важнее прозы ключа, как форма сигнала важнее усиления.","origin":"ask-persona"}
 {"ts":"2026-09-30T12:31:38.769Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-09-08-tariff-single-truth-m1-reseed","reason":"тот же инвариант «одна SSOT, проекции равны версии»: план с ratification = источник, //decisions///recut- = проекции одного согласия, различать по имени ключа — искусственная синонимия, что регексп DECISION_KEY и фиксирует.","origin":"ask-persona"}
+{"ts":"2026-09-30T16:20:23.476Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-09-29-batch-collection-run-contour-architecture-gate","origin":"persona-extract"}
+{"ts":"2026-09-30T16:20:23.476Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-09-30-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-30T16:20:23.476Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-30-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-30T16:20:23.476Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-29-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-30T16:20:23.476Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

@@ -5,14 +5,26 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14331/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 375 (причины в op-log) -->
+Записей: 50 · бюджет 14356/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 377 (причины в op-log) -->
+
+### 2026-09-30 · позиция · team-evening-feedback
+
+> Дынин. Мой trail-прогон `ritual-day-2026-09-29-r2` (`runPhase: open`) — не закрыт, судя по отсутствию `docs/procedure-runs/trail/ritual-day-2026-09-29-r2-trail.jsonl` в правках. Утром это был P2 с явной командой (`yarn turbo run typecheck test lint --filter=@membrana/tooling`), […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-30.md#reply-1`
 
 ### 2026-09-29 · позиция · team-evening-feedback
 
 > Dynin. Меня сегодня в коде не было — DSP-задач на дне не стояло. Оценка артефактов: DAILY_AUDIT — сухая механическая выжимка, 45% строк ушло в бизнес-процессы, 24% в «прочее», 17% в тулинг, только 6% в основной продукт. Это честная цифра: день был про инфраструктуру ритуала […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-29.md#reply-1`
+
+### 2026-09-29 · позиция · batch-collection-run-contour-architecture-gate
+
+> Численно batch — это чистая свёртка: вход = упорядоченный список идентификаторов проб + конфиг детектора(ов); выход = вектор `DetectionResult` + агрегаты (count, rate, latency p50/p95). `inputHash` обязан быть детерминированной функцией от канонического сериала входа (ids в […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/batch-collection-run-contour-architecture-gate-2026-09-29.md#reply-1`
 
 ### 2026-09-28 · позиция · team-evening-feedback
 
@@ -289,18 +301,6 @@
 > Оценка артефактов: MAIN_DAY_ISSUE корректно зафиксировал посылку «сервер уже умеет перенос» со ссылкой на `samples.service.ts` — это сэкономило день: не стали переписывать сервер. Code-review разложил `deletionAcknowledgementRisk` по веткам (evidence → unknown → scale, […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
-
-### 2026-08-30 · позиция · team-evening-feedback
-
-> Оценка артефактов: Алгоритмов/FFT в дне нет — день ритуальный, но документы дня (MAIN_DAY_ISSUE, code-review) согласованы и точны в терминах. Отмечу корректность зуба #2245: инвариант «все три или ни одного» для процедуры — правильная форма. Итоги дня: По моей зоне — «—». […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
-
-### 2026-08-29 · позиция · team-evening-feedback
-
-> Оценка артефактов: Артефакты дня корректны. `MAIN_DAY_ISSUE` чётко разделил «измерения/факты» (schedule drift, охота-враньё) от «гипотез». Код-ревью верно пометил мою роль как «нет FFT/спектра» — день не математический. Итоги дня: В изменениях нет математики, но есть корректные […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
 
 ### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 
