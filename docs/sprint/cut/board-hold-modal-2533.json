@@ -1,0 +1,72 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "board-hold-modal-2533",
+  "taskId": "board-hold-modal-2533",
+  "mode": "explicit-honest",
+  "cutBy": "rodchenko",
+  "window": {
+    "from": "2026-09-30T15:00:00+00:00",
+    "to": "2026-10-02T20:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-freed-standing-viewmodel",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "apps/client/src/lib/overflow-window/viewModel.ts",
+        "apps/client/src/lib/overflow-window/viewModel.test.ts",
+        "apps/client/src/lib/overflow-window/reasonTexts.ts",
+        "apps/client/src/lib/device-overflow-hold/deviceOverflowHold.ts",
+        "apps/client/src/lib/device-overflow-hold/deviceOverflowHold.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 160
+      }
+    },
+    {
+      "blockId": "b2-surfaces-read-standing",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/client/src/lib/overflow-window/OverflowWindow.tsx",
+        "apps/client/src/lib/overflow-window/OverflowWindow.test.tsx",
+        "apps/client/src/lib/overflow-window/OverflowWindowHost.tsx",
+        "apps/client/src/lib/overflow-window/OverflowWindowHost.test.tsx",
+        "apps/client/src/lib/overflow-window/useOverflowHoldBoardView.ts",
+        "apps/client/src/lib/overflow-window/OverflowHoldPlashka.tsx",
+        "apps/client/src/lib/overflow-window/structural.test.ts",
+        "packages/device-board/src/components/board-overflow-hold.ts",
+        "packages/device-board/src/components/board-overflow-hold-badge.tsx",
+        "packages/device-board/src/components/board-overflow-hold.test.tsx",
+        "packages/device-board/src/components/board-runtime-status.tsx"
+      ],
+      "estimate": {
+        "changedLines": 240
+      }
+    },
+    {
+      "blockId": "b3-live-check-closure",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "docs/local-sprint/board-hold-modal-2533/",
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/sprint/experience/board-hold-modal-2533.segments.json"
+      ],
+      "estimate": {
+        "changedLines": 200
+      }
+    }
+  ],
+  "//why": "Issue #2533: после вывоза всех 1057 проб окно «Буфер полон» на доске одновременно говорит «полон» (заголовок, красная плашка окна, бейдж шапки) и «занято 0 B» (живая строка «сейчас»); режим — «удержание · ещё не подтверждено сервером»; оператор не понимает состояние прибора. Контракт остановки (#2314, M3 DoD 7) верен: удержание снимается только явно. Неправильны СЛОВА — они берутся из замороженного эпизода и не знают, что место освобождено.",
+  "//measure": "Ствол dba53da0, замер 30.09. (1) Заголовок — константа OVERFLOW_WINDOW_TITLE (reasonTexts.ts:32) → vm.title без оглядки на живые оси (viewModel.ts:137); красная плашка окна судится только по vm.held (OverflowWindow.tsx:221-230); бейдж доски — литерал «Буфер полон · ${reasonText}» (packages/device-board/.../board-overflow-hold-badge.tsx:17), строки для него строятся только из замороженного эпизода (useOverflowHoldBoardView.ts:64-75; remainingText от episode.buffer = снимок при остановке). (2) Строка «сейчас» — живая квота библиотеки в хосте (OverflowWindowHost.tsx:136, refresh при открытии :87-92). (3) «ещё не подтверждено сервером» = OVERFLOW_PHASE_TEXT.held_local (reasonTexts.ts:52) при overflowId === null (viewModel.ts:133); null только у эпизода локального стража (deviceOverflowHold.ts:191-201). Сервер отказывает при used+incoming > limit (background-media buffer-overflow-refusal.ts:100-102, ~100 %), страж входит в удержание при 95 % (services/media-library buffer-stop.ts:26; localGuard.ts:16-19) и шлюз закрывает POST (wiring.ts:49; server-storage-backend.ts:598) — сервер после стража не видит ни одной пробы, id не чеканит, «promoted» не наступает. Живые числа: 486.7 MB / 512 MB = 95.06 % — первое пересечение порога стража. Фраза «ещё не подтверждено» — постоянное состояние любой остановки при политике stop. (4) Гипотеза #2319 (рестарт media теряет эпизод) к окну не относится: канала сервер→клиент об эпизоде нет (только тело отказа на POST; DTO /quota overflow-полей не несёт), эпизод клиента живёт в localStorage (OVERFLOW_HOLD_STORE_KEY), при переносе сервер сам закрывает свой эпизод (samples.service.ts:447). Живое чтение прода GET /v1/devices/9e86ec85…/quota (X-Membrana-Token): buffer 0/536870912, userStorage 510302892/536870912 (95.05 %), bufferPolicy stop. Кандидат «страж перевходит по чужой оси» опровергнут: эмиттер берёт resolveBufferQuota (mediaLibraryHubBridge.ts:39), серверный бэкенд всегда пишет bufferUsedBytes (server-storage-backend.ts:376/385). (5) Porcha на стволе (временный тест, удалён): vm.title !== «Буфер полон» при живом буфере 0 B и held — красный; OVERFLOW_PHASE_TEXT.held_local без «ещё не подтверждено» — красный; существующие viewModel.test.ts 9/9 зелёные.",
+  "//carriers": "Носители правды для окна: замороженный эпизод носителя удержания (apps/client/src/lib/device-overflow-hold, localStorage) — факт остановки; живой снимок библиотеки (getDefaultMediaLibraryService().getSnapshot().quota) — место сейчас; таблица текстов reasonTexts.ts — единственный носитель слов (структурный зуб). Порог «место освобождено» — тот же BUFFER_STOP_RATIO (0.95) из @membrana/media-library-service, которым судит страж: ниже него страж не перевходит, значит слово «освобождено» не лжёт. Серверный реестр эпизодов (background-media overflow-episode-registry.ts) окном НЕ читается и в спринт не входит.",
+  "//cutter": "Резчик rodchenko (вёрстка и слово оператору — его земля; вердикт M5 #2310 «не Ошибка 453, а факт словами»). Прогон контекста 30.09 14:43Z, конспект docs/discussions/cut-board-hold-modal-2533-rodchenko.md. Вердикт: контракт, границы файлов чистые, зубы структуры не ломаются; одна правка внесена — отдельный файл useLiveQuotaAxes.ts снят (хост уже смонтирован, service.getSnapshot() + useSyncExternalStore даёт живую ось без сети; подписка живёт в потребителе useOverflowHoldBoardView, новый файл ради трёх строк не плодится; выделять — при втором потребителе). Ширина b2 оправдана: один смысловой шов «слова surface'ов начинают читать standing», резать на «окно» и «доска» даст мигание словаря между PR. BLOCK-условия резчика: b1 — (а) standing считается не по BUFFER_STOP_RATIO из того же импорта, что у localGuard (расхождение порогов = вторая правда); (б) в reasonTexts.ts литерал мимо словаря; (в) describeOverflowHold зовёт сеть или квоту напрямую; (г) union phase в core тронут. b2 — (а) в packages/device-board/* свои слова о причинах; (б) любой surface читает library.quota/getQuota/fetch мимо снимка сервиса; (в) headline/цвет вычисляются в компоненте, а не приходят готовыми из vm/board-view; (г) remainingText бейджа остался от episode.buffer, а не от живой оси; (д) хост зовёт refresh() больше одного раза. b3 — приёмка на приборе владельца не покрыла все три состояния (0 B/удержание = «Место освобождено», «Возобновить» = бейдж гаснет, 95 % = «Буфер полон · по стражу прибора»); нет записи в LOCAL_SPRINT_LOG.md с id прибора и снимком /quota.",
+  "//order": "b1 → b2 → b3. b2 импортирует standing/тексты из b1 (единственная связь). Зоны не пересекаются. Точка перерезки — после b1: если для standing понадобится трогать носитель удержания глубже текста describeOverflowHold (например, хранить живую ось в эпизоде) — стоп и перерезка до старта b2.",
+  "//dod": "b1: OverflowWindowViewModel получает standing: 'full' | 'freed' | 'unknown' (freed — живая ось причины ниже BUFFER_STOP_RATIO; unknown — живой оси нет) и от него title/heldText: freed → «Место освобождено — снимите удержание» + «Прибор жив, не пишет: место освобождено, удержание держится до вашего слова»; full → как сегодня. OVERFLOW_PHASE_TEXT.held_local → «удержание · по стражу прибора (до отказа сервера не дошло)»; describeOverflowHold той же лексикой. Зубы с порчей: буфер 0 B + held → title ≠ «Буфер полон» (красный на стволе); userStorage-причина судится по оси userStorage, не по буферу; freed при held — held остаётся true (авто-снятия нет); фаза локального эпизода не содержит «ещё не подтверждено». b2: окно рисует vm.title/heldText; плашка окна при freed — alert-warning; бейдж доски и строка статуса получают headline и tone ('error' | 'warning') из клиента (BoardOverflowHoldView расширен, литерал «Буфер полон» из badge.tsx уходит в headline); remainingText бейджа — живой (подписка на снимок сервиса внутри useOverflowHoldBoardView через useSyncExternalStore, без сети и без нового файла); плашка микрофона — тот же headline из того же хука. Зубы: при живом буфере 0 B бейдж = «Место освобождено — снимите удержание», класс badge-warning; при 100 % — «Буфер полон · Буфер прибора полон», badge-error; структурный зуб: literal «Буфер полон» вне reasonTexts.ts — ноль вхождений в клиенте и доске (сегодня одно в badge.tsx — после b2 ноль); хост: service.refresh() ровно один. b3: живая приёмка на приборе 9e86ec85 при буфере 0 B и неснятом удержании — окно «Место освобождено…», бейдж жёлтый; «Возобновить запись» → бейдж исчез; следующая остановка (буфер ≥ 95 %) — «Буфер полон» + «удержание · по стражу прибора»; скриншоты в CLOSURE.md; sprint:gate pass; sprint:experience записан.",
+  "//out-of-scope": "#2319 (носитель эпизода на сервере — серверный долг, окном не читается). #2484 (startOverflowHoldVitals не подключён — отдельный выбор «подключить или снять»; здесь живая ось читается снимком сервиса, который обновляет хост при открытии окна и любой другой читатель). Счётчик «Записано до остановки» (носитель C его не несёт, признано в #2316) — строка остаётся «н/д». Порог стража 95 % против серверных 100 % — не двигается (решение M3). Авто-снятие удержания по освобождению места — запрещено (M3 DoD 7). Квота наборов 486.7/512 MB («перенос не освободил, а переложил») — продуктовый факт, отдельный билет. Кабинет и его предикаты dead/stopped_buffer_full — не трогаются.",
+  "//forecast": "b1: при буфере 0 B и неснятом удержании vm.title = «Место освобождено — снимите удержание», vm.held = true; тест «title ≠ Буфер полон при 0 B» красный на стволе dba53da0 и зелёный на ветке; 9 старых зубов viewModel.test.ts остаются зелёными. Опровержение: если для freed потребовалось трогать носитель удержания — перерезка. b2: бейдж шапки при 0 B — жёлтый с «Место освобождено — снимите удержание», при 100 % — красный «Буфер полон · Буфер прибора полон»; структурный зуб «литерал вне таблицы» с нуля вхождений; device-board 153 файла тестов зелёные. Опровержение: если бейджу для живой оси понадобился сетевой вызов — блок не сдан (живая ось только из снимка). b3: владелец видит на приборе «Место освобождено» вместо «Буфер полон» при 0 B; после «Возобновить» бейджа нет. Опровержение: бейдж вернулся после «Возобновить» при буфере 0 B — новый факт (страж перевошёл), которого код не допускает — стоп и замер localStorage/квоты, не правка слов.",
+  "//forks": "1. Заголовок при freed — «Место освобождено — снимите удержание» (умолчание) или короче «Место есть — снимите удержание» (резчик). 2. Цвет бейджа доски при freed — жёлтый (умолчание; красный оставит ложную тревогу) или красный. 3. Фаза локального эпизода — «удержание · по стражу прибора (до отказа сервера не дошло)» (умолчание) или сухое «удержание · локально» (резчик). 4. Строка «Записано до остановки: н/д» — оставить вне спринта (умолчание) или убрать, раз рядом «В буфере при остановке». 5. Порог freed — ниже 95 % BUFFER_STOP_RATIO (умолчание, симметрично стражу) или строго 0 B. 6. Наблюдение «бейдж держится при идущем луче» — до нажатия «Возобновить» или после? Если после — это второй факт (перевход стража, которого код не допускает), не этот спринт."
+}
