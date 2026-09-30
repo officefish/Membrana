@@ -5,14 +5,26 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14238/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 385 (причины в op-log) -->
+Записей: 49 · бюджет 14265/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 388 (причины в op-log) -->
+
+### 2026-09-30 · позиция · team-evening-feedback
+
+> Ожегов. Мой долг #2503 (PERSONAS → `scripts/lib/personas.mjs`) — не закрыт, четвёртый день XS без движения. Три скрипта продолжают дублировать константу. Это моя ответственность, факт признаю. Оценка артефактов: `DAILY_STANDUP` называет мой долг явно в разделе ролей — правильная […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-30.md#reply-1`
 
 ### 2026-09-29 · позиция · team-evening-feedback
 
 > Ozhegov. Мой день странный: два раза заведён в задачах (`ritual-reads-done-work` B1, разбор), но `PERSONAS → scripts/lib/personas.mjs` четвёртый день в санитарных. Оценка артефактов: DAILY_STANDUP правильно вычисляет роутинг из реестра, не моделью — это снимает субъективность […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-29.md#reply-1`
+
+### 2026-09-29 · позиция · batch-collection-run-contour-architecture-gate
+
+> Начинаю со словаря. В стволе уже есть read-only чтение коллекции (`CollectionSampleReader`) и request-контур collections plugin. Новый `SampleCollectionRef` в `@membrana/core` — это **второй словарь** на ту же сущность «набор проб». По SERVICES.md и ARCHITECTURE.md §1: core не […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/batch-collection-run-contour-architecture-gate-2026-09-29.md#reply-1`
 
 ### 2026-09-28 · позиция · team-evening-feedback
 
@@ -289,15 +301,3 @@
 > Оценка артефактов: Стендап дал чёткий фокус и «что сознательно не делаем» — это помогло не размазать день по трём L-якорям. MAIN_DAY_ISSUE структурно сильный: предикаты, DoD, риски, развилка A/B — всё на месте. Code-review выделил C1/C7 по развёрнутому диффу — этого достаточно […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
-
-### 2026-08-30 · позиция · team-evening-feedback
-
-> Оценка артефактов: Документы дня согласованы, границы работ в MAIN_DAY_ISSUE определены чётко: `docs/procedures/*`, `scripts/lib/validate-procedure.mjs`, тест, hash в `kits/containerization-master/MANIFEST.json`. Связность соблюдена, цикл пакетов не задет. C7: зуб на равенство […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
-
-### 2026-08-29 · позиция · team-evening-feedback
-
-> Оценка артефактов: Код-ревью дня корректно классифицировало слои: C1 (границы пакетов) усилены зубом `declared-imports`, C4/C7 (чистые ядра, тесты рядом) соблюдены. `MAIN_DAY_ISSUE` ясно разграничил primary/secondary/sanitary — это помогает структурировать работу. Итоги дня: […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`

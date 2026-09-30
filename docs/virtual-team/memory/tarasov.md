@@ -6,13 +6,25 @@
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
 Записей: 50 · бюджет 14400/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 390 (причины в op-log) -->
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 392 (причины в op-log) -->
+
+### 2026-09-30 · позиция · team-evening-feedback
+
+> Тарасов. День шёл по слову владельца — магистраль `three-roads-experiment` объявлена, гейт перечеканен, ассерции согласованы. Но фактически магистраль в диффе не видна: за день влито 7 PR, из которых 6 — ritual/docs/artefacts, единственный содержательный feat — #2534 (окно […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-30.md#reply-1`
 
 ### 2026-09-29 · позиция · team-evening-feedback
 
 > Tarasov на связи. День закрываю с ясной головой: магистраль three-roads-experiment выбрана владельцем в 14:25 (author=human, PR #2512), но живой опыт на приборе так и не проведён — это третий перенос подряд, и это главный факт дня. Оценка артефактов: STRATEGY_DAY — вещдок 17.07, […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-29.md#reply-1`
+
+### 2026-09-29 · позиция · batch-collection-run-contour-architecture-gate
+
+> Положение: gate до кода, одна развилка, пять однозначных ответов. Связка на спринт: Архитектор фиксирует форму → Структурщик пакет и API → Математик hash/агрегаты/тесты чистых функций → Музыкант стык окна/детектора → Верстальщик только отчётный UI после контракта. Вердикт […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/batch-collection-run-contour-architecture-gate-2026-09-29.md#reply-1`
 
 ### 2026-09-28 · позиция · team-evening-feedback
 
@@ -290,20 +302,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
 
-### 2026-08-31 · позиция · team-evening-feedback
+### 2026-08-20 · позиция · team-evening-feedback
 
-> Оценка артефактов: Утренние документы (стендап, MAIN_DAY_ISSUE) были согласованы между собой — оба указывали на `sample-move-between-collections` как магистраль дня, назначенную владельцем. STRATEGY_DAY оставался в стороне от owner-choice, что было явно отмечено в MAIN_DAY_ISSUE […]
+> **Оценка артефактов:** Утренние артефакты согласованы: стендап и MAIN_DAY_ISSUE единогласно фокусируются на пользовательском пути Studio→Firebat. Ключевое расхождение — в MAIN_DAY_ISSUE поле `primaryFocusId` = `firebat-node-device`, а телом заявлена магистраль […]
 
-— источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
-
-### 2026-08-30 · позиция · team-evening-feedback
-
-> Оценка артефактов: Документы дня согласованы между собой (стратегия → стендап → MAIN_DAY_ISSUE), но есть существенное расхождение: стендап и STRATEGY_DAY фокусируются на `secret-parser-built`, тогда как магистраль дня — `night-procedure-frames` (выбор владельца, sources[0]). […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
-
-### 2026-08-29 · позиция · team-evening-feedback
-
-> Оценка артефактов: Стратегический план дня (`STRATEGIC_PLAN_DAY.md`) вновь помечен как вещдок и не является рабочим документом — это ожидаемо и корректно. `MAIN_DAY_ISSUE` чётко зафиксировал магистраль `night-procedure-frames` по прямому слову владельца, отделив её от топ-3 […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-08-20.md#reply-1`

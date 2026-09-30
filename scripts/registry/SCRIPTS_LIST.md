@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-29 |
-| Head SHA | afc70ac76a714d9c862815a6c479b4d3c9b3101c |
+| Date | 2026-09-30 |
+| Head SHA | 0636e7193b01cdf8f3a97f87ea20a0167ed2f480 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,12 +16,12 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1259 |
+| Code files under `scripts/` | 1271 |
 | Yarn scripts (package.json) | 475 |
 | Yarn → `scripts/` | 421 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 921 |
+| Code files without yarn ref | 933 |
 
 ## Yarn → scripts/ (421)
 
@@ -447,7 +447,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (921)
+## Code files without yarn ref (933)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -690,6 +690,8 @@
 - `scripts/lib/bash-invoke.mjs`
 - `scripts/lib/belongs-invariant.mjs`
 - `scripts/lib/belongs.mjs`
+- `scripts/lib/benchmark-ensemble.mjs`
+- `scripts/lib/benchmark-ensemble.test.mjs`
 - `scripts/lib/benchmark-metrics.mjs`
 - `scripts/lib/benchmark-report-md.mjs`
 - `scripts/lib/bestiary-audit.mjs`
@@ -752,6 +754,9 @@
 - `scripts/lib/debt-classify.test.mjs`
 - `scripts/lib/debt-gate.mjs`
 - `scripts/lib/debt-gate.test.mjs`
+- `scripts/lib/decisions-ledger-port.mjs`
+- `scripts/lib/decisions-ledger.mjs`
+- `scripts/lib/decisions-ledger.test.mjs`
 - `scripts/lib/declared-imports.mjs`
 - `scripts/lib/deep-research.mjs`
 - `scripts/lib/delivery-report.mjs`
@@ -953,6 +958,7 @@
 - `scripts/lib/run-ledger/index.mjs`
 - `scripts/lib/run-ledger/merkle.mjs`
 - `scripts/lib/scenario-node-kinds.mjs`
+- `scripts/lib/scenario-trace-teardown-measure.mjs`
 - `scripts/lib/scripts-inventory.mjs`
 - `scripts/lib/scripts-workshop.mjs`
 - `scripts/lib/scripts-workshop.test.mjs`
@@ -1110,6 +1116,8 @@
 - `scripts/mcp-tier0.mjs`
 - `scripts/measure-metrics.test.mjs`
 - `scripts/measure-report.test.mjs`
+- `scripts/measure-scenario-trace-ipc.mjs`
+- `scripts/measure-scenario-trace-teardown.mjs`
 - `scripts/media-samples-client.test.mjs`
 - `scripts/media-token.test.mjs`
 - `scripts/meeting-agenda.test.mjs`
@@ -1257,6 +1265,10 @@
 - `scripts/rootpolicy.test.mjs`
 - `scripts/run-ledger.test.mjs`
 - `scripts/scaffold-detectors.mjs`
+- `scripts/scenario-trace-buffer-parity.test.mjs`
+- `scripts/scenario-trace-ipc-probe/main.js`
+- `scripts/scenario-trace-ipc-probe/preload.js`
+- `scripts/scenario-trace-teardown-measure.test.mjs`
 - `scripts/scripts-inventory.test.mjs`
 - `scripts/scripts-orphans.test.mjs`
 - `scripts/scripts-workshop.test.mjs`
@@ -1381,7 +1393,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1259)
+## All code files (1271)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1772,6 +1784,8 @@
 - `scripts/lib/bash-invoke.mjs`
 - `scripts/lib/belongs-invariant.mjs`
 - `scripts/lib/belongs.mjs`
+- `scripts/lib/benchmark-ensemble.mjs`
+- `scripts/lib/benchmark-ensemble.test.mjs`
 - `scripts/lib/benchmark-metrics.mjs`
 - `scripts/lib/benchmark-report-md.mjs`
 - `scripts/lib/bestiary-audit.mjs`
@@ -1834,6 +1848,9 @@
 - `scripts/lib/debt-classify.test.mjs`
 - `scripts/lib/debt-gate.mjs`
 - `scripts/lib/debt-gate.test.mjs`
+- `scripts/lib/decisions-ledger-port.mjs`
+- `scripts/lib/decisions-ledger.mjs`
+- `scripts/lib/decisions-ledger.test.mjs`
 - `scripts/lib/declared-imports.mjs`
 - `scripts/lib/deep-research.mjs`
 - `scripts/lib/delivery-report.mjs`
@@ -2035,6 +2052,7 @@
 - `scripts/lib/run-ledger/index.mjs`
 - `scripts/lib/run-ledger/merkle.mjs`
 - `scripts/lib/scenario-node-kinds.mjs`
+- `scripts/lib/scenario-trace-teardown-measure.mjs`
 - `scripts/lib/scripts-inventory.mjs`
 - `scripts/lib/scripts-workshop.mjs`
 - `scripts/lib/scripts-workshop.test.mjs`
@@ -2205,6 +2223,8 @@
 - `scripts/mcp-workstation-phase-d.mjs`
 - `scripts/measure-metrics.test.mjs`
 - `scripts/measure-report.test.mjs`
+- `scripts/measure-scenario-trace-ipc.mjs`
+- `scripts/measure-scenario-trace-teardown.mjs`
 - `scripts/media-env-check.mjs`
 - `scripts/media-provision-catalog.mjs`
 - `scripts/media-samples-client.test.mjs`
@@ -2437,6 +2457,10 @@
 - `scripts/rt-day-report.mjs`
 - `scripts/run-ledger.test.mjs`
 - `scripts/scaffold-detectors.mjs`
+- `scripts/scenario-trace-buffer-parity.test.mjs`
+- `scripts/scenario-trace-ipc-probe/main.js`
+- `scripts/scenario-trace-ipc-probe/preload.js`
+- `scripts/scenario-trace-teardown-measure.test.mjs`
 - `scripts/scripts-inventory.test.mjs`
 - `scripts/scripts-orphans.mjs`
 - `scripts/scripts-orphans.test.mjs`

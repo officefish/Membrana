@@ -5,14 +5,26 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14244/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 392 (причины в op-log) -->
+Записей: 49 · бюджет 14249/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 398 (причины в op-log) -->
+
+### 2026-09-30 · позиция · team-evening-feedback
+
+> Веснин. Ствол за сутки прирос на 8155 строк в категории «прочее» (60% диффа) — это ritual-артефакты и архив спринтов, не продуктовая архитектура. Единственный архитектурно значимый вклад — `DETECTOR_FUSION_SKETCH.md` (#2528): прикидка объединения DSP+yamnet на бумаге, честно […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-30.md#reply-1`
 
 ### 2026-09-29 · позиция · team-evening-feedback
 
 > Vesnin. Сегодня редкий день, когда я вёл вечернее ревью и вижу картину изнутри. Оценка артефактов: MAIN_DAY_ISSUE в финальной редакции (caf73ab5) — образцовый: посылки заменены на проверяемые маркеры (`file:` + `symbol:`), таблица «Почему это магистраль» с provenance и датами, […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-29.md#reply-1`
+
+### 2026-09-29 · позиция · batch-collection-run-contour-architecture-gate
+
+> Конструкция. Issue #494 в исходнике тянет `SampleCollectionRef`, узел-источник, `for-each-sample`, batch-runtime — это **полная execution-модель** уровня palette/nodes. Цена: новый core-контракт, ратификация a2/a3, долгий контур. Альтернатива: batch-run как […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/batch-collection-run-contour-architecture-gate-2026-09-29.md#reply-1`
 
 ### 2026-09-28 · позиция · team-evening-feedback
 
@@ -289,15 +301,3 @@
 > Оценка артефактов: MAIN_DAY_ISSUE хорошо разложил магистраль по посылкам с маркерами `holds`/`unknown`; явно отделил owner-choice от горизонта стендапа и не дал стендапу перебить слово владельца. Code-review правильно не заявил LGTM по непрочитанным oversized […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
-
-### 2026-08-30 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE дал чёткий контракт «все три или ни одного» (MANIFEST + trigger/steps/gates), и код дня этому контракту следует. #2245 — узкая и верная форма: публичный контракт `waitsFor` расширен до `owner|human|night`, смысл `night` зафиксирован в CORE […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
-
-### 2026-08-29 · позиция · team-evening-feedback
-
-> Оценка артефактов: `MAIN_DAY_ISSUE` — образец честной фиксации owner-choice: явное отделение назначения от отражений (стендап/DAY_PLAN/горизонт). Структура «1 источник назначения, N отражений контекста» предотвращает фантом-магистрали. DoD точен и проверяем. Итоги дня: #2231 — […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
