@@ -4,6 +4,14 @@
 
 ## Focus
 
+- **ritual-reads-decisions** (продолжение ritual-reads-done-work #2514; Issue с первым PR) ·
+  **фаза А — нарезка ждёт ратификации владельца** · `sprint:cut` → `findings` (только `plan_unratified`) ·
+  [`OPEN.md`](./local-sprint/ritual-reads-decisions/OPEN.md) —
+  решённое не доходит до читателей ритуала: вечер просит тест на снятое #2506 окно и проверку снятого #2513
+  `aria-current` (решение в `//decisions`, ратификация 29.09), каркас дня третий день предлагает закрытый 29.09
+  `batch-collection-run-contour` (4 закрытых прогона, 0 архивных карточек). Ведомость решённого (ядро + один порт)
+  для вечера, каркаса дня и зуба утверждений; порядок ритуалов, промпты персон, OUTCOMES зуба, архивация карточек — вне.
+
 - **ritual-reads-done-work** (И8 недельного плана 28.09; Issue с первым PR) ·
   ратифицирован 29.09 15:19+03 · **gate pass 4/4 honest_pair** · прогноз↔исход **hit** (4/4) ·
   [`OPEN.md`](./local-sprint/ritual-reads-done-work/OPEN.md) · [`CLOSURE.md`](./local-sprint/ritual-reads-done-work/CLOSURE.md) —

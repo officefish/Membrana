@@ -20,6 +20,12 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `ritual-reads-decisions-b5` | b5: Живая приёмка на сегодняшних файлах, гейт, опыт, закрытие | S | [`RITUAL_READS_DECISIONS_PROMPT.md`](../prompts/RITUAL_READS_DECISIONS_PROMPT.md) | — |
+| `ritual-reads-decisions-b4` | b4: Зуб утверждений читает решённое: голова выражения как символ, вещдок decidedIn в причине вердикта | S | [`RITUAL_READS_DECISIONS_PROMPT.md`](../prompts/RITUAL_READS_DECISIONS_PROMPT.md) | — |
+| `ritual-reads-decisions-b3` | b3: Каркас дня исключает карточки закрытых спринтов из кандидатов магистрали и называет их посылкой | S | [`RITUAL_READS_DECISIONS_PROMPT.md`](../prompts/RITUAL_READS_DECISIONS_PROMPT.md) | — |
+| `ritual-reads-decisions-b2` | b2: Порт ведомости и блок «Решённое» в промпте вечера после книги сделанного | S | [`RITUAL_READS_DECISIONS_PROMPT.md`](../prompts/RITUAL_READS_DECISIONS_PROMPT.md) | — |
+| `ritual-reads-decisions-b1` | b1: Ядро «ведомость решённого»: ратифицированные решения планов, закрытые прогоны лент, сверка с карточками | S | [`RITUAL_READS_DECISIONS_PROMPT.md`](../prompts/RITUAL_READS_DECISIONS_PROMPT.md) | — |
+| `ritual-reads-decisions` | Ритуал читает решённое: ратифицированные решения и закрытые спринты для вечера, каркаса дня и зуба утверждений | M | [`RITUAL_READS_DECISIONS_PROMPT.md`](../prompts/RITUAL_READS_DECISIONS_PROMPT.md) | — |
 | `trace-freeze-e-adr-gate-pr` | Фаза E: ADR различает кандидатов, gate и PR без merge | S | [`OPEN.md`](../local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md) | — |
 | `trace-freeze-d-probe-truth-tooth` | Фаза D: прибор трейса перестаёт судить копию без зуба | S | [`OPEN.md`](../local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md) | [#2485](https://github.com/officefish/Membrana/issues/2485) |
 | `trace-freeze-c-library-render` | Фаза C: проверить DOM-кандидат библиотеки после #2505 | M | [`OPEN.md`](../local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md) | — |
@@ -31,6 +37,10 @@
 | `ritual-reads-done-work-b2` | b2: Ядро «книга сделанного»: PR oversized ↔ билеты-результаты | S | [`RITUAL_READS_DONE_WORK_PROMPT.md`](../prompts/RITUAL_READS_DONE_WORK_PROMPT.md) | — |
 | `ritual-reads-done-work-b1` | b1: Проекция ассерций для каркаса дня + строка свежести предикатом probe | S | [`RITUAL_READS_DONE_WORK_PROMPT.md`](../prompts/RITUAL_READS_DONE_WORK_PROMPT.md) | — |
 | `ritual-reads-done-work` | Ритуал читает сделанное: проекция ассерций для каркаса дня, билеты-результаты для вечернего фидбека | M | [`RITUAL_READS_DONE_WORK_PROMPT.md`](../prompts/RITUAL_READS_DONE_WORK_PROMPT.md) | [#2516](https://github.com/officefish/Membrana/issues/2516) |
+| `batch-collection-run-contour-a1-architecture-gate` | Фаза A1: live↔batch architecture gate для прогона детекторов по коллекции | S | [`OPEN.md`](../local-sprint/batch-collection-run-contour/OPEN.md) | — |
+| `batch-collection-run-contour-a2-run-contract` | Фаза A2: контракт запуска batch-прогона по коллекции без второго носителя библиотеки | M | [`OPEN.md`](../local-sprint/batch-collection-run-contour/OPEN.md) | — |
+| `batch-collection-run-contour-a3-detector-runner` | Фаза A3: исполнитель детекторов по коллекции и агрегированный результат | M | [`OPEN.md`](../local-sprint/batch-collection-run-contour/OPEN.md) | — |
+| `batch-collection-run-contour-a4-cabinet-entry` | Фаза A4: вход кабинета для batch-прогона и честные отказы полного буфера | M | [`OPEN.md`](../local-sprint/batch-collection-run-contour/OPEN.md) | — |
 | `sample-library-paging-a11y` | Доступность органов листания библиотеки проб (Studio + кабинет): aria-семантика, клавиатура, фокус после смены страницы, узкий экран | M | [`SAMPLE_LIBRARY_PAGING_A11Y_PROMPT.md`](../prompts/SAMPLE_LIBRARY_PAGING_A11Y_PROMPT.md) | — |
 | `cowork-library-open-api` | Cowork Sprint: Открытое API библиотеки | L | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md) | — |
 | `node-duty-ready-predicate` | Узел к дежурству: предикат готовности Firebat — сон/гибернация/автовход/служба (Г4) | S | [`NODE_DUTY_READY_PREDICATE_PROMPT.md`](../prompts/NODE_DUTY_READY_PREDICATE_PROMPT.md) | [#2049](https://github.com/officefish/Membrana/issues/2049) |

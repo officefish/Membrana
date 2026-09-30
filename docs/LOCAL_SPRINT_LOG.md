@@ -5,6 +5,24 @@
 
 ---
 
+## 2026-09-30 — `ritual-reads-decisions` — **CUT (ждёт ратификации владельца)**
+
+- **Goal:** решения, принятые в спринтах, доходят до читателей ритуала по машинному носителю: ведомость
+  решённого (ратифицированные `//decisions` / `//recut-*` планов нарезки + закрытые прогоны лент ↔ карточки
+  реестра) для вечернего фидбека, каркаса дня и зуба утверждений; голова выражения как символ в зубе.
+- **Source:** остаток [`ritual-reads-done-work`](./local-sprint/ritual-reads-done-work/CLOSURE.md) (#2514) по
+  первому боевому прогону 29.09 (протокол `team-evening-feedback-2026-09-29.md`, утро 30.09).
+- **OPEN:** [`local-sprint/ritual-reads-decisions/OPEN.md`](./local-sprint/ritual-reads-decisions/OPEN.md)
+- **Prompt:** [`prompts/RITUAL_READS_DECISIONS_PROMPT.md`](./prompts/RITUAL_READS_DECISIONS_PROMPT.md)
+- **Cut:** [`sprint/cut/ritual-reads-decisions.json`](./sprint/cut/ritual-reads-decisions.json) — 5 блоков
+  (b1 ядро/dynin · b2 порт+вечер/vesnin · b3 каркас дня/ozhegov · b4 зуб утверждений/tarasov · b5 приёмка/angelina),
+  резчик ozhegov ([конспект](./discussions/cut-ritual-reads-decisions-ozhegov.md)); ждёт ратификации владельца.
+- **Finding at cut:** за 16–30.09 закрыто 4 прогона спринтов, архивировано 0 карточек — каркас дня читает только
+  `status === 'active'`; зуб утверждений видит `NIGHT_RUN_MAX_AGE_MS = 36 ч` как непрозрачную форму при нуле
+  вхождений символа в стволе; тело PR (#2506) — не машинный носитель, признанный предел.
+- **Boundary:** порядок ритуалов, промпты персон и регламенты, список OUTCOMES зуба, архивация карточек ритуалом,
+  тело PR как носитель решений — вне спринта.
+
 ## 2026-09-29 — `ritual-reads-done-work` — **CLOSED · gate pass 4/4 · experience hit**
 
 - **Closure:** [`local-sprint/ritual-reads-done-work/CLOSURE.md`](./local-sprint/ritual-reads-done-work/CLOSURE.md) —
