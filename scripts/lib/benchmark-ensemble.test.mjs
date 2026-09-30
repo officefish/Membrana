@@ -349,3 +349,34 @@ test('авто-блок MD: блок ансамбля с двумя охвата
   assert.doesNotMatch(md, /old/u);
   assert.ok(md.startsWith('x\n') && md.endsWith('\ny'));
 });
+
+test('паспорт судьи: identity по имени экспорта модуля ядра + замок на поведение', async () => {
+  const { fusionPassport, LIVE_FUSION_EXPORT } = await import('./benchmark-ensemble.mjs');
+  assert.equal(LIVE_FUSION_EXPORT, 'fuseDetectorConfidences');
+  // Модуль без экспорта — судьи нет.
+  assert.throws(() => fusionPassport({}, 'x.js'), /нет экспорта fuseDetectorConfidences/u);
+  // Одноимённый ключ, но чужая функция (max под именем ядра) — отказ по имени, до замка.
+  assert.throws(
+    () => fusionPassport({ fuseDetectorConfidences: maxFuse }, 'x.js'),
+    /функция «maxFuse», а не ядро/u,
+  );
+  // Правильное имя, чужая математика — отказ замком.
+  const fuseDetectorConfidences = (sources) => maxFuse(sources);
+  assert.throws(() => fusionPassport({ fuseDetectorConfidences }, 'x.js'), /не прошёл замок/u);
+});
+
+test(
+  'паспорт живого dist ядра: путь и имя экспорта едут в отчёт',
+  { skip: existsSync(CORE_FUSION_DIST) ? false : `нет ${CORE_FUSION_DIST} — соберите: yarn detectors:build` },
+  async () => {
+    const { fusionPassport } = await import('./benchmark-ensemble.mjs');
+    const mod = await import(pathToFileURL(CORE_FUSION_DIST).href);
+    const { fuse, passport } = fusionPassport(mod, 'packages/core/dist/contracts/detection-fusion.js');
+    assert.equal(fuse, mod.fuseDetectorConfidences);
+    assert.deepEqual(passport, {
+      source: 'packages/core/dist/contracts/detection-fusion.js',
+      exportName: 'fuseDetectorConfidences',
+      behaviourLock: 'passed',
+    });
+  },
+);

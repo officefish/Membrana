@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-30T12:28:16.950Z",
+  "generatedAt": "2026-09-30T12:59:32.447Z",
   "datasetVersion": "v2",
   "curatedOnly": true,
   "preliminaryOriginLabels": false,
@@ -74,8 +74,8 @@
             "precision": 0.0007729869346354706
           }
         ],
-        "latencyP50Ms": 0.10049999999995407,
-        "latencyP95Ms": 0.18899999999985084
+        "latencyP50Ms": 0.10130000000026484,
+        "latencyP95Ms": 0.19860000000016953
       },
       "perSample": [
         {
@@ -847,8 +847,8 @@
             "precision": 0.000999000999000999
           }
         ],
-        "latencyP50Ms": 0.2511999999996988,
-        "latencyP95Ms": 0.500900000000911
+        "latencyP50Ms": 0.2984999999998763,
+        "latencyP95Ms": 0.6304000000000087
       },
       "perSample": [
         {
@@ -1620,8 +1620,8 @@
             "precision": 0.0009140573517845375
           }
         ],
-        "latencyP50Ms": 0.09159999999974389,
-        "latencyP95Ms": 0.18699999999989814
+        "latencyP50Ms": 0.1368000000002212,
+        "latencyP95Ms": 0.327900000000227
       },
       "perSample": [
         {
@@ -2393,8 +2393,8 @@
             "precision": 0.002072618407922008
           }
         ],
-        "latencyP50Ms": 1.9782000000013795,
-        "latencyP95Ms": 4.011699999999109
+        "latencyP50Ms": 2.13379999999961,
+        "latencyP95Ms": 3.815499999996973
       },
       "perSample": [
         {
@@ -3166,8 +3166,8 @@
             "precision": 0.002493765586034913
           }
         ],
-        "latencyP50Ms": 125.84560000000056,
-        "latencyP95Ms": 168.06330000000162
+        "latencyP50Ms": 134.6447999999982,
+        "latencyP95Ms": 171.9062999999951
       },
       "perSample": [
         {
@@ -3939,8 +3939,8 @@
             "precision": 0.0013617793917385386
           }
         ],
-        "latencyP50Ms": 1.6837000000014086,
-        "latencyP95Ms": 3.224000000001979
+        "latencyP50Ms": 1.6922999999951571,
+        "latencyP95Ms": 3.547900000005029
       },
       "perSample": [
         {
@@ -10529,6 +10529,11 @@
       ]
     }
   ],
+  "ensembleFusion": {
+    "source": "packages/core/dist/contracts/detection-fusion.js",
+    "exportName": "fuseDetectorConfidences",
+    "behaviourLock": "passed"
+  },
   "ensemblePredicate": {
     "rule": "live бьёт yamnet solo по ROC-AUC (строго больше)",
     "all": {

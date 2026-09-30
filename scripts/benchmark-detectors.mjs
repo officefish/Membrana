@@ -20,6 +20,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
   benchmarkEnsembles,
   ensemblePredicate,
+  fusionPassport,
   heldOutSelection,
 } from './lib/benchmark-ensemble.mjs';
 import { detectorMetrics, sortNumbers } from './lib/benchmark-metrics.mjs';
@@ -519,12 +520,22 @@ const SCAFFOLD_DETECTORS = [
  */
 export async function runEnsembles(detectors, measuredSamples) {
   await ensureBuilt(CORE_FUSION_DIST, '@membrana/core (dist/contracts/detection-fusion.js)');
-  const { fuseDetectorConfidences } = await import(pathToFileURL(CORE_FUSION_DIST).href);
-  return benchmarkEnsembles({
-    detectors,
-    fuse: fuseDetectorConfidences,
-    heldOut: heldOutSelection(measuredSamples),
-  });
+  // Identity: функция берётся из модуля ядра по названному пути и проверяется по имени
+  // экспорта; поведение — замком. Паспорт едет в отчёт рядом со строками.
+  const mod = await import(pathToFileURL(CORE_FUSION_DIST).href);
+  const { fuse, passport } = fusionPassport(mod, relativeToRoot(CORE_FUSION_DIST));
+  return {
+    passport,
+    ensembles: benchmarkEnsembles({
+      detectors,
+      fuse,
+      heldOut: heldOutSelection(measuredSamples),
+    }),
+  };
+}
+
+function relativeToRoot(path) {
+  return path.replace(`${ROOT}`, '').replace(/^[/\\]/, '').replace(/\\/g, '/');
 }
 
 async function main() {
@@ -657,13 +668,15 @@ async function main() {
   // выше тем же ядром, что живой ансамбль Студии. Детекторы заново не гоняются. Отложенная
   // часть — split: val манифеста (калибровка DSP и шаблон сняты на train); ROC-AUC порога не
   // требует, F1 — на пороге моста device-board.
-  const ensembles = await runEnsembles(detectors, testSamples);
+  const { ensembles, passport: fusionSource } = await runEnsembles(detectors, testSamples);
   const predicate = ensemblePredicate(ensembles);
   {
     const heldOutLabel = ensembles[0].heldOut
       ? `${ensembles[0].heldOut.label} (${ensembles[0].heldOut.sampleCount} файлов)`
       : 'нет';
-    console.log(`Ансамбль (fuseDetectorConfidences, порог ${ensembles[0].threshold}) · отложенная часть: ${heldOutLabel}`);
+    console.log(
+      `Ансамбль (${fusionSource.exportName} из ${fusionSource.source}, порог ${ensembles[0].threshold}) · отложенная часть: ${heldOutLabel}`,
+    );
     for (const e of ensembles) {
       const auc = (m) => m?.rocAuc?.toFixed(3) ?? '—';
       const f1 = (m) => m?.f1?.toFixed(3) ?? '—';
@@ -692,6 +705,7 @@ async function main() {
     manifestPath: options.manifestPath.replace(`${ROOT}`, '').replace(/^[/\\]/, '').replace(/\\/g, '/'),
     detectors,
     ensembles,
+    ensembleFusion: fusionSource,
     ensemblePredicate: predicate,
   };
 

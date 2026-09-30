@@ -30,7 +30,7 @@
 
 <!-- BENCHMARK:auto:start -->
 
-> **Автогенерация:** `yarn benchmark:detectors` · 2026-09-30T12:28:16.950Z
+> **Автогенерация:** `yarn benchmark:detectors` · 2026-09-30T12:59:32.447Z
 > **Датасет:** v2 · ВЕСЬ корпус (test-split отсутствует): 120 файлов
 > **Конфигурация:** боевая (`data/detectors-benchmark/v0.2/calibration-preset.json`) — калиброваны: cepstral, harmonic, spectral-flux
 > **⚠ Внимание:** цифры получены НЕ на тестовом сплите — корпус содержит train-сэмплы.
@@ -40,11 +40,11 @@
 | name | family | TP | FP | FN | TN | precision | recall | F1 | latency p50 (ms) | latency p95 (ms) | статус |
 |------|--------|----|----|----|----|-----------|--------|-----|------------------|------------------|--------|
 | harmonic | dsp | 41 | 53 | 19 | 7 | 43.6% | 68.3% | 53.2% | 0.1 | 0.2 | benchmarked |
-| cepstral | dsp | 60 | 60 | 0 | 0 | 50.0% | 100.0% | 66.7% | 0.3 | 0.5 | benchmarked |
-| spectral-flux | dsp | 43 | 47 | 17 | 13 | 47.8% | 71.7% | 57.3% | 0.1 | 0.2 | benchmarked |
-| template-match | dsp | 54 | 26 | 6 | 34 | 67.5% | 90.0% | 77.1% | 2.0 | 4.0 | benchmarked |
-| yamnet | neural | 55 | 22 | 5 | 38 | 71.4% | 91.7% | 80.3% | 125.8 | 168.1 | benchmarked |
-| mfcc | dsp | 60 | 44 | 0 | 16 | 57.7% | 100.0% | 73.2% | 1.7 | 3.2 | benchmarked |
+| cepstral | dsp | 60 | 60 | 0 | 0 | 50.0% | 100.0% | 66.7% | 0.3 | 0.6 | benchmarked |
+| spectral-flux | dsp | 43 | 47 | 17 | 13 | 47.8% | 71.7% | 57.3% | 0.1 | 0.3 | benchmarked |
+| template-match | dsp | 54 | 26 | 6 | 34 | 67.5% | 90.0% | 77.1% | 2.1 | 3.8 | benchmarked |
+| yamnet | neural | 55 | 22 | 5 | 38 | 71.4% | 91.7% | 80.3% | 134.6 | 171.9 | benchmarked |
+| mfcc | dsp | 60 | 44 | 0 | 16 | 57.7% | 100.0% | 73.2% | 1.7 | 3.5 | benchmarked |
 | clap | neural | — | — | — | — | — | — | — | — | — | scaffold |
 | agentic-claude | agentic | — | — | — | — | — | — | — | — | — | scaffold |
 
@@ -84,6 +84,7 @@
 
 > Строки ниже НЕ гоняют детекторы заново: сырые confidence одиночных строк выше сливаются
 > тем же ядром, что живой ансамбль Студии (`createCombinedStreamDetectors` → `EnsembleProducer`),
+> судья — экспорт `fuseDetectorConfidences` из `packages/core/dist/contracts/detection-fusion.js` (замок на поведение: passed),
 > веса 1 у каждого источника — как в живом коде. `live` = harmonic + cepstral + spectral-flux + yamnet.
 > Вердикт для F1 — `combinedScore ≥ 0.5` (порог моста device-board); `ROC-AUC` порога не требует.
 > F1 у `yamnet solo` на этом пороге — не его рабочая точка (clip-score yamnet мал по абсолюту,

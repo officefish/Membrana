@@ -136,12 +136,16 @@ function renderEnsembleSection(report) {
   const num = (v) => (v == null ? '—' : v.toFixed(3));
   const threshold = ensembles[0].threshold;
   const heldOut = ensembles[0].heldOut;
+  const fusion = report.ensembleFusion;
   const lines = [
     '',
     '### Ансамбль — слияние пост-фактум (`fuseDetectorConfidences`)',
     '',
     '> Строки ниже НЕ гоняют детекторы заново: сырые confidence одиночных строк выше сливаются',
     '> тем же ядром, что живой ансамбль Студии (`createCombinedStreamDetectors` → `EnsembleProducer`),',
+    ...(fusion
+      ? [`> судья — экспорт \`${fusion.exportName}\` из \`${fusion.source}\` (замок на поведение: ${fusion.behaviourLock}),`]
+      : []),
     '> веса 1 у каждого источника — как в живом коде. `live` = harmonic + cepstral + spectral-flux + yamnet.',
     `> Вердикт для F1 — \`combinedScore ≥ ${threshold}\` (порог моста device-board); \`ROC-AUC\` порога не требует.`,
     '> F1 у `yamnet solo` на этом пороге — не его рабочая точка (clip-score yamnet мал по абсолюту,',

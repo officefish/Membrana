@@ -125,6 +125,32 @@ export function assertLiveFusion(fuse) {
   }
 }
 
+/** Имя экспорта ядра, который и есть живое правило. */
+export const LIVE_FUSION_EXPORT = 'fuseDetectorConfidences';
+
+/**
+ * Паспорт судьи — ОТКУДА взята функция (identity), в дополнение к замку на поведение.
+ * Замок выше ловит подмену математики; паспорт фиксирует в отчёте, что функция — именно
+ * экспорт `fuseDetectorConfidences` модуля ядра по названному пути, а не одноимённая
+ * своя. Модуль без такого экспорта или с чужим именем функции — отказ, не паспорт.
+ *
+ * @param {Record<string, unknown>} mod загруженный модуль dist ядра
+ * @param {string} source путь модуля относительно корня репозитория (в отчёт)
+ */
+export function fusionPassport(mod, source) {
+  const fn = mod?.[LIVE_FUSION_EXPORT];
+  if (typeof fn !== 'function') {
+    throw new Error(`ансамбль: в ${source} нет экспорта ${LIVE_FUSION_EXPORT} — судьи нет`);
+  }
+  if (fn.name !== LIVE_FUSION_EXPORT) {
+    throw new Error(
+      `ансамбль: экспорт ${LIVE_FUSION_EXPORT} из ${source} — функция «${fn.name || '(аноним)'}», а не ядро`,
+    );
+  }
+  assertLiveFusion(fn);
+  return { fuse: fn, passport: { source, exportName: LIVE_FUSION_EXPORT, behaviourLock: 'passed' } };
+}
+
 /**
  * Слить perSample одиночных строк в perSample ансамбля. Каждая строка — одна запись:
  * источники по имени → `fuse` → combinedScore как балл ранжирования, вердикт по порогу.
