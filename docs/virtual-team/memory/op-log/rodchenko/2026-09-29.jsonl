@@ -1,1 +1,4 @@
 {"ts":"2026-09-29T11:36:03.184Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-09-29T18:14:14.472Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-09-29-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-29T18:14:14.472Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-27-hunt-and-canon-m0-order","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-29T18:14:14.472Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

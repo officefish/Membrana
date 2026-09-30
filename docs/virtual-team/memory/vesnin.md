@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14235/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 391 (причины в op-log) -->
+Записей: 49 · бюджет 14244/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 392 (причины в op-log) -->
+
+### 2026-09-29 · позиция · team-evening-feedback
+
+> Vesnin. Сегодня редкий день, когда я вёл вечернее ревью и вижу картину изнутри. Оценка артефактов: MAIN_DAY_ISSUE в финальной редакции (caf73ab5) — образцовый: посылки заменены на проверяемые маркеры (`file:` + `symbol:`), таблица «Почему это магистраль» с provenance и датами, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-29.md#reply-1`
 
 ### 2026-09-28 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Оценка артефактов: `MAIN_DAY_ISSUE` — образец честной фиксации owner-choice: явное отделение назначения от отражений (стендап/DAY_PLAN/горизонт). Структура «1 источник назначения, N отражений контекста» предотвращает фантом-магистрали. DoD точен и проверяем. Итоги дня: #2231 — […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
-
-### 2026-08-28 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE — образцовый: явная магистраль, таблица обоснования с первоисточниками, посылки с маркерами и вердиктами. Code-review точно указал на риск «зонтика» #2204, под которым проходят Dockerfile/tsconfig без носителя buffer-stop в packages/. […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`
