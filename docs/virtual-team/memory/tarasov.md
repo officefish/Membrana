@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14394/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 389 (причины в op-log) -->
+Записей: 50 · бюджет 14400/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 390 (причины в op-log) -->
+
+### 2026-09-29 · позиция · team-evening-feedback
+
+> Tarasov на связи. День закрываю с ясной головой: магистраль three-roads-experiment выбрана владельцем в 14:25 (author=human, PR #2512), но живой опыт на приборе так и не проведён — это третий перенос подряд, и это главный факт дня. Оценка артефактов: STRATEGY_DAY — вещдок 17.07, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-29.md#reply-1`
 
 ### 2026-09-28 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > Оценка артефактов: Стратегический план дня (`STRATEGIC_PLAN_DAY.md`) вновь помечен как вещдок и не является рабочим документом — это ожидаемо и корректно. `MAIN_DAY_ISSUE` чётко зафиксировал магистраль `night-procedure-frames` по прямому слову владельца, отделив её от топ-3 […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
-
-### 2026-08-28 · позиция · team-evening-feedback
-
-> Оценка артефактов: Утренние документы дня согласованы между собой — фокус стендапа (#2204 green + стоп) совпал с MAIN_DAY_ISSUE, где магистралью закреплён `buffer-control-plugin-2204` с чётким DoD и таблицей обоснования. STRATEGY_DAY корректно вынес `secret-parser-built` в […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`

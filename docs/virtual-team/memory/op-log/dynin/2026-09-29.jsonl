@@ -1,1 +1,4 @@
 {"ts":"2026-09-29T11:36:02.469Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-09-29T18:14:12.131Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-09-29-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-29T18:14:12.131Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-28-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-29T18:14:12.131Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14335/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 374 (причины в op-log) -->
+Записей: 50 · бюджет 14331/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 375 (причины в op-log) -->
+
+### 2026-09-29 · позиция · team-evening-feedback
+
+> Dynin. Меня сегодня в коде не было — DSP-задач на дне не стояло. Оценка артефактов: DAILY_AUDIT — сухая механическая выжимка, 45% строк ушло в бизнес-процессы, 24% в «прочее», 17% в тулинг, только 6% в основной продукт. Это честная цифра: день был про инфраструктуру ритуала […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-29.md#reply-1`
 
 ### 2026-09-28 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > Оценка артефактов: Артефакты дня корректны. `MAIN_DAY_ISSUE` чётко разделил «измерения/факты» (schedule drift, охота-враньё) от «гипотез». Код-ревью верно пометил мою роль как «нет FFT/спектра» — день не математический. Итоги дня: В изменениях нет математики, но есть корректные […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
-
-### 2026-08-28 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE — лучший пример формализации: посылки с маркерами `unknown` → к вечеру должны стать green или явный fail-log. Code-review точно указал на отсутствие стоп-предиката в диффе — это correctness-требование, не косметика. Итоги дня: `FIELD_NODE_RATE` […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`
 
 ### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 

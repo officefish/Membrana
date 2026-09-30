@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-28 |
-| Head SHA | 412e05a2d8356b76c26e20a82d8ef718a90b0a50 |
+| Date | 2026-09-29 |
+| Head SHA | afc70ac76a714d9c862815a6c479b4d3c9b3101c |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,12 +16,12 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1254 |
+| Code files under `scripts/` | 1259 |
 | Yarn scripts (package.json) | 475 |
 | Yarn → `scripts/` | 421 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 916 |
+| Code files without yarn ref | 921 |
 
 ## Yarn → scripts/ (421)
 
@@ -447,7 +447,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (916)
+## Code files without yarn ref (921)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -836,6 +836,8 @@
 - `scripts/lib/llm-procedure-transport.mjs`
 - `scripts/lib/llm-procedure-transport.test.mjs`
 - `scripts/lib/long-temp-path.mjs`
+- `scripts/lib/main-day-assertions-view.mjs`
+- `scripts/lib/main-day-assertions-view.test.mjs`
 - `scripts/lib/main-day-issue-paths.mjs`
 - `scripts/lib/main-day-magistral-freshness.mjs`
 - `scripts/lib/main-day-magistral-freshness.test.mjs`
@@ -925,6 +927,9 @@
 - `scripts/lib/resolutions-liveness.mjs`
 - `scripts/lib/review-diff-source.mjs`
 - `scripts/lib/review-diff-source.test.mjs`
+- `scripts/lib/review-done-ledger-port.mjs`
+- `scripts/lib/review-done-ledger.mjs`
+- `scripts/lib/review-done-ledger.test.mjs`
 - `scripts/lib/review-gate.mjs`
 - `scripts/lib/review-gate.test.mjs`
 - `scripts/lib/review-lead.mjs`
@@ -1376,7 +1381,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1254)
+## All code files (1259)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1913,6 +1918,8 @@
 - `scripts/lib/llm-procedure-transport.mjs`
 - `scripts/lib/llm-procedure-transport.test.mjs`
 - `scripts/lib/long-temp-path.mjs`
+- `scripts/lib/main-day-assertions-view.mjs`
+- `scripts/lib/main-day-assertions-view.test.mjs`
 - `scripts/lib/main-day-issue-paths.mjs`
 - `scripts/lib/main-day-magistral-freshness.mjs`
 - `scripts/lib/main-day-magistral-freshness.test.mjs`
@@ -2002,6 +2009,9 @@
 - `scripts/lib/resolutions-liveness.mjs`
 - `scripts/lib/review-diff-source.mjs`
 - `scripts/lib/review-diff-source.test.mjs`
+- `scripts/lib/review-done-ledger-port.mjs`
+- `scripts/lib/review-done-ledger.mjs`
+- `scripts/lib/review-done-ledger.test.mjs`
 - `scripts/lib/review-gate.mjs`
 - `scripts/lib/review-gate.test.mjs`
 - `scripts/lib/review-lead.mjs`

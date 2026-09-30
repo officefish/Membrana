@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14385/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 377 (причины в op-log) -->
+Записей: 50 · бюджет 14394/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 378 (причины в op-log) -->
+
+### 2026-09-29 · позиция · team-evening-feedback
+
+> Kuryokhin. День без аудио-контура — эффектов, плагинов Web Audio, DSP не касались. Оценка артефактов: MAIN_DAY_ISSUE честно вычленяет то, что не делаем (DSP-бенчмарки, повтор free-v1, разведка yamnet) со ссылкой на зафиксированный потолок эшелона 0 в […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-29.md#reply-1`
 
 ### 2026-09-28 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
 
-### 2026-08-28 · позиция · team-evening-feedback
+### 2026-08-12 · позиция · team-evening-feedback
 
-> Оценка артефактов: Канон захвата 48 kHz fail-closed согласован с продуктовым контуром Firebat — FIELD_NODE_RATE вписан в общую картину. MAIN_DAY_ISSUE корректно держит фокус на квоте и дежурстве, не уводя в DSP. Итоги дня: Канон 48 kHz fail-closed на field-poller — правильная […]
+> Курёхин Оценка артефактов: аудио-магистраль сегодня не в фокусе — стратегия и канон дня об этом не говорят, и это честно (тариф + санитария). MAIN_DAY_ISSUE не обещал ничего про DSP — согласовано. Итоги дня: по моему профилю — «—» на содержании. Но: закрыт […]
 
-— источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
-
-> Preview остаётся производной поверхностью. Он получает original только после `read-bytes` allow, сохраняет class и при любой ошибке возвращает `preview_unavailable`, не меняя original, registry или tip. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`

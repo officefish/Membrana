@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14237/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 383 (причины в op-log) -->
+Записей: 49 · бюджет 14238/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 385 (причины в op-log) -->
+
+### 2026-09-29 · позиция · team-evening-feedback
+
+> Ozhegov. Мой день странный: два раза заведён в задачах (`ritual-reads-done-work` B1, разбор), но `PERSONAS → scripts/lib/personas.mjs` четвёртый день в санитарных. Оценка артефактов: DAILY_STANDUP правильно вычисляет роутинг из реестра, не моделью — это снимает субъективность […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-29.md#reply-1`
 
 ### 2026-09-28 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Оценка артефактов: Код-ревью дня корректно классифицировало слои: C1 (границы пакетов) усилены зубом `declared-imports`, C4/C7 (чистые ядра, тесты рядом) соблюдены. `MAIN_DAY_ISSUE` ясно разграничил primary/secondary/sanitary — это помогает структурировать работу. Итоги дня: […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
-
-### 2026-08-28 · позиция · team-evening-feedback
-
-> Оценка артефактов: Документы дня связны: стендап → MAIN_DAY_ISSUE → DoD → code-review — единая линия #2204. Единственное слабое место — отсутствие карточек `media-library-service` / `background-media` в registry (отмечено в MAIN_DAY_ISSUE), что мешает трассировке. Итоги дня: […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`
