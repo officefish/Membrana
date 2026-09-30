@@ -32,7 +32,10 @@ import {
 import { resetMediaLibraryHubForTests } from '@/lib/mediaLibraryHub';
 
 import { resetOverflowWindowControllerForTests, type OverflowWindowController } from './controller';
+import { OverflowHoldPlashka } from './OverflowHoldPlashka';
 import { OverflowWindowHost, SAMPLE_LIBRARY_MODULE_ID } from './OverflowWindowHost';
+import { OVERFLOW_FREED_TITLE, OVERFLOW_REASON_TEXT, OVERFLOW_WINDOW_TITLE } from './reasonTexts';
+import { buildBoardOverflowHoldView, useOverflowHoldBoardView } from './useOverflowHoldBoardView';
 
 const REFUSAL: OverflowRefusalSnapshot = {
   reason: BUFFER_OVERFLOW_REASONS.DEVICE_BUFFER_FULL,
@@ -233,5 +236,115 @@ describe('OverflowWindowHost', () => {
     expect(hold.isHeld()).toBe(false);
     expect(screen.getByTestId('overflow-released')).toBeTruthy();
     expect(getQuota).toHaveBeenCalledTimes(1);
+  });
+});
+
+/**
+ * #2533 — входы вне окна (бейдж доски, плашка панели) читают живую ось из снимка сервиса
+ * библиотеки, без второго запроса квоты. Зуб живёт здесь, рядом с хостом: та же сборка
+ * настоящих носителя, контроллера и сервиса с memory-бэкендом.
+ *
+ * Порчи → красный: заголовок бейджа «полон» при живом буфере ниже порога стража — красный;
+ * остаток бейджа из снимка остановки при живой оси — красный; плашка панели без тона — красный.
+ */
+describe('#2533: бейдж доски и плашка панели — место по живой оси', () => {
+  let hold: DeviceOverflowHold;
+  let controller: OverflowWindowController;
+  let backend: MemoryStorageBackend;
+  let service: MediaLibraryService;
+
+  function BoardViewProbe() {
+    const view = useOverflowHoldBoardView();
+    if (view === null) return <span data-testid="board-view-none" />;
+    return (
+      <span data-testid="board-view" data-tone={view.tone} data-remaining={view.remainingText}>
+        {view.headline}
+      </span>
+    );
+  }
+
+  beforeEach(async () => {
+    resetMediaLibraryHubForTests();
+    resetDeviceOverflowHoldWiringForTests();
+    hold = resetDeviceOverflowHoldForTests();
+    installDeviceOverflowHoldWiring(hold);
+    controller = resetOverflowWindowControllerForTests(hold);
+    backend = new MemoryStorageBackend({ limitBytes: 10_000, backend: 'server', serverReachable: true });
+    service = configureDefaultMediaLibraryService(backend);
+    await putBufferSamples(backend, 2);
+    await service.refresh();
+  });
+
+  afterEach(() => {
+    cleanup();
+    controller.dispose();
+    resetDeviceOverflowHoldWiringForTests();
+    resetDefaultMediaLibraryServiceForTests();
+    vi.restoreAllMocks();
+  });
+
+  it('строитель: живая ось ниже порога → слово об освобождённом месте, тон warning, остаток живой; выше → «полон», error', () => {
+    const episode = { ...REFUSAL, source: 'server' as const, enteredAtMs: 1, owner: null, policy: 'stop' as const };
+    const freed = buildBoardOverflowHoldView(
+      episode,
+      { usedBytes: 0, limitBytes: 100, backend: 'server', serverReachable: true, bufferUsedBytes: 0, bufferLimitBytes: 100 },
+      () => {},
+    );
+    expect(freed.headline).toBe(OVERFLOW_FREED_TITLE);
+    expect(freed.tone).toBe('warning');
+    expect(freed.remainingText).toBe('свободно 100 B из 100 B');
+    const full = buildBoardOverflowHoldView(
+      episode,
+      { usedBytes: 0, limitBytes: 100, backend: 'server', serverReachable: true, bufferUsedBytes: 96, bufferLimitBytes: 100 },
+      () => {},
+    );
+    expect(full.headline).toBe(`${OVERFLOW_WINDOW_TITLE} · ${OVERFLOW_REASON_TEXT.device_buffer_full}`);
+    expect(full.tone).toBe('error');
+    expect(full.remainingText).toBe('свободно 4 B из 100 B');
+    // Живой оси нет — остаток из снимка остановки, слово о факте прежнее.
+    const blind = buildBoardOverflowHoldView(episode, null, () => {});
+    expect(blind.headline).toBe(full.headline);
+    expect(blind.remainingText).toBe('свободно 0 B из 100 B');
+  });
+
+  it('хук и плашка: удержание при живом буфере 1 % → жёлтая плашка со словом о месте; после перечитанной квоты 96 % → красная «полон»', async () => {
+    const getQuota = vi.spyOn(backend, 'getQuota');
+    render(
+      <>
+        <BoardViewProbe />
+        <OverflowHoldPlashka />
+      </>,
+    );
+    expect(screen.getByTestId('board-view-none')).toBeTruthy();
+    expect(screen.queryByTestId('overflow-hold-plashka')).toBeNull();
+
+    act(() => {
+      expect(hold.activateFromServer(REFUSAL)).toBe('entered');
+    });
+    // Снимок сервиса: 2 пробы по 64 B из 10 000 → место есть; удержание при этом не снято.
+    expect(screen.getByTestId('board-view').textContent).toBe(OVERFLOW_FREED_TITLE);
+    expect(screen.getByTestId('board-view').getAttribute('data-tone')).toBe('warning');
+    expect(screen.getByTestId('board-view').getAttribute('data-remaining')).toContain('из 9.8 KB');
+    const plashka = screen.getByTestId('overflow-hold-plashka');
+    expect(plashka.className).toContain('alert-warning');
+    expect(plashka.textContent).toContain(OVERFLOW_FREED_TITLE);
+    expect(hold.isHeld()).toBe(true);
+
+    getQuota.mockResolvedValue({
+      usedBytes: 0,
+      limitBytes: 10_000,
+      bufferUsedBytes: 9_600,
+      bufferLimitBytes: 10_000,
+      backend: 'server',
+      serverReachable: true,
+    });
+    await act(async () => {
+      await service.refresh();
+    });
+    await waitFor(() => expect(screen.getByTestId('board-view').getAttribute('data-tone')).toBe('error'));
+    expect(screen.getByTestId('board-view').textContent).toBe(
+      `${OVERFLOW_WINDOW_TITLE} · ${OVERFLOW_REASON_TEXT.device_buffer_full}`,
+    );
+    expect(screen.getByTestId('overflow-hold-plashka').className).toContain('alert-error');
   });
 });

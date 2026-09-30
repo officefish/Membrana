@@ -1,18 +1,20 @@
 import type { RuntimeOverflowHoldPayload } from '@membrana/core';
-import type { StorageQuota } from '@membrana/media-library-service';
+import { stopDecision, type StorageQuota } from '@membrana/media-library-service';
 import type { OverflowPolicy, QuotaSubject } from '@membrana/plugin-contracts';
 
 import type { OverflowHoldAxis, OverflowHoldEpisode } from '@/lib/device-overflow-hold';
 
 import {
   NOT_AVAILABLE_TEXT,
+  OVERFLOW_HELD_TEXT_BY_STANDING,
   OVERFLOW_PHASE_TEXT,
   OVERFLOW_POLICY_TEXT,
-  OVERFLOW_WINDOW_TITLE,
+  OVERFLOW_TITLE_BY_STANDING,
   TARIFF_NO_TRANSITIONS_TEXT,
   describeOverflowReason,
   formatBytes,
   type OverflowReasonDescription,
+  type OverflowStanding,
 } from './reasonTexts';
 
 export interface OverflowAxisView {
@@ -45,7 +47,12 @@ export interface OverflowWindowViewModel {
   /** Ключ однократности окна: `overflowId` сервера либо локальный ключ до повышения. */
   readonly windowKey: string;
   readonly overflowId: string | null;
+  /** Заголовок — по состоянию места (#2533): «Буфер полон» либо «Место освобождено — снимите удержание». */
   readonly title: string;
+  /** Место по живой оси причины; удержание (`held`) от него НЕ зависит — снимает только человек. */
+  readonly standing: OverflowStanding;
+  /** Текст плашки удержания — по состоянию места; читается, когда `held === true`. */
+  readonly heldText: string;
   readonly reason: OverflowReasonDescription;
   /** Живые величины из последнего снимка библиотеки — основание решения оператора. */
   readonly axes: Readonly<Record<QuotaSubject, OverflowAxisView | null>>;
@@ -101,6 +108,19 @@ export function liveAxesFromQuota(quota: StorageQuota): Readonly<Record<QuotaSub
   };
 }
 
+/**
+ * Место по живой оси (#2533). Судья — ТОТ ЖЕ `stopDecision` с порогом `BUFFER_STOP_RATIO`, которым
+ * страж прибора входит в удержание (`localGuard.ts`): ниже порога страж не перевходит, значит слово
+ * «освобождено» не лжёт; вторая правда о пороге здесь не заводится. Предел не объявлен
+ * (`filled === null`) или оси нет → `unknown`. Освобождение места удержание НЕ снимает (M3 DoD 7).
+ */
+export function judgeOverflowStanding(axis: OverflowHoldAxis | null): OverflowStanding {
+  if (axis === null) return 'unknown';
+  const verdict = stopDecision(axis, { policy: 'stop' });
+  if (verdict.filled === null) return 'unknown';
+  return verdict.action === 'stop' ? 'full' : 'freed';
+}
+
 function describeRecordedBeforeStop(value: RecordedBeforeStop | null): string {
   if (value === null) return NOT_AVAILABLE_TEXT;
   return `${value.samples} проб · ${formatBytes(value.bytes)}`;
@@ -131,11 +151,16 @@ function resolveTariff(transitions: TariffTransitionsKnowledge): OverflowWindowV
 export function buildOverflowWindowViewModel(input: OverflowWindowViewModelInput): OverflowWindowViewModel {
   const { episode } = input;
   const phase: RuntimeOverflowHoldPayload['phase'] = episode.overflowId === null ? 'held_local' : 'held';
+  const reason = describeOverflowReason(episode.reason);
+  // Место судится по живой оси ПРИЧИНЫ (буфер либо наборы), не по буферу вообще.
+  const standing = judgeOverflowStanding(reason.axis === null ? null : input.liveAxes[reason.axis]);
   return {
     windowKey: episodeWindowKey(episode),
     overflowId: episode.overflowId,
-    title: OVERFLOW_WINDOW_TITLE,
-    reason: describeOverflowReason(episode.reason),
+    title: OVERFLOW_TITLE_BY_STANDING[standing],
+    standing,
+    heldText: OVERFLOW_HELD_TEXT_BY_STANDING[standing],
+    reason,
     axes: {
       buffer: toAxisView(input.liveAxes.buffer),
       userStorage: toAxisView(input.liveAxes.userStorage),

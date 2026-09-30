@@ -11,13 +11,7 @@ import {
   type CleanOutcome,
   type SinceStopDelta,
 } from './ledger';
-import {
-  NOT_AVAILABLE_TEXT,
-  OVERFLOW_ALIVE_TEXT,
-  OVERFLOW_AXIS_TITLE,
-  formatBytes,
-  formatOverflowAt,
-} from './reasonTexts';
+import { NOT_AVAILABLE_TEXT, OVERFLOW_AXIS_TITLE, formatBytes, formatOverflowAt } from './reasonTexts';
 import type { OverflowAxisView, OverflowWindowViewModel } from './viewModel';
 
 export interface OverflowWindowProps {
@@ -223,9 +217,15 @@ export function OverflowWindow({
             Удержание снято — запись снова возможна.
           </p>
         ) : (
-          <p className="alert alert-error py-2 text-sm" role="status" data-testid="overflow-held">
-            Прибор {OVERFLOW_ALIVE_TEXT}: новые пробы не отправляются, связь и наблюдение живут. Само не
-            возобновится.
+          // Плашка — по состоянию места (#2533): занято — красная, освобождено при неснятом
+          // удержании — жёлтая; слова приходят из vm, окно их не сочиняет.
+          <p
+            className={`alert ${vm.standing === 'freed' ? 'alert-warning' : 'alert-error'} py-2 text-sm`}
+            role="status"
+            data-testid="overflow-held"
+            data-overflow-standing={vm.standing}
+          >
+            {vm.heldText}
           </p>
         )}
 

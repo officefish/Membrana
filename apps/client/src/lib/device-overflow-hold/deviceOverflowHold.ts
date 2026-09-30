@@ -323,7 +323,12 @@ export function overflowHoldToRuntimePayload(
 
 /** Слово человеку о факте удержания — без таблицы код→текст (она у 4/4, M5). */
 export function describeOverflowHold(episode: OverflowHoldEpisode): string {
-  const id = episode.overflowId === null ? 'эпизод ещё не подтверждён сервером' : `эпизод ${episode.overflowId}`;
+  // Локальный эпизод — не «ещё не подтверждён»: при политике stop страж (95 %) всегда раньше
+  // серверного отказа (100 %), и после него сервер проб не видит — подтверждения не будет (#2533).
+  const id =
+    episode.overflowId === null
+      ? 'эпизод по стражу прибора, до отказа сервера не дошло'
+      : `эпизод ${episode.overflowId}`;
   return (
     `Остановлено: буфер полон (${episode.reason}; ${id}). ` +
     'Новые пробы не отправляются, запись не ведётся; связь с сервером и наблюдение живут. ' +

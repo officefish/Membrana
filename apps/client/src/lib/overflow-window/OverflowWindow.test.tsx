@@ -74,6 +74,36 @@ describe('OverflowWindow — содержание (а)', () => {
     expect(screen.getByTestId('overflow-held').textContent).toContain('жив, не пишет');
   });
 
+  it('#2533: место освобождено при неснятом удержании — заголовок о месте, плашка жёлтая, слово о слове человека', () => {
+    const vm = buildOverflowWindowViewModel({
+      episode: EPISODE,
+      liveAxes: { buffer: { usedBytes: 0, limitBytes: 1000 }, userStorage: EPISODE.userStorage },
+      held: true,
+      recordedBeforeStop: null,
+      tariffTransitions: 'unknown',
+    });
+    render(<OverflowWindow {...props({ vm })} />);
+    expect(screen.getByRole('heading').textContent).toBe('Место освобождено — снимите удержание');
+    const held = screen.getByTestId('overflow-held');
+    expect(held.className).toContain('alert-warning');
+    expect(held.className).not.toContain('alert-error');
+    expect(held.textContent).toContain('место освобождено');
+    expect(held.textContent).toContain('до вашего слова');
+    // Удержание не снято: кнопка «Возобновить запись» на месте, «снято» не показано.
+    expect(screen.getByTestId('overflow-resume')).toBeTruthy();
+    expect(screen.queryByTestId('overflow-released')).toBeNull();
+    // Снимок остановки остаётся рядом как вещдок.
+    expect(screen.getByTestId('overflow-axis-buffer-at-stop').textContent).toContain('лимит 1000 B');
+  });
+
+  it('#2533: место занято — заголовок «Буфер полон», плашка красная', () => {
+    render(<OverflowWindow {...props()} />);
+    expect(screen.getByRole('heading').textContent).toBe('Буфер полон');
+    const held = screen.getByTestId('overflow-held');
+    expect(held.className).toContain('alert-error');
+    expect(held.textContent).toContain('Само не возобновится');
+  });
+
   it('неизвестный код: заголовок «Буфер полон», сырой код приглушённой строкой', () => {
     const vm = buildOverflowWindowViewModel({
       episode: { ...EPISODE, reason: 'weird_code' },

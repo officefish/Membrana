@@ -47,9 +47,16 @@ export function describeOverflowReason(code: string): OverflowReasonDescription 
   return { code, text: OVERFLOW_WINDOW_TITLE, rawCode: code, axis: null };
 }
 
-/** Фаза удержания (M4): без серверного id / с id. Лексика согласована с кабинетом. */
+/**
+ * Фаза удержания (M4): без серверного id / с id. Лексика согласована с кабинетом.
+ *
+ * `held_local` — ПОСТОЯННОЕ состояние любой остановки при политике `stop`, а не переходное
+ * (#2533): страж прибора входит при 95 % (`BUFFER_STOP_RATIO`), сервер отказал бы при 100 %,
+ * а после стража шлюз не выпускает ни одной пробы — сервер эпизода не чеканит никогда.
+ * Слово «ещё не подтверждено» обещало подтверждение, которого не бывает; сказано, как есть.
+ */
 export const OVERFLOW_PHASE_TEXT: Record<RuntimeOverflowHoldPayload['phase'], string> = {
-  held_local: 'удержание · ещё не подтверждено сервером',
+  held_local: 'удержание · по стражу прибора (до отказа сервера не дошло)',
   held: 'удержание · подтверждено сервером',
 };
 
@@ -66,6 +73,32 @@ export const OVERFLOW_AXIS_TITLE: Record<QuotaSubject, string> = {
 
 /** Согласованная с кабинетом лексика M4: прибор на связи, детекция живёт, проб не пишет. */
 export const OVERFLOW_ALIVE_TEXT = 'жив, не пишет';
+
+/**
+ * Состояние МЕСТА по живой оси причины (#2533) — отдельно от факта удержания:
+ *  - `full` — место всё ещё занято не ниже порога стража (`BUFFER_STOP_RATIO`);
+ *  - `freed` — место освобождено (вывоз в набор / чистка снаружи), а удержание не снято:
+ *    снимает только человек (M3 DoD 7) — окно обязано сказать это словами, а не «полон» при 0 B;
+ *  - `unknown` — живой оси нет (снимка библиотеки нет либо код причины неизвестен) — говорим о
+ *    факте остановки, как и раньше.
+ */
+export type OverflowStanding = 'full' | 'freed' | 'unknown';
+
+/** Заголовок при освобождённом месте — развилка 1 плана #2533, умолчание владельца. */
+export const OVERFLOW_FREED_TITLE = 'Место освобождено — снимите удержание';
+
+export const OVERFLOW_TITLE_BY_STANDING: Record<OverflowStanding, string> = {
+  full: OVERFLOW_WINDOW_TITLE,
+  unknown: OVERFLOW_WINDOW_TITLE,
+  freed: OVERFLOW_FREED_TITLE,
+};
+
+/** Плашка окна при удержании — по состоянию места; вне окна тот же текст читают бейдж и панель. */
+export const OVERFLOW_HELD_TEXT_BY_STANDING: Record<OverflowStanding, string> = {
+  full: `Прибор ${OVERFLOW_ALIVE_TEXT}: новые пробы не отправляются, связь и наблюдение живут. Само не возобновится.`,
+  unknown: `Прибор ${OVERFLOW_ALIVE_TEXT}: новые пробы не отправляются, связь и наблюдение живут. Само не возобновится.`,
+  freed: `Прибор ${OVERFLOW_ALIVE_TEXT}: место освобождено, удержание держится до вашего слова.`,
+};
 
 /** Честная витрина тарифа при факте #2297 (M5 (б)). */
 export const TARIFF_NO_TRANSITIONS_TEXT = 'доступных тарифов для перехода нет';

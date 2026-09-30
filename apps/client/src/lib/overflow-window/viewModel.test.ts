@@ -5,7 +5,13 @@
  * Порчи → красный: убрать строку из `OVERFLOW_REASON_TEXT` — красный `tsc` (Record по union);
  * неизвестный код без сырого кода — красный; одна шкала вместо двух — красный; «н/д» заменить
  * на число — красный; пустой список переходов с включённой кнопкой — красный.
+ *
+ * #2533 (порчи, красные на стволе dba53da0): заголовок «Буфер полон» при живом буфере 0 B и
+ * неснятом удержании — красный; фаза локального эпизода со словами «ещё не подтверждено» —
+ * красный; место судится по буферу при причине «наборы полны» — красный; освобождение места
+ * снимает `held` — красный.
  */
+import { BUFFER_STOP_RATIO } from '@membrana/media-library-service';
 import { BUFFER_OVERFLOW_REASONS, type BufferOverflowReason } from '@membrana/plugin-contracts';
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
@@ -13,13 +19,16 @@ import type { OverflowHoldEpisode } from '@/lib/device-overflow-hold';
 
 import {
   NOT_AVAILABLE_TEXT,
+  OVERFLOW_FREED_TITLE,
+  OVERFLOW_HELD_TEXT_BY_STANDING,
+  OVERFLOW_PHASE_TEXT,
   OVERFLOW_REASON_TEXT,
   OVERFLOW_WINDOW_TITLE,
   TARIFF_NO_TRANSITIONS_TEXT,
   describeOverflowReason,
   formatAxisRemaining,
 } from './reasonTexts';
-import { buildOverflowWindowViewModel, episodeWindowKey, liveAxesFromQuota } from './viewModel';
+import { buildOverflowWindowViewModel, episodeWindowKey, judgeOverflowStanding, liveAxesFromQuota } from './viewModel';
 
 const LIVE_AXES = {
   buffer: { usedBytes: 250_000, limitBytes: 2_000_000 },
@@ -64,6 +73,76 @@ describe('таблица код→текст', () => {
   });
 });
 
+describe('#2533 — место по живой оси причины, удержание от него не зависит', () => {
+  const LIMIT = 536_870_912;
+  /** Живой эпизод 30.09: страж вошёл на 95.06 % (486.7 MB из 512 MB), id сервера нет. */
+  const LOCAL_EPISODE: OverflowHoldEpisode = {
+    ...EPISODE,
+    overflowId: null,
+    source: 'local',
+    buffer: { usedBytes: 510_302_892, limitBytes: LIMIT },
+    userStorage: null,
+  };
+  const build = (liveBuffer: number, liveUser = 510_302_892, episode: OverflowHoldEpisode = LOCAL_EPISODE) =>
+    buildOverflowWindowViewModel({
+      episode,
+      liveAxes: {
+        buffer: { usedBytes: liveBuffer, limitBytes: LIMIT },
+        userStorage: { usedBytes: liveUser, limitBytes: LIMIT },
+      },
+      held: true,
+      recordedBeforeStop: null,
+      tariffTransitions: 'unknown',
+    });
+
+  it('порча: буфер 0 B при неснятом удержании — заголовок НЕ «Буфер полон», а «Место освобождено — снимите удержание»', () => {
+    const vm = build(0);
+    expect(vm.standing).toBe('freed');
+    expect(vm.title).not.toBe(OVERFLOW_WINDOW_TITLE);
+    expect(vm.title).toBe(OVERFLOW_FREED_TITLE);
+    expect(vm.heldText).toBe(OVERFLOW_HELD_TEXT_BY_STANDING.freed);
+    expect(vm.heldText).toContain('место освобождено');
+    // Удержание НЕ снято освобождением места (M3 DoD 7): held приходит снаружи и остаётся.
+    expect(vm.held).toBe(true);
+    // Снимок остановки — вещдок, не переписан живой осью.
+    expect(vm.axesAtStop.buffer?.usedBytes).toBe(510_302_892);
+  });
+
+  it('место занято не ниже порога стража → «Буфер полон»; порог — тот же, что у стража', () => {
+    const atGuard = Math.ceil(LIMIT * BUFFER_STOP_RATIO);
+    expect(build(atGuard).standing).toBe('full');
+    expect(build(atGuard).title).toBe(OVERFLOW_WINDOW_TITLE);
+    expect(build(atGuard).heldText).toBe(OVERFLOW_HELD_TEXT_BY_STANDING.full);
+    expect(build(atGuard - 1).standing).toBe('freed');
+    expect(build(LIMIT).standing).toBe('full');
+  });
+
+  it('причина «наборы полны» судится по оси наборов, а не по буферу', () => {
+    const userFull: OverflowHoldEpisode = { ...EPISODE, reason: BUFFER_OVERFLOW_REASONS.USER_STORAGE_FULL };
+    // Буфер пуст, наборы полны → по оси причины место занято.
+    expect(build(0, LIMIT, userFull).standing).toBe('full');
+    // Наборы освободили, буфер полон → по оси причины место есть.
+    expect(build(LIMIT, 0, userFull).standing).toBe('freed');
+  });
+
+  it('живой оси нет / предел не объявлен / код причины неизвестен → unknown и прежний заголовок', () => {
+    expect(judgeOverflowStanding(null)).toBe('unknown');
+    expect(judgeOverflowStanding({ usedBytes: 0, limitBytes: 0 })).toBe('unknown');
+    const noLive = buildOverflowWindowViewModel({
+      episode: LOCAL_EPISODE,
+      liveAxes: { buffer: null, userStorage: null },
+      held: true,
+      recordedBeforeStop: null,
+      tariffTransitions: 'unknown',
+    });
+    expect(noLive.standing).toBe('unknown');
+    expect(noLive.title).toBe(OVERFLOW_WINDOW_TITLE);
+    const unknownReason = build(0, 0, { ...LOCAL_EPISODE, reason: 'quota_exceeded' });
+    expect(unknownReason.standing).toBe('unknown');
+    expect(unknownReason.title).toBe(OVERFLOW_WINDOW_TITLE);
+  });
+});
+
 describe('buildOverflowWindowViewModel — только эпизод + статус, без сети', () => {
   it('две шкалы всегда: занято / лимит / свободно (T4), даже если одна «ок»', () => {
     const vm = buildOverflowWindowViewModel({
@@ -80,7 +159,9 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
     expect(vm.overflowAt).toBe(EPISODE.overflowAt);
     expect(vm.phase).toBe('held');
     expect(vm.policyText).toBe('остановка');
-    expect(vm.title).toBe(OVERFLOW_WINDOW_TITLE);
+    // Живой буфер 13 % — место освобождено (#2533): заголовок не утверждает «полон» при свободной оси.
+    expect(vm.standing).toBe('freed');
+    expect(vm.title).toBe(OVERFLOW_FREED_TITLE);
     expect(vm.windowKey).toBe(EPISODE.overflowId);
   });
 
@@ -101,6 +182,14 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
       tariffTransitions: 'unknown',
     });
     expect(some.recordedBeforeStopText).toBe('12 проб · 2.0 KB');
+  });
+
+  it('локальный эпизод: фаза не обещает подтверждения сервера, которого при stop не бывает (#2533)', () => {
+    // Страж входит при 95 %, сервер отказал бы при 100 %, после стража шлюз не выпускает проб:
+    // «ещё не подтверждено» — ложь о будущем, не переходное состояние.
+    expect(OVERFLOW_PHASE_TEXT.held_local).not.toMatch(/ещё не подтвержден/u);
+    expect(OVERFLOW_PHASE_TEXT.held_local).toContain('по стражу прибора');
+    expect(OVERFLOW_PHASE_TEXT.held).toContain('подтверждено сервером');
   });
 
   it('локальный эпизод: фаза held_local, ключ окна — локальный, снимок хранилища н/д', () => {

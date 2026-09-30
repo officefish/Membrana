@@ -51,9 +51,10 @@ describe('один носитель модалки «Буфер полон»', (
   });
 
   it('литерал заголовка «Буфер полон» как строка диалога не дублируется вне таблицы текстов', () => {
-    const outside = [...CLIENT_FILES, ...BOARD_FILES].filter(
-      (p) => !p.endsWith('reasonTexts.ts') && read(p).includes("'Буфер полон'"),
-    );
+    // Строка, шаблон и текст JSX — все три формы литерала; в комментариях слово законно (#2533:
+    // на стволе dba53da0 шаблон жил в бейдже доски, JSX-текст — в плашке панели).
+    const literal = /(['`]Буфер полон|>Буфер полон)/u;
+    const outside = [...CLIENT_FILES, ...BOARD_FILES].filter((p) => !p.endsWith('reasonTexts.ts') && literal.test(read(p)));
     expect(outside).toEqual([]);
   });
 });

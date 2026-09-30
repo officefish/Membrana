@@ -5,8 +5,10 @@
  * `board-overflow-hold-badge.tsx`, `board-runtime-status.tsx`.
  *
  * Порчи → красный: бейдж со своими словами о причине (не из view) — красный; клик по бейджу
- * не зовёт `onOpenWindow` (второе окно / ничего) — красный; строка статуса без фазы, причины
+ * не зовёт `onOpenWindow` (второе окно / ничего) — красный; строка статуса без фазы, заголовка
  * или «жив, не пишет» — красный; статус скрыт при idle-рантайме, хотя удержание есть — красный.
+ * #2533 (красные на стволе dba53da0): бейдж печатает свой префикс вместо `headline` из view —
+ * красный; при `tone: 'warning'` бейдж/статус остаются красными (`badge-error`/`text-error`) — красный.
  */
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -33,17 +35,27 @@ const IDLE: ScenarioRuntimeState = {
   printOutputs: {},
 };
 
-function view(onOpenWindow?: () => void): BoardOverflowHoldView {
+function view(onOpenWindow?: () => void, overrides: Partial<BoardOverflowHoldView> = {}): BoardOverflowHoldView {
   return {
     overflowKey: 'ovf-1',
+    headline: 'Заголовок из клиента · Причина из таблицы клиента',
+    tone: 'error',
     reasonText: 'Причина из таблицы клиента',
     phaseText: 'удержание · подтверждено сервером',
     remainingText: 'свободно 0 B из 1.0 MB',
     aliveText: 'жив, не пишет',
     title: 'подсказка',
     onOpenWindow,
+    ...overrides,
   };
 }
+
+/** Место освобождено, удержание не снято (#2533): клиент прислал другой заголовок и тон. */
+const FREED: Partial<BoardOverflowHoldView> = {
+  headline: 'Слово клиента об освобождённом месте',
+  tone: 'warning',
+  remainingText: 'свободно 1.0 MB из 1.0 MB',
+};
 
 afterEach(() => cleanup());
 
@@ -57,8 +69,11 @@ describe('BoardOverflowHoldBadge', () => {
     const open = vi.fn();
     render(<BoardOverflowHoldBadge hold={view(open)} />);
     const btn = screen.getByRole('button');
-    expect(btn.textContent).toBe('Буфер полон · Причина из таблицы клиента');
+    // Заголовок — ровно строка клиента, без своего префикса у пакета (#2533).
+    expect(btn.textContent).toBe('Заголовок из клиента · Причина из таблицы клиента');
+    expect(btn.className).toContain('badge-error');
     expect(btn.getAttribute('data-overflow-key')).toBe('ovf-1');
+    expect(btn.getAttribute('data-overflow-tone')).toBe('error');
     expect(btn.getAttribute('aria-label')).toContain('свободно 0 B из 1.0 MB');
     fireEvent.click(btn);
     expect(open).toHaveBeenCalledTimes(1);
@@ -67,18 +82,40 @@ describe('BoardOverflowHoldBadge', () => {
   it('без обработчика — только показ (status), не кнопка', () => {
     render(<BoardOverflowHoldBadge hold={view()} />);
     expect(screen.queryByRole('button')).toBeNull();
-    expect(screen.getByRole('status').textContent).toContain('Буфер полон');
+    expect(screen.getByRole('status').textContent).toBe('Заголовок из клиента · Причина из таблицы клиента');
+  });
+
+  it('#2533: место освобождено — бейдж жёлтый и несёт слово клиента, не «полон»', () => {
+    render(<BoardOverflowHoldBadge hold={view(vi.fn(), FREED)} />);
+    const btn = screen.getByRole('button');
+    expect(btn.textContent).toBe('Слово клиента об освобождённом месте');
+    expect(btn.className).toContain('badge-warning');
+    expect(btn.className).not.toContain('badge-error');
+    expect(btn.getAttribute('data-overflow-tone')).toBe('warning');
+    expect(btn.getAttribute('aria-label')).toContain('свободно 1.0 MB из 1.0 MB');
   });
 });
 
 describe('BoardRuntimeStatus + удержание', () => {
-  it('idle без удержания — строки нет; idle с удержанием — фаза · причина · «жив, не пишет»', () => {
+  it('idle без удержания — строки нет; idle с удержанием — заголовок · фаза · «жив, не пишет»', () => {
     const { container, rerender } = render(<BoardRuntimeStatus state={IDLE} />);
     expect(container.innerHTML).toBe('');
     rerender(<BoardRuntimeStatus state={IDLE} overflowHold={view()} />);
     const line = screen.getByTestId('board-overflow-hold-status');
-    expect(line.textContent).toBe('удержание · подтверждено сервером · Причина из таблицы клиента · жив, не пишет');
+    expect(line.textContent).toBe(
+      'Заголовок из клиента · Причина из таблицы клиента · удержание · подтверждено сервером · жив, не пишет',
+    );
+    expect(line.className).toContain('text-error');
     expect(line.getAttribute('data-overflow-key')).toBe('ovf-1');
+  });
+
+  it('#2533: место освобождено — строка статуса жёлтая и начинается со слова клиента', () => {
+    render(<BoardRuntimeStatus state={IDLE} overflowHold={view(undefined, FREED)} />);
+    const line = screen.getByTestId('board-overflow-hold-status');
+    expect(line.textContent).toBe('Слово клиента об освобождённом месте · удержание · подтверждено сервером · жив, не пишет');
+    expect(line.className).toContain('text-warning');
+    expect(line.className).not.toContain('text-error');
+    expect(line.getAttribute('data-overflow-tone')).toBe('warning');
   });
 
   it('удержание ортогонально фазе рантайма: строка живёт рядом с бегущим main', () => {
