@@ -6,13 +6,13 @@
 | Procedure | `membrana-local-sprint` |
 | Registry epic | `ritual-reads-decisions` (M; Issue с первым PR) · фазы `ritual-reads-decisions-b1…b5` |
 | Prompt | [`RITUAL_READS_DECISIONS_PROMPT.md`](../../prompts/RITUAL_READS_DECISIONS_PROMPT.md) |
-| Cut | [`ritual-reads-decisions.json`](../../sprint/cut/ritual-reads-decisions.json) — **ждёт ратификации владельца** (`sprint:cut` → `findings`: единственная находка `plan_unratified`) |
+| Cut | [`ritual-reads-decisions.json`](../../sprint/cut/ritual-reads-decisions.json) — ратифицирован владельцем 2026-09-30T15:14:18+03:00 инструментом (дайджест `f8a53340…`, умолчания по развилкам), `sprint:cut` → `contract` |
 | Cutter | ozhegov → [`cut-ritual-reads-decisions-ozhegov.md`](../../discussions/cut-ritual-reads-decisions-ozhegov.md) · лента актов [`trail/ritual-reads-decisions.jsonl`](../../sprint/cut/trail/ritual-reads-decisions.jsonl) |
 | Lead | ozhegov |
 | Support | dynin · vesnin · tarasov · angelina (гейт) |
 | Source | остаток [`ritual-reads-done-work`](../ritual-reads-done-work/CLOSURE.md) (#2514) по первому боевому прогону 29.09 |
 | Branch / tree | `fix/decisions-reach-evening` от `origin/main` `0ecbc2f5` · `Membrana-orphans` |
-| Status | **фаза А — нарезка**; фаза Б после ратификации |
+| Status | CLOSED 30.09 — b1 `9b3a5abc`+`91e28d71`+`0262e151` · b2 `85bf1bce` · b3 `1663f4ca` · b4 `ecfdbb83`; gate pass 5/5 `honest_pair`, experience `miss` (overflow b1); итог — [`CLOSURE.md`](./CLOSURE.md) |
 
 ## Зачем
 
