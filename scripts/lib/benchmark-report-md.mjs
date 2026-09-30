@@ -119,7 +119,9 @@ function renderAutoBlock(report) {
     lines.push(...renderEnsembleSection(report));
   }
 
-  lines.push('', AUTO_END, '');
+  // Без хвостового '' — остаток документа за маркером и так начинается с переноса;
+  // хвостовой перенос добавлял по пустой строке за каждый прогон (4 к 30.09).
+  lines.push('', AUTO_END);
   return lines.join('\n');
 }
 
@@ -142,8 +144,8 @@ function renderEnsembleSection(report) {
     '> тем же ядром, что живой ансамбль Студии (`createCombinedStreamDetectors` → `EnsembleProducer`),',
     '> веса 1 у каждого источника — как в живом коде. `live` = harmonic + cepstral + spectral-flux + yamnet.',
     `> Вердикт для F1 — \`combinedScore ≥ ${threshold}\` (порог моста device-board); \`ROC-AUC\` порога не требует.`,
-    '> F1 у `yamnet solo` на этом пороге — не его рабочая точка (clip-score yamnet ≈ 0.004–0.06,',
-    '> собственный порог 0.01, строка yamnet выше); сравнимая величина между строками — ROC-AUC.',
+    '> F1 у `yamnet solo` на этом пороге — не его рабочая точка (clip-score yamnet мал по абсолюту,',
+    '> собственный порог 0.01 — строка yamnet выше); сравнимая величина между строками — ROC-AUC.',
     '',
     `#### Весь тот же корпус, что у одиночных строк (${report.sampleCount} файлов)`,
     '',
