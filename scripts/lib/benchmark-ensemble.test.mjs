@@ -134,6 +134,13 @@ test('фикстура замка сама различает подмены: н
 // Живой судья: dist ядра есть локально после `yarn detectors:build` и в прогоне бенчмарка
 // (там замок стоит на каждом запуске). В CI test:scripts идёт до сборки, dist нет — эта
 // половина зуба тогда пропускается ВСЛУХ, порча выше гоняется всегда.
+//
+// ГДЕ IDENTITY ПРОВЕРЯЕТСЯ В CI. Не здесь, а в гейте «Corpus free-v1 vs baseline»
+// (.github/workflows/detector-drift-gate.yml → yarn drift:code → main() прогонщика →
+// runEnsembles → fusionPassport против собранного dist ядра на живом корпусе). Пути этого
+// файла, lib ансамбля и detection-fusion.ts — в триггерах гейта: правка любого из них
+// прогоняет паспорт в CI. Пропуск ниже — не дыра в инварианте, а разделение труда между
+// двумя судами; обе стороны названы, чтобы пропуск не выглядел проверкой.
 test('живой fuseDetectorConfidences из dist ядра замок проходит', { skip: existsSync(CORE_FUSION_DIST) ? false : `нет ${CORE_FUSION_DIST} — соберите: yarn detectors:build` }, async () => {
   const { fuseDetectorConfidences } = await import(pathToFileURL(CORE_FUSION_DIST).href);
   assert.equal(liveFusionProblem(fuseDetectorConfidences), null);
