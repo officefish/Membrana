@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-29",
+  "date": "2026-09-30",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -177,6 +177,41 @@
       "url": "https://github.com/advisories/GHSA-7q85-xj36-vmfc"
     },
     {
+      "pkg": "adm-zip",
+      "id": "1240032",
+      "severity": "high",
+      "issue": "adm-zip: Decompression-bomb protection (fix for CVE-2026-39244) can be bypassed by declaring uncompressed size as 0",
+      "url": "https://github.com/advisories/GHSA-rcw4-f5rp-g42v"
+    },
+    {
+      "pkg": "adm-zip",
+      "id": "1240034",
+      "severity": "high",
+      "issue": "adm-zip extraction preserves SUID/SGID bits from untrusted ZIPs -> local privilege escalation",
+      "url": "https://github.com/advisories/GHSA-j5f4-cc29-5x44"
+    },
+    {
+      "pkg": "adm-zip",
+      "id": "1240064",
+      "severity": "moderate",
+      "issue": "adm-zip: Duplicate ZIP entry names: getEntry() and extractAllTo() resolve to different content",
+      "url": "https://github.com/advisories/GHSA-p634-w6r4-rjp2"
+    },
+    {
+      "pkg": "adm-zip",
+      "id": "1240065",
+      "severity": "moderate",
+      "issue": "adm-zip: getDataAsync() bypasses the maxOutputLength size guard enforced by the synchronous getData() path",
+      "url": "https://github.com/advisories/GHSA-c6fg-446q-cg94"
+    },
+    {
+      "pkg": "adm-zip",
+      "id": "1240066",
+      "severity": "high",
+      "issue": "adm-zip: Unhandled error event in async DEFLATE decompression crashes Node.js process (DoS)",
+      "url": "https://github.com/advisories/GHSA-8238-w5pm-2374"
+    },
+    {
       "pkg": "ajv",
       "id": "1113714",
       "severity": "moderate",
@@ -310,6 +345,69 @@
       "url": "https://github.com/advisories/GHSA-rgw5-rvv9-x895"
     },
     {
+      "pkg": "brace-expansion",
+      "id": "1240100",
+      "severity": "moderate",
+      "issue": "brace-expansion: Quadratic-time expansion of the `{a},b}` rewrite causes CPU denial of service",
+      "url": "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr"
+    },
+    {
+      "pkg": "brace-expansion",
+      "id": "1240101",
+      "severity": "moderate",
+      "issue": "brace-expansion: Quadratic-time expansion of the `{a},b}` rewrite causes CPU denial of service",
+      "url": "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr"
+    },
+    {
+      "pkg": "brace-expansion",
+      "id": "1240103",
+      "severity": "moderate",
+      "issue": "brace-expansion: Quadratic-time expansion of the `{a},b}` rewrite causes CPU denial of service",
+      "url": "https://github.com/advisories/GHSA-q2hr-2g5m-vwhr"
+    },
+    {
+      "pkg": "brace-expansion",
+      "id": "1240104",
+      "severity": "high",
+      "issue": "brace-expansion: DoS via uncontrolled recursion on nested brace groups causing stack exhaustion",
+      "url": "https://github.com/advisories/GHSA-qhr7-859c-m2p7"
+    },
+    {
+      "pkg": "brace-expansion",
+      "id": "1240105",
+      "severity": "high",
+      "issue": "brace-expansion: DoS via uncontrolled recursion on nested brace groups causing stack exhaustion",
+      "url": "https://github.com/advisories/GHSA-qhr7-859c-m2p7"
+    },
+    {
+      "pkg": "brace-expansion",
+      "id": "1240107",
+      "severity": "high",
+      "issue": "brace-expansion: DoS via uncontrolled recursion on nested brace groups causing stack exhaustion",
+      "url": "https://github.com/advisories/GHSA-qhr7-859c-m2p7"
+    },
+    {
+      "pkg": "brace-expansion",
+      "id": "1240108",
+      "severity": "high",
+      "issue": "brace-expansion: DoS via uncontrolled recursion in parseCommaParts causing stack exhaustion",
+      "url": "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p"
+    },
+    {
+      "pkg": "brace-expansion",
+      "id": "1240109",
+      "severity": "high",
+      "issue": "brace-expansion: DoS via uncontrolled recursion in parseCommaParts causing stack exhaustion",
+      "url": "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p"
+    },
+    {
+      "pkg": "brace-expansion",
+      "id": "1240111",
+      "severity": "high",
+      "issue": "brace-expansion: DoS via uncontrolled recursion in parseCommaParts causing stack exhaustion",
+      "url": "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p"
+    },
+    {
       "pkg": "browserslist",
       "id": "1153171",
       "severity": "high",
@@ -336,6 +434,41 @@
       "severity": "high",
       "issue": "DeepmergeTS has stack exhaustion when merging recursive object graphs",
       "url": "https://github.com/advisories/GHSA-ggr8-5vv4-36mx"
+    },
+    {
+      "pkg": "electron",
+      "id": "1239973",
+      "severity": "high",
+      "issue": "Electron drops inherited HTML sandbox restrictions for popups opened through OpenURLFromTab",
+      "url": "https://github.com/advisories/GHSA-hq2x-r82h-9wj4"
+    },
+    {
+      "pkg": "electron",
+      "id": "1239977",
+      "severity": "high",
+      "issue": "Electron: Windows opened from a sandboxed top-level document do not inherit its sandbox restrictions",
+      "url": "https://github.com/advisories/GHSA-gr2m-v5gq-v685"
+    },
+    {
+      "pkg": "electron",
+      "id": "1239981",
+      "severity": "high",
+      "issue": "Electron: File and HTTP protocol handlers allow cross-origin reads without corsEnabled",
+      "url": "https://github.com/advisories/GHSA-j84w-jfhq-vhvj"
+    },
+    {
+      "pkg": "electron",
+      "id": "1239985",
+      "severity": "high",
+      "issue": "Electron: <webview> can enable Node.js integration in Web Workers despite embedder restrictions",
+      "url": "https://github.com/advisories/GHSA-9qh4-3jw8-366w"
+    },
+    {
+      "pkg": "engine.io",
+      "id": "1240112",
+      "severity": "high",
+      "issue": "Socket.IO: Engine.IO Protocol Revision Mismatch DoS",
+      "url": "https://github.com/advisories/GHSA-2gc4-cqfq-p2gv"
     },
     {
       "pkg": "esbuild",
@@ -450,6 +583,20 @@
       "url": "https://github.com/advisories/GHSA-qw65-cvwx-89v3"
     },
     {
+      "pkg": "fast-uri",
+      "id": "1240090",
+      "severity": "moderate",
+      "issue": "fast-uri vulnerable to inconsistent host case normalization via percent-encoded octets",
+      "url": "https://github.com/advisories/GHSA-hrr3-gc8f-f4qj"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1240091",
+      "severity": "moderate",
+      "issue": "fast-uri vulnerable to inconsistent host case normalization via percent-encoded octets",
+      "url": "https://github.com/advisories/GHSA-hrr3-gc8f-f4qj"
+    },
+    {
       "pkg": "fastify",
       "id": "1158514",
       "severity": "moderate",
@@ -534,6 +681,20 @@
       "url": "https://github.com/advisories/GHSA-2vr4-cq9g-pvrc"
     },
     {
+      "pkg": "ip-address",
+      "id": "1240097",
+      "severity": "moderate",
+      "issue": "ip-address: isInSubnet() and isHostInSubnet() compare addresses of different families as if they shared an address space, allowing an allowlist check to admit an address outside its range",
+      "url": "https://github.com/advisories/GHSA-j6r3-76f7-8jcv"
+    },
+    {
+      "pkg": "ip-address",
+      "id": "1240098",
+      "severity": "moderate",
+      "issue": "ip-address: Address6 builds a parse diagnostic proportional to the input with no length bound, allowing a single long string to stall or crash the process",
+      "url": "https://github.com/advisories/GHSA-h3mg-xc3c-68pw"
+    },
+    {
       "pkg": "js-yaml",
       "id": "1138114",
       "severity": "high",
@@ -560,6 +721,13 @@
       "severity": "high",
       "issue": "js-yaml: maxTotalMergeKeys does not limit CPU use for empty merge sources",
       "url": "https://github.com/advisories/GHSA-2883-xcg3-v3hh"
+    },
+    {
+      "pkg": "js-yaml",
+      "id": "1239991",
+      "severity": "moderate",
+      "issue": "js-yaml: maxTotalMergeKeys does not limit CPU use for empty merge sources",
+      "url": "https://github.com/advisories/GHSA-r3ph-w7gj-g6xm"
     },
     {
       "pkg": "lodash",
@@ -791,6 +959,83 @@
       "severity": "moderate",
       "issue": "undici vulnerable to Denial of Service via unhandled error in WebSocket permessage-deflate decompression",
       "url": "https://github.com/advisories/GHSA-3wwx-pv8p-q78v"
+    },
+    {
+      "pkg": "undici",
+      "id": "1240036",
+      "severity": "moderate",
+      "issue": "undici vulnerable to Denial of Service via orphaned RetryHandler response body",
+      "url": "https://github.com/advisories/GHSA-pmjh-fq2x-6v4x"
+    },
+    {
+      "pkg": "undici",
+      "id": "1240038",
+      "severity": "low",
+      "issue": "undici vulnerable to downstream response splitting via retry interceptor",
+      "url": "https://github.com/advisories/GHSA-r53p-7pc4-xj5r"
+    },
+    {
+      "pkg": "undici",
+      "id": "1240039",
+      "severity": "low",
+      "issue": "undici vulnerable to downstream response splitting via retry interceptor",
+      "url": "https://github.com/advisories/GHSA-r53p-7pc4-xj5r"
+    },
+    {
+      "pkg": "undici",
+      "id": "1240041",
+      "severity": "high",
+      "issue": "undici vulnerable to Denial of Service via unrequested WebSocket subprotocol",
+      "url": "https://github.com/advisories/GHSA-rfgv-xxqx-mfg5"
+    },
+    {
+      "pkg": "undici",
+      "id": "1240042",
+      "severity": "high",
+      "issue": "undici vulnerable to Denial of Service via unrequested WebSocket subprotocol",
+      "url": "https://github.com/advisories/GHSA-rfgv-xxqx-mfg5"
+    },
+    {
+      "pkg": "undici",
+      "id": "1240044",
+      "severity": "moderate",
+      "issue": "undici vulnerable to Denial of Service via unbounded decompression of compressed responses",
+      "url": "https://github.com/advisories/GHSA-3xpg-4rpp-hhhm"
+    },
+    {
+      "pkg": "undici",
+      "id": "1240046",
+      "severity": "moderate",
+      "issue": "undici vulnerable to cross-user cookie disclosure via Set-Cookie caching in shared caches",
+      "url": "https://github.com/advisories/GHSA-2jfj-6hjv-fm6j"
+    },
+    {
+      "pkg": "undici",
+      "id": "1240048",
+      "severity": "low",
+      "issue": "undici vulnerable to response truncation via oversized chunked responses in the dump interceptor",
+      "url": "https://github.com/advisories/GHSA-2gqq-gqf2-x968"
+    },
+    {
+      "pkg": "undici",
+      "id": "1240050",
+      "severity": "high",
+      "issue": "undici vulnerable to TLS certificate validation bypass via dropped connect options in BalancedPool",
+      "url": "https://github.com/advisories/GHSA-w293-vg96-wgc3"
+    },
+    {
+      "pkg": "undici",
+      "id": "1240052",
+      "severity": "low",
+      "issue": "undici vulnerable to caching and replay of unsafe HTTP method responses",
+      "url": "https://github.com/advisories/GHSA-8436-99hf-9mmv"
+    },
+    {
+      "pkg": "undici",
+      "id": "1240055",
+      "severity": "moderate",
+      "issue": "undici vulnerable to Denial of Service via WebSocketStream unclean close",
+      "url": "https://github.com/advisories/GHSA-rx4f-c7p8-82vq"
     },
     {
       "pkg": "vitest",
