@@ -1,0 +1,8 @@
+{"traceId":"batch-a1-run","blockId":"architecture-gate","kind":"context_run","subject":"vesnin","at":"2026-09-29T15:22:00+03:00","ref":"docs/discussions/batch-collection-run-contour-a1.md"}
+{"traceId":"batch-a1-review","blockId":"architecture-gate","kind":"review_pass","subject":"vesnin","at":"2026-09-29T15:24:00+03:00","ref":"docs/seanses/batch-collection-run-contour-architecture-gate-2026-09-29.md"}
+{"traceId":"batch-a2-run","blockId":"run-contract","kind":"context_run","subject":"dynin","at":"2026-09-29T15:28:00+03:00","ref":"docs/discussions/batch-collection-run-contour-a2.md"}
+{"traceId":"batch-a2-review","blockId":"run-contract","kind":"review_pass","subject":"dynin","at":"2026-09-29T16:12:50+03:00","ref":"packages/plugin-handlers/src/detector-batch/executor.test.ts"}
+{"traceId":"batch-a3-run","blockId":"detector-runner","kind":"context_run","subject":"dynin","at":"2026-09-29T15:32:00+03:00","ref":"docs/discussions/batch-collection-run-contour-a3.md"}
+{"traceId":"batch-a3-review","blockId":"detector-runner","kind":"review_pass","subject":"dynin","at":"2026-09-29T16:16:50+03:00","ref":"packages/background-media/src/modules/collections/first-wave.registrar.test.ts"}
+{"traceId":"batch-a4-run","blockId":"cabinet-entry","kind":"context_run","subject":"rodchenko","at":"2026-09-29T15:40:00+03:00","ref":"docs/discussions/batch-collection-run-contour-a4.md"}
+{"traceId":"batch-a4-review","blockId":"cabinet-entry","kind":"review_pass","subject":"rodchenko","at":"2026-09-29T16:13:32+03:00","ref":"apps/cabinet/src/components/sample-library/BatchDetectorRunPanel.test.tsx"}

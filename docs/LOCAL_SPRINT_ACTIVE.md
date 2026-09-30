@@ -19,6 +19,14 @@
   пустого `aria-current`, фокус не падает на `body` (край → соседняя кнопка; `loading` кабинета без
   `disabled`), клавиатура без глобальных слушателей; 12 порч красные. Gap: живой замер 320px без
   браузера. Сдача `pr:ship --no-merge`; мердж — слово владельца.
+- **batch-collection-run-contour** ([#494](https://github.com/officefish/Membrana/issues/494)) ·
+  gate pass 4/4 `honest_pair` · experience `miss` (3/4, runner overflow) ·
+  [`OPEN.md`](./local-sprint/batch-collection-run-contour/OPEN.md) ·
+  [`CLOSURE.md`](./local-sprint/batch-collection-run-contour/CLOSURE.md) — read-only прогон
+  детекторов по коллекции на существующих `CollectionSampleReader` и plugin request; перенос и
+  пагинация признаны уже закрытыми стволом. Стек #2517 → #2518 → #2519 → #2520 → evidence;
+  все PR без merge.
+
 - **tariff-matrix-2333** ([#2333](https://github.com/officefish/Membrana/issues/2333)) ·
   implementation checks pass, awaiting review/PR · [`OPEN.md`](./local-sprint/tariff-matrix-2333/OPEN.md) —
   серверная адаптация к матрице тарифов по принятому M1: версия контракта на `Tariff`/`Device`,
