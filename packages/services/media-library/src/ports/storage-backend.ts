@@ -3,6 +3,8 @@ import type {
   BufferCleanupPlanOutcome,
   BufferCleanupPlanRequest,
   Collection,
+  CollectionDetectorBatchRequest,
+  CollectionDetectorBatchRunOutcome,
   LibraryChartListRequest,
   SessionDigestRequest,
   SessionDigestRunOutcome,
@@ -54,6 +56,11 @@ export interface IStorageBackend {
     collectionId: string,
     req: LibraryChartListRequest,
   ): Promise<LibraryChartListRunOutcome>;
+  /** Read-only detector run over a frozen collection snapshot; server backend only. */
+  requestCollectionDetectorBatch?(
+    collectionId: string,
+    req: CollectionDetectorBatchRequest,
+  ): Promise<CollectionDetectorBatchRunOutcome>;
   /** Свод сеанса (#2039): двадцать опорных звуков окна — только серверный бэкенд. */
   requestSessionDigest?(
     collectionId: string,

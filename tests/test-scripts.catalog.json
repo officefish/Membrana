@@ -28,7 +28,9 @@
       "fallback": true
     }
   ],
-  "skips": {},
+  "skips": {
+    "scripts/scenario-trace-buffer-parity.test.mjs": "импортирует apps/client/.../scenarioTraceBuffer.ts (стирание типов, Node >= 22); test:scripts идёт в CI на Node 20 и падает на .ts с ERR_UNKNOWN_FILE_EXTENSION. Гоняется отдельным шагом unit-tests.yml, где Node 22 уже поднят. Переносимая половина того же зуба — scripts/scenario-trace-teardown-measure.test.mjs — идёт здесь и без исключений."
+  },
   "setups": {
     "smoke": {
       "include": [

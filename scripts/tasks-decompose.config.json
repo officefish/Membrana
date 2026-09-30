@@ -71,7 +71,7 @@
     {
       "name": "Наблюдаемость и диагностика аварий",
       "patterns": [
-        "^(obs-|logging-observability)"
+        "^(obs-|logging-observability|trace-freeze-)"
       ]
     }
   ],
