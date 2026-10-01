@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-30",
+  "date": "2026-10-01",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -49,6 +49,13 @@
       "severity": "moderate",
       "issue": "Use @eslint/object-schema instead",
       "url": ""
+    },
+    {
+      "pkg": "@nestjs/platform-fastify",
+      "id": "1240613",
+      "severity": "high",
+      "issue": "@nestjs/platform-fastify: Path-scoped middleware bypass via absolute-form request targets",
+      "url": "https://github.com/advisories/GHSA-9c5c-9qcx-q35q"
     },
     {
       "pkg": "@npmcli/move-file",
@@ -301,6 +308,83 @@
       "severity": "moderate",
       "issue": "Axios form serializer maxDepth bypass via {} metatoken",
       "url": "https://github.com/advisories/GHSA-hcpx-6fm6-wx23"
+    },
+    {
+      "pkg": "axios",
+      "id": "1240600",
+      "severity": "moderate",
+      "issue": "Axios: Prototype pollution gadget in fetch adapter can alter outbound requests",
+      "url": "https://github.com/advisories/GHSA-vh66-26gq-q6x8"
+    },
+    {
+      "pkg": "axios",
+      "id": "1240601",
+      "severity": "moderate",
+      "issue": "Axios: Prototype-Pollution Gadget in the Default Instance Allows Inherited Object.prototype.method to Override HTTP Method",
+      "url": "https://github.com/advisories/GHSA-9fr6-4gfg-395g"
+    },
+    {
+      "pkg": "axios",
+      "id": "1240603",
+      "severity": "high",
+      "issue": "Axios: ReDoS in fromDataURI data: URL parser freezes the Node event loop (DoS)",
+      "url": "https://github.com/advisories/GHSA-c29m-xwm3-cm6r"
+    },
+    {
+      "pkg": "axios",
+      "id": "1240604",
+      "severity": "high",
+      "issue": "Axios: ReDoS (O(N²)) in shouldBypassProxy host normalization, reachable via untrusted redirect Location",
+      "url": "https://github.com/advisories/GHSA-mghh-pgcx-3jjj"
+    },
+    {
+      "pkg": "axios",
+      "id": "1240605",
+      "severity": "high",
+      "issue": "Axios: Prototype Pollution Gadget in axios toFormData Options",
+      "url": "https://github.com/advisories/GHSA-x97p-jq2g-jp4f"
+    },
+    {
+      "pkg": "axios",
+      "id": "1240607",
+      "severity": "high",
+      "issue": "Axios: HTTP/2 adapter bypasses configured DNS lookup and proxy controls",
+      "url": "https://github.com/advisories/GHSA-3pq3-5fj3-cg6v"
+    },
+    {
+      "pkg": "axios",
+      "id": "1240608",
+      "severity": "high",
+      "issue": "Axios: Denial of Service via Unhandled 'error' Event in HTTP/2 ClientHttp2Session Initialization",
+      "url": "https://github.com/advisories/GHSA-542g-h47m-68v8"
+    },
+    {
+      "pkg": "axios",
+      "id": "1240626",
+      "severity": "moderate",
+      "issue": "Axios: Header Injection via Inherited headers After Minimal Interceptor",
+      "url": "https://github.com/advisories/GHSA-j8rh-479h-cp32"
+    },
+    {
+      "pkg": "axios",
+      "id": "1240627",
+      "severity": "moderate",
+      "issue": "Axios: Fetch Adapter Header Injection via Inherited FormData getHeaders",
+      "url": "https://github.com/advisories/GHSA-4hqw-qxg8-jxx2"
+    },
+    {
+      "pkg": "axios",
+      "id": "1240628",
+      "severity": "high",
+      "issue": "Axios: Node HTTP adapter prototype-pollution gadget allows request socket hijack via inherited createConnection",
+      "url": "https://github.com/advisories/GHSA-m8m8-qj5v-23w3"
+    },
+    {
+      "pkg": "axios",
+      "id": "1240629",
+      "severity": "moderate",
+      "issue": "Axios: CIDR-form NO_PROXY entries are ignored, causing proxy exclusion bypass for internal IP ranges",
+      "url": "https://github.com/advisories/GHSA-44g4-m2mj-wpvx"
     },
     {
       "pkg": "baseline-browser-mapping",
@@ -609,6 +693,41 @@
       "severity": "moderate",
       "issue": "fastify vulnerable to X-Forwarded-* spoofing under trustProxy hop-count",
       "url": "https://github.com/advisories/GHSA-3m5p-2c4r-xxw2"
+    },
+    {
+      "pkg": "fastify",
+      "id": "1240639",
+      "severity": "moderate",
+      "issue": "fastify vulnerable to Denial of Service via unhandled exception on HTTP/2 trailer responses",
+      "url": "https://github.com/advisories/GHSA-4mh8-r7rc-xpvc"
+    },
+    {
+      "pkg": "fastify",
+      "id": "1240641",
+      "severity": "high",
+      "issue": "fastify vulnerable to request body replacement via an async validation result collision",
+      "url": "https://github.com/advisories/GHSA-667r-xxjv-c9mm"
+    },
+    {
+      "pkg": "fastify",
+      "id": "1240642",
+      "severity": "high",
+      "issue": "fastify vulnerable to authentication bypass via malformed URLs reaching encapsulated not-found handlers",
+      "url": "https://github.com/advisories/GHSA-p68q-wchp-6fh7"
+    },
+    {
+      "pkg": "fastify",
+      "id": "1240643",
+      "severity": "high",
+      "issue": "fastify vulnerable to request validation bypass via skipped boolean false schemas",
+      "url": "https://github.com/advisories/GHSA-hwr6-493r-vm6h"
+    },
+    {
+      "pkg": "fastify",
+      "id": "1240644",
+      "severity": "high",
+      "issue": "fastify vulnerable to header validation bypass via incomplete schema case normalization",
+      "url": "https://github.com/advisories/GHSA-9q9j-q6p8-xq58"
     },
     {
       "pkg": "file-type",

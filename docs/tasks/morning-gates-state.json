@@ -1,31 +1,13 @@
 {
   "magistralOptions": [
-    "three-roads-experiment",
-    "detector-fusion-sketch",
-    "decisions-reach-evening"
+    "angelina-hostess-impl",
+    "assets-container",
+    "chart-list-plugin"
   ],
-  "frozenDigest": "67b21ceec6134e124591ef3e62d0191c0359e845d5e3b0efd2db3da54e2fa5e5",
-  "magistral": "three-roads-experiment",
-  "swallow": {
-    "draftDigest": "3f62cea0488e926b5f716e8b9b872dd45c0afa0d4e17d51f9cb47e785e72bf8f",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-30.md",
-    "ownerAck": true,
-    "day": "2026-09-30",
-    "claimsProbe": {
-      "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-09-30.md",
-      "sha": "4ee044dfe215",
-      "at": "2026-09-30T16:13:44.990Z"
-    },
-    "gate": "evening:partner-swallow"
-  },
-  "day": "2026-09-30",
-  "magistralChosenAt": "2026-09-30",
-  "magistralAuthor": "human",
-  "magistralManual": {
-    "at": "2026-09-30",
-    "chosen": "three-roads-experiment",
-    "snapshotDigest": "67b21ceec6134e124591ef3e62d0191c0359e845d5e3b0efd2db3da54e2fa5e5",
-    "inSnapshot": true
-  }
+  "frozenDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
+  "magistral": "angelina-hostess-impl",
+  "swallow": null,
+  "day": "2026-10-01",
+  "magistralChosenAt": "2026-10-01",
+  "magistralAuthor": "snapshot"
 }
