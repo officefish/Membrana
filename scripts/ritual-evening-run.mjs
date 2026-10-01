@@ -41,6 +41,7 @@ import {
 } from './lib/ritual-exit-codes.mjs';
 import { blockedInputs, explainStatus, isBlocking, isFinding, stepStatus } from './lib/step-status.mjs';
 import { eveningCloseArgs } from './lib/ritual-evening-close-args.mjs';
+import { sessionState, writeSessionState } from './lib/angelina-session.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const MANIFEST_REL = 'docs/tasks/evening-ritual-steps.json';
@@ -223,6 +224,9 @@ function main() {
   const journalBroken = fullRun && (journal.open !== 0 || journal.close !== 0);
   if (journalBroken && failed.length === 0) {
     console.error('\n✗ журнал прогона не записан (см. выше) — вечер отработал, но след не оставлен');
+  }
+  if (fullRun) {
+    writeSessionState(root, sessionState(false, new Date().toISOString(), 'ritual:evening'));
   }
   process.exit(failed.length > 0 || journalBroken ? 1 : 0);
 }

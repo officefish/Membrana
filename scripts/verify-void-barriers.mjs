@@ -29,7 +29,29 @@ import { VOID_DIR } from './lib/gc-void.mjs';
 const EXIT_BREACH = 24;
 
 /** Файлы кладбища, объясняющие правило, — не могилы и барьерами не проверяются. */
-export const VOID_CANON = Object.freeze(['README.md', 'LIFECYCLE.md']);
+export const VOID_CANON = Object.freeze(['README.md', 'LIFECYCLE.md', 'registry.json']);
+
+function readVoidRegistry(repoRoot, io = { existsSync, readFileSync }) {
+  const path = join(repoRoot, VOID_DIR, 'registry.json');
+  if (!io.existsSync(path)) return { registry: null, problem: 'инвентарь: registry.json отсутствует — пустой корпус нельзя объявить чистым' };
+  try { return { registry: JSON.parse(io.readFileSync(path, 'utf8')), problem: null }; }
+  catch { return { registry: null, problem: 'инвентарь: registry.json нечитаем' }; }
+}
+
+export function checkInventory(repoRoot, graves, io = { existsSync, readFileSync }) {
+  const { registry, problem } = readVoidRegistry(repoRoot, io);
+  if (problem) return [problem];
+  const required = registry?.verdictSchema?.required;
+  if (!Array.isArray(required) || required.length === 0) {
+    return ['инвентарь: verdictSchema.required отсутствует — эпитафии нечем проверять'];
+  }
+  const ids = new Set((registry.graves ?? []).map((x) => typeof x === 'string' ? x : x?.id));
+  const missing = graves.filter((g) => !ids.has(g.id)).map((g) => `инвентарь: могила ${g.id} отсутствует в registry.json`);
+  if (graves.length === 0 && registry.status !== 'no-owner-condemned-exhibits') {
+    missing.push('инвентарь: пустой корпус обязан называться no-owner-condemned-exhibits');
+  }
+  return missing;
+}
 
 /**
  * Перечислить могилы: каталоги кладбища, каждый — один перенесённый след.
@@ -67,7 +89,7 @@ export function listGraves(repoRoot, io = { existsSync, readdirSync, statSync })
  *
  * @returns {string[]} нарушения
  */
-export function checkEpitaphs(graves, io = { readFileSync }) {
+export function checkEpitaphs(graves, requiredFields, io = { readFileSync }) {
   const breaches = [];
   for (const grave of graves) {
     for (const file of grave.files) {
@@ -75,6 +97,13 @@ export function checkEpitaphs(graves, io = { readFileSync }) {
       const body = io.readFileSync(join(grave.dir, file), 'utf8');
       if (!body.startsWith('---\nstatus: rejected')) {
         breaches.push(`барьер 1: ${VOID_DIR}/${grave.id}/${file} без эпитафии в начале файла`);
+        continue;
+      }
+      const frontMatter = body.slice(0, body.indexOf('\n---', 4));
+      for (const field of requiredFields ?? []) {
+        if (!new RegExp(`^${field}:\\s*\\S`, 'mu').test(frontMatter)) {
+          breaches.push(`барьер 1: ${VOID_DIR}/${grave.id}/${file} — эпитафия без обязательного поля ${field}`);
+        }
       }
     }
   }
@@ -145,8 +174,10 @@ function liveTree(repoRoot) {
 
 export function verifyBarriers(repoRoot) {
   const graves = listGraves(repoRoot);
+  const { registry } = readVoidRegistry(repoRoot);
   const breaches = [
-    ...checkEpitaphs(graves),
+    ...checkInventory(repoRoot, graves),
+    ...checkEpitaphs(graves, registry?.verdictSchema?.required ?? []),
     ...checkIndex(repoRoot, graves),
     ...checkNoLiveLinks(repoRoot, graves, liveTree(repoRoot)),
   ];
@@ -169,4 +200,3 @@ function main() {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) main();
-
