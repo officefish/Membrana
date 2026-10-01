@@ -23,6 +23,7 @@
     "@membrana/plugin-contracts": "*",
     "@membrana/sample-playback-service": "*",
     "@membrana/telemetry-journal-service": "*",
+    "@membrana/trends-detector-service": "*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

@@ -14,7 +14,7 @@
   "ranking": [
     {
       "name": "@membrana/core",
-      "fanIn": 28
+      "fanIn": 29
     },
     {
       "name": "@membrana/audio-engine-service",
@@ -39,6 +39,10 @@
     {
       "name": "@membrana/detector-report",
       "fanIn": 5
+    },
+    {
+      "name": "@membrana/device-board",
+      "fanIn": 4
     },
     {
       "name": "@membrana/mfcc-analyzer-service",
@@ -71,10 +75,6 @@
     {
       "name": "@membrana/wav-decode",
       "fanIn": 3
-    },
-    {
-      "name": "@membrana/device-board",
-      "fanIn": 2
     },
     {
       "name": "@membrana/drone-detection-orchestrator-service",
