@@ -106,6 +106,37 @@ export const TARIFF_NO_TRANSITIONS_TEXT = 'доступных тарифов д�
 /** Явная строка, когда состояние узла не несёт счётчика (M5 (а)). */
 export const NOT_AVAILABLE_TEXT = 'н/д';
 
+/**
+ * Момент чтения предела (#2538): величина без момента чтения не живая. Окно обязано сказать,
+ * КОГДА предел прочитан, а при отказе чтения — что показан снимок (развилка 4: числа не
+ * скрываются, помечается источник). Тексты — только здесь (структурный зуб).
+ */
+export interface QuotaReadState {
+  /** Последнее чтение удалось (не серверный бэкенд считается прочитанным: локальный предел). */
+  readonly fresh: boolean;
+  /** ISO момента последнего успешного чтения; `null` — успешного чтения ещё не было. */
+  readonly readAt: string | null;
+}
+
+export const QUOTA_READ_FRESH_PREFIX = 'предел сервера прочитан';
+export const QUOTA_READ_STALE_PREFIX = 'предел не прочитан — показан снимок от';
+export const QUOTA_READ_NONE_TEXT = 'предел не прочитан — снимка ещё нет';
+
+export function describeQuotaRead(state: QuotaReadState): string {
+  if (state.readAt === null) {
+    return state.fresh ? `${QUOTA_READ_FRESH_PREFIX}: момент чтения ${NOT_AVAILABLE_TEXT}` : QUOTA_READ_NONE_TEXT;
+  }
+  const at = formatReadAt(state.readAt);
+  return state.fresh ? `${QUOTA_READ_FRESH_PREFIX} ${at}` : `${QUOTA_READ_STALE_PREFIX} ${at}`;
+}
+
+/** Время чтения в локали оператора (только часы:минуты:секунды — дата у окна своя). */
+export function formatReadAt(iso: string): string {
+  const t = Date.parse(iso);
+  if (!Number.isFinite(t)) return iso;
+  return new Date(t).toLocaleTimeString();
+}
+
 export function formatBytes(bytes: number): string {
   if (!Number.isFinite(bytes) || bytes < 0) return NOT_AVAILABLE_TEXT;
   if (bytes < 1024) return `${bytes} B`;

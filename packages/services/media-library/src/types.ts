@@ -55,6 +55,12 @@ export interface StorageQuota {
   /** Buffer collection quota — set when backend tracks buffer separately (server). */
   bufferUsedBytes?: number;
   bufferLimitBytes?: number;
+  /**
+   * Момент последнего УСПЕШНОГО чтения квоты (ISO) — штампует сервис библиотеки, не бэкенд
+   * (#2538). Отказ чтения прежние числа не стирает и `readAt` не двигает: величина без момента
+   * чтения не живая, а старый предел без пометки показывался как живой.
+   */
+  readAt?: string;
 }
 
 export interface NewSampleMeta {

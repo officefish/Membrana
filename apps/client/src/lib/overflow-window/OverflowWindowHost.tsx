@@ -18,7 +18,12 @@ import { getOverflowWindowController, type OverflowWindowController } from './co
 import { deltaSinceStop, readBufferLedger, settleClean, type BufferLedgerSnapshot } from './ledger';
 import { OverflowWindow } from './OverflowWindow';
 import { formatBytes } from './reasonTexts';
-import { buildOverflowWindowViewModel, liveAxesFromQuota, type TariffTransitionsKnowledge } from './viewModel';
+import {
+  buildOverflowWindowViewModel,
+  liveAxesFromQuota,
+  quotaReadStateFromQuota,
+  type TariffTransitionsKnowledge,
+} from './viewModel';
 
 export const SAMPLE_LIBRARY_MODULE_ID = 'sample-library';
 
@@ -43,7 +48,8 @@ function defaultOpenExternal(url: string): void {
 
 /**
  * Хост окна оператора (4/4, #2310) — единственное место, где окно встречает приложение:
- * живой снимок библиотеки (квота перечитывается при открытии и каждой новой попытке старта),
+ * живой снимок библиотеки (предел перечитывается лёгким `refreshQuota()` при открытии и каждой
+ * новой попытке старта, с моментом чтения — #2538),
  * подтверждение чистки через общие ворота удаления (#2218), переход в библиотеку и в
  * кабинет. Монтируется один раз в `App`; плашка панели записи и бейдж доски — только входы.
  */
@@ -86,8 +92,11 @@ export function OverflowWindowHost({
 
   useEffect(() => {
     if (!state.open || state.episode === null) return;
-    void service.refresh().catch(() => {
-      // Последний успешный снимок остаётся виден; следующий vitals tick попробует снова.
+    // #2538: предел читается ОДНИМ лёгким запросом, не полным refresh() (тот читает квоту
+    // последним шагом после списка всех проб и при любом сбое раньше оставлял старый предел без
+    // следа). Отказ чтения сервис помечает сам (readAt/serverReachable) — окно его покажет.
+    void service.refreshQuota().catch(() => {
+      // Бэкенд бросил до ответа — снимок прежний; следующий тик связанного режима попробует снова.
     });
   }, [service, state.episode, state.open, state.opensForKey]);
 
@@ -134,6 +143,7 @@ export function OverflowWindowHost({
   const vm = buildOverflowWindowViewModel({
     episode: state.episode,
     liveAxes: liveAxesFromQuota(library.quota),
+    quotaRead: quotaReadStateFromQuota(library.quota),
     held: state.held,
     // Состояние узла (`runtime.state`) счётчика «записано до остановки» не несёт — честное
     // «н/д»; ниже, отдельной строкой, окно показывает счёт буфера при остановке (снимок).

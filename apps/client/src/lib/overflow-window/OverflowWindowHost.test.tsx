@@ -65,7 +65,7 @@ describe('OverflowWindowHost', () => {
   let backend: MemoryStorageBackend;
   let service: MediaLibraryService;
   let getQuota: ReturnType<typeof vi.spyOn>;
-  let refresh: ReturnType<typeof vi.spyOn>;
+  let refreshQuota: ReturnType<typeof vi.spyOn>;
   let removeSample: ReturnType<typeof vi.spyOn>;
   const openExternal = vi.fn();
   const selectModule = vi.fn();
@@ -81,7 +81,7 @@ describe('OverflowWindowHost', () => {
     await putBufferSamples(backend, 2);
     await service.refresh();
     getQuota = vi.spyOn(backend, 'getQuota');
-    refresh = vi.spyOn(service, 'refresh');
+    refreshQuota = vi.spyOn(service, 'refreshQuota');
     removeSample = vi.spyOn(backend, 'removeSample');
     openExternal.mockReset();
     selectModule.mockReset();
@@ -121,7 +121,7 @@ describe('OverflowWindowHost', () => {
       expect(hold.activateFromServer(REFUSAL)).toBe('entered');
     });
     expect(screen.getByTestId('overflow-window').getAttribute('data-overflow-key')).toBe('ovf-host-1');
-    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(refreshQuota).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(screen.getByTestId('overflow-axis-buffer').textContent).toContain('лимит 200 B'));
     expect(screen.getByTestId('overflow-axis-buffer-at-stop').textContent).toContain('лимит 100 B');
     // Счёт буфера при остановке — из ЛОКАЛЬНОГО снимка: 2 пробы.
@@ -140,7 +140,7 @@ describe('OverflowWindowHost', () => {
     });
     mount();
     act(() => void hold.activateFromServer(REFUSAL));
-    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(refreshQuota).toHaveBeenCalledTimes(1));
 
     getQuota.mockResolvedValue({
       usedBytes: 30,
@@ -154,7 +154,7 @@ describe('OverflowWindowHost', () => {
       expect(hold.refuseStart({ source: 'board', what: 'запись сценария' })).toBe(true);
     });
 
-    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(refreshQuota).toHaveBeenCalledTimes(2));
     await waitFor(() => expect(screen.getByTestId('overflow-axis-buffer').textContent).toContain('лимит 400 B'));
     expect(screen.getByTestId('overflow-axis-buffer-at-stop').textContent).toContain('лимит 100 B');
     expect(hold.isHeld()).toBe(true);
@@ -236,6 +236,54 @@ describe('OverflowWindowHost', () => {
     expect(hold.isHeld()).toBe(false);
     expect(screen.getByTestId('overflow-released')).toBeTruthy();
     expect(getQuota).toHaveBeenCalledTimes(1);
+  });
+
+  /**
+   * #2538, porcha P1 (красная на стволе d364ef64): список коллекций не прочитан, а квота читается —
+   * окно обязано показать НОВЫЙ предел сервера. На стволе хост звал полный refresh(), который
+   * падал до квоты, и окно показывало старый предел как живой (512 МБ при сервере 2 ГБ).
+   */
+  it('#2538 P1: список проб не прочитан, а квота читается — окно показывает новый предел, без списков', async () => {
+    getQuota.mockResolvedValue({
+      usedBytes: 0,
+      limitBytes: 400,
+      bufferUsedBytes: 95,
+      bufferLimitBytes: 400,
+      backend: 'server',
+      serverReachable: true,
+    });
+    const listCollections = vi.spyOn(backend, 'listCollections').mockRejectedValue(new Error('Media-server network error'));
+    mount();
+    act(() => {
+      expect(hold.activateFromServer(REFUSAL)).toBe('entered');
+    });
+    await waitFor(() => expect(screen.getByTestId('overflow-axis-buffer').textContent).toContain('лимит 400 B'));
+    expect(getQuota).toHaveBeenCalledTimes(1);
+    expect(listCollections).not.toHaveBeenCalled();
+    expect(screen.getByTestId('overflow-quota-read').getAttribute('data-quota-fresh')).toBe('true');
+    expect(screen.getByTestId('overflow-quota-read').textContent).toContain('предел сервера прочитан');
+  });
+
+  it('#2538: сервер не ответил — числа прежние, строка «снимок от …», суждения «освобождено» нет', async () => {
+    getQuota.mockResolvedValue({
+      usedBytes: 0,
+      limitBytes: 0,
+      bufferUsedBytes: 0,
+      bufferLimitBytes: 0,
+      backend: 'server',
+      serverReachable: false,
+    });
+    mount();
+    act(() => void hold.activateFromServer(REFUSAL));
+    await waitFor(() => expect(getQuota).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(screen.getByTestId('overflow-quota-read').getAttribute('data-quota-fresh')).toBe('false'),
+    );
+    // Прежний предел снимка (10 000 B) остаётся на шкале, помеченный как снимок.
+    expect(screen.getByTestId('overflow-axis-buffer').textContent).toContain('лимит 9.8 KB');
+    expect(screen.getByTestId('overflow-quota-read').textContent).toContain('показан снимок от');
+    expect(screen.getByTestId('overflow-held').getAttribute('data-overflow-standing')).toBe('unknown');
+    expect(hold.isHeld()).toBe(true);
   });
 });
 

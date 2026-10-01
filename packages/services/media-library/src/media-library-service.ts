@@ -31,6 +31,7 @@ import type {
   MediaPluginState,
   NewSampleMeta,
   PaginatedSamples,
+  StorageQuota,
 } from './types.js';
 
 export class MediaLibraryService {
@@ -108,7 +109,7 @@ export class MediaLibraryService {
 
     try {
       const quota = await this.backend.getQuota();
-      this.snapshot = { ...this.snapshot, quota };
+      this.snapshot = { ...this.snapshot, quota: this.mergeQuota(quota) };
       mediaLibraryTrace('snapshot-quota-done', { elapsedMs: traceElapsedMs(mergeStartedAt) });
     } catch {
       mediaLibraryTrace('snapshot-quota-skip', { reason: 'getQuota-failed' });
@@ -156,11 +157,47 @@ export class MediaLibraryService {
     this.snapshot = {
       collections,
       samplesByCollection,
-      quota,
+      quota: this.mergeQuota(quota),
       version: this.version,
     };
     this.emit();
     mediaLibraryTrace('refresh-done', { elapsedMs: traceElapsedMs(refreshStartedAt) });
+  }
+
+  /**
+   * Лёгкое перечитывание предела (#2538): один `getQuota()`, без списков коллекций и проб.
+   *
+   * Полный `refresh()` читает квоту ПОСЛЕДНИМ шагом после списка всех проб: любой сбой раньше
+   * оставлял в снимке прежний предел без следа (живой опыт 01.10 — 512 МБ при сервере 2 ГБ).
+   * Здесь предел читается сам, одним запросом, и получает момент чтения (`readAt`).
+   * Списки снимка не трогаются; emit один. Бросает только то, что бросил бэкенд.
+   */
+  async refreshQuota(): Promise<void> {
+    const startedAt = performance.now();
+    mediaLibraryTrace('refreshQuota-start');
+    const quota = await this.backend.getQuota();
+    this.snapshot = { ...this.snapshot, quota: this.mergeQuota(quota) };
+    this.emit();
+    mediaLibraryTrace('refreshQuota-done', { elapsedMs: traceElapsedMs(startedAt) });
+  }
+
+  /**
+   * Единственное место, где прочитанная квота ложится в снимок (#2538).
+   *
+   * Успех — числа бэкенда и свежий `readAt`. Отказ серверного чтения (`serverReachable=false`)
+   * прежний предел НЕ стирает: числа остаются, `serverReachable` опускается, `readAt` — момент
+   * последнего успешного чтения (развилка 4 плана — слово владельца: «прежний предел с пометкой
+   * „снимок от …“, числа не скрываем»). Пока успешного серверного чтения не было (снимок ещё
+   * локальный), отказ ложится как есть — нули без `readAt`: нечего помечать «снимком от».
+   */
+  private mergeQuota(next: StorageQuota): StorageQuota {
+    const failed = next.backend === 'server' && !next.serverReachable;
+    if (!failed) return { ...next, readAt: new Date().toISOString() };
+    const prev = this.snapshot.quota;
+    if (prev.backend === 'server' && prev.readAt !== undefined) {
+      return { ...prev, serverReachable: false };
+    }
+    return next;
   }
 
   async listSamplesPage(

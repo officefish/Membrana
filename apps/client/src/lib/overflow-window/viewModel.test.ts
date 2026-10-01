@@ -20,6 +20,10 @@ import type { OverflowHoldEpisode } from '@/lib/device-overflow-hold';
 import {
   NOT_AVAILABLE_TEXT,
   OVERFLOW_FREED_TITLE,
+  QUOTA_READ_FRESH_PREFIX,
+  QUOTA_READ_NONE_TEXT,
+  QUOTA_READ_STALE_PREFIX,
+  describeQuotaRead,
   OVERFLOW_HELD_TEXT_BY_STANDING,
   OVERFLOW_PHASE_TEXT,
   OVERFLOW_REASON_TEXT,
@@ -28,12 +32,21 @@ import {
   describeOverflowReason,
   formatAxisRemaining,
 } from './reasonTexts';
-import { buildOverflowWindowViewModel, episodeWindowKey, judgeOverflowStanding, liveAxesFromQuota } from './viewModel';
+import {
+  buildOverflowWindowViewModel,
+  episodeWindowKey,
+  judgeOverflowStanding,
+  liveAxesFromQuota,
+  quotaReadStateFromQuota,
+} from './viewModel';
 
 const LIVE_AXES = {
   buffer: { usedBytes: 250_000, limitBytes: 2_000_000 },
   userStorage: { usedBytes: 20, limitBytes: 2_000_000 },
 } as const;
+
+/** #2538: свежее чтение предела с моментом — умолчание зубов, где возраст не предмет. */
+const QUOTA_READ = { fresh: true, readAt: '2026-10-01T08:00:00.000Z' } as const;
 
 const EPISODE: OverflowHoldEpisode = {
   overflowId: '7e0d3f9a-0000-4000-8000-000000000001',
@@ -90,6 +103,7 @@ describe('#2533 — место по живой оси причины, удерж
         buffer: { usedBytes: liveBuffer, limitBytes: LIMIT },
         userStorage: { usedBytes: liveUser, limitBytes: LIMIT },
       },
+      quotaRead: QUOTA_READ,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
@@ -131,6 +145,7 @@ describe('#2533 — место по живой оси причины, удерж
     const noLive = buildOverflowWindowViewModel({
       episode: LOCAL_EPISODE,
       liveAxes: { buffer: null, userStorage: null },
+      quotaRead: QUOTA_READ,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
@@ -148,6 +163,7 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
     const vm = buildOverflowWindowViewModel({
       episode: EPISODE,
       liveAxes: LIVE_AXES,
+      quotaRead: QUOTA_READ,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
@@ -169,6 +185,7 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
     const none = buildOverflowWindowViewModel({
       episode: EPISODE,
       liveAxes: LIVE_AXES,
+      quotaRead: QUOTA_READ,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
@@ -177,6 +194,7 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
     const some = buildOverflowWindowViewModel({
       episode: EPISODE,
       liveAxes: LIVE_AXES,
+      quotaRead: QUOTA_READ,
       held: true,
       recordedBeforeStop: { samples: 12, bytes: 2048 },
       tariffTransitions: 'unknown',
@@ -196,6 +214,7 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
     const vm = buildOverflowWindowViewModel({
       episode: { ...EPISODE, overflowId: null, source: 'local', userStorage: null },
       liveAxes: LIVE_AXES,
+      quotaRead: QUOTA_READ,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
@@ -210,6 +229,7 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
     const empty = buildOverflowWindowViewModel({
       episode: EPISODE,
       liveAxes: LIVE_AXES,
+      quotaRead: QUOTA_READ,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: [],
@@ -220,6 +240,7 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
     const unknown = buildOverflowWindowViewModel({
       episode: EPISODE,
       liveAxes: LIVE_AXES,
+      quotaRead: QUOTA_READ,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
@@ -230,6 +251,7 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
     const some = buildOverflowWindowViewModel({
       episode: EPISODE,
       liveAxes: LIVE_AXES,
+      quotaRead: QUOTA_READ,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: [{ id: 'checkpoint-v1', name: 'Блокпост' }],
@@ -242,6 +264,7 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
     const vm = buildOverflowWindowViewModel({
       episode: { ...EPISODE, reason: 'something_new' },
       liveAxes: LIVE_AXES,
+      quotaRead: QUOTA_READ,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
@@ -264,5 +287,67 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
       buffer: { usedBytes: 20, limitBytes: 200 },
       userStorage: { usedBytes: 30, limitBytes: 300 },
     });
+  });
+});
+
+/**
+ * #2538 — момент чтения предела. Живой опыт 01.10: окно показывало 512 МБ при сервере 2 ГБ,
+ * потому что предел лежал в снимке без момента чтения и отказ перечитывания был невидим.
+ *
+ * Порчи → красный: несвежая квота судится «полон»/«освобождено» — красный; строка возраста без
+ * времени при известном readAt — красный; отказ чтения прячет числа — красный.
+ */
+describe('#2538 — предел без момента чтения не живой', () => {
+  const STALE = { fresh: false, readAt: '2026-10-01T05:00:00.000Z' } as const;
+
+  it('свежее чтение: строка «предел сервера прочитан HH:MM:SS», место судится по оси', () => {
+    const vm = buildOverflowWindowViewModel({
+      episode: EPISODE,
+      liveAxes: { buffer: { usedBytes: 0, limitBytes: 1000 }, userStorage: EPISODE.userStorage },
+      quotaRead: QUOTA_READ,
+      held: true,
+      recordedBeforeStop: null,
+      tariffTransitions: 'unknown',
+    });
+    expect(vm.quotaRead).toEqual(QUOTA_READ);
+    expect(vm.quotaReadText.startsWith(QUOTA_READ_FRESH_PREFIX)).toBe(true);
+    expect(vm.quotaReadText).toMatch(/\d{1,2}:\d{2}/u);
+    expect(vm.standing).toBe('freed');
+  });
+
+  it('отказ чтения: числа прежние, строка «не прочитан — показан снимок от …», standing unknown, held не тронут', () => {
+    const vm = buildOverflowWindowViewModel({
+      episode: EPISODE,
+      liveAxes: { buffer: { usedBytes: 0, limitBytes: 1000 }, userStorage: EPISODE.userStorage },
+      quotaRead: STALE,
+      held: true,
+      recordedBeforeStop: null,
+      tariffTransitions: 'unknown',
+    });
+    // Числа не скрываются (развилка 4 — слово владельца), но «освобождено» по ним не судится.
+    expect(vm.axes.buffer).toEqual({ usedBytes: 0, limitBytes: 1000, freeBytes: 1000, percent: 0 });
+    expect(vm.standing).toBe('unknown');
+    expect(vm.title).toBe(OVERFLOW_WINDOW_TITLE);
+    expect(vm.quotaReadText.startsWith(QUOTA_READ_STALE_PREFIX)).toBe(true);
+    expect(vm.quotaReadText).toMatch(/\d{1,2}:\d{2}/u);
+    expect(vm.held).toBe(true);
+  });
+
+  it('успешного чтения ещё не было: fresh без времени → «момент чтения н/д»; не fresh → «снимка ещё нет»', () => {
+    expect(describeQuotaRead({ fresh: true, readAt: null })).toContain(NOT_AVAILABLE_TEXT);
+    expect(describeQuotaRead({ fresh: false, readAt: null })).toBe(QUOTA_READ_NONE_TEXT);
+  });
+
+  it('quotaReadStateFromQuota: сервер недоступен → не свежо; локальный бэкенд — свежо; readAt ?? null', () => {
+    expect(
+      quotaReadStateFromQuota({ usedBytes: 1, limitBytes: 2, backend: 'server', serverReachable: false, readAt: 'x' }),
+    ).toEqual({ fresh: false, readAt: 'x' });
+    expect(quotaReadStateFromQuota({ usedBytes: 1, limitBytes: 2, backend: 'server', serverReachable: true })).toEqual({
+      fresh: true,
+      readAt: null,
+    });
+    expect(
+      quotaReadStateFromQuota({ usedBytes: 1, limitBytes: 2, backend: 'browser-limited', serverReachable: false }),
+    ).toEqual({ fresh: true, readAt: null });
   });
 });
