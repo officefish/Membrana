@@ -31,7 +31,7 @@
  * вслух, чтобы частичный прогон не выглядел полным.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -41,6 +41,7 @@ import {
 } from './lib/ritual-exit-codes.mjs';
 import { blockedInputs, explainStatus, isBlocking, isFinding, stepStatus } from './lib/step-status.mjs';
 import { eveningCloseArgs } from './lib/ritual-evening-close-args.mjs';
+import { ANGELINA_SESSION_REL, sessionState } from './lib/angelina-session.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const MANIFEST_REL = 'docs/tasks/evening-ritual-steps.json';
@@ -223,6 +224,11 @@ function main() {
   const journalBroken = fullRun && (journal.open !== 0 || journal.close !== 0);
   if (journalBroken && failed.length === 0) {
     console.error('\n✗ журнал прогона не записан (см. выше) — вечер отработал, но след не оставлен');
+  }
+  if (fullRun) {
+    const sessionPath = resolve(root, ANGELINA_SESSION_REL);
+    mkdirSync(dirname(sessionPath), { recursive: true });
+    writeFileSync(sessionPath, `${JSON.stringify(sessionState(false, new Date().toISOString(), 'ritual:evening'), null, 2)}\n`, 'utf8');
   }
   process.exit(failed.length > 0 || journalBroken ? 1 : 0);
 }

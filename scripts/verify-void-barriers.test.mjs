@@ -13,7 +13,7 @@ import { join } from 'node:path';
 import { recentVoidIds } from './lib/gc-void.mjs';
 import { collectInsightsForWeeklyPlan, formatInsightsWeeklyBlock } from './lib/insight-ritual.mjs';
 import { readVoidIndex } from './lib/void-index.mjs';
-import { checkEpitaphs, checkIndex, checkNoLiveLinks, listGraves, verifyBarriers } from './verify-void-barriers.mjs';
+import { checkEpitaphs, checkIndex, checkInventory, checkNoLiveLinks, listGraves, verifyBarriers } from './verify-void-barriers.mjs';
 
 const EPITAPH = [
   '---',
@@ -34,6 +34,7 @@ function tree({ epitaph = true, index = true, liveLink = false } = {}) {
     writeFileSync(join(root, rel), body, 'utf8');
   };
   write('docs/void/README.md', index ? '# кладбище\n\n- insight-мёртвый\n' : '# кладбище\n');
+  write('docs/void/registry.json', JSON.stringify({ schema: 'void-inventory/1', status: 'has-owner-condemned-exhibits', graves: ['insight-мёртвый'] }));
   write('docs/void/insight-мёртвый/INSIGHT.md', (epitaph ? EPITAPH : '') + '# Мёртвая идея\n');
   write('docs/insights/insight-живой/INSIGHT.md', '# Живая идея\n');
   if (liveLink) write('docs/STRATEGY_DAY.md', 'см. docs/void/insight-мёртвый — оттуда возьмём подход\n');
@@ -112,10 +113,19 @@ test('барьеры независимы: один пробой не маски
   } finally { cleanup(); }
 });
 
-test('пустое кладбище барьеров не нарушает', () => {
+test('пустой корпус без машинного инвентаря не получает ложную зелень', () => {
   const root = mkdtempSync(join(tmpdir(), 'void-empty-'));
   try {
-    assert.deepEqual(verifyBarriers(root), { graves: [], breaches: [] });
+    assert.match(verifyBarriers(root).breaches[0], /registry\.json отсутствует/u);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test('пустой корпус легален только с честным именованным состоянием', () => {
+  const root = mkdtempSync(join(tmpdir(), 'void-empty-named-'));
+  try {
+    mkdirSync(join(root, 'docs/void'), { recursive: true });
+    writeFileSync(join(root, 'docs/void/registry.json'), JSON.stringify({ status: 'no-owner-condemned-exhibits', graves: [] }));
+    assert.deepEqual(checkInventory(root, []), []);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 

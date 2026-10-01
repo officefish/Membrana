@@ -29,7 +29,21 @@ import { VOID_DIR } from './lib/gc-void.mjs';
 const EXIT_BREACH = 24;
 
 /** Файлы кладбища, объясняющие правило, — не могилы и барьерами не проверяются. */
-export const VOID_CANON = Object.freeze(['README.md', 'LIFECYCLE.md']);
+export const VOID_CANON = Object.freeze(['README.md', 'LIFECYCLE.md', 'registry.json']);
+
+export function checkInventory(repoRoot, graves, io = { existsSync, readFileSync }) {
+  const path = join(repoRoot, VOID_DIR, 'registry.json');
+  if (!io.existsSync(path)) return ['инвентарь: registry.json отсутствует — пустой корпус нельзя объявить чистым'];
+  let registry;
+  try { registry = JSON.parse(io.readFileSync(path, 'utf8')); }
+  catch { return ['инвентарь: registry.json нечитаем']; }
+  const ids = new Set((registry.graves ?? []).map((x) => typeof x === 'string' ? x : x?.id));
+  const missing = graves.filter((g) => !ids.has(g.id)).map((g) => `инвентарь: могила ${g.id} отсутствует в registry.json`);
+  if (graves.length === 0 && registry.status !== 'no-owner-condemned-exhibits') {
+    missing.push('инвентарь: пустой корпус обязан называться no-owner-condemned-exhibits');
+  }
+  return missing;
+}
 
 /**
  * Перечислить могилы: каталоги кладбища, каждый — один перенесённый след.
@@ -146,6 +160,7 @@ function liveTree(repoRoot) {
 export function verifyBarriers(repoRoot) {
   const graves = listGraves(repoRoot);
   const breaches = [
+    ...checkInventory(repoRoot, graves),
     ...checkEpitaphs(graves),
     ...checkIndex(repoRoot, graves),
     ...checkNoLiveLinks(repoRoot, graves, liveTree(repoRoot)),
@@ -169,4 +184,3 @@ function main() {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) main();
-

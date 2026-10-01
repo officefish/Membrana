@@ -1,0 +1,7 @@
+{
+  "schema": "void-inventory/1",
+  "status": "no-owner-condemned-exhibits",
+  "eligibleCorpus": [],
+  "graves": [],
+  "note": "The inventory is intentionally empty: no exhibit may be guessed into void without a closed owner or teamlead verdict. Empty is reported, never called clean."
+}

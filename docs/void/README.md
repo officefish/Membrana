@@ -15,3 +15,8 @@
 
 Механика: `scripts/lib/gc-void.mjs` (isDead/isStale/epitaph) — проход в вечернем ритуале
 после закрытия вердиктов дня; человек-гейт = diff в PR.
+
+Машинный реестр: `registry.json`. Пустой `eligibleCorpus` означает
+`no-owner-condemned-exhibits`, а не «проверено и чисто»: GC не вправе придумать первый
+экспонат. Каждая будущая запись обязана нести `rejectedReason`, `rejectedBy`, `rejectedAt`
+и `verdict` из закрытого решения.
