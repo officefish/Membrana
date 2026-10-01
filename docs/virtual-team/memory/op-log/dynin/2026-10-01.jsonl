@@ -8,3 +8,6 @@
 {"ts":"2026-10-01T07:43:56.364Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
 {"ts":"2026-10-01T17:20:35.072Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-10-01T17:20:21.605Z","origin":"ask-persona"}
 {"ts":"2026-10-01T17:20:35.078Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-10-01T17:20:21.605Z","origin":"ask-persona"}
+{"ts":"2026-10-01T18:42:31.861Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-10-01-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-10-01T18:42:31.861Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-31-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-01T18:42:31.861Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

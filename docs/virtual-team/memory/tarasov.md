@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14400/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 392 (причины в op-log) -->
+Записей: 50 · бюджет 14393/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 393 (причины в op-log) -->
+
+### 2026-10-01 · позиция · team-evening-feedback
+
+> Тарасов, веду вечер. Оценка артефактов: STRATEGY_DAY устарел (вещдок 17.07, не читать как план), но DAILY_STANDUP, MAIN_DAY_ISSUE и DAILY_CODE_REVIEW согласованы между собой и честно указывают на магистраль `angelina-hostess-impl` и P1-хвосты. MAIN_DAY_ISSUE добросовестно […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-01.md#reply-1`
 
 ### 2026-09-30 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > Комната узкая: не срок ключа (M3 закрыт), не форма контракта id/404/403 (M2 закрыт). Предмет — что можно вынуть и чем это реально ограничено. Планка: вердикт без носителя границы — BLOCK. «По одному» без исполнителя — пожелание, не правило. Начинаем с фактуры ствола, не с вкуса. _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/library-open-api-m4-extraction-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · team-evening-feedback
-
-> Tarasov. Оценка артефактов: `STRATEGY_DAY` — вещдок 17.07, из планирования выведен, вход не даёт; `DAY_PLAN` отсутствует в контексте (упомянут в стендапе, но не подан); `DAILY_STANDUP` и `MAIN_DAY_ISSUE` согласованы между собой по фокусу (background-media#test как P1, магистраль […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
 
 ### 2026-08-20 · позиция · team-evening-feedback
 

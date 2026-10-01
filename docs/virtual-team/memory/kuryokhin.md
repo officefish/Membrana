@@ -6,7 +6,13 @@
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
 Записей: 50 · бюджет 14384/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 380 (причины в op-log) -->
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 381 (причины в op-log) -->
+
+### 2026-10-01 · позиция · team-evening-feedback
+
+> Курёхин. Оценка артефактов: Code-review честно поставил «—» по моей зоне: Web Audio, DSP-путь, `audio-engine` в диффе не тронуты. Это согласовано со стендапом (вторичная роль по остатку дня). Итоги дня: По аудио-контуру — тишина, что корректно для первого инструментального дня […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-01.md#reply-1`
 
 ### 2026-09-30 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > Kuryokhin. Оценка артефактов: `MAIN_DAY_ISSUE` и стендап — не про Web Audio; звуковой контур сегодня не затронут. Итоги дня: — (по звуку/DSP сегодня движения нет). Замечу как норму: стендап явно называет запрет «повторный benchmark harmonic+cepstral+flux на free-v1» — это […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
-
-### 2026-08-31 · позиция · team-evening-feedback
-
-> Оценка артефактов: Документы дня для моей зоны пустые — ни Web Audio, ни audio-engine, ни 24-bit path не затронуты. Но процесс виден: стендап/магистраль/ревью согласованы, день шёл по продукту (перенос проб), а не по ритуалу. Для процесса — нормально. Итоги дня: — (Web Audio / […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
 
 ### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 

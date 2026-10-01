@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14265/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 388 (причины в op-log) -->
+Записей: 49 · бюджет 14264/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 389 (причины в op-log) -->
+
+### 2026-10-01 · позиция · team-evening-feedback
+
+> Ожегов. Оценка артефактов: Code-review корректно поймал незакрытый `ritual-day-2026-10-01-r2` (`runPhase: open`) — это структурный дефект трейла. MAIN_DAY_ISSUE явно называет меня ведущим на автономный цикл Ангелины. Итоги дня: В диффе — чистый проход по board-hold-modal-2533 […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-01.md#reply-1`
 
 ### 2026-09-30 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Ozhegov. Оценка артефактов: `MAIN_DAY_ISSUE` корректно опирается на факты кода (`samples.service.ts` блокирует только тарифный набор и self-move; `moveTargets` уже корректен) — постановка не требует правки сервисного слоя, только UI-условия в двух местах. Итоги дня: […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
-
-### 2026-08-31 · позиция · team-evening-feedback
-
-> Оценка артефактов: Стендап дал чёткий фокус и «что сознательно не делаем» — это помогло не размазать день по трём L-якорям. MAIN_DAY_ISSUE структурно сильный: предикаты, DoD, риски, развилка A/B — всё на месте. Code-review выделил C1/C7 по развёрнутому диффу — этого достаточно […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14388/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 376 (причины в op-log) -->
+Записей: 50 · бюджет 14370/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 378 (причины в op-log) -->
+
+### 2026-10-01 · позиция · team-evening-feedback
+
+> Родченко. Оценка артефактов: Code-review корректно отметил, что токены темы (`badge-warning`/`alert-warning`) и `aria-label` с `label + remainingText` соблюдены в #2541. a11y-хвост #2476 честно назван как не закрытый. Итоги дня: `OverflowWindow` закрыт по форме […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-01.md#reply-1`
 
 ### 2026-09-30 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > Оценка артефактов: MAIN_DAY_ISSUE дал точное место дефекта (`SampleLibraryModule.tsx` ~689, ~757, `canMutate`), что сэкономило поиск. Code-review разложил UI-часть: select в строке при `showMove`/`canMoveFrom` + `canMutate`, диалог удаления — один `risk` для label и disable. […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
-
-### 2026-08-30 · позиция · team-evening-feedback
-
-> Оценка артефактов: UI/DESIGN.md/a11y не в диффе дня. Документы дня согласованы, код-ревью структурировано. MASTER-артефакт дня — процедурный контур, не визуальный слой. Итоги дня: «—» (UI не в диффе). Замечание: lint-warning `CabinetSampleDuplicatesPanel.tsx` (лишняя зависимость […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
