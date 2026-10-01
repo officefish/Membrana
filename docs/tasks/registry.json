@@ -1,9 +1,4 @@
 {
-  "verdictSchema": {
-    "status": "rejected",
-    "required": ["rejectedReason", "rejectedBy", "rejectedAt", "verdict"],
-    "authority": "closed owner or teamlead verdict; GC executes and never decides"
-  },
   "tasks": [
     {
       "id": "ritual-reads-decisions-b5",

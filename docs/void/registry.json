@@ -1,5 +1,10 @@
 {
   "schema": "void-inventory/1",
+  "verdictSchema": {
+    "status": "rejected",
+    "required": ["rejectedReason", "rejectedBy", "rejectedAt", "verdict"],
+    "authority": "closed owner or teamlead verdict; GC executes and never decides"
+  },
   "status": "no-owner-condemned-exhibits",
   "eligibleCorpus": [],
   "graves": [],

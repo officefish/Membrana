@@ -26,6 +26,8 @@ const EPITAPH = [
   '---',
   '',
 ].join('\n');
+const REQUIRED = ['rejectedReason', 'rejectedBy', 'rejectedAt', 'verdict'];
+const REGISTRY = { schema: 'void-inventory/1', verdictSchema: { status: 'rejected', required: REQUIRED }, status: 'has-owner-condemned-exhibits', graves: ['insight-мёртвый'] };
 
 function tree({ epitaph = true, index = true, liveLink = false } = {}) {
   const root = mkdtempSync(join(tmpdir(), 'void-'));
@@ -34,7 +36,7 @@ function tree({ epitaph = true, index = true, liveLink = false } = {}) {
     writeFileSync(join(root, rel), body, 'utf8');
   };
   write('docs/void/README.md', index ? '# кладбище\n\n- insight-мёртвый\n' : '# кладбище\n');
-  write('docs/void/registry.json', JSON.stringify({ schema: 'void-inventory/1', status: 'has-owner-condemned-exhibits', graves: ['insight-мёртвый'] }));
+  write('docs/void/registry.json', JSON.stringify(REGISTRY));
   write('docs/void/insight-мёртвый/INSIGHT.md', (epitaph ? EPITAPH : '') + '# Мёртвая идея\n');
   write('docs/insights/insight-живой/INSIGHT.md', '# Живая идея\n');
   if (liveLink) write('docs/STRATEGY_DAY.md', 'см. docs/void/insight-мёртвый — оттуда возьмём подход\n');
@@ -61,7 +63,7 @@ test('все три барьера держат на здоровом кладб
 test('барьер 1 КРАСНЫЙ: могила без эпитафии в начале файла', () => {
   const { root, cleanup } = tree({ epitaph: false });
   try {
-    const breaches = checkEpitaphs(listGraves(root));
+    const breaches = checkEpitaphs(listGraves(root), REQUIRED);
     assert.equal(breaches.length, 1);
     assert.match(breaches[0], /барьер 1/u);
   } finally { cleanup(); }
@@ -71,7 +73,7 @@ test('барьер 1 КРАСНЫЙ: эпитафия задвинута в ко
   const { root, cleanup } = tree({ epitaph: false });
   try {
     writeFileSync(join(root, 'docs/void/insight-мёртвый/INSIGHT.md'), `# Мёртвая идея\n${EPITAPH}`, 'utf8');
-    assert.equal(checkEpitaphs(listGraves(root)).length, 1, 'эпитафия обязана быть ПЕРВОЙ');
+    assert.equal(checkEpitaphs(listGraves(root), REQUIRED).length, 1, 'эпитафия обязана быть ПЕРВОЙ');
   } finally { cleanup(); }
 });
 
@@ -124,9 +126,19 @@ test('пустой корпус легален только с честным и
   const root = mkdtempSync(join(tmpdir(), 'void-empty-named-'));
   try {
     mkdirSync(join(root, 'docs/void'), { recursive: true });
-    writeFileSync(join(root, 'docs/void/registry.json'), JSON.stringify({ status: 'no-owner-condemned-exhibits', graves: [] }));
+    writeFileSync(join(root, 'docs/void/registry.json'), JSON.stringify({ verdictSchema: { required: REQUIRED }, status: 'no-owner-condemned-exhibits', graves: [] }));
     assert.deepEqual(checkInventory(root, []), []);
   } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test('porcha: могила без rejectedReason красная по исполняемой схеме', () => {
+  const { root, cleanup } = tree();
+  try {
+    const path = join(root, 'docs/void/insight-мёртвый/INSIGHT.md');
+    writeFileSync(path, EPITAPH.replace('rejectedReason: —\n', '') + '# Мёртвая идея\n', 'utf8');
+    const breaches = verifyBarriers(root).breaches;
+    assert.ok(breaches.some((b) => /обязательного поля rejectedReason/u.test(b)));
+  } finally { cleanup(); }
 });
 
 test('нечитаемый файл ссылкой не объявляется', () => {

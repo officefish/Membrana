@@ -21,8 +21,9 @@ yarn insight decide <mandate-id> --set rejected --request-key <key> --authority 
 
 ## Что значит «вердикт закрыт»
 
-Форма приговора объявлена машинно в `docs/tasks/registry.json#verdictSchema`, а перечень
-допущенных к переносу следов — в `docs/void/registry.json`. Пустой перечень не зелёный
+Форма приговора и перечень допущенных к переносу следов объявлены машинно в
+`docs/void/registry.json`. `verify-void-barriers` читает оттуда обязательные поля каждой
+эпитафии. Пустой перечень не зелёный
 аудит: это именованное состояние `no-owner-condemned-exhibits`.
 
 Проекция цикла даёт оценку двух видов:
