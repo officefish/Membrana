@@ -39,6 +39,9 @@ export function usePairStatusMonitor(): void {
           return;
         }
 
+        // #2538: слияние несёт и id тарифа. Смена тарифа → новая ссылка → applyPairing → эффект
+        // перезапускается с новым `pairing`, и цикл идёт сразу, не дожидаясь следующей минуты:
+        // ping → tryUpgradeMediaLibraryToRemote → refreshQuota (один лёгкий GET /quota).
         const nextPairing = mergePairStatusTariff(pairing, status);
         if (nextPairing !== pairing) {
           applyPairing(nextPairing);

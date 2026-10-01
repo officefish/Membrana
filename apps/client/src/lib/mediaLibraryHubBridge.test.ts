@@ -25,6 +25,7 @@ import {
   initMediaLibraryHubBridge,
   requestClearMediaLibraryBuffer,
   resetMediaLibraryHubBridgeForTests,
+  tryUpgradeMediaLibraryToRemote,
 } from './mediaLibraryHubBridge';
 import { resolveMediaLibraryBackend } from './resolveMediaLibraryBackend';
 import { micBufferRecorderPluginState } from '@/plugins/mic-buffer-recorder/micBufferRecorderPluginState';
@@ -161,5 +162,74 @@ describe('mediaLibraryHubBridge', () => {
     expect(trackItems).toHaveLength(1);
     expect(trackItems[0]?.track?.trackId).toBe(trackId);
     unsub();
+  });
+});
+
+/**
+ * #2538, porcha P2 (красная на стволе d364ef64): тик связанного режима при ЖИВОМ серверном
+ * бэкенде обязан перечитать предел прибора — лёгким refreshQuota(), без списков. На стволе
+ * tryUpgradeMediaLibraryToRemote при server+reachable не делал ничего, и смена тарифа на сервере
+ * до прибора не доезжала.
+ */
+describe('tryUpgradeMediaLibraryToRemote — предел перечитывается тиком (#2538)', () => {
+  const PAIRING = {
+    token: 't',
+    expiresAt: '2027-01-01T00:00:00.000Z',
+    deviceId: 'dev',
+    mediaToken: 'm',
+    mediaApiUrl: 'https://media.test',
+    membraneId: 'mem',
+    nodeId: 'node',
+    nodeLabel: 'node',
+  };
+
+  afterEach(() => {
+    resetDefaultMediaLibraryServiceForTests();
+    resetMediaLibraryHubBridgeForTests();
+  });
+
+  it('P2: живой серверный бэкенд → один getQuota, списки не трогаются, новый предел в снимке', async () => {
+    const backend = new MemoryStorageBackend({ limitBytes: 512, backend: 'server', serverReachable: true });
+    const svc = createMediaLibraryService(backend);
+    setDefaultMediaLibraryServiceForTests(svc);
+    await svc.refresh();
+    const getQuota = vi.spyOn(backend, 'getQuota').mockResolvedValue({
+      usedBytes: 486,
+      limitBytes: 2048,
+      backend: 'server',
+      serverReachable: true,
+      bufferUsedBytes: 486,
+      bufferLimitBytes: 2048,
+    });
+    const listCollections = vi.spyOn(backend, 'listCollections');
+
+    await tryUpgradeMediaLibraryToRemote('paired', PAIRING);
+
+    expect(getQuota).toHaveBeenCalledTimes(1);
+    expect(listCollections).not.toHaveBeenCalled();
+    expect(svc.getSnapshot().quota.bufferLimitBytes).toBe(2048);
+  });
+
+  it('сервер был недоступен → прежний путь восстановления: полный refresh()', async () => {
+    const backend = new MemoryStorageBackend({ limitBytes: 512, backend: 'server', serverReachable: false });
+    const svc = createMediaLibraryService(backend);
+    setDefaultMediaLibraryServiceForTests(svc);
+    await svc.refresh();
+    const refresh = vi.spyOn(svc, 'refresh');
+    const refreshQuota = vi.spyOn(svc, 'refreshQuota');
+
+    await tryUpgradeMediaLibraryToRemote('paired', PAIRING);
+
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(refreshQuota).not.toHaveBeenCalled();
+  });
+
+  it('не связан → ничего не читает', async () => {
+    const backend = new MemoryStorageBackend({ limitBytes: 512, backend: 'server', serverReachable: true });
+    const svc = createMediaLibraryService(backend);
+    setDefaultMediaLibraryServiceForTests(svc);
+    const getQuota = vi.spyOn(backend, 'getQuota');
+    await tryUpgradeMediaLibraryToRemote('autonomous', null);
+    expect(getQuota).not.toHaveBeenCalled();
   });
 });

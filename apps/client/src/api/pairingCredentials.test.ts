@@ -28,7 +28,7 @@ describe('pairResponseToCredentials', () => {
     expect(c).toEqual({
       token: 'tok', expiresAt: '2026-08-21T00:00:00Z', deviceId: 'd1', mediaToken: 'mt',
       mediaApiUrl: 'https://media.example', membraneId: 'mem1', nodeId: 'n1',
-      nodeLabel: 'Firebat', pairedKeyId: 'pk1', maxUserWorkspaces: 3,
+      nodeLabel: 'Firebat', pairedKeyId: 'pk1', maxUserWorkspaces: 3, tariffId: 't1',
     });
   });
 
@@ -36,7 +36,7 @@ describe('pairResponseToCredentials', () => {
     const keys = Object.keys(pairResponseToCredentials(response())).sort();
     expect(keys).toEqual([
       'deviceId', 'expiresAt', 'maxUserWorkspaces', 'mediaApiUrl', 'mediaToken',
-      'membraneId', 'nodeId', 'nodeLabel', 'pairedKeyId', 'token',
+      'membraneId', 'nodeId', 'nodeLabel', 'pairedKeyId', 'tariffId', 'token',
     ]);
   });
 
@@ -45,6 +45,7 @@ describe('pairResponseToCredentials', () => {
     expect('pairedKeyId' in c).toBe(true);
     expect(c.pairedKeyId).toBeUndefined();
     expect(c.maxUserWorkspaces).toBeUndefined();
+    expect(c.tariffId).toBeUndefined();
   });
 
   it('вход не мутируется', () => {
@@ -84,5 +85,46 @@ describe('mergePairStatusTariff', () => {
     const snapshot = structuredClone(c);
     mergePairStatusTariff(c, linked(7));
     expect(c).toEqual(snapshot);
+  });
+});
+
+/**
+ * #2538 — id тарифа едет в учётные данные и сливается опросом наравне с квотой.
+ * Порчи → красный: смена id без новой ссылки — красный; id из ответа потерян при маппинге — красный.
+ */
+describe('mergePairStatusTariff — tariffId (#2538)', () => {
+  const creds = () => pairResponseToCredentials(response());
+  const linkedTariff = (id: string, quota = 3): PairStatusLinked => ({
+    ...linked(), tariff: { id, maxUserWorkspaces: quota },
+  });
+
+  it('pairResponseToCredentials несёт tariffId из ответа привязки', () => {
+    expect(creds().tariffId).toBe('t1');
+  });
+
+  it('тот же id и та же квота → тот же объект', () => {
+    const c = creds();
+    expect(Object.is(mergePairStatusTariff(c, linkedTariff('t1')), c)).toBe(true);
+  });
+
+  it('смена id при той же квоте → новая ссылка с новым tariffId; квота не тронута', () => {
+    const c = creds();
+    const next = mergePairStatusTariff(c, linkedTariff('checkpoint-v1'));
+    expect(next).not.toBe(c);
+    expect(next.tariffId).toBe('checkpoint-v1');
+    expect(next.maxUserWorkspaces).toBe(3);
+  });
+
+  it('учётные данные без tariffId (старая привязка) получают id первым же опросом', () => {
+    const c = { ...creds(), tariffId: undefined };
+    const next = mergePairStatusTariff(c, linkedTariff('t1'));
+    expect(next).not.toBe(c);
+    expect(next.tariffId).toBe('t1');
+  });
+
+  it('ответ без тарифа сохранённый id не стирает', () => {
+    const c = creds();
+    expect(Object.is(mergePairStatusTariff(c, linked()), c)).toBe(true);
+    expect(c.tariffId).toBe('t1');
   });
 });
