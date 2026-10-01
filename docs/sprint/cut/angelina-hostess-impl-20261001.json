@@ -1,0 +1,77 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "angelina-hostess-impl-20261001",
+  "taskId": "angelina-hostess-impl",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "//why": "Audit of all 33 ratified DoD items found 25 done, 7 partial and 1 missing. This cut contains only the residuals: M1 canon closure, M4 session hostess wiring, and M5 literal verdict registry plus starter inventory. M2 and M3 are not reopened.",
+  "window": {
+    "from": "2026-10-01T12:00:00+03:00",
+    "to": "2026-10-01T20:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "m1-canon-closure",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        ".cursor/skills/README.md",
+        "package.json",
+        "scripts/lib/skill-status.mjs",
+        "scripts/skill-status.test.mjs",
+        "scripts/skills-sync-readme.mjs",
+        "scripts/skills-sync-readme.test.mjs",
+        "scripts/verify-docs-canon.mjs",
+        "docs/DEVELOPER_RHYTHM.md",
+        "docs/DAY_PLAN.md",
+        "docs/MAIN_DAY_ISSUE.md",
+        "AGENTS.md"
+      ],
+      "estimate": { "changedLines": 260 },
+      "//forecast": "Gives a generated skills inventory with a Status column, an append-only transition/failover provenance record, and a green canon verifier for the exact M1 surface. Checked by skills-sync idempotence, status-DAG/leak tests, docs:verify-canon, and docs lint. Falsified if README can drift from skill front matter, a failed morning route has no journal evidence, or the verifier remains red.",
+      "//porcha": "Red on origin/main 00257180: node predicate requires package.scripts['skills:sync-readme'] and a Status column in .cursor/skills/README.md; output says command absent and header is only Skill/Triggers, exit 1. Mutation teeth must also remove status, create a superseded cycle, and delete the transition record."
+    },
+    {
+      "blockId": "m4-session-hostess",
+      "persona": "angelina",
+      "context": "angelina",
+      "zone": [
+        "scripts/angelina.mjs",
+        "scripts/angelina-adapter.test.mjs",
+        "scripts/angelina-delegate.test.mjs",
+        "scripts/angelina-validate.test.mjs",
+        "scripts/lib/angelina-session.mjs",
+        "scripts/angelina-session.test.mjs",
+        "scripts/ritual-day-run.mjs",
+        "scripts/ritual-evening-run.mjs",
+        "docs/tasks/morning-ritual-steps.json",
+        "docs/tasks/evening-ritual-steps.json"
+      ],
+      "estimate": { "changedLines": 340 },
+      "//forecast": "Gives explicit session availability raised by ritual:day and lowered by ritual:evening, wires mechanical frontier checks through analyst calls, and renders one hostess artifact with premises-before-verdict plus four echoes. Checked by pure session transition tests, injected analyst-call counts/schema failures, one-entry observer, and structural rendering teeth. Falsified by any resident process, copied gate predicate inside Angelina, direct morning start outside the hostess, or missing fourth echo.",
+      "//porcha": "Red on origin/main 00257180: source predicate requires analyst invocation, session_active state, and ritual:evening shutdown in the hostess contract; scripts/angelina.mjs contains none as a combined wire, exit 1. Mutations must bypass analyst, keep availability after evening, and add a second entry."
+    },
+    {
+      "blockId": "m5-verdict-inventory",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "docs/tasks/registry.json",
+        "docs/tasks/README.md",
+        "docs/void/README.md",
+        "docs/void/LIFECYCLE.md",
+        "docs/void/registry.json",
+        "scripts/lib/void-sentence.mjs",
+        "scripts/void-sentence.test.mjs",
+        "scripts/lib/void-index.mjs",
+        "scripts/verify-void-barriers.mjs",
+        "scripts/verify-void-barriers.test.mjs"
+      ],
+      "estimate": { "changedLines": 300 },
+      "//forecast": "Gives one explicit machine-readable verdict registry carrying rejectedReason/rejectedBy and an honest inventory report that distinguishes owner-condemned exhibits from an empty eligible corpus; it does not move uncondemned history. Checked by schema/validator red cases, deterministic projection into isDead, three barrier tests, and fail-closed inventory reporting. Falsified if GC itself can condemn, a grave lacks owner/date/reason, an exhibit is guessed without a closed verdict, or an empty corpus is reported clean.",
+      "//porcha": "Red on origin/main 00257180: docs/tasks/registry.json has neither rejectedReason nor rejectedBy and docs/void has zero grave directories; predicate prints both false and graves=0, exit 1. Mutations must remove each required field, empty the corpus, create an unindexed grave, and add a live link to void."
+    }
+  ],
+  "ratification": null,
+  "//out": "M2 assembly and M3 send gates; changes to product applications/packages; autonomous-agent goals; deployments; deletion of history or worktrees; actual GC moves without a new closed owner verdict; archive of angelina-hostess-impl."
+}
