@@ -1,0 +1,12 @@
+{
+  "schema": "void-inventory/1",
+  "verdictSchema": {
+    "status": "rejected",
+    "required": ["rejectedReason", "rejectedBy", "rejectedAt", "verdict"],
+    "authority": "closed owner or teamlead verdict; GC executes and never decides"
+  },
+  "status": "no-owner-condemned-exhibits",
+  "eligibleCorpus": [],
+  "graves": [],
+  "note": "The inventory is intentionally empty: no exhibit may be guessed into void without a closed owner or teamlead verdict. Empty is reported, never called clean."
+}

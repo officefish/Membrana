@@ -18,6 +18,7 @@ import { fileURLToPath } from 'node:url';
 
 import { pendingCiContinuation } from './lib/ritual-deliver-to-main.mjs';
 import { dayCloseArgs } from './lib/ritual-day-close.mjs';
+import { sessionState, writeSessionState } from './lib/angelina-session.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -64,6 +65,7 @@ function runChain() {
     'docs/tasks/morning-ritual-steps.json',
   ]);
   if (open !== 0) return 1;
+  writeSessionState(root, sessionState(true, new Date().toISOString(), 'ritual:day'));
 
   for (const step of STEPS) {
     console.error(`\n=== ritual:day → ${step.id}${step.critical ? '' : ' (noncritical)'} ===`);

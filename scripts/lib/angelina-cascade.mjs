@@ -14,6 +14,7 @@
  */
 
 import { createHash } from 'node:crypto';
+import { AUTHOR_PERSONAS } from './personas.mjs';
 
 /**
  * Автор документа каскада ∈ {8 голосов реестра, человек}. Субагент автором быть не может (M1).
@@ -21,10 +22,7 @@ import { createHash } from 'node:crypto';
  * и Фаррелл — голоса реестра; список зеркалит docs/virtual-team/voices.registry.json (зуб
  * verify:voices). Провод пойман стражем 28.07: стендап Тарасова блокировала старая пятёрка.
  */
-export const AUTHOR_ROLES = new Set([
-  'tarasov', 'vesnin', 'ozhegov', 'dynin', 'kuryokhin', 'rodchenko', 'angelina', 'farrell',
-  'human',
-]);
+export const AUTHOR_ROLES = new Set(AUTHOR_PERSONAS);
 
 /** Три исхода проверки свежести ребра. `unknown` («не проверено») ≠ `fresh` — не мёртвая дверь. */
 export const FRESHNESS = Object.freeze({ FRESH: 'fresh', STALE: 'stale', UNKNOWN: 'unknown' });

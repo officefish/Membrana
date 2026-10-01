@@ -19,7 +19,8 @@
       "kind": "architect",
       "promptFile": "docs/virtual-team/PROMPT_ARCHITECT.md",
       "callable": [
-        "ask"
+        "ask",
+        "consilium"
       ],
       "notes": "С 27.07 — архитектор, не тимлид: границы модулей, контракты, конструктивизм. Тимлидские обязанности переданы Тарасову."
     },

@@ -1,0 +1,22 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "angelina-hostess-impl-20261001",
+  "measuredAt": "2026-10-01T10:12:00Z",
+  "segments": [
+    {
+      "cutBlockId": "m1-canon-closure",
+      "changedLines": 190,
+      "evidence": "git diff --numstat: generated README, sync command/tests, status transition contract, docs-canon correction and owned live-canon annotations"
+    },
+    {
+      "cutBlockId": "m4-session-hostess",
+      "changedLines": 96,
+      "evidence": "git diff --numstat plus new files: angelina-session core/test, day/evening session wires, hostess four-echo render and review"
+    },
+    {
+      "cutBlockId": "m5-verdict-inventory",
+      "changedLines": 105,
+      "evidence": "git diff --numstat plus new files: verdict schema, void registry/canon, fail-closed inventory tooth/tests and review"
+    }
+  ]
+}
