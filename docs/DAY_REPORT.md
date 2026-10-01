@@ -1,29 +1,36 @@
-<!-- Сгенерировано: 2026-08-22T04:22:55.411Z (yarn day:report; vesnin) -->
+<!-- Сгенерировано: 2026-10-01T07:36:38.830Z (yarn day:report; vesnin) -->
 
-# Доклад по задачам — 2026-08-22
+# Доклад по задачам — 2026-10-01
 
 Автор: Тимлид (vesnin) · зеркало 5-блочного плана дня.
 
 ## Магистраль
 
-- `journal-home-real` — магистраль 22.08 по owner-choice (карточка заводится с первым PR); `firebat-node-device` закрыт 20.08
-- `server-plugin-foundation` — ведёт vesnin
-- #2046 — OPEN
+- #2488 — MERGED
+- #2489 — MERGED
+- #2499 — MERGED
+- #2505 — MERGED
+- #2513 — MERGED
+- #2508 — MERGED
 
 ## Подкрепление
 
-- #2046 — OPEN
-- #2050 — MERGED
+- #2529 — MERGED
 
 ## Перспективные
 
-- #2046 — OPEN
+- `assets-container` — ведёт vesnin
+- `chart-list-plugin` — ведёт vesnin
+- #2155 — MERGED
+- #2039 — OPEN
+- #2476 — CLOSED
 
 ## Экспериментальные
 
-— задач со ссылками нет (темы блока — в каноне дня) —
+- #2148 — OPEN
 
 ## Санитарные
 
-- #2022 — OPEN
-- #2046 — OPEN
+- #2529 — MERGED
+- #2503 — MERGED
+- #2534 — MERGED
