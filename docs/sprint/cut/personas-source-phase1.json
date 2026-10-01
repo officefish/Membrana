@@ -30,8 +30,8 @@
       "estimate": {
         "changedLines": 260
       },
-      "revisionAt": "2026-10-01T09:44:06Z",
-      "revisionOf": "1b00f456b2d58d027162573755d095f06985d7f8d1c9a7703c4d39d31c5d7e2f"
+      "revisionAt": "2026-10-01T10:10:00Z",
+      "revisionOf": "037e51b025d81779bc9be1d26492aed6f3a2b0fcb1a3e6f0d887af94be07abaa"
     },
     {
       "blockId": "b2-named-filters-and-drift-tooth",
@@ -53,8 +53,8 @@
       "estimate": {
         "changedLines": 180
       },
-      "revisionAt": "2026-10-01T09:44:06Z",
-      "revisionOf": "0bd6e55f945bc60e8db1611d475636ed88e31c70d779bf566ace6348769026cc"
+      "revisionAt": "2026-10-01T10:10:00Z",
+      "revisionOf": "01fdc5c7ee91da2528778e811254339a17a1d2864b695af67ef37d9b5816d0ce"
     }
   ],
   "//why": "GitHub Issue #2542. Several scripts declare persona rosters independently. The runtime already has one likely source (`docs/virtual-team/voices.registry.json`), but nearby modules still carry manual lists. Measured drift: `CONSILIUM_ROLE_KEY_TO_SLUG.teamlead` maps Teamlead memory to `vesnin`, while the registry and prompt say Teamlead is `tarasov`; the architect role has no memory mapping. Other differences are legal filters (review leads, procedure holders/moderators, ask-callable roster) and must be preserved as named derivations, not flattened.",
@@ -65,5 +65,10 @@
   "//out-of-scope": "Do not merge legal filters into all voices. Do not change branch grammar or branch hygiene persona branch categories. Do not rewrite historical docs. Do not touch `@membrana/core`. Do not change the meaning of Farrell as storm-only/free voice or Angelina as procedure moderator/non-code holder.",
   "//forecast": "b1 should be small-to-medium because the registry and several teeth already exist; highest risk is ESM JSON/fs loading in script modules. b2 should be smaller but has the main safety value: a red-on-trunk tooth. Expected focused tests: `node --test scripts/voices-registry.test.mjs scripts/persona-memory-roster.test.mjs scripts/personas-source.test.mjs scripts/procedure-personas.test.mjs scripts/code-review-ritual.test.mjs scripts/validate-procedure.test.mjs`, plus direct smoke for `node scripts/verify-voices.mjs` and affected CLI dry/help paths where possible.",
   "//porcha": "Temporary/committed porcha target for phase 2: `node --test scripts/personas-source.test.mjs` must fail on `origin/main` by detecting `CONSILIUM_ROLE_KEY_TO_SLUG.teamlead -> vesnin` and manual full-roster lists in `day-memo-persona-trace.mjs`/`angelina-cascade.mjs`; it must pass after derivation from the single source. Report both red-on-trunk and green-on-branch runs.",
-  "//forks": "1. Canonical source: keep JSON registry as truth (default) vs move truth to `scripts/lib/personas.mjs` and check/generate JSON. 2. `ask-persona`: derive all role/prompt/description metadata from registry (default) vs keep local descriptions with a drift tooth. 3. `consilium`: validate actual role-key -> persona-id mapping (default) vs only prompt files as today. 4. Tooth strictness: block any persona-id array/object outside allowlisted filters (default) vs only block all-roster duplicates."
+  "//forks": "1. Canonical source: keep JSON registry as truth (default) vs move truth to `scripts/lib/personas.mjs` and check/generate JSON. 2. `ask-persona`: derive all role/prompt/description metadata from registry (default) vs keep local descriptions with a drift tooth. 3. `consilium`: validate actual role-key -> persona-id mapping (default) vs only prompt files as today. 4. Tooth strictness: block any persona-id array/object outside allowlisted filters (default) vs only block all-roster duplicates.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-10-01T10:10:00Z",
+    "digest": "ea78ae24832a12b79903bec826f6c8726726a4b39e69b797ad591b6417bc8276"
+  }
 }
