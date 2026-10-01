@@ -1,0 +1,10 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "board-hold-modal-2533",
+  "measuredAt": "2026-10-01T08:20:00Z",
+  "segments": [
+    { "cutBlockId": "b1-freed-standing-viewmodel", "changedLines": 187, "evidence": "git diff --numstat dba53da0..c20b9a96 — viewModel.ts 29/4 + viewModel.test.ts 91/2 + reasonTexts.ts 35/2 + deviceOverflowHold.ts 6/1 + deviceOverflowHold.test.ts 17/0 (коммит 0f4b03bf)" },
+    { "cutBlockId": "b2-surfaces-read-standing", "changedLines": 359, "evidence": "git diff --numstat dba53da0..c20b9a96 — OverflowWindow.tsx 10/10 + OverflowWindow.test.tsx 30/0 + OverflowWindowHost.test.tsx 113/0 + structural.test.ts 4/3 + useOverflowHoldBoardView.ts 58/18 + OverflowHoldPlashka.tsx 14/13 + device-board: board-overflow-hold.ts 10/2, badge 15/5, test 43/6, runtime-status 3/2 (коммит c20b9a96)" },
+    { "cutBlockId": "b3-live-check-closure", "changedLines": 324, "evidence": "ветка chore/close-board-hold-modal-2533 от d364ef64 — CLOSURE.md + execution-traces.jsonl + reviews/*.md + LOCAL_SPRINT_ACTIVE/LOG (git diff --numstat + wc -l новых файлов) + сегменты/трейл/раздел гейта ~40" }
+  ]
+}
