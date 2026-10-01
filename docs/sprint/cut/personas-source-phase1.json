@@ -46,6 +46,8 @@
         "scripts/code-review-ritual.test.mjs",
         "scripts/validate-procedure.test.mjs",
         "scripts/personas-source.test.mjs",
+        "scripts/lib/sprint-experience/forecast-record.mjs",
+        "scripts/sprint-smoke.test.mjs",
         "scripts/lib/sprint-cut/test-support/live-fixtures.mjs",
         "docs/sprint/cut/personas-source-phase1.json",
         "docs/discussions/personas-source-phase1-report.md"
@@ -53,8 +55,8 @@
       "estimate": {
         "changedLines": 180
       },
-      "revisionAt": "2026-10-01T10:10:00Z",
-      "revisionOf": "01fdc5c7ee91da2528778e811254339a17a1d2864b695af67ef37d9b5816d0ce"
+      "revisionAt": "2026-10-01T19:58:38+03:00",
+      "revisionOf": "12bf8e988f9d8711cc3716a7c2fe9f08fa1b548529de1169ff9719326790be70"
     }
   ],
   "//why": "GitHub Issue #2542. Several scripts declare persona rosters independently. The runtime already has one likely source (`docs/virtual-team/voices.registry.json`), but nearby modules still carry manual lists. Measured drift: `CONSILIUM_ROLE_KEY_TO_SLUG.teamlead` maps Teamlead memory to `vesnin`, while the registry and prompt say Teamlead is `tarasov`; the architect role has no memory mapping. Other differences are legal filters (review leads, procedure holders/moderators, ask-callable roster) and must be preserved as named derivations, not flattened.",
@@ -66,9 +68,10 @@
   "//forecast": "b1 should be small-to-medium because the registry and several teeth already exist; highest risk is ESM JSON/fs loading in script modules. b2 should be smaller but has the main safety value: a red-on-trunk tooth. Expected focused tests: `node --test scripts/voices-registry.test.mjs scripts/persona-memory-roster.test.mjs scripts/personas-source.test.mjs scripts/procedure-personas.test.mjs scripts/code-review-ritual.test.mjs scripts/validate-procedure.test.mjs`, plus direct smoke for `node scripts/verify-voices.mjs` and affected CLI dry/help paths where possible.",
   "//porcha": "Temporary/committed porcha target for phase 2: `node --test scripts/personas-source.test.mjs` must fail on `origin/main` by detecting `CONSILIUM_ROLE_KEY_TO_SLUG.teamlead -> vesnin` and manual full-roster lists in `day-memo-persona-trace.mjs`/`angelina-cascade.mjs`; it must pass after derivation from the single source. Report both red-on-trunk and green-on-branch runs.",
   "//forks": "1. Canonical source: keep JSON registry as truth (default) vs move truth to `scripts/lib/personas.mjs` and check/generate JSON. 2. `ask-persona`: derive all role/prompt/description metadata from registry (default) vs keep local descriptions with a drift tooth. 3. `consilium`: validate actual role-key -> persona-id mapping (default) vs only prompt files as today. 4. Tooth strictness: block any persona-id array/object outside allowlisted filters (default) vs only block all-roster duplicates.",
+  "//recut": "2026-10-01: владелец ратифицировал перерезку словами «Оба файла в блок 2». В b2 добавлены runtime-валидатор scripts/lib/sprint-experience/forecast-record.mjs и fixture scripts/sprint-smoke.test.mjs: оба несут полные ростеры 8 голосов и не являются законными фильтрами.",
   "ratification": {
     "by": "owner",
-    "at": "2026-10-01T10:10:00Z",
-    "digest": "ea78ae24832a12b79903bec826f6c8726726a4b39e69b797ad591b6417bc8276"
+    "at": "2026-10-01T19:58:38+03:00",
+    "digest": "d79bb177eabfa2925df35a6d032f7592716d7b11ce2f47984a6ef53ef371b110"
   }
 }
