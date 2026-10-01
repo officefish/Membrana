@@ -6,7 +6,12 @@
   ],
   "frozenDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
   "magistral": "angelina-hostess-impl",
-  "swallow": null,
+  "swallow": {
+    "draftDigest": "0d187616cb36f79a799fb1c7e2f9e43d73a92887a63a61271df5b72c376cd008",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-10-01.md",
+    "ownerAck": true,
+    "day": "2026-10-01"
+  },
   "day": "2026-10-01",
   "magistralChosenAt": "2026-10-01",
   "magistralAuthor": "snapshot"
