@@ -25,8 +25,9 @@ import { computeCutAccuracy } from './lib/sprint-experience/cut-accuracy.mjs';
 import { computeFalseStopRate } from './lib/sprint-experience/false-stop-rate.mjs';
 import { renderMetricLine } from './lib/sprint-experience/absence.mjs';
 import { nominateRuns } from './lib/sprint-experience/nominate.mjs';
+import { loadKnownPersonaIds } from './lib/personas.mjs';
 
-const VOICES = ['tarasov', 'vesnin', 'ozhegov', 'dynin', 'kuryokhin', 'rodchenko', 'angelina', 'farrell'];
+const VOICES = loadKnownPersonaIds();
 const REASONS = ['mechanical', 'no_profile_owner', 'owner_solo', 'urgent_recovery'];
 
 /** План из двух блоков: первый влезает в проход, второй переполнен. */

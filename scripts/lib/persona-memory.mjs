@@ -9,6 +9,10 @@
  */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import {
+  CONSILIUM_ROLE_KEY_TO_SLUG as DERIVED_CONSILIUM_ROLE_KEY_TO_SLUG,
+  PERSONA_ROLE_LABELS as DERIVED_PERSONA_ROLE_LABELS,
+} from './personas.mjs';
 
 /** Слаг персоны → метка роли в протоколах/REVIEW (тег реплики `[Метка]:`). */
 /**
@@ -34,25 +38,10 @@ import path from 'node:path';
  * ключом служит роль. Уникальность меток и полноту карты держит зуб
  * `scripts/persona-memory-roster.test.mjs`.
  */
-export const PERSONA_ROLE_LABELS = {
-  tarasov: 'Teamlead',
-  vesnin: 'Архитектор',
-  ozhegov: 'Структурщик',
-  dynin: 'Математик',
-  kuryokhin: 'Музыкант',
-  rodchenko: 'Верстальщик',
-  angelina: 'Секретарь',
-  farrell: 'Свободный голос',
-};
+export const PERSONA_ROLE_LABELS = DERIVED_PERSONA_ROLE_LABELS;
 
 /** role.key консилиума → слаг персоны (для маппинга PERSONA_FILES → журнал). */
-export const CONSILIUM_ROLE_KEY_TO_SLUG = {
-  teamlead: 'vesnin',
-  structurer: 'ozhegov',
-  mathematician: 'dynin',
-  musician: 'kuryokhin',
-  layout: 'rodchenko',
-};
+export const CONSILIUM_ROLE_KEY_TO_SLUG = DERIVED_CONSILIUM_ROLE_KEY_TO_SLUG;
 
 export const MEMORY_DIR = 'docs/virtual-team/memory';
 

@@ -38,6 +38,7 @@ import {
   shouldUsePersonaRag,
 } from './lib/rag-ritual.mjs';
 import { readPersonaMemory, personaMemoryPath } from './lib/persona-memory.mjs';
+import { ASK_PERSONAS } from './lib/personas.mjs';
 import { HOMES } from './persona-memory/lib/archive-schema.mjs';
 import {
   LIFT_LAMBDA_V1,
@@ -54,46 +55,7 @@ import {
   similarityBetween,
 } from './persona-memory/lib/subconscious-retrieval.mjs';
 
-// ---------------------------------------------------------------------------
-// Персонажи. Чтобы добавить нового — пиши сюда + создавай PROMPT_*.md.
-
-const PERSONAS = {
-  tarasov: {
-    role: 'Teamlead',
-    promptFile: 'docs/virtual-team/PROMPT_TEAMLEAD.md',
-    description: 'Tarasov — Teamlead. Нагрузки, связки ролей, вердикты; исполнение.',
-  },
-  vesnin: {
-    role: 'Архитектор',
-    promptFile: 'docs/virtual-team/PROMPT_ARCHITECT.md',
-    description: 'Vesnin — Архитектор. Границы модулей, контракты, форма решения (с 27.07 не тимлид).',
-  },
-  angelina: {
-    role: 'Секретарь · мастер процедур',
-    promptFile: 'docs/virtual-team/PROMPT_ANGELINA.md',
-    description: 'Angelina — секретарь и мастер процедур. Фиксация, журнал, гейт каскада; кода не пишет.',
-  },
-  dynin: {
-    role: 'Математик',
-    promptFile: 'docs/virtual-team/PROMPT_MATHEMATICIAN.md',
-    description: 'Dynin — Математик. Чистые функции, спектр, статистика.',
-  },
-  ozhegov: {
-    role: 'Структурщик',
-    promptFile: 'docs/virtual-team/PROMPT_STRUCTURER.md',
-    description: 'Ozhegov — Структурщик. Термины, границы пакетов, слабая связанность.',
-  },
-  rodchenko: {
-    role: 'Верстальщик',
-    promptFile: 'docs/virtual-team/PROMPT_LAYOUT_DEVELOPER.md',
-    description: 'Rodchenko — Верстальщик. DESIGN.md, конструктивизм, a11y.',
-  },
-  kuryokhin: {
-    role: 'Музыкант',
-    promptFile: 'docs/virtual-team/PROMPT_MUSICIAN.md',
-    description: 'Kuryokhin — Музыкант. Смелые аудио-гипотезы, Web Audio, риск со структурой.',
-  },
-};
+const PERSONAS = ASK_PERSONAS;
 
 const MAX_CONTEXT_CHARS = 90_000;
 const MAX_PROMPT_CHARS = 16_000;
