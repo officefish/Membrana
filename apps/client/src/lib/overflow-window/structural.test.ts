@@ -91,10 +91,13 @@ describe('живое чтение квоты только в host и без об
     },
   );
 
-  it('#2444: только host перечитывает квоту через сервис, без прямого getQuota/fetch', () => {
+  it('#2444/#2538: только host перечитывает предел — лёгким refreshQuota() ровно один раз, без полного refresh()', () => {
     const host = read(hostPath);
     expect(host).not.toMatch(/getQuota|fetch\(|useMediaLibrary\b|\.init\(/u);
-    expect(host.match(/service\.refresh\(\)/gu)).toHaveLength(1);
+    expect(host.match(/service\.refreshQuota\(\)/gu)).toHaveLength(1);
+    // #2538: полный refresh() читает квоту ПОСЛЕДНИМ шагом после списка всех проб и при сбое
+    // раньше оставлял старый предел без следа — в хосте ему не место.
+    expect(host).not.toMatch(/service\.refresh\(\)/u);
     expect(host).toContain('state.opensForKey');
   });
 

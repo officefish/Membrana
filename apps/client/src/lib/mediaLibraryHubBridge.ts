@@ -135,7 +135,15 @@ export async function reconfigureMediaLibraryFromConnection(
   }
 }
 
-/** Re-attach server backend when paired but library still uses browser fallback. */
+/**
+ * Re-attach server backend when paired but library still uses browser fallback.
+ *
+ * #2538: при ЖИВОМ серверном бэкенде тик больше не молчит — перечитывает предел прибора лёгким
+ * `refreshQuota()` (один GET /quota, без списков). До того при удержании предел перечитывался
+ * только эффектом окна, и смена тарифа на сервере (512 МБ → 2 ГБ) до прибора не доезжала.
+ * Зовут: тик 30 с (`schedulePairedMediaLibraryUpgrade`), опрос кабинета 60 с
+ * (`usePairStatusMonitor`), кнопка «Остаться в связанном режиме». Новых часов не заводится.
+ */
 export async function tryUpgradeMediaLibraryToRemote(
   mode: NodeConnectionMode | null,
   pairing: PairedNodeCredentials | null,
@@ -149,6 +157,12 @@ export async function tryUpgradeMediaLibraryToRemote(
       } catch (err) {
         console.error('[mediaLibraryHubBridge] media library refresh failed', err);
       }
+      return;
+    }
+    try {
+      await getDefaultMediaLibraryService().refreshQuota();
+    } catch (err) {
+      console.error('[mediaLibraryHubBridge] media library quota refresh failed', err);
     }
     return;
   }

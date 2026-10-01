@@ -240,6 +240,14 @@ export function OverflowWindow({
           {AXES.map((subject) => (
             <AxisMeter key={subject} subject={subject} axis={vm.axes[subject]} axisAtStop={vm.axesAtStop[subject]} />
           ))}
+          {/* #2538: предел без момента чтения — не живой; отказ чтения помечается, числа остаются. */}
+          <p
+            className={`text-xs ${vm.quotaRead.fresh ? 'opacity-60' : 'text-warning'}`}
+            data-testid="overflow-quota-read"
+            data-quota-fresh={vm.quotaRead.fresh ? 'true' : 'false'}
+          >
+            {vm.quotaReadText}
+          </p>
         </div>
 
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">

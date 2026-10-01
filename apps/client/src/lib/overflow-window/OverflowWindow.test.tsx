@@ -30,6 +30,8 @@ const EPISODE: OverflowHoldEpisode = {
 };
 
 const LIVE_AXES = { buffer: EPISODE.buffer, userStorage: EPISODE.userStorage } as const;
+/** #2538: свежее чтение предела с моментом — умолчание зубов, где возраст не предмет. */
+const QUOTA_READ = { fresh: true, readAt: '2026-10-01T08:00:00.000Z' } as const;
 
 function props(overrides: Partial<OverflowWindowProps> = {}, tariff: TariffTransitionsKnowledge = 'unknown') {
   return {
@@ -37,6 +39,7 @@ function props(overrides: Partial<OverflowWindowProps> = {}, tariff: TariffTrans
     vm: buildOverflowWindowViewModel({
       episode: EPISODE,
       liveAxes: LIVE_AXES,
+      quotaRead: QUOTA_READ,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: tariff,
@@ -78,6 +81,7 @@ describe('OverflowWindow — содержание (а)', () => {
     const vm = buildOverflowWindowViewModel({
       episode: EPISODE,
       liveAxes: { buffer: { usedBytes: 0, limitBytes: 1000 }, userStorage: EPISODE.userStorage },
+      quotaRead: QUOTA_READ,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
@@ -108,6 +112,7 @@ describe('OverflowWindow — содержание (а)', () => {
     const vm = buildOverflowWindowViewModel({
       episode: { ...EPISODE, reason: 'weird_code' },
       liveAxes: LIVE_AXES,
+      quotaRead: QUOTA_READ,
       held: true,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
@@ -203,6 +208,7 @@ describe('OverflowWindow — закрытие и a11y (DoD 7)', () => {
     const released = buildOverflowWindowViewModel({
       episode: EPISODE,
       liveAxes: LIVE_AXES,
+      quotaRead: QUOTA_READ,
       held: false,
       recordedBeforeStop: null,
       tariffTransitions: 'unknown',
@@ -235,5 +241,32 @@ describe('OverflowWindow — закрытие и a11y (DoD 7)', () => {
   it('отбитый старт назван в окне (T5)', () => {
     render(<OverflowWindow {...props({ refusedAttempt: { source: 'mic', what: 'запись в буфер' } })} />);
     expect(screen.getByTestId('overflow-refused-attempt').textContent).toContain('запись в буфер');
+  });
+});
+
+describe('#2538 — строка момента чтения предела под живыми шкалами', () => {
+  it('свежее чтение — приглушённая строка с временем; отказ — предупреждение «снимок от», числа остаются', () => {
+    render(<OverflowWindow {...props()} />);
+    const fresh = screen.getByTestId('overflow-quota-read');
+    expect(fresh.getAttribute('data-quota-fresh')).toBe('true');
+    expect(fresh.textContent).toContain('предел сервера прочитан');
+    expect(fresh.textContent).toMatch(/\d{1,2}:\d{2}/u);
+    cleanup();
+
+    const stale = buildOverflowWindowViewModel({
+      episode: EPISODE,
+      liveAxes: LIVE_AXES,
+      quotaRead: { fresh: false, readAt: '2026-10-01T05:00:00.000Z' },
+      held: true,
+      recordedBeforeStop: null,
+      tariffTransitions: 'unknown',
+    });
+    render(<OverflowWindow {...props({ vm: stale })} />);
+    const line = screen.getByTestId('overflow-quota-read');
+    expect(line.getAttribute('data-quota-fresh')).toBe('false');
+    expect(line.textContent).toContain('предел не прочитан — показан снимок от');
+    expect(line.className).toContain('text-warning');
+    // Числа не спрятаны (развилка 4).
+    expect(screen.getByTestId('overflow-axis-buffer').textContent).toMatch(/лимит 1000 B/u);
   });
 });

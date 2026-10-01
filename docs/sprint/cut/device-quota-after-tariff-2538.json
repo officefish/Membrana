@@ -1,0 +1,84 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "device-quota-after-tariff-2538",
+  "taskId": "device-quota-after-tariff-2538",
+  "mode": "explicit-honest",
+  "cutBy": "dynin",
+  "window": {
+    "from": "2026-10-01T08:00:00+00:00",
+    "to": "2026-10-03T20:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-quota-reread-light-and-aged",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/services/media-library/src/media-library-service.ts",
+        "packages/services/media-library/src/types.ts",
+        "packages/services/media-library/test/media-library.test.ts",
+        "apps/client/src/lib/overflow-window/OverflowWindowHost.tsx",
+        "apps/client/src/lib/overflow-window/OverflowWindowHost.test.tsx",
+        "apps/client/src/lib/overflow-window/viewModel.ts",
+        "apps/client/src/lib/overflow-window/viewModel.test.ts",
+        "apps/client/src/lib/overflow-window/reasonTexts.ts",
+        "apps/client/src/lib/overflow-window/OverflowWindow.tsx",
+        "apps/client/src/lib/overflow-window/OverflowWindow.test.tsx"
+      ],
+      "estimate": {
+        "changedLines": 200
+      },
+      "revisionAt": "2026-10-01T08:35:59Z",
+      "revisionOf": "967c19c50c4669d4592276cf498cde2ab1ffd7c27c64059dd07fae648696310d"
+    },
+    {
+      "blockId": "b2-tariff-reaches-device-ticks",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "apps/client/src/lib/mediaLibraryHubBridge.ts",
+        "apps/client/src/lib/mediaLibraryHubBridge.test.ts",
+        "apps/client/src/hooks/usePairStatusMonitor.ts",
+        "apps/client/src/hooks/usePairStatusMonitor.test.tsx",
+        "apps/client/src/api/pairingCredentials.ts",
+        "apps/client/src/api/pairingCredentials.test.ts",
+        "apps/client/src/lib/nodeConnectionMode.ts"
+      ],
+      "estimate": {
+        "changedLines": 150
+      },
+      "revisionAt": "2026-10-01T08:35:59Z",
+      "revisionOf": "6211414f4ef5d5687fee4af98922b18a2c8ccdad3f06e16c9c97ab70eae68e4a"
+    },
+    {
+      "blockId": "b3-live-check-closure",
+      "persona": "angelina",
+      "context": "angelina",
+      "zone": [
+        "docs/local-sprint/device-quota-after-tariff-2538/",
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/sprint/experience/device-quota-after-tariff-2538.segments.json"
+      ],
+      "estimate": {
+        "changedLines": 160
+      },
+      "revisionAt": "2026-10-01T08:35:59Z",
+      "revisionOf": "984f68f4511592861172081ba07bcf70501c1ee07f740710a9c48d45d91595ca"
+    }
+  ],
+  "//why": "Issue #2538: владелец 01.10 переключил тариф мембраны с «Датчик» (free-v1, 512 МБ) на «Блокпост» (checkpoint-v1, 2 ГБ). Сервер media по прибору 9e86ec85 сразу отдаёт 486.5/2048 МБ, а окно «Буфер полон» на доске Studio после смены тарифа и после «Возобновить запись» показывает «лимит 512.0 MB / свободно 25.5 MB» по обеим осям и заголовок «Буфер полон». #2444 обещал перечитывать квоту при открытии окна и каждой попытке старта — обещание не исполнилось. Корень: предел прибора живёт в одном снимке сервиса библиотеки, который перечитывается только ТЯЖЁЛЫМ `refresh()` (список коллекций и всех проб, квота — последним шагом); при любом сбое до квоты старый предел остаётся в снимке и показывается как живой; ни один тик связанного режима при живом сервере квоту не перечитывает; опрос кабинета видит смену тарифа (`tariff.id`) каждые 60 с и её игнорирует.",
+  "//measure": "Ствол d364ef64, замер 01.10 08:00–08:25Z. (1) Живое чтение прода GET /v1/devices/9e86ec85…/quota (X-Membrana-Token из .env главного дерева, значение не печаталось): HTTP 200, buffer 510115200/2147483648, userStorage 510302892/2147483648, tariffContractVersion 1, dataset.catalogId checkpoint-v1-catalog, bufferPolicy stop — сервер знает 2 ГБ по обеим осям; разноска кабинет→media (tariff.controller.ts:133 syncAllNodes после selectTariff → PATCH /devices/:id/membrane, device-limits.ts:32-48) доехала. (2) Путь лимита к окну: OverflowWindowHost.tsx:136 `liveAxesFromQuota(library.quota)` ← снимок сервиса `service.getSnapshot().quota` (:57-58) ← media-library-service.ts refresh() :125-164: ensureReservedCollections :131 → listCollections :135 → listSamples по каждой коллекции :142-150 → getQuota :153 ПОСЛЕДНИМ; любой бросок раньше (server-storage-backend.ts requestJson :337-355 → REQUEST_FAILED) оставляет quota прежней. Хост зовёт `service.refresh().catch(() => {})` :87-92 — отказ глотается, окно продолжает показывать старый предел без признака возраста. (3) Другие читатели квоты при живом сервере: tryUpgradeMediaLibraryToRemote (mediaLibraryHubBridge.ts:139-160) при backend server и serverReachable — ничего не делает (:145-153); тик 30 с (:170-182) и опрос кабинета 60 с (usePairStatusMonitor.ts:47-53) зовут именно его. pingMediaApi (api/pairing.ts:108-121) делает GET /quota и выбрасывает тело. Читатель политики (buffer-policy-bridge.ts:35,39 → getQuotaRaw) читает /quota своим запросом и лимиты выбрасывает. Снимок после загрузки (media-library-service.ts:109-115) при удержании не наступает: шлюз закрывает POST до fetch. Итого при удержании и живом сервере предел перечитывается ТОЛЬКО эффектом окна — и его отказ невидим. (4) Опрос кабинета: pair.service.ts:175-178 отдаёт tariff.id и maxUserWorkspaces; клиент сливает только maxUserWorkspaces (pairingCredentials.ts:22-31), tariff.id не хранит и не сравнивает. (5) Запасные хранилища отпадают: browser-limited = DEFAULT_LOCAL_QUOTA_BYTES 100 МБ (constants.ts:9), Electron FS = DEFAULT_ELECTRON_QUOTA_BYTES 50 ГБ (apps/membrana-studio/.../constants.ts:7) — 512 МБ могло прийти только ответом сервера до смены тарифа. (6) Перевход после «Возобновить»: страж судит по хаб-событию квоты из того же снимка (mediaLibraryHubBridge.ts:34-51 pushQuotaSnapshot → micBufferRecorderPlugin.ts:362-375 → localGuard.ts:17-20, порог 0.95 buffer-stop.ts:26); 510115200/536870912 = 0.9502 ≥ 0.95 → новый локальный эпизод → окно открывается заново (controller.ts:131-147), «Отбит старт … тот же факт переполнения» — следствие того же застрявшего предела, не второй дефект. (7) «Сервер недоступен · cabinet unreachable»: usePairStatusMonitor.ts:54-58 — любой бросок fetchPairStatus (сеть или HTTP не 2xx кроме 401/404, api/pairing.ts:86-96) → reportConnectionError → nodeConnectionStore.ts:180-184 showFallbackDialog → ConnectionFallbackDialog.tsx:29. С тарифом не связано кодом: getPairStatus (pair.service.ts:127-180) читает мембрану/тариф/узел, переход тарифа их не блокирует; на библиотеку диалог влияет только кнопками («Остаться» → tryUpgrade = ничего при живом сервере; «Автономный» → Electron FS 50 ГБ, чего владелец не видел). Причина самого сбоя (транзиент сети/прокси/5xx кабинета) из дерева не выводится — отдельный билет. (8) Porcha на стволе (временный файл, прогнан и удалён): P1 — хост, бэкенд с listCollections → reject и getQuota → лимит 400 B: окно показывает «лимит 100 B» (красный: старый предел как живой); P2 — tryUpgradeMediaLibraryToRemote при живом серверном бэкенде: getQuota вызван 0 раз (красный). Базовая линия: overflow-window + mediaLibraryHubBridge 81/81 зелёные.",
+  "//carriers": "Носители правды о пределе: сервер media — единственный источник (`GET /quota`, лимиты из строки прибора, разносит кабинет); снимок сервиса библиотеки (`MediaLibraryService.snapshot.quota`) — копия на приборе, по которой судят окно (liveAxesFromQuota), страж (хаб-событие квоты) и панель; после спринта копия несёт ВОЗРАСТ (момент последнего успешного чтения) и признак «не прочитано» (serverReachable=false уже есть в StorageQuota, server-storage-backend.ts:379-388). Носитель удержания (эпизод, localStorage) — факт остановки, спринтом не трогается; авто-снятия по новому пределу нет (M3 DoD 7) — после перечитывания окно скажет «Место освобождено — снимите удержание» (standing freed из #2533), снимает человек. Тик 30 с (schedulePairedMediaLibraryUpgrade) и опрос кабинета 60 с — существующие часы; новых таймеров спринт не заводит.",
+  "//cutter": "Резчик dynin (предикаты и замер: спор о том, ЧТО есть живая величина — вычислимый вопрос: величина без момента чтения не живая). Прогон контекста 01.10 (yarn ask dynin --ticket-file <замеры #2538 по стволу d364ef64>), конспект docs/discussions/cut-device-quota-after-tariff-2538-dynin.md. Вердикт: контракт годится, граф b1→b2→b3 без циклов; корень верен — копия в снимке без момента чтения, альтернативного кандидата замеры не оставили; porcha P1/P2 достаточно, третий зуб на возраст квоты — в приёмку b3; tariff.id в учётных данных хранить (опрос раз в 60 с, сравнение требует памяти о прошлом значении) — развилка 2 закрыта резчиком в пользу умолчания. Добавленные резчиком условия: b1 — readAt штампуется при КАЖДОМ успешном getQuota и не трогается при отказе; b2 — при смене tariff.id refreshQuota зовётся немедленно в том же цикле опроса. BLOCK-условия. b1: (а) `refreshQuota()` зовёт listCollections/listSamples — не сдан (смысл блока — лёгкое чтение одним запросом); (б) хост зовёт полный `refresh()` для квоты — не сдан; (в) отказ чтения квоты не виден в окне (старый предел без возраста/признака) — не сдан; (г) любое авто-снятие удержания по новому пределу — не сдан (M3 DoD 7); (д) подписчик моста (mediaLibraryHubBridge subscribe → syncPolicyThenPushQuota) зовёт refreshQuota/refresh — петля, не сдан; (е) структурный зуб reasonTexts: литерал вне таблицы — не сдан. b2: (а) новый setInterval — не сдан (часы уже есть: 30 с и 60 с); (б) чтение квоты из React-компонента мимо сервиса — не сдан; (в) при backend ≠ server или serverReachable=false поведение tryUpgrade изменилось (сегодняшний путь восстановления остаётся) — не сдан; (г) tariff.id из /pair/status сравнивается, но не персистится — допустимо только по развилке 2. b3: приёмка на приборе владельца не показала момент чтения предела и 2048 МБ без действия оператора в пределах 60 с — не сдан; нет записи в LOCAL_SPRINT_LOG.md с id прибора и снимком /quota.",
+  "//order": "b1 → b2 → b3. b2 зовёт `refreshQuota()` из b1 (единственная связь). Зоны не пересекаются (b1 — сервис библиотеки + окно; b2 — мост, опрос кабинета, учётные данные; b3 — документы). Точка перерезки — после b1: если для возраста квоты понадобится менять StorageQuota сверх одного необязательного поля (например, трогать IStorageBackend всех трёх бэкендов) — стоп и перерезка до старта b2.",
+  "//dod": "b1: `MediaLibraryService.refreshQuota()` — одно чтение `backend.getQuota()`, снимок получает новую quota и `readAt` (ISO момента успешного чтения; при serverReachable=false прежний readAt не обновляется), emit один; полный `refresh()` тоже штампует readAt. Хост при открытии окна и каждой отбитой попытке зовёт `refreshQuota()` (не `refresh()`); отказ чтения виден: вью-модель получает `quotaReadAt: string | null` и `quotaFresh: boolean`, окно рисует под живой строкой «предел сервера прочитан HH:MM:SS» либо «предел не прочитан — показан снимок от HH:MM:SS» (тексты только в reasonTexts.ts). Зубы: P1 зелёный (список упал, квота читается → окно показывает новый предел); getQuota при открытии вызван ровно один раз, listCollections — ноль; quota с serverReachable=false → standing unknown и строка «не прочитан»; 14 старых зубов viewModel и 10 хоста зелёные; test/media-library.test.ts: refreshQuota не трогает samplesByCollection и штампует readAt. b2: `tryUpgradeMediaLibraryToRemote` при backend server и serverReachable=true зовёт `refreshQuota()` (P2 зелёный); при serverReachable=false — прежний `refresh()`; опрос кабинета сравнивает `status.tariff.id` с `pairing.tariffId` (новое необязательное поле PairedNodeCredentials, сливается в mergePairStatusTariff) и при смене зовёт `refreshQuota()` немедленно; зубы: смена tariff.id → один refreshQuota; тот же id → ноль лишних вызовов; mergePairStatusTariff возвращает тот же объект при неизменных id и maxUserWorkspaces. b3: живая приёмка на приборе 9e86ec85 (Studio из ветки): при неснятом удержании и тарифе «Блокпост» окно в пределах 60 с без действий оператора показывает «лимит 2048.0 MB» по обеим осям, заголовок «Место освобождено — снимите удержание», строку момента чтения; «Возобновить запись» → запись идёт, перевхода стража нет, бейдж доски гаснет; снимок /quota и скриншоты в CLOSURE.md; LOCAL_SPRINT_LOG.md; sprint:gate pass; sprint:experience записан.",
+  "//out-of-scope": "«Сервер недоступен · cabinet unreachable» — отдельный билет (транзиент опроса /v1/pair/status; код не связывает его с тарифом; предложение туда: нести в lastConnectionError причину — статус/текст, а не константу). #2484 (startOverflowHoldVitals не подключён) — не трогается: предел теперь перечитывают существующие тики. #2319 (эпизод на сервере) — не относится. Разноска кабинет→media — работает (прод 2 ГБ), не трогается. Читатель политики и pingMediaApi — свои чтения /quota, остаются (развилка 3 — слить три чтения в одно — отдельный спринт). Порог стража 95 % и серверные 100 % — не двигаются. Авто-снятие удержания — запрещено (M3 DoD 7). Жёлтая строка «Отбит старт … тот же факт переполнения» — следствие перевхода по старому пределу, отдельной работы не требует. Кабинет, его предикаты и витрина тарифов — не трогаются. Прод-квота и тариф мембраны september спринтом не меняются.",
+  "//forecast": "b1: на ветке P1 зелёный (окно показывает 400 B при упавшем списке), на стволе d364ef64 красный («лимит 100 B»); при открытии окна getQuota = 1, listCollections = 0; окно несёт строку момента чтения; 24 старых зуба окна/хоста зелёные. Опровержение: для readAt пришлось менять IStorageBackend или все бэкенды — перерезка; refreshQuota заставил petлю emit→мост→refreshQuota — блок не сдан. b2: P2 зелёный на ветке, красный на стволе (0 вызовов); при смене tariff.id в ответе опроса — refreshQuota в том же цикле; без смены — ноль лишних сетевых чтений сверх сегодняшних. Опровержение: понадобился новый таймер или чтение из компонента — не сдан. b3: владелец на приборе видит 2048 МБ и «Место освобождено» не позже чем через 60 с после запуска Studio из ветки, без клика; после «Возобновить» запись идёт и страж не перевходит. Опровержение: окно по-прежнему 512 при сервере 2048 — значит предел застревает ещё где-то (например, снимок пришёл от другого экземпляра сервиса — configureDefaultMediaLibraryService пересоздаёт синглтон, media-library-service.ts:437-443) — стоп и замер, не правка слов.",
+  "//forks": "1. Форма возраста в окне — «предел сервера прочитан HH:MM:SS» под живой строкой (умолчание) или отдельная строка состояния связи. 2. tariff.id — хранить в учётных данных и реагировать на смену немедленно (умолчание) или довериться только тикам 30/60 с (тогда зона b2 без pairingCredentials/nodeConnectionMode). 3. Три чтения /quota за цикл (ping, читатель политики, сервис) — оставить (умолчание) или слить в одно чтение в этом спринте (рост b2 до ~250 строк). 4. При отказе чтения квоты — показывать прежний предел с пометкой «снимок от …» (умолчание) или скрывать числа до успешного чтения. 5. Живая приёмка — наблюдение 2048 на текущем тарифе (умолчание) или владелец повторяет опыт туда-обратно «Блокпост→Датчик→Блокпост» и смотрит, что окно следует за сервером за ≤60 с. 6. Опрос кабинета 60 с: добавить refreshQuota сразу после удачного pingMediaApi (умолчание — через tryUpgrade) или заменить ping на refreshQuota, раз ping уже читает /quota и выбрасывает тело (резчик: включить в b2 или оставить только tariff.id — слово владельца). Развилка 2 (хранить tariff.id) закрыта резчиком в пользу умолчания.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-10-01T08:35:59Z",
+    "digest": "9d8f8e55df5692fa8ad4d4313b5b122426ff947c053acaa90585d28cb2166591"
+  }
+}

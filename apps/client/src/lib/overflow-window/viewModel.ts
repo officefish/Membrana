@@ -12,9 +12,11 @@ import {
   OVERFLOW_TITLE_BY_STANDING,
   TARIFF_NO_TRANSITIONS_TEXT,
   describeOverflowReason,
+  describeQuotaRead,
   formatBytes,
   type OverflowReasonDescription,
   type OverflowStanding,
+  type QuotaReadState,
 } from './reasonTexts';
 
 export interface OverflowAxisView {
@@ -56,6 +58,9 @@ export interface OverflowWindowViewModel {
   readonly reason: OverflowReasonDescription;
   /** Живые величины из последнего снимка библиотеки — основание решения оператора. */
   readonly axes: Readonly<Record<QuotaSubject, OverflowAxisView | null>>;
+  /** Момент и исход последнего чтения предела (#2538): несвежий предел — не основание для «полон». */
+  readonly quotaRead: QuotaReadState;
+  readonly quotaReadText: string;
   /** Неизменяемый вещдок момента остановки. */
   readonly axesAtStop: Readonly<Record<QuotaSubject, OverflowAxisView | null>>;
   readonly overflowAt: string;
@@ -79,6 +84,8 @@ export interface OverflowWindowViewModel {
 export interface OverflowWindowViewModelInput {
   readonly episode: OverflowHoldEpisode;
   readonly liveAxes: Readonly<Record<QuotaSubject, OverflowHoldAxis | null>>;
+  /** Откуда живые оси: `quotaReadStateFromQuota(snapshot.quota)` в хосте. */
+  readonly quotaRead: QuotaReadState;
   /** `hold.isHeld()` — эпизод ∧ политика `stop`. */
   readonly held: boolean;
   readonly recordedBeforeStop: RecordedBeforeStop | null;
@@ -105,6 +112,18 @@ export function liveAxesFromQuota(quota: StorageQuota): Readonly<Record<QuotaSub
   return {
     buffer,
     userStorage: { usedBytes: quota.usedBytes, limitBytes: quota.limitBytes },
+  };
+}
+
+/**
+ * Исход последнего чтения предела по снимку (#2538). Серверный бэкенд с `serverReachable=false` —
+ * чтение не удалось (сервис сохранил прежние числа и прежний `readAt`); не серверный бэкенд читает
+ * локальный предел и считается прочитанным. `readAt` отсутствует → успешного чтения не было.
+ */
+export function quotaReadStateFromQuota(quota: StorageQuota): QuotaReadState {
+  return {
+    fresh: quota.backend !== 'server' || quota.serverReachable,
+    readAt: quota.readAt ?? null,
   };
 }
 
@@ -152,8 +171,12 @@ export function buildOverflowWindowViewModel(input: OverflowWindowViewModelInput
   const { episode } = input;
   const phase: RuntimeOverflowHoldPayload['phase'] = episode.overflowId === null ? 'held_local' : 'held';
   const reason = describeOverflowReason(episode.reason);
-  // Место судится по живой оси ПРИЧИНЫ (буфер либо наборы), не по буферу вообще.
-  const standing = judgeOverflowStanding(reason.axis === null ? null : input.liveAxes[reason.axis]);
+  // Место судится по живой оси ПРИЧИНЫ (буфер либо наборы), не по буферу вообще. Предел, который
+  // не удалось перечитать, — не живая ось (#2538): числа показываются с пометкой, но суждения
+  // «полон»/«освобождено» по ним нет.
+  const standing = !input.quotaRead.fresh
+    ? 'unknown'
+    : judgeOverflowStanding(reason.axis === null ? null : input.liveAxes[reason.axis]);
   return {
     windowKey: episodeWindowKey(episode),
     overflowId: episode.overflowId,
@@ -165,6 +188,8 @@ export function buildOverflowWindowViewModel(input: OverflowWindowViewModelInput
       buffer: toAxisView(input.liveAxes.buffer),
       userStorage: toAxisView(input.liveAxes.userStorage),
     },
+    quotaRead: input.quotaRead,
+    quotaReadText: describeQuotaRead(input.quotaRead),
     axesAtStop: {
       buffer: toAxisView(episode.buffer),
       userStorage: toAxisView(episode.userStorage),
