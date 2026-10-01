@@ -1,0 +1,4 @@
+{"ts":"2026-10-01T08:13:30.178Z","persona":"rodchenko","verb":"cloud_query","ref":"rodchenko-2026-10-01T08:12:59.768Z","origin":"ask-persona"}
+{"ts":"2026-10-01T08:13:30.188Z","persona":"rodchenko","verb":"surface_invoke","ref":"rodchenko-2026-10-01T08:12:59.768Z","origin":"ask-persona"}
+{"ts":"2026-10-01T08:13:30.189Z","persona":"rodchenko","verb":"emerge","ref":"rodchenko-2026-07-29-tariff-grid-m6-switch","reason":"там я формулировал норму «с витрины оператор видит исход», здесь ровно это: три метки (error/warning/снято) приходят готовыми из view, компонент их не сочиняет.","origin":"ask-persona"}
+{"ts":"2026-10-01T08:13:30.190Z","persona":"rodchenko","verb":"emerge","ref":"rodchenko-2026-09-08-tariff-single-truth-m1-reseed-r3","reason":"там UI не источник правды и не чинит расхождение; здесь то же: useSyncExternalStore на снимке сервиса, surface только читает.","origin":"ask-persona"}
