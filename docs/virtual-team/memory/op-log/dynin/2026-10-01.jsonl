@@ -6,3 +6,5 @@
 {"ts":"2026-10-01T08:15:34.328Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-16-team-evening-feedback","reason":"требование провенанса у каждого утверждения; здесь это проверка «предмет + вещдок» (слова владельца / снимок сервера) у каждой строки замера.","origin":"ask-persona"}
 {"ts":"2026-10-01T08:15:34.329Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-01-evening-review-predicate-m4-memoization","reason":"формализация конфликта предикатов: мне нужен тот же приём, чтобы развести «ось места» (живая) и «фазу» (политика стража) — они в CLOSURE не смешаны, и это надо назвать явно.","origin":"ask-persona"}
 {"ts":"2026-10-01T07:43:56.364Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-10-01T17:20:35.072Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-10-01T17:20:21.605Z","origin":"ask-persona"}
+{"ts":"2026-10-01T17:20:35.078Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-10-01T17:20:21.605Z","origin":"ask-persona"}
