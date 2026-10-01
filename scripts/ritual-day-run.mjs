@@ -13,13 +13,12 @@
  * вынесена в `lib/ritual-day-close.mjs` — её судит зуб, а не глаз.
  */
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { pendingCiContinuation } from './lib/ritual-deliver-to-main.mjs';
 import { dayCloseArgs } from './lib/ritual-day-close.mjs';
-import { ANGELINA_SESSION_REL, sessionState } from './lib/angelina-session.mjs';
+import { sessionState, writeSessionState } from './lib/angelina-session.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -66,9 +65,7 @@ function runChain() {
     'docs/tasks/morning-ritual-steps.json',
   ]);
   if (open !== 0) return 1;
-  const sessionPath = resolve(root, ANGELINA_SESSION_REL);
-  mkdirSync(dirname(sessionPath), { recursive: true });
-  writeFileSync(sessionPath, `${JSON.stringify(sessionState(true, new Date().toISOString(), 'ritual:day'), null, 2)}\n`, 'utf8');
+  writeSessionState(root, sessionState(true, new Date().toISOString(), 'ritual:day'));
 
   for (const step of STEPS) {
     console.error(`\n=== ritual:day → ${step.id}${step.critical ? '' : ' (noncritical)'} ===`);

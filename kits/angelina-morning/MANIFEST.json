@@ -28,7 +28,7 @@
     "scripts/hermes-brief.mjs": "261d4d6094d3a868542f28e7461d7ceba6a67365",
     "scripts/lib/angelina-adapter.mjs": "35cb67dda00e45cc59d178c21a886ab4a88b2de4",
     "scripts/lib/angelina-cascade.mjs": "e55ef65486c5f5c5b78ed0d3eb9d01ae4b2e334e",
-    "scripts/lib/angelina-session.mjs": "7e13aac6e64f9797f2f12eaf28028d0dd38b66e5",
+    "scripts/lib/angelina-session.mjs": "93bcf8a6fc156e6793cdbfdc1f77f19a460a0b9c",
     "scripts/lib/artifact-freshness.mjs": "05a0e753da742d7a7c9dcb775b637e93b49b2eb3",
     "scripts/lib/audit-pins.mjs": "8c1b3326e592214871cf87eef0cdb150497ec6b2",
     "scripts/lib/classify-worktree.mjs": "350a8d6f021ba698fd4831abf599721701182038",

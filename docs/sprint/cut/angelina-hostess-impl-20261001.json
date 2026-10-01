@@ -21,19 +21,17 @@
         "scripts/skill-status.test.mjs",
         "scripts/skills-sync-readme.mjs",
         "scripts/skills-sync-readme.test.mjs",
+        "scripts/lib/docs-canon.mjs",
         "scripts/verify-docs-canon.mjs",
-        "docs/DEVELOPER_RHYTHM.md",
-        "docs/DAY_PLAN.md",
-        "docs/MAIN_DAY_ISSUE.md",
-        "AGENTS.md"
+        "docs/DEVELOPER_RHYTHM.md"
       ],
       "estimate": {
         "changedLines": 260
       },
       "//forecast": "Gives a generated skills inventory with a Status column, an append-only transition/failover provenance record, and a green canon verifier for the exact M1 surface. Checked by skills-sync idempotence, status-DAG/leak tests, docs:verify-canon, and docs lint. Falsified if README can drift from skill front matter, a failed morning route has no journal evidence, or the verifier remains red.",
       "//porcha": "Red on origin/main 00257180: node predicate requires package.scripts['skills:sync-readme'] and a Status column in .cursor/skills/README.md; output says command absent and header is only Skill/Triggers, exit 1. Mutation teeth must also remove status, create a superseded cycle, and delete the transition record.",
-      "revisionAt": "2026-10-01T13:00:14.6565583+03:00",
-      "revisionOf": "0ad1a6722323b355d8ae2e75364f3947b2d76cf26abab52ce91e1ea46a2bf648"
+      "revisionAt": "2026-10-01T14:57:00+03:00",
+      "revisionOf": "28d0d2ae989e4b93483cab3e88818dac0d106404284a7c6451144cdef8f4e5cf"
     },
     {
       "blockId": "m4-session-hostess",
@@ -48,6 +46,7 @@
         "scripts/angelina-session.test.mjs",
         "scripts/ritual-day-run.mjs",
         "scripts/ritual-evening-run.mjs",
+        ".gitignore",
         "docs/tasks/morning-ritual-steps.json",
         "docs/tasks/evening-ritual-steps.json"
       ],
@@ -56,8 +55,8 @@
       },
       "//forecast": "Gives explicit session availability raised by ritual:day and lowered by ritual:evening, wires mechanical frontier checks through analyst calls, and renders one hostess artifact with premises-before-verdict plus four echoes. Checked by pure session transition tests, injected analyst-call counts/schema failures, one-entry observer, and structural rendering teeth. Falsified by any resident process, copied gate predicate inside Angelina, direct morning start outside the hostess, or missing fourth echo.",
       "//porcha": "Red on origin/main 00257180: source predicate requires analyst invocation, session_active state, and ritual:evening shutdown in the hostess contract; scripts/angelina.mjs contains none as a combined wire, exit 1. Mutations must bypass analyst, keep availability after evening, and add a second entry.",
-      "revisionAt": "2026-10-01T13:00:14.6565583+03:00",
-      "revisionOf": "f80c7fb581aea67d5ee47123742c981fc77150dacf60f12402fa9f32cb2b9ef2"
+      "revisionAt": "2026-10-01T14:57:00+03:00",
+      "revisionOf": "30dc21b4b82a01f0dd307046f6feaf7ca040dfceb1c54a646021e0eea588bcf1"
     },
     {
       "blockId": "m5-verdict-inventory",
@@ -87,7 +86,7 @@
   "//out": "M2 assembly and M3 send gates; changes to product applications/packages; autonomous-agent goals; deployments; deletion of history or worktrees; actual GC moves without a new closed owner verdict; archive of angelina-hostess-impl.",
   "ratification": {
     "by": "owner",
-    "at": "2026-10-01T13:00:14.6565583+03:00",
-    "digest": "3b3c095bf782b7b93957a2dfe6e46336c4e78a384065ff3e6b080ecebd8fc803"
+    "at": "2026-10-01T14:57:00+03:00",
+    "digest": "fad0b577104802c12f0299595436fee351ed6812399b4c0b2a772362d97e271c"
   }
 }
