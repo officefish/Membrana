@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-30 |
-| Head SHA | 0636e7193b01cdf8f3a97f87ea20a0167ed2f480 |
+| Date | 2026-10-01 |
+| Head SHA | b39d3aaddca6d74c8a8b1908cee460811e312691 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1271 |
-| Yarn scripts (package.json) | 475 |
-| Yarn → `scripts/` | 421 |
+| Code files under `scripts/` | 1277 |
+| Yarn scripts (package.json) | 476 |
+| Yarn → `scripts/` | 422 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 933 |
+| Code files without yarn ref | 938 |
 
-## Yarn → scripts/ (421)
+## Yarn → scripts/ (422)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -309,6 +309,7 @@
 - `sessions:scan` → `scripts/session-scan.mjs`
 - `skills:closure-review:sync` → `scripts/sync-task-closure-review-skills.mjs`
 - `skills:closure-review:verify` → `scripts/sync-task-closure-review-skills.mjs`
+- `skills:sync-readme` → `scripts/skills-sync-readme.mjs`
 - `skills:verify-mirrors` → `scripts/verify-skill-mirrors.mjs`
 - `snapshots:rebuild` → `scripts/snapshots-rebuild.mjs`
 - `sprint:cut` → `scripts/sprint-cut-check.mjs`
@@ -447,7 +448,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (933)
+## Code files without yarn ref (938)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -506,6 +507,7 @@
 - `scripts/angelina-adapter.test.mjs`
 - `scripts/angelina-cascade.test.mjs`
 - `scripts/angelina-delegate.test.mjs`
+- `scripts/angelina-session.test.mjs`
 - `scripts/angelina-validate.test.mjs`
 - `scripts/angelina.mjs`
 - `scripts/anthropic-credit-hint.test.mjs`
@@ -674,6 +676,7 @@
 - `scripts/lib/angelina-adapter.mjs`
 - `scripts/lib/angelina-cascade.mjs`
 - `scripts/lib/angelina-delegate.mjs`
+- `scripts/lib/angelina-session.mjs`
 - `scripts/lib/angelina-validate.mjs`
 - `scripts/lib/archivarius.mjs`
 - `scripts/lib/archive-doc-snapshot.mjs`
@@ -900,6 +903,7 @@
 - `scripts/lib/orphan-waiver.mjs`
 - `scripts/lib/percentile-template.mjs`
 - `scripts/lib/persona-memory.mjs`
+- `scripts/lib/personas.mjs`
 - `scripts/lib/pr-mergeability.mjs`
 - `scripts/lib/pr-mergeability.test.mjs`
 - `scripts/lib/pr-ship-size.mjs`
@@ -1205,6 +1209,7 @@
 - `scripts/persona-memory/lib/subconscious-lift.test.mjs`
 - `scripts/persona-memory/lib/subconscious-retrieval.mjs`
 - `scripts/persona-memory/lib/subconscious-retrieval.test.mjs`
+- `scripts/personas-source.test.mjs`
 - `scripts/plan-week-if-monday.mjs`
 - `scripts/plan-week-if-monday.test.mjs`
 - `scripts/pr-perimeter-check.test.mjs`
@@ -1280,6 +1285,7 @@
 - `scripts/session-floor-verbs.test.mjs`
 - `scripts/session-floor.test.mjs`
 - `scripts/skill-status.test.mjs`
+- `scripts/skills-sync-readme.test.mjs`
 - `scripts/snapshots-plan.test.mjs`
 - `scripts/sprint-cut-acts.test.mjs`
 - `scripts/sprint-cut-check.test.mjs`
@@ -1393,7 +1399,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1271)
+## All code files (1277)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1480,6 +1486,7 @@
 - `scripts/angelina-adapter.test.mjs`
 - `scripts/angelina-cascade.test.mjs`
 - `scripts/angelina-delegate.test.mjs`
+- `scripts/angelina-session.test.mjs`
 - `scripts/angelina-validate.test.mjs`
 - `scripts/angelina.mjs`
 - `scripts/anthropic-credit-hint.test.mjs`
@@ -1768,6 +1775,7 @@
 - `scripts/lib/angelina-adapter.mjs`
 - `scripts/lib/angelina-cascade.mjs`
 - `scripts/lib/angelina-delegate.mjs`
+- `scripts/lib/angelina-session.mjs`
 - `scripts/lib/angelina-validate.mjs`
 - `scripts/lib/archivarius.mjs`
 - `scripts/lib/archive-doc-snapshot.mjs`
@@ -1994,6 +2002,7 @@
 - `scripts/lib/orphan-waiver.mjs`
 - `scripts/lib/percentile-template.mjs`
 - `scripts/lib/persona-memory.mjs`
+- `scripts/lib/personas.mjs`
 - `scripts/lib/pr-mergeability.mjs`
 - `scripts/lib/pr-mergeability.test.mjs`
 - `scripts/lib/pr-ship-size.mjs`
@@ -2357,6 +2366,7 @@
 - `scripts/persona-memory/lib/subconscious-lift.test.mjs`
 - `scripts/persona-memory/lib/subconscious-retrieval.mjs`
 - `scripts/persona-memory/lib/subconscious-retrieval.test.mjs`
+- `scripts/personas-source.test.mjs`
 - `scripts/plan-week-if-monday.mjs`
 - `scripts/plan-week-if-monday.test.mjs`
 - `scripts/plugin-run-mfcc.mjs`
@@ -2480,6 +2490,8 @@
 - `scripts/session-floor.test.mjs`
 - `scripts/session-scan.mjs`
 - `scripts/skill-status.test.mjs`
+- `scripts/skills-sync-readme.mjs`
+- `scripts/skills-sync-readme.test.mjs`
 - `scripts/snapshots-plan.test.mjs`
 - `scripts/snapshots-rebuild.mjs`
 - `scripts/sprint-cut-acts.test.mjs`
