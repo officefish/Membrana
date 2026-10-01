@@ -1,0 +1,78 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "personas-source-phase1",
+  "taskId": "github-2542",
+  "mode": "explicit-honest",
+  "cutBy": "ozhegov",
+  "window": {
+    "from": "2026-10-01T09:44:06Z",
+    "to": "2026-10-02T20:00:00Z"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-canonical-roster-and-runtime-readers",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/lib/personas.mjs",
+        "docs/virtual-team/voices.registry.json",
+        "scripts/ask-persona.mjs",
+        "scripts/consilium.mjs",
+        "scripts/lib/consilium-paths.mjs",
+        "scripts/lib/persona-memory.mjs",
+        "scripts/lib/day-memo-persona-trace.mjs",
+        "scripts/lib/angelina-cascade.mjs",
+        "scripts/lib/execution-trace/personas.mjs",
+        "scripts/verify-voices.mjs",
+        "scripts/voices-registry.test.mjs",
+        "scripts/persona-memory-roster.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "revisionAt": "2026-10-01T10:10:00Z",
+      "revisionOf": "037e51b025d81779bc9be1d26492aed6f3a2b0fcb1a3e6f0d887af94be07abaa"
+    },
+    {
+      "blockId": "b2-named-filters-and-drift-tooth",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/procedure-personas.mjs",
+        "scripts/lib/review-lead.mjs",
+        "scripts/lib/validate-procedure.mjs",
+        "scripts/lib/one-shot-run.mjs",
+        "scripts/procedure-personas.test.mjs",
+        "scripts/code-review-ritual.test.mjs",
+        "scripts/validate-procedure.test.mjs",
+        "scripts/personas-source.test.mjs",
+        "scripts/lib/sprint-experience/forecast-record.mjs",
+        "scripts/sprint-smoke.test.mjs",
+        "scripts/lib/sprint-cut/test-support/live-fixtures.mjs",
+        "kits/angelina-morning/MANIFEST.json",
+        "docs/sprint/cut/personas-source-phase1.json",
+        "docs/discussions/personas-source-phase1-report.md"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "revisionAt": "2026-10-01T20:21:25+03:00",
+      "revisionOf": "b796fb370d9a384e3638a77b36cda6a68f2c9f042ae40dde4f89bf7b90ffd8f7"
+    }
+  ],
+  "//why": "GitHub Issue #2542. Several scripts declare persona rosters independently. The runtime already has one likely source (`docs/virtual-team/voices.registry.json`), but nearby modules still carry manual lists. Measured drift: `CONSILIUM_ROLE_KEY_TO_SLUG.teamlead` maps Teamlead memory to `vesnin`, while the registry and prompt say Teamlead is `tarasov`; the architect role has no memory mapping. Other differences are legal filters (review leads, procedure holders/moderators, ask-callable roster) and must be preserved as named derivations, not flattened.",
+  "//measure": "Discovery followed tooling order: `node scripts/tooling-overview.mjs` as fallback for missing global Yarn/Corepack, `node scripts/scripts-registry.mjs --report`, `node scripts/scripts-sets-of.mjs scripts`, codebase-memory fast index/search (scripts excluded by index), then `rg`. Table and readers are recorded in docs/discussions/personas-source-phase1-report.md. Main declarations found: full registry 8 voices; ask roster 7 without farrell; consilium roles 6; persona-memory labels 8; consilium role-to-slug map 5 and stale; review leads 6; day-memo all voices 8; execution-trace loader from registry; procedure holder/moderator legal filters; angelina cascade authors 8+human; sprint-cut fixture 7; branch grammar/branch hygiene out of runtime scope.",
+  "//carriers": "Canonical source candidate: `docs/virtual-team/voices.registry.json`. Runtime adapter candidate: new `scripts/lib/personas.mjs` exports the full roster and named derivations from that source. Existing legal filters keep their names and reasons: ask-callable, consilium-adviser roles, review leads, procedure holders, procedure moderators, cascade authors. Fixtures stay fixtures and must not become runtime truth.",
+  "//order": "b1 -> b2. b1 creates/uses the canonical roster adapter and fixes runtime all-roster readers and consilium memory drift. b2 wires legal filters to named derivations where appropriate and adds the tooth that forbids new handwritten persona-id rosters outside the source, legal filters, and fixtures.",
+  "//dod": "b1: `loadKnownPersonas()` and the new source agree with `voices.registry.json`; `day-memo-persona-trace` and `angelina-cascade` derive full voice lists; `ask-persona` derives callable ask metadata or is checked from the source; `CONSILIUM_ROLE_KEY_TO_SLUG.teamlead === 'tarasov'` and `architect === 'vesnin'`; `verify-voices` catches persona-id mapping drift, not only prompt-file presence. b2: `REVIEW_LEAD_PERSONAS`, `HOLDER_PERSONAS`, and `MODERATOR_PERSONAS` remain named filters with ADR/review reasons; the porcha tooth fails on current `origin/main` for manual all-roster declarations and stale consilium mapping, then passes on the branch; no `@membrana/core` touched.",
+  "//out-of-scope": "Do not merge legal filters into all voices. Do not change branch grammar or branch hygiene persona branch categories. Do not rewrite historical docs. Do not touch `@membrana/core`. Do not change the meaning of Farrell as storm-only/free voice or Angelina as procedure moderator/non-code holder.",
+  "//forecast": "b1 should be small-to-medium because the registry and several teeth already exist; highest risk is ESM JSON/fs loading in script modules. b2 should be smaller but has the main safety value: a red-on-trunk tooth. Expected focused tests: `node --test scripts/voices-registry.test.mjs scripts/persona-memory-roster.test.mjs scripts/personas-source.test.mjs scripts/procedure-personas.test.mjs scripts/code-review-ritual.test.mjs scripts/validate-procedure.test.mjs`, plus direct smoke for `node scripts/verify-voices.mjs` and affected CLI dry/help paths where possible.",
+  "//porcha": "Temporary/committed porcha target for phase 2: `node --test scripts/personas-source.test.mjs` must fail on `origin/main` by detecting `CONSILIUM_ROLE_KEY_TO_SLUG.teamlead -> vesnin` and manual full-roster lists in `day-memo-persona-trace.mjs`/`angelina-cascade.mjs`; it must pass after derivation from the single source. Report both red-on-trunk and green-on-branch runs.",
+  "//forks": "1. Canonical source: keep JSON registry as truth (default) vs move truth to `scripts/lib/personas.mjs` and check/generate JSON. 2. `ask-persona`: derive all role/prompt/description metadata from registry (default) vs keep local descriptions with a drift tooth. 3. `consilium`: validate actual role-key -> persona-id mapping (default) vs only prompt files as today. 4. Tooth strictness: block any persona-id array/object outside allowlisted filters (default) vs only block all-roster duplicates.",
+  "//recut": "2026-10-01: владелец ратифицировал перерезку словами «Оба файла в блок 2». В b2 добавлены runtime-валидатор scripts/lib/sprint-experience/forecast-record.mjs и fixture scripts/sprint-smoke.test.mjs: оба несут полные ростеры 8 голосов и не являются законными фильтрами. 2026-10-01: владелец дополнительно ратифицировал добавление kits/angelina-morning/MANIFEST.json как служебного pre-push artifact: новый scripts/lib/personas.mjs вошёл в замыкание angelina-morning, и push без обновления pins запрещён.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-10-01T20:21:25+03:00",
+    "digest": "7edf4d0f37778fdf7cad9cfb75c49d66165d6d41a5b5dba914d97f8e7b171671"
+  }
+}

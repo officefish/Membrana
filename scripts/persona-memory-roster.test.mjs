@@ -22,13 +22,14 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 
-import { PERSONA_ROLE_LABELS, personaMemoryPath } from './lib/persona-memory.mjs';
+import { PERSONA_ROLE_LABELS, CONSILIUM_ROLE_KEY_TO_SLUG, personaMemoryPath } from './lib/persona-memory.mjs';
+import { loadKnownPersonaIds } from './lib/personas.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const registry = JSON.parse(
   readFileSync(join(repoRoot, 'docs/virtual-team/voices.registry.json'), 'utf8'),
 );
-const voiceIds = (registry.voices ?? []).map((v) => v.id).filter((id) => typeof id === 'string');
+const voiceIds = loadKnownPersonaIds();
 
 test('реестр голосов читается и непуст — иначе зуб проверял бы пустоту', () => {
   assert.ok(voiceIds.length >= 5, `голосов в реестре ${voiceIds.length}`);
@@ -57,6 +58,11 @@ test('метки УНИКАЛЬНЫ — иначе двое собирают о�
   const labels = Object.values(PERSONA_ROLE_LABELS);
   const dupes = labels.filter((l, i) => labels.indexOf(l) !== i);
   assert.deepEqual([...new Set(dupes)], [], `метка занята дважды: ${dupes.join(', ')}`);
+});
+
+test('память консилиума берёт Teamlead у Тарасова, Architect у Веснина', () => {
+  assert.equal(CONSILIUM_ROLE_KEY_TO_SLUG.teamlead, 'tarasov');
+  assert.equal(CONSILIUM_ROLE_KEY_TO_SLUG.architect, 'vesnin');
 });
 
 test('у каждой персоны карты есть путь журнала, и он в общем каталоге', () => {

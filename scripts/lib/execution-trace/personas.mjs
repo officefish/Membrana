@@ -9,9 +9,9 @@
  * Чтение файла живёт здесь, а не в предикатах: предикаты получают готовый список.
  */
 
-import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadKnownPersonaIds } from '../personas.mjs';
 
 export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 export const VOICES_PATH = resolve(REPO_ROOT, 'docs/virtual-team/voices.registry.json');
@@ -21,7 +21,5 @@ export const VOICES_PATH = resolve(REPO_ROOT, 'docs/virtual-team/voices.registry
  * @returns {readonly string[]} personaId
  */
 export function loadKnownPersonas(path = VOICES_PATH) {
-  const raw = JSON.parse(readFileSync(path, 'utf8'));
-  const voices = Array.isArray(raw?.voices) ? raw.voices : [];
-  return Object.freeze(voices.map((v) => String(v?.id ?? '')).filter((id) => id !== ''));
+  return loadKnownPersonaIds(path);
 }
