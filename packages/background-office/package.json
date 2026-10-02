@@ -6,7 +6,7 @@
   "main": "./dist/main.js",
   "scripts": {
     "prepare": "node ./scripts/copy-prompts.cjs",
-    "build": "yarn prepare && tsc -b",
+    "build": "yarn prepare && tsc -b --force",
     "dev": "yarn prepare && node --watch -r ts-node/register ./src/main.ts",
     "start": "node ./dist/main.js",
     "clean": "rimraf dist .turbo .tsbuildinfo",

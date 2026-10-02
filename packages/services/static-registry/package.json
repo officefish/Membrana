@@ -16,7 +16,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -b && vite build",
+    "build": "tsc -b --force && vite build",
     "clean": "rimraf dist .turbo .tsbuildinfo",
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
