@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14263/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 399 (причины в op-log) -->
+Записей: 49 · бюджет 14267/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 401 (причины в op-log) -->
+
+### 2026-10-02 · позиция · team-evening-feedback
+
+> Vesnin Оценка артефактов: MAIN_DAY_ISSUE хорош структурой «посылка → маркер → вердикт» с явными `unknown` — это дисциплинирует разведку перед правкой. STRATEGY_DAY не читать (вещдок). DAILY_CODE_REVIEW корректно вынес мои оговорки про PR size и невозможность развернуть 7 […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-02.md#reply-1`
 
 ### 2026-10-01 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Конструкция выемки держится на трёх осях, уже закрытых соседями: владение = `Device.membraneId` (M1), ключ пробы = `id` без `storageRef`/`notes` (M2), ссылка предъявительская с истечением (шторм + M3). M4 не переоткрывает форму. Вопрос M4 — какие **селекторы** торчат наружу и […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/library-open-api-m4-extraction-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · team-evening-feedback
-
-> Vesnin. Оценка артефактов: `MAIN_DAY_ISSUE` даёт точный диагноз до гейта (файл, строки, серверная сторона, `moveTargets`) — редкий случай, когда постановка не требует разведки. Ревью корректно вывело oversized (три коммита >400 строк не развёрнуто); бестиарий чист по […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`

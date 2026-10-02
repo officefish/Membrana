@@ -1,3 +1,6 @@
 {"ts":"2026-10-02T07:26:51.516Z","persona":"rodchenko","verb":"cloud_query","ref":"rodchenko-2026-10-02T07:26:22.792Z","origin":"ask-persona"}
 {"ts":"2026-10-02T07:26:51.520Z","persona":"rodchenko","verb":"surface_invoke","ref":"rodchenko-2026-10-02T07:26:22.792Z","origin":"ask-persona"}
 {"ts":"2026-10-02T06:57:23.420Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-10-02T18:03:00.420Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-10-02-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-10-02T18:03:00.420Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-31-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-02T18:03:00.420Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

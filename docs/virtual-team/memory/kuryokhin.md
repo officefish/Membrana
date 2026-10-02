@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14384/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 381 (причины в op-log) -->
+Записей: 50 · бюджет 14389/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 382 (причины в op-log) -->
+
+### 2026-10-02 · позиция · team-evening-feedback
+
+> Kuryokhin Оценка артефактов: Аудио-контур в документах дня не фигурирует — это согласовано со STANDUP (магистраль процессная, не продуктовая по звуку). PR #2550 (cabinet-unreachable) и #2553 (board-header-hold-badge) задевают клиент/device-board, но не Web Audio. Итоги дня: по […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-02.md#reply-1`
 
 ### 2026-10-01 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > С тракта: массовой раздачи медиа штормом нет — и правильно, трек по одному. Но ухо слышит другой риск: не «скачали zip двора», а «за вечер собрали связку предъявительских ссылок и унесли на свой CDN». Это та же выемка, только разрезанная на такты. Правило «по одному» без темпа — […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/library-open-api-m4-extraction-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · team-evening-feedback
-
-> Kuryokhin. Оценка артефактов: `MAIN_DAY_ISSUE` и стендап — не про Web Audio; звуковой контур сегодня не затронут. Итоги дня: — (по звуку/DSP сегодня движения нет). Замечу как норму: стендап явно называет запрет «повторный benchmark harmonic+cepstral+flux на free-v1» — это […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
 
 ### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 

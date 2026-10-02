@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14264/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 389 (причины в op-log) -->
+Записей: 49 · бюджет 14277/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 390 (причины в op-log) -->
+
+### 2026-10-02 · позиция · team-evening-feedback
+
+> Ozhegov Оценка артефактов: Код-ревью точно указало на `procedure-runs/trail/2026-10-02.jsonl` в `runPhase: open` — это тот же паттерн, что ломал нас в r2 за 01.10. STANDUP и MAIN_DAY_ISSUE согласованно требуют закрыть `#2503`, но за день он так и не сдвинулся. Итоги дня: по моей […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-02.md#reply-1`
 
 ### 2026-10-01 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Леммы. **Список с ключами** ≠ **метаданные каталога**. **Ручка списка** ≠ **ручка выдачи медиа**. **Потолок страницы** ≠ **предел выемки**. Словарь: носитель границы — артефакт рантайма, который отказывает; исполнитель — модуль, который этот отказ чеканит. Пожелание в README без […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/library-open-api-m4-extraction-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · team-evening-feedback
-
-> Ozhegov. Оценка артефактов: `MAIN_DAY_ISSUE` корректно опирается на факты кода (`samples.service.ts` блокирует только тарифный набор и self-move; `moveTargets` уже корректен) — постановка не требует правки сервисного слоя, только UI-условия в двух местах. Итоги дня: […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
