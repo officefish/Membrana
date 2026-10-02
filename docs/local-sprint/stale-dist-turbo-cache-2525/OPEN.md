@@ -170,6 +170,74 @@ doctor — оставлен развилкой 3 владельцу. Не вхо
 5. **Сборки приложений**: оставить `tsc -b` (умолчание) · тоже `--force` (+60 с на сборку клиента).
 6. **References клиента без `media-library`** — отдельный билет (умолчание) · одна строка в b1.
 
+## Проверки ревью (02.10)
+
+Ревью тимлида поставило BLOCK на `fc3bb4ce` по двум P1. Ревьюер читает только дифф; оба пункта сведены к
+командам и перепрогнаны в дереве `Membrana-installstate` 02.10 на голове `fc3bb4ce` при чистом рабочем дереве.
+
+### P1-1 «Индексация fileIdsList → fileInfos не верифицирована»
+
+Предикат **`fileIdsList` не использует** — в манифесте tsc это список для `referencedMap`. Версии берутся
+позиционно: `fileNames[i] ↔ fileInfos[i]`, так tsc 5.x пишет `.tsbuildinfo` (E10 фазы 1: для `src/index.ts`
+`fileInfos[i].version` = `sha256(текст)` побайтно). Тело — `scripts/lib/dist-freshness.mjs`, дословно:
+
+```js
+53  export function manifestSources(buildInfo, { rootDir = './src' } = {}) {
+54    const names = Array.isArray(buildInfo?.fileNames) ? buildInfo.fileNames : [];
+55    const infos = Array.isArray(buildInfo?.fileInfos) ? buildInfo.fileInfos : [];
+56    const prefix = `${normalizeSlashes(rootDir).replace(/\/+$/u, '')}/`;
+58    names.forEach((rawName, i) => {
+59      const name = normalizeSlashes(rawName);
+60      if (!name.startsWith(prefix) || name.includes('/node_modules/')) return;
+61      const info = infos[i];
+62      const version = typeof info === 'string' ? info : info?.version;
+…
+82  export function judgeDistFreshness({ manifest, current, distPresent }) {
+83    if (!Array.isArray(manifest)) return { state: FRESHNESS.ABSENT, files: [] };
+84    if (!distPresent) return { state: FRESHNESS.DIST_MISSING, files: [] };
+85    const lookup = current instanceof Map ? (k) => current.get(k) : (k) => current?.[k];
+87    for (const { name, version } of manifest) {
+88      const hash = lookup(name);
+89      if (hash === undefined) files.push({ name, reason: 'хеш исходника не подан — сравнивать нечем' });
+90      else if (hash === null) files.push({ name, reason: 'исходник удалён, манифест его ещё знает' });
+91      else if (hash !== version) files.push({ name, reason: 'содержимое исходника не совпадает с манифестом' });
+```
+
+Индекс `i` берётся один раз в `manifestSources` (:58–62): имя из `fileNames[i]`, версия из `fileInfos[i]`; дальше
+`judgeDistFreshness` работает уже парами `{name, version}` и ищет хеш по имени (:87–88). `current` строит CLI
+`scripts/verify-dist-fresh.mjs`: `:89` `manifestSources(JSON.parse(.tsbuildinfo), { rootDir })`, `:98`
+`current.set(name, hashSourceText(readFileSync(abs)))` по каждому имени манифеста, `:101`
+`judgeDistFreshness({ manifest, current, distPresent })`.
+
+Перепрогон (команда → вывод):
+
+| Команда | Вывод |
+|---|---|
+| `node --test scripts/lib/dist-freshness.test.mjs` | `ℹ tests 9` · `ℹ pass 9` · `ℹ fail 0` |
+| `echo "// e51-probe" >> packages/plugin-contracts/src/index.ts` → `node scripts/verify-dist-fresh.mjs` | `✖ stale @membrana/plugin-contracts` · `пакетов 34: fresh 33 · stale 1 · dist_missing 0 · absent 0` · `КРАСНЫЙ: dist отстал от исходников` · **exit 1** |
+| `git checkout -- packages/plugin-contracts/src/index.ts` → `node scripts/verify-dist-fresh.mjs` | `пакетов 34: fresh 34 · stale 0 · dist_missing 0 · absent 0` · **exit 0** |
+
+Индексация проверена живым состоянием: одна правка одного файла → ровно один `stale` с именем этого файла, откат →
+34 `fresh`. Был бы индекс смещён — красным стал бы другой файл или все 14 исходников пакета.
+
+### P1-2 «Сценарий должен изолировать TURBO_CACHE_DIR»
+
+Изолирует. `scripts/turbo-stale-dist-scenario.mjs`, дословно:
+
+```js
+147    const cacheDir = mkdtempSync(join(tmpdir(), 'turbo-stale-dist-'));
+148    const env = { ...process.env, TURBO_CACHE_DIR: cacheDir, TURBO_TELEMETRY_DISABLED: '1' };
+149    const turboBuild = () => run(yarnBin(), ['turbo', 'run', 'build', `--filter=${pkg}`, '--output-logs=errors-only'], { env });
+…
+186        rmSync(cacheDir, { recursive: true, force: true });
+```
+
+Все обращения к turbo идут только через `turboBuild()` (:158, :165, :174) — с `env`, где `TURBO_CACHE_DIR` указывает
+во временный каталог. Остальные `run()` — `git` (:104 `ls-files`, :141 `status`, :180 `checkout --`) и `tsc -b --force`
+(:170, :182) — кеш turbo не читают и не пишут. Каталог удаляется в `finally` (:186). Замер фазы 2: общий кеш главного
+дерева до и после прогонов сценария на стволе и на ветке — 22 089 записей (рост до ~22 300 позже дали только честные
+записи шагов пред-пуша после правки 34 `package.json`).
+
 ## Не one shot
 
 Два предмета (сборочный контур 34 пакетов + новый прибор-зуб), две персоны с непересекающимися зонами,
