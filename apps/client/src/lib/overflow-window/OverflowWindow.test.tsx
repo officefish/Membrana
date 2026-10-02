@@ -41,7 +41,6 @@ function props(overrides: Partial<OverflowWindowProps> = {}, tariff: TariffTrans
       liveAxes: LIVE_AXES,
       quotaRead: QUOTA_READ,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: tariff,
     }),
     refusedAttempt: null,
@@ -62,7 +61,7 @@ function props(overrides: Partial<OverflowWindowProps> = {}, tariff: TariffTrans
 afterEach(() => cleanup());
 
 describe('OverflowWindow — содержание (а)', () => {
-  it('показывает причину словами, две шкалы, время факта, режим/фазу, «н/д» и счёт буфера', () => {
+  it('показывает причину словами, две шкалы, время факта, режим/фазу и счёт буфера — без строки «н/д» (#2552)', () => {
     render(<OverflowWindow {...props()} />);
     expect(screen.getByRole('dialog').getAttribute('aria-modal')).toBe('true');
     expect(screen.getByTestId('overflow-reason').textContent).toContain('Буфер прибора полон');
@@ -72,7 +71,9 @@ describe('OverflowWindow — содержание (а)', () => {
     expect(screen.getByTestId('overflow-at').textContent?.length).toBeGreaterThan(5);
     expect(screen.getByTestId('overflow-mode').textContent).toContain('остановка');
     expect(screen.getByTestId('overflow-mode').textContent).toContain('подтверждено сервером');
-    expect(screen.getByTestId('overflow-recorded').textContent).toBe('н/д');
+    // #2552: строки «Записано до остановки» нет — у прибора нет её источника, «н/д» не показывается.
+    expect(screen.queryByTestId('overflow-recorded')).toBeNull();
+    expect(screen.queryByText('Записано до остановки')).toBeNull();
     expect(screen.getByTestId('overflow-buffer-at-stop').textContent).toBe('3 проб · 300 B');
     expect(screen.getByTestId('overflow-held').textContent).toContain('жив, не пишет');
   });
@@ -83,7 +84,6 @@ describe('OverflowWindow — содержание (а)', () => {
       liveAxes: { buffer: { usedBytes: 0, limitBytes: 1000 }, userStorage: EPISODE.userStorage },
       quotaRead: QUOTA_READ,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     render(<OverflowWindow {...props({ vm })} />);
@@ -114,7 +114,6 @@ describe('OverflowWindow — содержание (а)', () => {
       liveAxes: LIVE_AXES,
       quotaRead: QUOTA_READ,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     render(<OverflowWindow {...props({ vm })} />);
@@ -210,7 +209,6 @@ describe('OverflowWindow — закрытие и a11y (DoD 7)', () => {
       liveAxes: LIVE_AXES,
       quotaRead: QUOTA_READ,
       held: false,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     rerender(<OverflowWindow {...p} vm={released} />);
@@ -258,7 +256,6 @@ describe('#2538 — строка момента чтения предела по
       liveAxes: LIVE_AXES,
       quotaRead: { fresh: false, readAt: '2026-10-01T05:00:00.000Z' },
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     render(<OverflowWindow {...props({ vm: stale })} />);

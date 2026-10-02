@@ -145,9 +145,9 @@ export function OverflowWindowHost({
     liveAxes: liveAxesFromQuota(library.quota),
     quotaRead: quotaReadStateFromQuota(library.quota),
     held: state.held,
-    // Состояние узла (`runtime.state`) счётчика «записано до остановки» не несёт — честное
-    // «н/д»; ниже, отдельной строкой, окно показывает счёт буфера при остановке (снимок).
-    recordedBeforeStop: null,
+    // Счётчика «записано до остановки» у прибора нет ни в носителе эпизода, ни в состоянии узла
+    // (#2316; строка снята словом владельца, #2552) — счёт буфера при остановке окно показывает
+    // отдельной строкой из локального снимка библиотеки.
     tariffTransitions: TARIFF_TRANSITIONS_KNOWLEDGE,
   });
   const sinceStop = base === null ? null : deltaSinceStop(base, ledgerNow);

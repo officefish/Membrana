@@ -260,8 +260,6 @@ export function OverflowWindow({
             <span className="badge badge-outline badge-sm mr-2">{vm.policyText}</span>
             {vm.phaseText}
           </dd>
-          <dt className="opacity-70">Записано до остановки</dt>
-          <dd data-testid="overflow-recorded">{vm.recordedBeforeStopText}</dd>
           <dt className="opacity-70">В буфере при остановке</dt>
           <dd data-testid="overflow-buffer-at-stop">
             {bufferAtStop === null

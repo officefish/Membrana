@@ -5,7 +5,6 @@ import type { OverflowPolicy, QuotaSubject } from '@membrana/plugin-contracts';
 import type { OverflowHoldAxis, OverflowHoldEpisode } from '@/lib/device-overflow-hold';
 
 import {
-  NOT_AVAILABLE_TEXT,
   OVERFLOW_HELD_TEXT_BY_STANDING,
   OVERFLOW_PHASE_TEXT,
   OVERFLOW_POLICY_TEXT,
@@ -13,7 +12,6 @@ import {
   TARIFF_NO_TRANSITIONS_TEXT,
   describeOverflowReason,
   describeQuotaRead,
-  formatBytes,
   type OverflowReasonDescription,
   type OverflowStanding,
   type QuotaReadState,
@@ -40,11 +38,6 @@ export interface TariffTransitionOption {
  */
 export type TariffTransitionsKnowledge = 'unknown' | readonly TariffTransitionOption[];
 
-export interface RecordedBeforeStop {
-  readonly samples: number;
-  readonly bytes: number;
-}
-
 export interface OverflowWindowViewModel {
   /** Ключ однократности окна: `overflowId` сервера либо локальный ключ до повышения. */
   readonly windowKey: string;
@@ -70,9 +63,6 @@ export interface OverflowWindowViewModel {
   readonly policyText: string;
   readonly source: OverflowHoldEpisode['source'];
   readonly held: boolean;
-  /** Из состояния узла; `null` → «н/д» явной строкой. */
-  readonly recordedBeforeStop: RecordedBeforeStop | null;
-  readonly recordedBeforeStopText: string;
   readonly tariff: {
     readonly enabled: boolean;
     /** Пояснение под кнопкой: почему выключена / куда ведёт. */
@@ -88,7 +78,6 @@ export interface OverflowWindowViewModelInput {
   readonly quotaRead: QuotaReadState;
   /** `hold.isHeld()` — эпизод ∧ политика `stop`. */
   readonly held: boolean;
-  readonly recordedBeforeStop: RecordedBeforeStop | null;
   readonly tariffTransitions: TariffTransitionsKnowledge;
 }
 
@@ -138,11 +127,6 @@ export function judgeOverflowStanding(axis: OverflowHoldAxis | null): OverflowSt
   const verdict = stopDecision(axis, { policy: 'stop' });
   if (verdict.filled === null) return 'unknown';
   return verdict.action === 'stop' ? 'full' : 'freed';
-}
-
-function describeRecordedBeforeStop(value: RecordedBeforeStop | null): string {
-  if (value === null) return NOT_AVAILABLE_TEXT;
-  return `${value.samples} проб · ${formatBytes(value.bytes)}`;
 }
 
 function resolveTariff(transitions: TariffTransitionsKnowledge): OverflowWindowViewModel['tariff'] {
@@ -201,8 +185,6 @@ export function buildOverflowWindowViewModel(input: OverflowWindowViewModelInput
     policyText: OVERFLOW_POLICY_TEXT[episode.policy],
     source: episode.source,
     held: input.held,
-    recordedBeforeStop: input.recordedBeforeStop,
-    recordedBeforeStopText: describeRecordedBeforeStop(input.recordedBeforeStop),
     tariff: resolveTariff(input.tariffTransitions),
   };
 }
