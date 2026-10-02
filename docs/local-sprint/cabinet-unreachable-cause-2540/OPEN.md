@@ -11,7 +11,7 @@
 | Lead | vesnin |
 | Support | ozhegov (слова окна для оператора) · rodchenko (форма строки в окне) · angelina (гейт, модератор) |
 | Branch / tree | `fix/cabinet-unreachable-cause-2540` от `origin/main` `0eb88efa` · `Membrana-sanitation-b` |
-| Status | OPEN · фаза 2 (02.10): **b1 сдан PR'ом** (`pr:ship --no-merge`, см. §«Исполнение b1»); **b2 — за владельцем**, инструкция в §«b2 — живая приёмка» |
+| Status | OPEN · фаза 2 (02.10): **b1 сдан — PR [#2550](https://github.com/officefish/Membrana/pull/2550)** (`pr:ship --no-merge`, голова afa2b027, см. §«Исполнение b1»); **b2 — за владельцем**, инструкция в §«b2 — живая приёмка» |
 
 ## Симптом (живой опыт владельца 01.10, прибор `9e86ec85…`, Studio `02c6396a`)
 
@@ -201,7 +201,7 @@ curl -s -D - -o /dev/null -X OPTIONS -H "Origin: file://" -H "Access-Control-Req
 | Строка с ISO в shell-log Studio | **Сошлось** (P3: `writeElectronShellLog('warn', '[connection] <ISO> cabinet server_error http=503 · …')`, ровно один вызов) |
 | Опровержение: таймер / повтор / таймаут / кнопки | **Не понадобилось** — ни одного |
 | Точка перерезки (`createScenarioRuntimeHost.test.ts` вне зоны) | **Не наступила:** тест задаёт стор `setState` частично, новое поле ему не мешает; файл не тронут |
-| Оценка 240 строк | Факт: 7 изменённых файлов +253/−31, новый модуль `connection-fallback/` (4 файла кода + 3 зуба), новый `api/pairing.test.ts` — зубов больше прогноза, код в оценке |
+| Оценка 240 строк | **Разошлось вверх:** код 346 (+106 к прогнозу — пояснения в `classify.ts` 116 и `reasonTexts.ts` 100), зубы 545, документы спринта 376; всего на ветке 1267 → `pr:ship` потребовал `--size-reason` (порог 400), причина названа в теле PR #2550: план и код — один контракт, резать по веткам нечестно |
 
 Сверх прогноза: `tsc -b` клиента падал тремя ошибками **чужой зоны** (`refreshQuota`, `readAt` из #2538) — stale dist
 `@membrana/media-library-service` от 30.09 при исходниках от 01.10; вылечено `yarn turbo run build
