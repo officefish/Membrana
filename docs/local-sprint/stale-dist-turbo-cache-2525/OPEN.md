@@ -238,6 +238,45 @@ doctor — оставлен развилкой 3 владельцу. Не вхо
 дерева до и после прогонов сценария на стволе и на ветке — 22 089 записей (рост до ~22 300 позже дали только честные
 записи шагов пред-пуша после правки 34 `package.json`).
 
+## Перерезка b1 (02.10) — слово владельца «tsc -p + снять ссылку»
+
+**Повод.** CI PR #2555 (прогон 36999810878, голова `370751ae`) упал в `usercase-catalog-service#build`:
+`../../device-board/src/graph/collapse-to-function.ts(259,35): error TS7006: Parameter 'item' implicitly has an 'any' type`.
+Разбор показал не латентную ошибку типов, а **гонку записи dist**:
+
+| Факт | Свидетельство |
+|---|---|
+| `--force` пересобирает соседей из `references` | `tsc -b --force --dry --verbose` в usercase-catalog: `Project '../../core/tsconfig.json' is being forcibly rebuilt`, то же `../../device-board`; у 24 из 34 пакетов есть `references`, все транзитивно упираются в core → в полном прогоне `core/dist` переписывается 25 раз параллельно с читателями |
+| В CI две сборки писали один dist одновременно | лог: `11:16:09.30 ##[group]@membrana/device-board:build · cache miss`, `11:16:11.70 usercase-catalog-service:build … TS7006`; тип `inputPins: readonly ScenarioFunctionPin[]` (:25) из `@membrana/core` (:2) читался из `core/dist/index.d.ts` в момент перезаписи |
+| Ссылка usercase-catalog → device-board мёртвая | `grep '@membrana/' src` → только `@membrana/core` (3 импорта); в `dependencies` device-board нет → turbo сборки не упорядочивает; добавлена 24.06 (`2294051e`) |
+| Латентных ошибок нет | `tsc -b --force` по одному во всех 34 пакетах (лимит 120 с на пакет) — **34/34 зелёные**; в usercase-catalog одиночный `tsc -b --force` — exit 0 |
+| Гонка локально не воспроизводится | 3× `turbo run build --force --concurrency=10` на 8 задачах (40/41/52 с) и 1× полный (44 задачи, 198 с) в изолированном кеше — 0 ошибок; окно гонки на раннере CI шире |
+
+**Новый предмет b1.** В 34 сборках `tsc -b --force` → `tsc -p tsconfig.json` (хвосты `&& vite build` и
+`yarn prepare &&` сохранены: 15 · 18 · 1). Не-build режим сверяет содержимое, а не mtime (E8; E5.1-состояние →
+экспорт в dist **1**), пишет манифест `.tsbuildinfo` (предмет зуба b2), **соседей не трогает** — ни гонки, ни чужих
+пересборок; при отсутствующем dist настоящей зависимости падает громко (`core/dist` убран → `TS2307 Cannot find
+module '@membrana/core'`, exit 2), мёртвую ссылку без dist игнорирует (exit 0). В зону b1 добавлен
+`packages/services/usercase-catalog/tsconfig.json` — снята `{ "path": "../../device-board" }`. Предикат конфиг-зуба
+`buildScriptTrustsTsbuildinfo` не менялся: `tsc -p tsconfig.json` он уже считал честным (тест утверждает это явно).
+Ратификация переподписана инструментом словом владельца (`--ratify --at 2026-10-02T17:02:24+03:00`, digest
+`70558221…`), акт `recut_act` в ленте, `sprint:cut` → `contract`.
+
+**Порча и проверки после перерезки (дерево Membrana-installstate):**
+
+| Проверка | Вывод |
+|---|---|
+| конфиг-зуб `build-scripts-tsbuildinfo-trust.test.mjs` | ветка (`tsc -p`): `ℹ tests 7 · pass 7 · fail 0`; на стволе (`tsc -b`) — красный, 34 находки (замер 02.10 утром, предикат тот же) |
+| сценарий E5 на стволовом состоянии (plugin-contracts `"build": "tsc -b"`) | `экспорт после промаха: НЕТ … после replay: НЕТ → ОТРАВЛЕНО`, exit 1 |
+| сценарий E5 на ветке (`tsc -p tsconfig.json`) | `после промаха: есть … после replay: есть → ЧИСТО`, exit 0; остатков в `src` нет |
+| `yarn verify:dist-fresh` после полной сборки | `пакетов 34: fresh 34 · stale 0 · dist_missing 0 · absent 0` |
+| dist и `.d.ts` каждого из 34 на месте | у 31 пакета файл `types` существует; у `background-cabinet`/`-media`/`-office` поля `types` нет по устройству (приложения NestJS), их `main` существует; потерь emit от ухода с `-b` нет |
+| `tsc -p tsconfig.json` в usercase-catalog без ссылки на device-board | exit 0 |
+| полная `yarn turbo run build --force --concurrency=4`, изолированный кеш, 44 задачи | ствол `tsc -b`: **2 м 14,8 с** · ветка `tsc -b --force`: **3 м 14,0 с** (+59 с) · ветка `tsc -p`: **2 м 12,6 с** — быстрее исходного ствола, ошибок 0 |
+
+**Сверка с прогнозом перерезки:** ожидали «быстрее нынешних +59 с» — получили −61 с к `--force` и −2 с к стволу.
+Опровержение (`tsc -p` теряет emit references) не наступило: dist/`.d.ts` всех 34 на месте, зуб свежести 34 fresh.
+
 ## Не one shot
 
 Два предмета (сборочный контур 34 пакетов + новый прибор-зуб), две персоны с непересекающимися зонами,

@@ -17,7 +17,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc -b --force",
+    "build": "tsc -p tsconfig.json",
     "dev": "tsc -b --watch",
     "clean": "rimraf dist .turbo .tsbuildinfo",
     "lint": "eslint src --ext .ts,.tsx",

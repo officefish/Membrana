@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b --force && vite build",
+    "build": "tsc -p tsconfig.json && vite build",
     "preview": "vite preview",
     "clean": "rimraf dist .turbo .tsbuildinfo",
     "lint": "eslint src --ext .ts,.tsx",
