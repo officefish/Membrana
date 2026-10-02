@@ -85,6 +85,34 @@ describe('BoardOverflowHoldBadge', () => {
     expect(screen.getByRole('status').textContent).toBe('Заголовок из клиента · Причина из таблицы клиента');
   });
 
+  it('#2552: бейдж уступает место в шапке — без shrink-0, с min-w-0, текст усекается во внутреннем span', () => {
+    render(<BoardOverflowHoldBadge hold={view(vi.fn())} />);
+    const btn = screen.getByRole('button');
+    expect(btn.className).not.toContain('shrink-0');
+    expect(btn.className).toContain('min-w-0');
+    const text = btn.querySelector('.truncate');
+    expect(text).not.toBeNull();
+    expect(text?.className).toContain('min-w-0');
+    expect(text?.textContent).toBe('Заголовок из клиента · Причина из таблицы клиента');
+    // Тот же уступ у бейджа-показа (status) — форма одна для обоих носителей.
+    cleanup();
+    render(<BoardOverflowHoldBadge hold={view()} />);
+    const status = screen.getByRole('status');
+    expect(status.className).not.toContain('shrink-0');
+    expect(status.className).toContain('min-w-0');
+    expect(status.querySelector('.truncate')?.textContent).toBe('Заголовок из клиента · Причина из таблицы клиента');
+  });
+
+  it('#2552: усечение — форма, не потеря слов: title и aria-label несут длинный заголовок целиком', () => {
+    const LONG = 'Буфер полон · Хранилище пользователя заполнено до предела тарифа (user_storage_full)';
+    render(<BoardOverflowHoldBadge hold={view(vi.fn(), { headline: LONG, title: `${LONG} · с 12:00:00` })} />);
+    const btn = screen.getByRole('button');
+    expect(LONG.length).toBeGreaterThan(45);
+    expect(btn.getAttribute('title')).toContain(LONG);
+    expect(btn.getAttribute('aria-label')).toContain(LONG);
+    expect(btn.querySelector('.truncate')?.textContent).toBe(LONG);
+  });
+
   it('#2533: место освобождено — бейдж жёлтый и несёт слово клиента, не «полон»', () => {
     render(<BoardOverflowHoldBadge hold={view(vi.fn(), FREED)} />);
     const btn = screen.getByRole('button');

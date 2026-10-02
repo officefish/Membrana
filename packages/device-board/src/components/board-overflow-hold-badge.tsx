@@ -11,6 +11,10 @@ export interface BoardOverflowHoldBadgeProps {
  * той же лексикой — заголовок приходит из клиента готовым (`headline`, #2533), слов у пакета нет.
  * Тон — по месту: занято (error) / освобождено, ждёт человека (warning). Клик открывает то же
  * окно того же `overflowId` — не второе.
+ *
+ * Место в шапке (#2552): бейдж уступает — `min-w-0` вместо `shrink-0`, текст усекается многоточием
+ * во внутреннем span (`.badge` daisyUI — inline-flex, сам текст не усекает). Полный заголовок
+ * остаётся в `title` и `aria-label`: усечение — форма, не потеря слов.
  */
 export const BoardOverflowHoldBadge: React.FC<BoardOverflowHoldBadgeProps> = ({ hold }) => {
   if (hold === null) {
@@ -18,7 +22,8 @@ export const BoardOverflowHoldBadge: React.FC<BoardOverflowHoldBadgeProps> = ({ 
   }
   const label = hold.headline;
   const toneClass = hold.tone === 'warning' ? 'badge-warning' : 'badge-error';
-  const className = `badge ${toneClass} badge-sm shrink-0 gap-1`;
+  const className = `badge ${toneClass} badge-sm min-w-0 gap-1`;
+  const text = <span className="min-w-0 truncate">{label}</span>;
   if (!hold.onOpenWindow) {
     return (
       <span
@@ -28,7 +33,7 @@ export const BoardOverflowHoldBadge: React.FC<BoardOverflowHoldBadgeProps> = ({ 
         data-overflow-tone={hold.tone}
         role="status"
       >
-        {label}
+        {text}
       </span>
     );
   }
@@ -42,7 +47,7 @@ export const BoardOverflowHoldBadge: React.FC<BoardOverflowHoldBadgeProps> = ({ 
       aria-label={`${label}. ${hold.remainingText}. Открыть окно оператора`}
       onClick={hold.onOpenWindow}
     >
-      {label}
+      {text}
     </button>
   );
 };

@@ -3,8 +3,9 @@
  * `reasonTexts.ts`.
  *
  * Порчи → красный: убрать строку из `OVERFLOW_REASON_TEXT` — красный `tsc` (Record по union);
- * неизвестный код без сырого кода — красный; одна шкала вместо двух — красный; «н/д» заменить
- * на число — красный; пустой список переходов с включённой кнопкой — красный.
+ * неизвестный код без сырого кода — красный; одна шкала вместо двух — красный; пустой список
+ * переходов с включённой кнопкой — красный; поле «записано до остановки» вернулось в модель
+ * (у прибора нет его источника — #2552) — красный.
  *
  * #2533 (порчи, красные на стволе dba53da0): заголовок «Буфер полон» при живом буфере 0 B и
  * неснятом удержании — красный; фаза локального эпизода со словами «ещё не подтверждено» —
@@ -105,7 +106,6 @@ describe('#2533 — место по живой оси причины, удерж
       },
       quotaRead: QUOTA_READ,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
 
@@ -147,7 +147,6 @@ describe('#2533 — место по живой оси причины, удерж
       liveAxes: { buffer: null, userStorage: null },
       quotaRead: QUOTA_READ,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     expect(noLive.standing).toBe('unknown');
@@ -165,7 +164,6 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
       liveAxes: LIVE_AXES,
       quotaRead: QUOTA_READ,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     expect(vm.axes.buffer).toEqual({ usedBytes: 250_000, limitBytes: 2_000_000, freeBytes: 1_750_000, percent: 13 });
@@ -181,25 +179,17 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
     expect(vm.windowKey).toBe(EPISODE.overflowId);
   });
 
-  it('«что записано до остановки»: нет в состоянии узла → явная строка «н/д»; есть → число', () => {
-    const none = buildOverflowWindowViewModel({
+  it('#2552: модель не несёт «записано до остановки» — у прибора нет источника, мёртвого поля с «н/д» нет', () => {
+    const vm = buildOverflowWindowViewModel({
       episode: EPISODE,
       liveAxes: LIVE_AXES,
       quotaRead: QUOTA_READ,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
-    expect(none.recordedBeforeStopText).toBe(NOT_AVAILABLE_TEXT);
-    const some = buildOverflowWindowViewModel({
-      episode: EPISODE,
-      liveAxes: LIVE_AXES,
-      quotaRead: QUOTA_READ,
-      held: true,
-      recordedBeforeStop: { samples: 12, bytes: 2048 },
-      tariffTransitions: 'unknown',
-    });
-    expect(some.recordedBeforeStopText).toBe('12 проб · 2.0 KB');
+    expect('recordedBeforeStop' in vm).toBe(false);
+    expect('recordedBeforeStopText' in vm).toBe(false);
+    expect(Object.values(vm).includes(NOT_AVAILABLE_TEXT)).toBe(false);
   });
 
   it('локальный эпизод: фаза не обещает подтверждения сервера, которого при stop не бывает (#2533)', () => {
@@ -216,7 +206,6 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
       liveAxes: LIVE_AXES,
       quotaRead: QUOTA_READ,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     expect(vm.phase).toBe('held_local');
@@ -231,7 +220,6 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
       liveAxes: LIVE_AXES,
       quotaRead: QUOTA_READ,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: [],
     });
     expect(empty.tariff.enabled).toBe(false);
@@ -242,7 +230,6 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
       liveAxes: LIVE_AXES,
       quotaRead: QUOTA_READ,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     expect(unknown.tariff.enabled).toBe(true);
@@ -253,7 +240,6 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
       liveAxes: LIVE_AXES,
       quotaRead: QUOTA_READ,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: [{ id: 'checkpoint-v1', name: 'Блокпост' }],
     });
     expect(some.tariff.enabled).toBe(true);
@@ -266,7 +252,6 @@ describe('buildOverflowWindowViewModel — только эпизод + стат�
       liveAxes: LIVE_AXES,
       quotaRead: QUOTA_READ,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     expect(vm.reason.text).toBe(OVERFLOW_WINDOW_TITLE);
@@ -306,7 +291,6 @@ describe('#2538 — предел без момента чтения не жив�
       liveAxes: { buffer: { usedBytes: 0, limitBytes: 1000 }, userStorage: EPISODE.userStorage },
       quotaRead: QUOTA_READ,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     expect(vm.quotaRead).toEqual(QUOTA_READ);
@@ -321,7 +305,6 @@ describe('#2538 — предел без момента чтения не жив�
       liveAxes: { buffer: { usedBytes: 0, limitBytes: 1000 }, userStorage: EPISODE.userStorage },
       quotaRead: STALE,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     // Числа не скрываются (развилка 4 — слово владельца), но «освобождено» по ним не судится.
