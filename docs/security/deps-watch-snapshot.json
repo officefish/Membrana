@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-01",
+  "date": "2026-10-02",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -392,6 +392,13 @@
       "severity": "moderate",
       "issue": "baseline-browser-mapping process termination on invalid input causes denial of service",
       "url": "https://github.com/advisories/GHSA-w5vr-8v7q-w6rv"
+    },
+    {
+      "pkg": "basic-ftp",
+      "id": "1240853",
+      "severity": "high",
+      "issue": "basic-ftp: Quadratic-time CPU denial of service in Client.list() Unix directory-listing parser (RE_LINE backtracking)",
+      "url": "https://github.com/advisories/GHSA-c475-qrg2-pj4r"
     },
     {
       "pkg": "body-parser",
