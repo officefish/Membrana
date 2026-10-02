@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14343/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 379 (причины в op-log) -->
+Записей: 50 · бюджет 14342/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 380 (причины в op-log) -->
+
+### 2026-10-02 · позиция · team-evening-feedback
+
+> Dynin Оценка артефактов: Документы дня по моей зоне не задевают — ядро FFT/детекторов не трогалось, и это честно отражено (ни в STANDUP, ни в MAIN_DAY_ISSUE нет мат-задач). STRATEGY_DAY — вещдок, не читать. Итоги дня: по ядру — тишина, что соответствует фиксированному потолку […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-02.md#reply-1`
 
 ### 2026-10-01 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > Численно: потолок страницы 100, ответ несёт `total`. Ночь 23.08 — 1136 проб → минимум ⌈1136/100⌉ = 12 страниц при фильтре по окну. Счётчика выдач ключей нет, предела частоты на вход нет. Значит цикл `for page in 1..N: GET list → for id in page: GET link` не упирается ни в один […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/library-open-api-m4-extraction-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · team-evening-feedback
-
-> Dynin. Оценка артефактов: ревью справедливо выделило P1 в `repo-links.mjs` — regex `ISSUE_LINK` с флагом `/g` в модульном скоупе; `lastIndex` не сбрасывается между вызовами, зубы косвенно покрывают через `assert.equal(rewritten.length, N)`, но прямого теста «два вызова с одним […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
 
 ### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14393/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 393 (причины в op-log) -->
+Записей: 50 · бюджет 14400/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 394 (причины в op-log) -->
+
+### 2026-10-02 · позиция · team-evening-feedback
+
+> Tarasov Оценка артефактов: STRATEGY_DAY — вещдок (помечен 17.07, не рабочий), остальные свежие и согласованы между собой: STANDUP, MAIN_DAY_ISSUE и owner-choice несут одну магистраль `evening-reads-done-work`; DAILY_CODE_REVIEW подтверждает тот же P1-долг (ritual r2, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-02.md#reply-1`
 
 ### 2026-10-01 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > Комната узкая: не срок ключа (M3 закрыт), не форма контракта id/404/403 (M2 закрыт). Предмет — что можно вынуть и чем это реально ограничено. Планка: вердикт без носителя границы — BLOCK. «По одному» без исполнителя — пожелание, не правило. Начинаем с фактуры ствола, не с вкуса. _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/library-open-api-m4-extraction-2026-09-01.md#reply-1`
-
-### 2026-08-20 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** Утренние артефакты согласованы: стендап и MAIN_DAY_ISSUE единогласно фокусируются на пользовательском пути Studio→Firebat. Ключевое расхождение — в MAIN_DAY_ISSUE поле `primaryFocusId` = `firebat-node-device`, а телом заявлена магистраль […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-20.md#reply-1`

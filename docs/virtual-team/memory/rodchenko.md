@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14370/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 378 (причины в op-log) -->
+Записей: 50 · бюджет 14353/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 379 (причины в op-log) -->
+
+### 2026-10-02 · позиция · team-evening-feedback
+
+> Rodchenko Оценка артефактов: MAIN_DAY_ISSUE явно вынес a11y #2476 во «Вторично (если останется время)» — честно, но пагинация библиотеки проб висит вторую неделю без верификации трёх чекбоксов. Код-ревью это не упомянуло — выпало. Итоги дня: по UI — PR #2553 […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-02.md#reply-1`
 
 ### 2026-10-01 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > Rodchenko. Оценка артефактов: `MAIN_DAY_ISSUE` называет UI-правку в двух местах (`~689`, `~757` в `SampleLibraryModule.tsx`) и требует единого текста сообщения «переносится… перенесено в X» — постановка достаточно точна для DoD. Итоги дня: UI сегодня не тронут. #2255 (удаление […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
-
-### 2026-08-31 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE дал точное место дефекта (`SampleLibraryModule.tsx` ~689, ~757, `canMutate`), что сэкономило поиск. Code-review разложил UI-часть: select в строке при `showMove`/`canMoveFrom` + `canMutate`, диалог удаления — один `risk` для label и disable. […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`

@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-10-01 |
-| Head SHA | b39d3aaddca6d74c8a8b1908cee460811e312691 |
+| Date | 2026-10-02 |
+| Head SHA | 118b3c5e39a672723795948d2514e7955888f564 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1277 |
-| Yarn scripts (package.json) | 476 |
-| Yarn → `scripts/` | 422 |
+| Code files under `scripts/` | 1280 |
+| Yarn scripts (package.json) | 477 |
+| Yarn → `scripts/` | 423 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 938 |
+| Code files without yarn ref | 940 |
 
-## Yarn → scripts/ (422)
+## Yarn → scripts/ (423)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -429,6 +429,7 @@
 - `verify:adr-registry` → `scripts/verify-adr-registry.mjs`
 - `verify:branch-protection` → `scripts/verify-branch-protection.mjs`
 - `verify:declared-imports` → `scripts/verify-declared-imports.mjs`
+- `verify:dist-fresh` → `scripts/verify-dist-fresh.mjs`
 - `verify:encoding` → `scripts/verify-encoding.mjs`
 - `verify:image-workspace-deps` → `scripts/verify-image-workspace-deps.mjs`
 - `verify:install-state` → `scripts/require-install-state.mjs`
@@ -448,7 +449,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (938)
+## Code files without yarn ref (940)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -769,6 +770,8 @@
 - `scripts/lib/deps-watch-diff.test.mjs`
 - `scripts/lib/detection-planning-priorities.mjs`
 - `scripts/lib/detector-compare-lib.mjs`
+- `scripts/lib/dist-freshness.mjs`
+- `scripts/lib/dist-freshness.test.mjs`
 - `scripts/lib/docs-canon.mjs`
 - `scripts/lib/dreams-format.mjs`
 - `scripts/lib/dreams-log.mjs`
@@ -1399,7 +1402,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1277)
+## All code files (1280)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1868,6 +1871,8 @@
 - `scripts/lib/deps-watch-diff.test.mjs`
 - `scripts/lib/detection-planning-priorities.mjs`
 - `scripts/lib/detector-compare-lib.mjs`
+- `scripts/lib/dist-freshness.mjs`
+- `scripts/lib/dist-freshness.test.mjs`
 - `scripts/lib/docs-canon.mjs`
 - `scripts/lib/dreams-format.mjs`
 - `scripts/lib/dreams-log.mjs`
@@ -2633,6 +2638,7 @@
 - `scripts/verify-branch-protection.mjs`
 - `scripts/verify-client-catalog.mjs`
 - `scripts/verify-declared-imports.mjs`
+- `scripts/verify-dist-fresh.mjs`
 - `scripts/verify-docs-canon.mjs`
 - `scripts/verify-encoding.mjs`
 - `scripts/verify-encoding.test.mjs`
