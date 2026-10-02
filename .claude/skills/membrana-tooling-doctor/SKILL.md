@@ -9,3 +9,6 @@ description: >-
 # Mirror — tooling doctor
 
 **Canonical:** [`.cursor/skills/membrana-tooling-doctor/SKILL.md`](../../.cursor/skills/membrana-tooling-doctor/SKILL.md)
+
+Stale-dist: `yarn verify:dist-fresh` судит свежесть dist по содержимому (`.tsbuildinfo` ↔ sha256 исходников),
+`yarn build:affected` пересобирает. Подробности и лечение — в каноне (шаг 4; #2525).

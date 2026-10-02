@@ -20,6 +20,7 @@
     "pr:recreate": "node scripts/pr-recreate.mjs",
     "pr:perimeter": "node scripts/pr-perimeter-check.mjs",
     "build:affected": "node scripts/build-affected.mjs",
+    "verify:dist-fresh": "node scripts/verify-dist-fresh.mjs",
     "wire:generate": "node scripts/generate-wire-contract.mjs",
     "verify:wire-sync": "node scripts/verify-wire-sync.mjs",
     "verify:image-workspace-deps": "node scripts/verify-image-workspace-deps.mjs",
