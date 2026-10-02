@@ -8,6 +8,7 @@ import {
   defaultOutputPath,
   estimateChangedLines,
   parseCodeReviewCli,
+  taskDocsProvenance,
 } from './lib/code-review-ritual.mjs';
 
 test('parseCodeReviewCli daily defaults', () => {
@@ -66,6 +67,24 @@ test('estimateChangedLines parses git stat summary', () => {
 test('appendTaskContext includes MAIN_DAY_ISSUE when present', () => {
   const block = appendTaskContext('pr');
   assert.match(block, /MAIN_DAY_ISSUE/);
+  assert.match(block, /Источник документов дня/u);
+  assert.match(block, /cwd=/u);
+});
+
+test('taskDocsProvenance names cwd and exact git source for day docs', () => {
+  const cwd = process.cwd();
+  const block = taskDocsProvenance(['docs/MAIN_DAY_ISSUE.md', 'docs/MISSING_DAY_DOC.md'], {
+    cwd,
+    runGit: (args) => {
+      const key = args.join(' ');
+      if (key === 'rev-parse --show-toplevel') return cwd;
+      if (key.includes('docs/MAIN_DAY_ISSUE.md')) return 'a'.repeat(40);
+      return null;
+    },
+  });
+  assert.match(block, /Источник документов дня/u);
+  assert.match(block, /docs\/MAIN_DAY_ISSUE\.md: a{12}/u);
+  assert.match(block, /docs\/MISSING_DAY_DOC\.md: absent/u);
 });
 
 // ─── TF-2 (#554): --pr обязан быть числом ─────────────────────────────────────────
