@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { pairResponseToCredentials } from '../../api/pairingCredentials';
 import { pairWithAccessKey } from '../../api/pairing';
+import { classifyConnectionFailure } from '../../lib/connection-fallback/classify';
 import { reconfigureMediaLibraryFromConnection } from '../../lib/mediaLibraryHubBridge';
 import { useNodeConnectionStore } from '../../stores/nodeConnectionStore';
 import { NodeRebindStepsNote } from './NodeRebindStepsNote';
@@ -33,7 +34,8 @@ export const MembranePairingPanel: React.FC = () => {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Pairing failed';
       if (message.toLowerCase().includes('fetch') || message.toLowerCase().includes('network')) {
-        reportConnectionError(message);
+        // #2540: тот же классификатор и та же воронка стора, что у опроса кабинета.
+        reportConnectionError(classifyConnectionFailure(err, 'pairing'));
       }
       setError(message);
     } finally {

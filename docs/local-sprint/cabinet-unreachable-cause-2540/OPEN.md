@@ -6,12 +6,12 @@
 | Procedure | `membrana-local-sprint` |
 | Issue | [#2540](https://github.com/officefish/Membrana/issues/2540) — Studio: окно «Сервер недоступен · cabinet unreachable» несёт константу вместо причины |
 | Registry | карточка НЕ заведена (фаза 1 — разбор и план; регистрация `sprintKind: membrana-local-sprint` — после ратификации, руками ведущей) |
-| Cut | [`cabinet-unreachable-cause-2540.json`](../../sprint/cut/cabinet-unreachable-cause-2540.json) — **НЕ ратифицирован**; ратифицирует только владелец (`yarn sprint:cut --plan docs/sprint/cut/cabinet-unreachable-cause-2540.json --ratify --at <ISO>` по его явному слову) |
+| Cut | [`cabinet-unreachable-cause-2540.json`](../../sprint/cut/cabinet-unreachable-cause-2540.json) — **ратифицирован владельцем 02.10 06:28Z** («Ратифицирую с умолчаниями»; отметка инструментом `--ratify --at 2026-10-02T06:28:11Z`, digest `abecd987…`; `sprint:cut` → `contract`) |
 | Cutter | vesnin → [`cut-cabinet-unreachable-cause-2540-vesnin.md`](../../discussions/cut-cabinet-unreachable-cause-2540-vesnin.md) · лента актов [`trail/cabinet-unreachable-cause-2540.jsonl`](../../sprint/cut/trail/cabinet-unreachable-cause-2540.jsonl) |
 | Lead | vesnin |
 | Support | ozhegov (слова окна для оператора) · rodchenko (форма строки в окне) · angelina (гейт, модератор) |
 | Branch / tree | `fix/cabinet-unreachable-cause-2540` от `origin/main` `0eb88efa` · `Membrana-sanitation-b` |
-| Status | OPEN · фаза 1 (разбор + план) 02.10 — код продукта не тронут, PR не открыт |
+| Status | OPEN · фаза 2 (02.10): **b1 сдан PR'ом** (`pr:ship --no-merge`, см. §«Исполнение b1»); **b2 — за владельцем**, инструкция в §«b2 — живая приёмка» |
 
 ## Симптом (живой опыт владельца 01.10, прибор `9e86ec85…`, Studio `02c6396a`)
 
@@ -149,12 +149,17 @@ Renderer в Electron и браузер одинаковы: у обоих тол�
 - Таймаут fetch — развилка 2 (сегодня висящее соединение ошибки не даёт вовсе — факт записан, не чинится).
 - Коды сети из главного процесса Electron (прокси/DNS/сертификат) через IPC-пробник — развилка 3.
 - Опрос media: `pingMediaApi` возвращает `boolean` и глотает причину — текст `'media-server unreachable'` остаётся (развилка 5).
-- **CORS-политика кабинета для `Origin: file://` / `null`** (preflight без ACAO) — отдельный вопрос: сначала живая проверка
-  Studio-сборки с DevTools, потом билет. Кабинет и Caddy не трогаются.
+- **CORS-политика кабинета для `Origin: file://` / `null`** (preflight и GET без ACAO) — замер 02.10 закрыл развилку 0:
+  сборка сопряжена живым фактом, блокера нет, Issue не заводится (§«Развилка 0»). Кабинет и Caddy не трогаются.
 - **Наложение бейджа «Буфер полон» на галку INFO в шапке доски — НЕ этот спринт.**
 - Кабинет, Caddy, прод-окружение, тариф и квота — не трогаются.
 
 ## Развилки на слово владельца
+
+**Решено 02.10 06:28Z — «Ратифицирую с умолчаниями»:** (1) порог показа окна — как есть; (2) таймаут — не вводить;
+(3) коды сети из главного процесса — не в этот спринт; (4) форма строки — класс + что делать + деталь приглушённо + время;
+(5) media-ветка — константа остаётся; (6) приёмка — два подстроенных отказа в dev. Развилка 0 — замер до кода (ниже):
+посылка опровергнута, Issue не заводится.
 
 0. **CORS в Studio-сборке (резчик — первой по риску).** Preflight кабинета на `Origin: file://` / `null` — без ACAO. Если
    сопряжение в сборке (`loadFile`) не работает вовсе, это блокер релиза, а не наблюдаемость. Живая проверка сборки с
@@ -166,14 +171,91 @@ Renderer в Electron и браузер одинаковы: у обоих тол�
 5. **media-ветка** — оставить константу (умолчание, по билету) или в том же блоке нести причину из `pingMediaApi` (+~40 строк к b1).
 6. **Живая приёмка** — два подстроенных отказа в dev-Studio (умолчание) или ждать настоящего транзиента на проде с журналом (по времени не управляемо).
 
+## Развилка 0 — закрыта замером 02.10 (до кода, только чтение)
+
+**Посылка «сопряжение в сборке не работает» — опровергнута** живым фактом владельца: 30.09–01.10 он работал в собранной
+Studio (установщики 02c6396a и 00257180), в шапке горело «связан» (это `pingMediaApi` с кастомными заголовками
+`X-Membrana-*`), смена тарифа доехала через `/v1/pair/status`. Серверная сторона при этом `file://` не белит:
+
+```
+# По коду: GET /v1/pair/status несёт Authorization: Bearer (api/pairing.ts) — заголовок не из безопасного списка,
+# preflight по спецификации обязателен; media GET /quota несёт X-Membrana-Token / X-Membrana-Device-Id — тоже.
+curl -s -D - -o /dev/null -H "Origin: file://" -H "Authorization: Bearer invalid" https://cabinet.membrana.space/v1/pair/status | grep -i "^HTTP/\|^access-control"
+#   HTTP/1.1 401 Unauthorized · Access-Control-Allow-Credentials: true · Access-Control-Expose-Headers: … — БЕЗ Allow-Origin
+#   (то же для Origin: null; для Origin: http://localhost:5173 — Allow-Origin отдаётся)
+curl -s -D - -o /dev/null -X OPTIONS -H "Origin: file://" -H "Access-Control-Request-Method: GET" -H "Access-Control-Request-Headers: authorization" https://cabinet.membrana.space/v1/pair/status | grep -i "^HTTP/\|^access-control"
+#   HTTP/1.1 204 — БЕЗ Allow-Origin
+```
+
+Вывод: renderer Electron на origin `file://` (сборка, `loadFile`) CORS-запрет к этим адресам не применяет — иначе
+сопряжение в сборке не жило бы. Блокера нет, Issue не заводится; в b1 класс CORS отдельно не обещается (из renderer он
+неотличим от сети). Запись оставлена на случай смены политики Electron или кабинета.
+
+## Исполнение b1 (02.10, ветка `fix/cabinet-unreachable-cause-2540`)
+
+| Прогноз b1 | Исход |
+|---|---|
+| P1/P2 зелёные на ветке, красные на стволе | **Сошлось.** Ствол 2ff2d18f: P1 `expected 'cabinet unreachable' to contain '502'`, P2 `… to contain 'Failed to fetch'`, P3 `spy … called 0 times` — красные; ветка — 3/3 зелёные (оба прогона 02.10; порча — временный файл, прогнан через `git stash -u`, удалён) |
+| 15 старых зубов зелёные | **Сошлось и шире:** зона + соседи **141/141** (хук 9, стор 14, `api/pairing.test.ts` 7, `connection-fallback` 23, `overflow-window` структурные, `createScenarioRuntimeHost`) |
+| Окно на 502 — «Кабинет ответил ошибкой 502» + что делать; на TypeError — «Связи с кабинетом нет» | **Сошлось** (`reasonTexts.test.ts`); приглушённо `ЧЧ:ММ:СС · HTTP 502 Bad Gateway` |
+| Строка с ISO в shell-log Studio | **Сошлось** (P3: `writeElectronShellLog('warn', '[connection] <ISO> cabinet server_error http=503 · …')`, ровно один вызов) |
+| Опровержение: таймер / повтор / таймаут / кнопки | **Не понадобилось** — ни одного |
+| Точка перерезки (`createScenarioRuntimeHost.test.ts` вне зоны) | **Не наступила:** тест задаёт стор `setState` частично, новое поле ему не мешает; файл не тронут |
+| Оценка 240 строк | Факт: 7 изменённых файлов +253/−31, новый модуль `connection-fallback/` (4 файла кода + 3 зуба), новый `api/pairing.test.ts` — зубов больше прогноза, код в оценке |
+
+Сверх прогноза: `tsc -b` клиента падал тремя ошибками **чужой зоны** (`refreshQuota`, `readAt` из #2538) — stale dist
+`@membrana/media-library-service` от 30.09 при исходниках от 01.10; вылечено `yarn turbo run build
+--filter=@membrana/media-library-service --force`, после чего `tsc -b` чист. `eslint` изменённых файлов — чист.
+Структурный зуб «одна таблица слов, один вход отказа» сначала ловил слово «catch {}» в комментарии хука — зуб снимает
+строчные комментарии перед проверкой.
+
+## b2 — живая приёмка владельцем (инструкция; прод не трогается)
+
+Нужна Studio из ветки (после слияния PR — из `main`), запуск **dev** (`yarn studio:dev` сам ставит `MEMBRANA_STUDIO_DEV=1`
+и пробрасывает окружение в Vite: переменная оболочки перекрывает `apps/client/.env.development`). Studio должна быть
+**уже сопряжена** (учётные данные живут в `%APPDATA%\Membrana`, переживают перезапуск): если нет — один раз запустить
+`yarn studio:dev` без переменных, связать ключом из кабинета, закрыть.
+
+**Опыт 1 — «связи нет»** (порт 9 — discard, соединение отвергается сразу). PowerShell из корня репозитория:
+
+```powershell
+$env:VITE_CABINET_API_URL = 'http://127.0.0.1:9'
+yarn studio:dev
+```
+Ожидание ≤60 с после старта (опрос идёт сразу, затем раз в минуту): окно **«Сервер недоступен»** →
+«Связи с кабинетом нет. Запрос не дошёл до сервера.» → «Проверьте интернет и прокси…» → приглушённо
+`ЧЧ:ММ:СС · Failed to fetch`. Закрыть Studio.
+
+**Опыт 2 — «кабинет ответил ошибкой 502».** Во втором окне PowerShell поднять локальный сервер, отдающий 502 с JSON на
+любой путь (с заголовками CORS, иначе dev-renderer на `localhost:5173` увидит не 502, а запрет):
+
+```powershell
+node -e "require('http').createServer((q,s)=>{const h={'Access-Control-Allow-Origin':q.headers.origin||'*','Access-Control-Allow-Headers':'authorization,content-type','Access-Control-Allow-Methods':'GET,POST,OPTIONS','Content-Type':'application/json'};if(q.method==='OPTIONS'){s.writeHead(204,h);return s.end();}s.writeHead(502,h);s.end(JSON.stringify({message:'upstream down'}))}).listen(3999,'127.0.0.1',()=>console.log('502-сервер на 127.0.0.1:3999'))"
+```
+В первом окне:
+```powershell
+$env:VITE_CABINET_API_URL = 'http://127.0.0.1:3999'
+yarn studio:dev
+```
+Ожидание: окно «Сервер недоступен» → **«Кабинет ответил ошибкой 502.»** → «Это на стороне сервера. Подождите минуту…» →
+приглушённо `ЧЧ:ММ:СС · HTTP 502 upstream down`.
+
+**Журнал.** Открыть `%APPDATA%\Membrana\logs\shell-<ГГГГ-ММ-ДД>.log` — две строки вида
+`[renderer] [connection] 2026-10-02T…Z cabinet unreachable · Failed to fetch` и
+`… cabinet server_error http=502 · HTTP 502 upstream down`; время в строке совпадает с временем на экране.
+
+**Сдача b2:** снимки двух окон и две строки журнала — в `CLOSURE.md` этого каталога и запись в `docs/LOCAL_SPRINT_LOG.md`;
+затем `yarn sprint:gate` и `yarn sprint:experience`. Если оба окна одинаковые или строк в журнале нет — стоп и замер
+(вторая точка потери), не правка слов.
+
+**Вернуть окружение:** `Remove-Item Env:VITE_CABINET_API_URL` (или закрыть окно PowerShell); 502-сервер — Ctrl+C.
+
 ## Что неизвестно
 
-- Как сопряжение живёт в Studio-**сборке** (`loadFile`, origin `file://`) при preflight без ACAO — владелец 01.10 мог быть в
-  dev-запуске. Различит живая сборка с DevTools → Network при опросе. До этого класс CORS в текстах не обещается отдельно.
-- Какой именно отказ был 01.10 — журнала нет (его и заводит спринт); Caddy-логи кабинета за 01.10 ~07:40–08:10Z могли бы
-  показать 5xx, если они есть.
+- Какой именно отказ был 01.10 — журнала тогда не было (его и заводит b1); после слияния любой повтор оставит строку с
+  временем в `shell-<дата>.log`, сопоставимую с логами Caddy кабинета.
 - Отдаёт ли Caddy кабинета HTTP/2 Chromium-клиенту (curl получил HTTP/1.1): при HTTP/2 `statusText` пуст — потому статус
-  несётся числом, не словом, независимо от ответа.
+  несётся числом (`HttpResponseError.status`), не словом; зуб «502 с HTML-телом и пустым statusText» это закрепляет.
 
 ## Не one shot
 

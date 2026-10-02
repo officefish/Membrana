@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { mergePairStatusTariff } from '@/api/pairingCredentials';
 import { fetchPairStatus, pingMediaApi } from '@/api/pairing';
+import { classifyConnectionFailure, mediaUnreachableFailure } from '@/lib/connection-fallback/classify';
 import { tryUpgradeMediaLibraryToRemote } from '@/lib/mediaLibraryHubBridge';
 import { useNodeConnectionStore } from '@/stores/nodeConnectionStore';
 
@@ -50,13 +51,17 @@ export function usePairStatusMonitor(): void {
         const mediaOk = await pingMediaApi(pairing.mediaApiUrl, pairing.mediaToken, pairing.deviceId);
         if (cancelled) return;
         if (!mediaOk) {
-          reportConnectionError('media-server unreachable');
+          // Развилка 5 (#2540, умолчание владельца): причина из media не несётся — константа.
+          reportConnectionError(mediaUnreachableFailure());
         } else {
           await tryUpgradeMediaLibraryToRemote(mode, pairing);
         }
-      } catch {
+      } catch (err) {
+        // #2540: до спринта здесь был `catch {}` — ошибка выбрасывалась, окну уходила константа,
+        // и владелец не мог отличить сеть от 5xx кабинета. Теперь бросок читается: статус и
+        // текст ответа либо текст сетевой ошибки доезжают до окна и журнала.
         if (!cancelled) {
-          reportConnectionError('cabinet unreachable');
+          reportConnectionError(classifyConnectionFailure(err, 'cabinet'));
         }
       }
     };
