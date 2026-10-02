@@ -47,6 +47,7 @@ import { listSubgraphBlocksForFunction } from '../graph/list-subgraph-blocks-for
 import {
   BRANCH_TAB_LABEL,
   BRANCH_SCENARIO_TITLE,
+  BOARD_HEADER_LEAD_GROUP_CLASS,
   boardHeaderContentOffsetClass,
   SIGNAL_LAYER_TITLE,
   isSignalAdvancedEnabled,
@@ -1508,7 +1509,7 @@ const DeviceBoardShellInner: React.FC<{
           </span>
         </div>
 
-        <div className={`flex min-w-0 flex-1 items-center gap-3 ${headerContentOffsetClass}`}>
+        <div className={`${BOARD_HEADER_LEAD_GROUP_CLASS} ${headerContentOffsetClass}`}>
           <div className="flex h-5 w-5 shrink-0 items-center justify-center">
             {isSaving ? (
               <span
