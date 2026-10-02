@@ -14,6 +14,7 @@ import { execFileSync } from 'node:child_process';
 // Природа коммита (code/docs/mixed) и порог — из ядра очереди oversized: книга аннотирует ту же
 // очередь, и «что считается кодом» обязано быть одним носителем, а не второй копией списка.
 import { describeCommit, NATURES } from './review-oversized-queue.mjs';
+import { formatResultFacts, resultFactsFromPaths } from './day-work-diff.mjs';
 import { buildDoneLedger, dayOf, formatDoneLedger } from './review-done-ledger.mjs';
 
 /** Окно книги по умолчанию: неделя. Слот 27.09 обязан быть виден вечером 29.09. */
@@ -40,7 +41,7 @@ export function sinceDayOf(today, days = DONE_LEDGER_DAYS) {
  * по умолчанию — иначе книга тонет в артефактах вечера.
  *
  * @param {string} text
- * @returns {Array<{sha:string, mergedDay:string|null, subject:string, pr:number|null, changedLines:number, nature:string, oversized:boolean}>}
+ * @returns {Array<{sha:string, mergedDay:string|null, subject:string, pr:number|null, changedLines:number, nature:string, oversized:boolean, files:string[], resultFacts:Array<{kind:string,label:string,path:string,sprintId:string|null}>}>}
  */
 export function parseGitLogNumstat(text) {
   const out = [];
@@ -59,7 +60,18 @@ export function parseGitLogNumstat(text) {
   }
   return out.map((c) => {
     const d = describeCommit(c);
-    return { sha: c.sha, mergedDay: c.mergedDay, subject: c.subject, pr: c.pr, changedLines: d.total, nature: d.nature, oversized: d.oversized };
+    const files = c.files.map((f) => f.path);
+    return {
+      sha: c.sha,
+      mergedDay: c.mergedDay,
+      subject: c.subject,
+      pr: c.pr,
+      changedLines: d.total,
+      nature: d.nature,
+      oversized: d.oversized,
+      files,
+      resultFacts: resultFactsFromPaths(files),
+    };
   });
 }
 
@@ -108,7 +120,14 @@ export function collectDoneLedgerBlock(opts = {}) {
   const docsOnly = parsed.filter((c) => c.pr !== null && c.oversized && c.nature === NATURES.DOCS).length;
   const prs = parsed
     .filter((c) => c.pr !== null && c.mergedDay !== null && c.oversized && c.nature !== NATURES.DOCS)
-    .map((c) => ({ pr: c.pr, mergedDay: c.mergedDay, subject: c.subject, changedLines: c.changedLines }));
+    .map((c) => ({
+      pr: c.pr,
+      mergedDay: c.mergedDay,
+      subject: c.subject,
+      changedLines: c.changedLines,
+      files: c.files,
+      resultFacts: c.resultFacts,
+    }));
 
   const gh = run('gh', ['issue', 'list', '--state', 'all', '--search', `created:>=${sinceDay}`, '--limit', '200', '--json', 'number,title,createdAt,body,state'], cwd);
   let issues;
@@ -123,7 +142,10 @@ export function collectDoneLedgerBlock(opts = {}) {
   if (!gh.ok) {
     const reason = reasonOf(gh, 'gh issue list');
     const lines = [title, '', `(книга сделанного недоступна: ${reason} — билеты не опрошены; судить «разбор не сделан» по этому блоку нельзя)`, ''];
-    for (const p of prs.slice(0, 12)) lines.push(`- **#${p.pr}** (${p.mergedDay} · ${p.changedLines} строк) ${p.subject} → билеты не опрошены`);
+    for (const p of prs.slice(0, 12)) {
+      const facts = formatResultFacts(p.resultFacts);
+      lines.push(`- **#${p.pr}** (${p.mergedDay} · ${p.changedLines} строк) ${p.subject} → билеты не опрошены${facts ? `; ${facts}` : ''}`);
+    }
     return { ok: false, reason, oversized: prs.length, ticketed: 0, block: lines.join('\n') };
   }
 

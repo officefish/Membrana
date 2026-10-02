@@ -4,6 +4,12 @@
 
 ## Focus
 
+- **evening-reads-done-work-20261002** (магистраль 02.10; PR #2551) ·
+  ратифицирован 02.10 10:26:49+03 инструментом · b1 (vesnin) + b2 (tarasov) + b3 (angelina) —
+  **gate pass 3/3 `honest_pair`; experience hit (3/3, overflow 0/3)** · [`OPEN.md`](./local-sprint/evening-reads-done-work-20261002/OPEN.md) ·
+  [`CLOSURE.md`](./local-sprint/evening-reads-done-work-20261002/CLOSURE.md) — вечер и code-review больше не получают
+  пустой oversized по #2543/#2544: #2544 несёт report+plan, #2543 — AUDIT+plan+experience; `code-review:pr` печатает
+  provenance документов дня (`cwd`, `git-root`, SHA файлов). Сдача `pr:ship --no-merge`; мердж — слово владельца.
 - **device-quota-after-tariff-2538** ([#2538](https://github.com/officefish/Membrana/issues/2538)) ·
   ратифицирован 01.10 08:35:59Z инструментом с умолчаниями · b1 `2b09b9f3` (dynin) + b2 `4133dfcc` (vesnin) — PR #2541
   **влит владельцем** 01.10 (`00257180`) · живая приёмка b3 на приборе `9e86ec85` (Studio `00257180`): лимит 2.00 GB по

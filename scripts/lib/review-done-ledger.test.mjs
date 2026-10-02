@@ -83,6 +83,26 @@ test('порядок: свежие мерджи выше, билеты по да
   assert.deepEqual(entries.find((e) => e.pr === 2489).tickets.map((t) => t.number), [2492, 2496, 2497]);
 });
 
+
+test('formatDoneLedger: показывает носители результата и не выдумывает CLOSURE', () => {
+  const { entries } = buildDoneLedger({
+    prs: [
+      {
+        pr: 2544,
+        mergedDay: '2026-10-01',
+        subject: 'docs: personas source phase1 (#2544)',
+        changedLines: 900,
+        files: ['docs/sprint/cut/personas-source-phase1.json', 'docs/discussions/personas-source-phase1-report.md'],
+      },
+    ],
+    issues: [],
+  });
+  assert.equal(entries[0].resultFacts.length, 2);
+  const text = formatDoneLedger({ entries, dropped: { noPr: 0, badMergedDay: 0, notOversized: 0, issuesWithoutDay: 0 } });
+  assert.match(text, /носители результата:/u);
+  assert.match(text, /personas-source-phase1-report\.md/u);
+  assert.match(text, /CLOSURE в диффе не найден/u);
+});
 test('formatDoneLedger: заведённые названы билетами, незаведённые — словами; пустая книга не молчит', () => {
   const text = formatDoneLedger(buildDoneLedger({ prs: PRS, issues: ISSUES }), { sinceDay: '2026-09-22' });
   assert.match(text, /\*\*#2488\*\* \(2026-09-27 · 1340 строк\)/u);

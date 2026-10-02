@@ -5,6 +5,17 @@
 
 ---
 
+## 2026-10-02 — `evening-reads-done-work-20261002` — **IMPLEMENTED · gate pass 3/3 · experience hit · PR #2551**
+
+- **Closure:** [`local-sprint/evening-reads-done-work-20261002/CLOSURE.md`](./local-sprint/evening-reads-done-work-20261002/CLOSURE.md) —
+  ратификация 02.10 10:26:49+03; focused suite 73/73; живой `collectDoneLedgerBlock({today:'2026-10-02', days:2})` показал
+  #2544 с `docs/discussions/personas-source-phase1-report.md` + `docs/sprint/cut/personas-source-phase1.json`, #2543 с
+  `AUDIT.md` + cut + experience; `appendTaskContext('pr')` печатает источник документов дня из рабочего дерева.
+- **Goal:** вечер и code-review не объявляют влитые #2543/#2544 несделанными по пустому oversized: носители результата
+  показаны, отсутствие `CLOSURE` названо отдельно, источник дневных документов подписан.
+- **OPEN:** [`local-sprint/evening-reads-done-work-20261002/OPEN.md`](./local-sprint/evening-reads-done-work-20261002/OPEN.md)
+- **Cut:** [`sprint/cut/evening-reads-done-work-20261002.json`](./sprint/cut/evening-reads-done-work-20261002.json)
+- **Boundary:** подписанные документы дня не правились; `gh issue list` при отказе не даёт билетный статус, только запрет на вывод «разбор не сделан».
 ## 2026-10-01 — `device-quota-after-tariff-2538` — **CLOSED · gate pass 3/3 · experience miss (объём b1 425 > 400; предмет 3/3) · PR #2541 влит (`00257180`)**
 
 - **Closure:** [`local-sprint/device-quota-after-tariff-2538/CLOSURE.md`](./local-sprint/device-quota-after-tariff-2538/CLOSURE.md) —
