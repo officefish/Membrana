@@ -81,6 +81,77 @@ export function isSegmentOversized(changedLines) {
   return Number(changedLines) > OVERSIZED_CHANGED_LINES;
 }
 
+function normalizeResultPath(value) {
+  const raw = typeof value === 'string' ? value : value?.path ?? value?.name ?? '';
+  return String(raw).replaceAll('\\', '/').replace(/^\/+/, '');
+}
+
+function pushFact(out, seen, fact) {
+  const key = `${fact.kind}\0${fact.path}`;
+  if (seen.has(key)) return;
+  seen.add(key);
+  out.push(fact);
+}
+
+/**
+ * Result carriers visible from changed file paths. This is intentionally conservative:
+ * a sprint/report is named only when the diff itself carries its artifact path.
+ *
+ * @param {readonly (string|{path?: string, name?: string})[]} paths
+ * @returns {Array<{kind:string, label:string, path:string, sprintId:string|null}>}
+ */
+export function resultFactsFromPaths(paths = []) {
+  const facts = [];
+  const seen = new Set();
+  for (const raw of paths) {
+    const path = normalizeResultPath(raw);
+    if (!path) continue;
+
+    let m = path.match(/^docs\/local-sprint\/([^/]+)\/(CLOSURE|AUDIT|OPEN)\.md$/u);
+    if (m) {
+      pushFact(facts, seen, { kind: m[2].toLowerCase(), label: m[2], path, sprintId: m[1] });
+      continue;
+    }
+
+    m = path.match(/^docs\/sprint\/cut\/([^/]+)\.json$/u);
+    if (m) {
+      pushFact(facts, seen, { kind: 'sprint-plan', label: 'sprint plan', path, sprintId: m[1] });
+      continue;
+    }
+
+    m = path.match(/^docs\/sprint\/experience\/([^/]+)\.segments\.json$/u);
+    if (m) {
+      pushFact(facts, seen, { kind: 'sprint-experience', label: 'sprint experience', path, sprintId: m[1] });
+      continue;
+    }
+
+    m = path.match(/^docs\/discussions\/([^/]*report[^/]*)\.md$/iu);
+    if (m) {
+      pushFact(facts, seen, { kind: 'report', label: 'report', path, sprintId: null });
+    }
+  }
+  return facts;
+}
+
+/**
+ * @param {readonly {kind:string, label:string, path:string}[]} facts
+ */
+export function formatResultFacts(facts = []) {
+  if (!Array.isArray(facts) || facts.length === 0) return '';
+  const carriers = facts.map((f) => `\`${f.path}\` (${f.label})`).join(', ');
+  const closureNote = facts.some((f) => f.kind === 'closure')
+    ? ''
+    : '; CLOSURE в диффе не найден — не выдумывать закрытие';
+  return `носители результата: ${carriers}${closureNote}`;
+}
+
+function filesFromNameOnly(stdout) {
+  return String(stdout ?? '')
+    .split(/\r?\n/u)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 const DEFAULT_RUN = (args) => {
   try {
     return { ok: true, stdout: execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }) };
@@ -168,17 +239,21 @@ export function collectDayWorkDiff(opts = {}) {
     const shortstatResult = runGit(run, ['diff', '--shortstat', `${c.sha}^..${c.sha}`]);
     if (!shortstatResult.ok) {
       diffAvailable = false;
-      return { sha: c.sha, subject: c.subject, pr: c.pr, changedLines: 0, oversized: false, diff: '', diffAvailable: false };
+      return { sha: c.sha, subject: c.subject, pr: c.pr, changedLines: 0, oversized: false, diff: '', diffAvailable: false, files: [], resultFacts: [] };
     }
     const changedLines = changedLinesFromShortstat(shortstatResult.stdout);
+    const namesResult = runGit(run, ['diff', '--name-only', `${c.sha}^..${c.sha}`]);
+    if (!namesResult.ok) diffAvailable = false;
+    const files = namesResult.ok ? filesFromNameOnly(namesResult.stdout) : [];
+    const resultFacts = resultFactsFromPaths(files);
     const oversized = isSegmentOversized(changedLines);
     // oversized — помечаем и НЕ тянем гигантский дифф в контекст: обрезка молчаливая
     // (MAX_DIFF_CHARS) — тот же класс тихого сбоя, что и слепота. Пусть ревьюер видит
     // пометку и решит, а не получит обрезок, выглядящий как целое.
-    if (oversized) return { sha: c.sha, subject: c.subject, pr: c.pr, changedLines, oversized, diff: '', diffAvailable: true };
+    if (oversized) return { sha: c.sha, subject: c.subject, pr: c.pr, changedLines, oversized, diff: '', diffAvailable: true, files, resultFacts };
     const diffResult = runGit(run, ['diff', `${c.sha}^..${c.sha}`]);
     if (!diffResult.ok) diffAvailable = false;
-    return { sha: c.sha, subject: c.subject, pr: c.pr, changedLines, oversized, diff: diffResult.stdout, diffAvailable: diffResult.ok };
+    return { sha: c.sha, subject: c.subject, pr: c.pr, changedLines, oversized, diff: diffResult.stdout, diffAvailable: diffResult.ok, files, resultFacts };
   });
 
   const boundary = boundaryPrecision(commits, {
@@ -235,9 +310,16 @@ export function formatDayWorkContext(result) {
   for (const s of result.segments) {
     const head = `### ${s.sha.slice(0, 8)}${s.pr ? ` (#${s.pr})` : ''} — ${s.subject} [${s.changedLines} строк]`;
     if (s.oversized) {
-      parts.push(head, `(oversized — дифф не развёрнут, ревьюить как отдельный PR)`, '');
+      const facts = formatResultFacts(s.resultFacts);
+      parts.push(
+        head,
+        `(oversized — дифф не развёрнут, ревьюить как отдельный PR)`,
+        facts ? `→ ${facts}` : '→ носители результата в списке файлов не найдены',
+        '',
+      );
     } else if (!s.diffAvailable) {
-      parts.push(head, `(дифф недоступен — показано текущее дерево в fallback-контексте)`, '');
+      const facts = formatResultFacts(s.resultFacts);
+      parts.push(head, `(дифф недоступен — показано текущее дерево в fallback-контексте)`, ...(facts ? [`→ ${facts}`] : []), '');
     } else {
       parts.push(head, '```diff', s.diff.trimEnd(), '```', '');
     }

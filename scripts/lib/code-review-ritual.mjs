@@ -526,6 +526,29 @@ export function readOptionalFile(relPath, maxChars = MAX_TASK_DOC_CHARS) {
   return text;
 }
 
+function runGitQuiet(args, cwd = process.cwd()) {
+  const res = spawnSync('git', args, { cwd, encoding: 'utf8', maxBuffer: 1024 * 1024 });
+  if (res.status !== 0) return null;
+  return (res.stdout || '').trim();
+}
+
+/**
+ * @param {readonly string[]} [paths]
+ * @param {{cwd?: string, runGit?: (args:string[], cwd:string) => string|null}} [opts]
+ */
+export function taskDocsProvenance(paths = [MAIN_DAY_ISSUE_PATH, CURRENT_TASK_PATH], opts = {}) {
+  const cwd = opts.cwd ?? process.cwd();
+  const git = opts.runGit ?? runGitQuiet;
+  const root = git(['rev-parse', '--show-toplevel'], cwd) || cwd;
+  const docs = paths.map((relPath) => {
+    const abs = resolve(cwd, relPath);
+    if (!existsSync(abs)) return `${relPath}: absent`;
+    const sha = git(['log', '-1', '--format=%H', '--', relPath], cwd);
+    return `${relPath}: ${sha ? sha.slice(0, 12) : 'untracked-or-unknown'}`;
+  });
+  return `Источник документов дня: cwd=\`${cwd}\`; git-root=\`${root}\`; ${docs.join('; ')}`;
+}
+
 /**
  * @param {string} diffStatText
  */
@@ -546,7 +569,7 @@ export function appendTaskContext(kind) {
   const main = readOptionalFile(MAIN_DAY_ISSUE_PATH);
   const buffer = readOptionalFile(CURRENT_TASK_PATH);
   if (!main && !buffer) return '';
-  const parts = [`## Task context (${kind})`];
+  const parts = [`## Task context (${kind})`, `> ${taskDocsProvenance()}`];
   if (main) parts.push(`### MAIN_DAY_ISSUE.md\n\n${main}`);
   if (buffer) parts.push(`### CURRENT_TASK.md\n\n${buffer}`);
   return parts.join('\n\n') + '\n\n';

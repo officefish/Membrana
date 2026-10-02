@@ -20,7 +20,7 @@
  * КНИГА НЕ СНИМАЕТ С ОЧЕРЕДИ. Основание снятия у `review:oversized` прежнее (артефакт ревью
  * или commit-status) — слово владельца 29.09. Здесь только «разбор заведён билетами #…».
  */
-import { isSegmentOversized } from './day-work-diff.mjs';
+import { formatResultFacts, isSegmentOversized, resultFactsFromPaths } from './day-work-diff.mjs';
 
 /** Исходы записи книги. Список закрыт: третьего состояния у PR относительно билетов нет. */
 export const LEDGER_STATUS = Object.freeze({
@@ -58,12 +58,12 @@ export function prRefsIn(text) {
  * Свести PR и билеты в книгу.
  *
  * @param {{
- *   prs: ReadonlyArray<{pr: number|string, mergedDay: string, subject?: string, changedLines?: number}>,
+ *   prs: ReadonlyArray<{pr: number|string, mergedDay: string, subject?: string, changedLines?: number, files?: readonly string[], paths?: readonly string[], resultFacts?: readonly unknown[]}>,
  *   issues: ReadonlyArray<{number: number|string, title?: string, body?: string, createdAt?: string, state?: string}>,
  *   onlyOversized?: boolean
  * }} p
  * @returns {{entries: Array<{pr:number, mergedDay:string, subject:string, changedLines:number|null,
- *   status:string, tickets: Array<{number:number, day:string, title:string, state:string|null}>}>,
+ *   status:string, tickets: Array<{number:number, day:string, title:string, state:string|null}>, resultFacts: Array<{kind:string,label:string,path:string,sprintId:string|null}>}>,
  *   dropped: {noPr:number, badMergedDay:number, notOversized:number, issuesWithoutDay:number}}}
  */
 export function buildDoneLedger(p) {
@@ -106,6 +106,8 @@ export function buildDoneLedger(p) {
       dropped.notOversized += 1;
       continue;
     }
+    const files = Array.isArray(raw?.files) ? raw.files : Array.isArray(raw?.paths) ? raw.paths : [];
+    const resultFacts = Array.isArray(raw?.resultFacts) ? raw.resultFacts : resultFactsFromPaths(files);
     const tickets = issues
       .filter((i) => i.number !== pr && i.refs.has(pr) && i.day >= mergedDay)
       .sort((a, b) => (a.day === b.day ? a.number - b.number : a.day < b.day ? -1 : 1))
@@ -117,6 +119,7 @@ export function buildDoneLedger(p) {
       changedLines,
       status: tickets.length > 0 ? LEDGER_STATUS.TICKETED : LEDGER_STATUS.NOT_TICKETED,
       tickets,
+      resultFacts,
     });
   }
   // Свежие мерджи выше: вечер судит день, а не историю.
@@ -150,11 +153,13 @@ export function formatDoneLedger(ledger, opts = {}) {
   for (const e of entries.slice(0, limit)) {
     const size = e.changedLines === null ? '' : ` · ${e.changedLines} строк`;
     const head = `- **#${e.pr}** (${e.mergedDay}${size}) ${e.subject}`.trimEnd();
+    const facts = formatResultFacts(e.resultFacts);
     if (e.status === LEDGER_STATUS.TICKETED) {
       lines.push(`${head}`, `  → разбор заведён билетами: ${e.tickets.map((t) => `#${t.number} (${t.day}${t.state ? `, ${t.state}` : ''})`).join(', ')}`);
     } else {
       lines.push(`${head}`, '  → разбор не заведён (билета со ссылкой на PR нет)');
     }
+    if (facts) lines.push(`  → ${facts}`);
   }
   if (entries.length > limit) lines.push(`- … ещё ${entries.length - limit} PR за окном показа`);
   const ticketed = entries.filter((e) => e.status === LEDGER_STATUS.TICKETED).length;
