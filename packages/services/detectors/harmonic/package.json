@@ -17,7 +17,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && vite build",
+    "build": "tsc -b && vite build",
     "clean": "rimraf dist dist-demo .turbo .tsbuildinfo",
     "dev:demo": "vite --config demo/vite.config.ts",
     "lint": "eslint src demo --ext .ts,.tsx",

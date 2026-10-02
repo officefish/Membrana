@@ -10,56 +10,6 @@
   },
   "blocks": [
     {
-      "blockId": "b1-build-never-trusts-tsbuildinfo",
-      "persona": "vesnin",
-      "context": "vesnin",
-      "zone": [
-        "turbo.json",
-        "packages/agenda/package.json",
-        "packages/background-cabinet/package.json",
-        "packages/background-media/package.json",
-        "packages/background-office/package.json",
-        "packages/core/package.json",
-        "packages/device-board/package.json",
-        "packages/drift-anchor/package.json",
-        "packages/libs/audioDataViz/package.json",
-        "packages/libs/detector-report/package.json",
-        "packages/libs/journal-report-views/package.json",
-        "packages/libs/wav-decode/package.json",
-        "packages/plugin-contracts/package.json",
-        "packages/plugin-handlers/package.json",
-        "packages/services/audio-engine/package.json",
-        "packages/services/detection-ensemble-service/package.json",
-        "packages/services/detectors/agentic-claude/package.json",
-        "packages/services/detectors/base/package.json",
-        "packages/services/detectors/cepstral/package.json",
-        "packages/services/detectors/clap/package.json",
-        "packages/services/detectors/harmonic/package.json",
-        "packages/services/detectors/spectral-flux/package.json",
-        "packages/services/detectors/template-match/package.json",
-        "packages/services/detectors/yamnet/package.json",
-        "packages/services/drone-detection-orchestrator/package.json",
-        "packages/services/fft-analyzer/package.json",
-        "packages/services/media-library/package.json",
-        "packages/services/mfcc-analyzer/package.json",
-        "packages/services/rag/package.json",
-        "packages/services/sample-playback/package.json",
-        "packages/services/static-registry/package.json",
-        "packages/services/telemetry-journal/package.json",
-        "packages/services/telemetry/package.json",
-        "packages/services/trends-detector/package.json",
-        "packages/services/usercase-catalog/package.json",
-        "packages/services/usercase-catalog/tsconfig.json",
-        "scripts/turbo-stale-dist-scenario.mjs",
-        "scripts/build-scripts-tsbuildinfo-trust.test.mjs"
-      ],
-      "estimate": {
-        "changedLines": 240
-      },
-      "revisionAt": "2026-10-02T17:02:24+03:00",
-      "revisionOf": "1b882c64527475c3b84109865774cdedf7524c9fd240124895f5d0d4751f55b6"
-    },
-    {
       "blockId": "b2-dist-freshness-tooth",
       "persona": "dynin",
       "context": "dynin",
@@ -70,13 +20,14 @@
         "package.json",
         ".cursor/skills/membrana-tooling-doctor/SKILL.md",
         ".claude/skills/membrana-tooling-doctor/SKILL.md",
-        ".githooks/pre-push"
+        ".githooks/pre-push",
+        "packages/services/usercase-catalog/tsconfig.json"
       ],
       "estimate": {
         "changedLines": 280
       },
-      "revisionAt": "2026-10-02T07:40:00Z",
-      "revisionOf": "300c413b7e74bc5b4e38ee8e60b3f69725a9904558f02927e5c1c351c70bc5b2"
+      "revisionAt": "2026-10-02T18:06:27+03:00",
+      "revisionOf": "0e2af51f80adce5495b70a882ba03efaa04e0a818c2a3ccf96e46739f61b5908"
     }
   ],
   "//why": "Issue #2525 (29.09): предпуш падал на `background-media` с TS2339 «DETECTOR_BATCH_MANIFEST does not exist on typeof import('.../plugin-handlers/dist/index')» при экспорте в исходниках и зелёном CI; `turbo run build --force` не помогал, `tsc -b --force` помогал до следующего пуша, вылечил только `yarn clean` + `turbo --force`. Четыре пуша в двух деревьях за день. Повторы: 01.10 (#2538 CLOSURE.md:68-69,182-183 — plugin-contracts dist от 08.09 без BatchCollection*, media-library-service без MoveBatch*/refreshQuota), 02.10 (#2540 OPEN.md:206 — tsc -b клиента падал на refreshQuota/readAt, dist media-library 30.09 при исходниках 01.10), 30.09 бенчмарк ансамбля. Три спринта из четырёх платили этим временем. Цель спринта — починить механику, не памятку: промах кеша turbo обязан быть полным эмитом, а свежесть dist относительно исходников — проверяемой по содержимому, не по часам.",
@@ -85,6 +36,7 @@
   "//cutter": "Резчик vesnin (архитектор: границы сборочного контура, радиус поражения общего кеша). Прогон контекста 02.10 07:46Z (yarn ask vesnin --ticket-file <замеры #2525 по стволу 75668adb>), конспект docs/discussions/cut-stale-dist-turbo-cache-2525-vesnin.md. Вердикт: нарезка на 2 блока годится (b1 — починка в точке отравления, b2 — наблюдатель; граф b1 → b2, зоны чистые «packer vs observer»); корень петли replay → mtime → tsc -b → старый dist под новым хешем верен и доказан E5; porcha достаточна (сценарий E5.0–E5.3 + предикат по sha256) при условии, что оба запускаются на ЧИСТОМ стволе — незакоммиченные правки пакета = отказ; способ — `tsc -b --force` в 34 сборках (форма соответствует функции: «пересчитать, не верь кешу»; обёртка требует поддержки зуба, `tsc -p` теряет инкрементальность references); `.tsbuildinfo` в outputs оставить как манифест для b2 (E7); общий кеш деревьев оставить (после b1 отрава не образуется, одно лечение чинит все деревья), CI изолирован по факту; приложения без --force. Добавленные резчиком условия: b2 блокируется до зелёного b1 (иначе зуб ловит ещё не излеченную отраву и путает предмет); провод зуба в предпуш — «если возможно сразу» либо в doctor — оставлен развилкой 3 владельцу. BLOCK-условия. b1: (а) в любой из 34 сборок пакетов остался `tsc -b` без `--force` (или иной способ, не дающий полный эмит на промахе) — не сдан; (б) `.tsbuildinfo` убран из build.outputs без решения владельца по развилке 2 — не сдан (E7: зуб b2 теряет предмет); (в) сценарий-зуб трогает общий кеш (запуск без изолированного TURBO_CACHE_DIR) или оставляет пакет с правками/непересобранным dist — не сдан; (г) сценарий зелёный на стволе — зуб без предмета, не сдан; (д) тронуты сборки приложений (apps/*) — вне зоны, не сдан. b2: (а) предикат читает ФС/часы (судит по mtime) — не сдан: свежесть только по содержимому (sha256 ↔ fileInfos[].version), ФС — инъекцией из провода; (б) отсутствие .tsbuildinfo или dist выдаётся как `fresh` — не сдан (`absent`/`dist_missing` — свои исходы); (в) зуб красный на честном дереве после `turbo build` (ложный красный от replay без манифеста) — не сдан; (г) провод в pre-push без слова владельца по развилке 3 — не сдан; (д) второй писатель правды о свежести рядом с `build:affected` без ссылки друг на друга — не сдан.",
   "//order": "b1 → b2 (b2 читает тот же `.tsbuildinfo`, который b1 обязался оставить в outputs; при обратном решении по развилке 2 зуб b2 судит только по локальному манифесту и обязан объявлять `absent` после replay). Зоны не пересекаются: b1 — turbo.json, 34 package.json пакетов, два новых скрипта; b2 — предикат/CLI/корневой package.json/скиллы/хук. Точка перерезки — после b1: если `tsc -b --force` на 18 vite-пакетах ломает `vite build` или даёт рост `turbo build` полного прогона сверх +90 с (34 × ~2 с) — стоп и перерезка (обёртка-сторож по содержимому вместо --force) до старта b2.",
   "//recut": "Перерезка b1 02.10 словом владельца «tsc -p + снять ссылку». Повод: CI PR #2555 (прогон 36999810878) упал в usercase-catalog-service#build на `../../device-board/src/graph/collapse-to-function.ts(259,35) TS7006` — не латентная ошибка типов (34/34 `tsc -b --force` по одному зелёные), а гонка записи: `tsc -b --force` у 24 пакетов с `references` принудительно пересобирает соседей (core — 25 раз за прогон, `--dry`: «Project '../../core/tsconfig.json' is being forcibly rebuilt») параллельно с их читателями; ссылка usercase-catalog → device-board мёртвая (импортов нет, зависимости нет, turbo сборки не упорядочивает). Предмет b1 меняется: `tsc -b --force` → `tsc -p tsconfig.json` в 34 сборках (хвосты `&& vite build` и `yarn prepare &&` сохранены): не-build режим сверяет содержимое (E8, E5.1-состояние эмитит), манифест пишет, соседей не трогает; при отсутствующем dist настоящей зависимости падает громко TS2307. В зону добавлен `packages/services/usercase-catalog/tsconfig.json` (снята `{ \"path\": \"../../device-board\" }`). Прежнее согласие снято, ратификация переподписана инструментом этим словом.",
+  "//recut2": "Перерезка №2 02.10 словом владельца «Разделить: сторож сейчас». Блок b1 (build-never-trusts-tsbuildinfo: `tsc -b --force` → `tsc -p tsconfig.json` в 34 сборках, сценарий scripts/turbo-stale-dist-scenario.mjs, конфиг-зуб scripts/build-scripts-tsbuildinfo-trust.test.mjs) снимается из спринта целиком — предмет уходит отдельным билетом #2557 вместе с переводом 4 Dockerfile и workflow usercase-competition на turbo и проверкой каждого образа. Повод: регресс «Образ офиса исполняет свой рантайм» (прогон 37018164440) на голове 265b7773 — Dockerfile офиса (:56-58) собирает пакет напрямую `yarn workspace @membrana/background-office build`; с `tsc -p` соседи из references не собираются → TS2307 @membrana/plugin-contracts | @membrana/core | @membrana/rag-service | @membrana/static-registry-service и каскад TS18046/TS2322/TS7006. Та же опора на `tsc -b` с references у media/background-cabinet/apps-cabinet Dockerfile (fft-analyzer до audio-engine, оркестратор без 7 детекторов, device-board без core), у usercase-competition.yml:81 и у 8 корневых скриптов. 34 package.json возвращены к форме ствола (`tsc -b`, `tsc -b && vite build`, `yarn prepare && tsc -b`); сценарий и конфиг-зуб из ветки удалены (на форме ствола зуб красный) — лежат в истории ветки: 5e628001 (создание), 265b7773 (редакция под tsc -p). Снятая мёртвая ссылка usercase-catalog → device-board ОСТАЁТСЯ (владелец одобрил отдельно словом «+ снять ссылку»; с `tsc -b` безвредна: импортов нет, `tsc -b` зелёный) — файл переходит в зону b2. В этот PR вливается только сторож `yarn verify:dist-fresh` + шаг doctor. Прежнее согласие (digest 70558221…) снято, ратификация переподписана инструментом этим словом.",
   "//dod": "b1: все 34 сборки пакетов идут через `tsc -p tsconfig.json` (`tsc -p tsconfig.json`, `tsc -p tsconfig.json && vite build`, `yarn prepare && tsc -p tsconfig.json`) — ни одной `tsc -b` (перерезка 02.10); мёртвая ссылка usercase-catalog → device-board снята; turbo.json не меняется (`.tsbuildinfo` остаётся в build.outputs как манифест) либо меняется только по развилке 2; `scripts/turbo-stale-dist-scenario.mjs --package <name>`: в изолированном TURBO_CACHE_DIR (временный каталог) повторяет E5.0→E5.3 на названном пакете (новый экспорт + mtime исходника старше манифеста → turbo build → tsc -b --force в пакете → turbo build hit), отказывается при незакоммиченных правках пакета, восстанавливает исходник (`git checkout --`) и честный dist, печатает ОТРАВЛЕНО/ЧИСТО и exit 1/0; на стволе 75668adb — ОТРАВЛЕНО (dist без экспорта после replay), на ветке — ЧИСТО; `scripts/build-scripts-tsbuildinfo-trust.test.mjs`: зуб по всем package.json пакетов (сборка с `tsc -b` без `--force` — находка) и по turbo.json (build.outputs содержит .tsbuildinfo) — красный на стволе, зелёный на ветке; `yarn turbo run build` полный прогон на ветке зелёный. b2: `scripts/lib/dist-freshness.mjs` — чистый предикат `judgeDistFreshness({ buildInfo, sources, distPresent })` → `fresh | stale(files[]) | dist_missing | absent`, без fs/часов; `scripts/verify-dist-fresh.mjs` (`yarn verify:dist-fresh [--filter <pkg>]`) обходит пакеты с composite-tsconfig, читает .tsbuildinfo и sha256 исходников под rootDir (BOM снимается как у tsc, переводы строк не нормализуются), печатает таблицу и exit 1 при stale/dist_missing; `scripts/lib/dist-freshness.test.mjs`: красный на version ≠ sha256, на E7-состоянии (манифест есть, dist нет), `absent` без манифеста, `fresh` на совпадении; живой прогон на E5.1-состоянии — красный, на честном дереве после `turbo build` — зелёный; шаг «yarn verify:dist-fresh» в обоих SKILL.md membrana-tooling-doctor; провод в pre-push — только по развилке 3.",
   "//out-of-scope": "Чужая резолюция `node_modules/@membrana/*` в соседнее дерево (#1647/#1725, prepush-typecheck-scope уже понижает вердикт) — не трогается. 30 typecheck-скриптов `tsc --noEmit` (пишут тот же .tsbuildinfo; E3 показал, что они не отравляют) — не трогаются. Сборки приложений `apps/*` (`tsc -b && vite build` с 22 references у клиента: --force там пересобирал бы все references, +60 с) — не трогаются. CI (чистый раннер, честен) — не меняется. `build:affected` — остаётся. Обновление turbo / remote cache / отключение общего кеша деревьев — развилка 4, не в спринте. Чистка 22 089 записей общего кеша — не нужна: правка package.json меняет хеши всех 34 сборок, старые записи просто обходятся. Отсутствие media-library в `apps/client/tsconfig.app.json` references (подвид #2540: tsc -b клиента не пересобирает зависимость) — отдельный билет. Пусковой момент первого отравления в поле — не ищется дальше: починка от него не зависит.",
   "//forecast": "b1: сценарий `turbo-stale-dist-scenario.mjs` на стволе 75668adb — ОТРАВЛЕНО (повтор E5.3: после `tsc -b --force` и `turbo build` hit в dist экспорта 0), на ветке — ЧИСТО (E5.1 даёт полный эмит, replay возвращает честный dist); конфиг-зуб красный на стволе (34 находки), зелёный на ветке; полный `yarn turbo run build` на ветке зелёный, рост времени промаха ≈ +1,7 с на пакет (E9), в CI рост ≈ 34 × 1,7 с ≈ 1 мин на полной сборке. Опровержение: `tsc -b --force` ломает `vite build` или rag `yarn prepare` — перерезка на обёртку-сторож; сценарий зелёный на стволе — замер E5 не воспроизводится из скрипта, стоп и разбор, не правка ожиданий. b2: предикат красный на fileInfos с version ≠ sha256 и на «манифест есть, dist нет»; `yarn verify:dist-fresh` на E5.1-состоянии красный с именем файла, на честном дереве зелёный по всем 34 пакетам. Опровержение: зелёный на E5.1 — сравнение идёт не по тому полю (fileInfos индексируется через fileNames/fileIdsList), стоп; ложный красный на честном дереве — манифест и dist разошлись по другой причине (replay без манифеста по развилке 2) — объявлять `absent`, не `stale`.",
@@ -92,7 +44,7 @@
   "//not-one-shot": "Два предмета (сборочный контур 34 пакетов + новый прибор-зуб), две персоны с непересекающимися зонами, сценарий-порча, трогающий кеш и исходники (требует изоляции и отката), ратификация владельца по шести развилкам, точка перерезки после b1.",
   "ratification": {
     "by": "owner",
-    "at": "2026-10-02T17:02:24+03:00",
-    "digest": "7055822170f3bae97267a04f388d5e514507387f099eaaa7e0d33cb0f68a090b"
+    "at": "2026-10-02T18:09:35+03:00",
+    "digest": "1abf55af2795dd56e791fe0279cf73ed437f967e256389a1fc152263229660ba"
   }
 }

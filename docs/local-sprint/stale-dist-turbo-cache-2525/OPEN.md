@@ -277,6 +277,50 @@ module '@membrana/core'`, exit 2), мёртвую ссылку без dist иг�
 **Сверка с прогнозом перерезки:** ожидали «быстрее нынешних +59 с» — получили −61 с к `--force` и −2 с к стволу.
 Опровержение (`tsc -p` теряет emit references) не наступило: dist/`.d.ts` всех 34 на месте, зуб свежести 34 fresh.
 
+## Разделение (02.10) — слово владельца «Разделить: сторож сейчас»
+
+**Повод.** На голове `265b7773` (b1 в форме `tsc -p tsconfig.json`) CI упал на проверке «Образ офиса исполняет свой
+рантайм» (прогон 37018164440): `packages/background-office/Dockerfile:56-58` собирает пакет напрямую —
+`yarn workspaces focus @membrana/background-office --all && yarn workspace @membrana/background-office build` — без turbo,
+опираясь на то, что `tsc -b` сам строит проекты из `references` (комментарии Dockerfile `:54-55`, `:78-79`). С `tsc -p`
+соседи не собираются → `TS2307 Cannot find module '@membrana/plugin-contracts' | '@membrana/core' | '@membrana/rag-service' |
+'@membrana/static-registry-service'` и каскад TS18046/TS2322/TS7006. Локально воспроизведено на Docker-состоянии (спрятаны
+dist и манифесты четырёх соседей): `tsc -p` → `6× TS2307`, exit 2; `tsc -b` → exit 0 и четыре dist на месте. Та же опора
+у `packages/background-media/Dockerfile:27-38` (fft-analyzer раньше audio-engine — `TS2307 @membrana/audio-engine-service`
+воспроизведён; оркестратор без 7 детекторов), `packages/background-cabinet/Dockerfile:28-37`, `apps/cabinet/Dockerfile:37-42`
+(device-board и telemetry-journal без core), `.github/workflows/usercase-competition.yml:81` и 8 корневых скриптов
+(`office:build`, `rag:index*`, `templates:*`). Это настоящий регресс выкатки, и чинится он не в package.json, а в способе
+сборки образов — отдельным спринтом с проверкой каждого образа.
+
+**Что влито в PR #2555 (этот спринт):**
+- **b2** — сторож `yarn verify:dist-fresh` (`scripts/lib/dist-freshness.mjs` + зуб 9/9, `scripts/verify-dist-fresh.mjs`,
+  провод в корневом `package.json`) и шаг 4 в `membrana-tooling-doctor` (канон + зеркало). Судит свежесть dist по
+  содержимому (sha256 ↔ `fileInfos[].version`), не по часам — и потому видит отравленный dist, на котором `tsc -b` молчал.
+- Снятая мёртвая ссылка `usercase-catalog → device-board` (`packages/services/usercase-catalog/tsconfig.json`) — владелец
+  одобрил отдельно словом «+ снять ссылку»; с `tsc -b` безвредна: импортов device-board в пакете нет, `tsc -b` в
+  usercase-catalog после снятия — exit 0. Файл переведён в зону b2.
+
+**Что ушло в билет [#2557](https://github.com/officefish/Membrana/issues/2557)** «Сборка пакетов без доверия к
+`.tsbuildinfo`: tsc -p + Dockerfile'ы и workflow через turbo»:
+- b1 целиком: смена способа сборки 34 пакетов (`tsc -p tsconfig.json`), перевод 4 Dockerfile и workflow на
+  `yarn turbo run build --filter=<pkg>`, 8 корневых скриптов — с проверкой каждого образа (варианты (а)/(б)/(в), таблица
+  путей прямой сборки, замеры времени: ствол 2 м 14,8 с · `--force` 3 м 14,0 с · `tsc -p` 2 м 12,6 с — в билете);
+- сценарий отравления `scripts/turbo-stale-dist-scenario.mjs` и конфиг-зуб `scripts/build-scripts-tsbuildinfo-trust.test.mjs`
+  — из PR удалены (на форме ствола зуб красный и уронил бы CI), лежат в истории ветки: `5e628001` (создание), `265b7773`
+  (редакция под `tsc -p`).
+
+**Способ сборки в этом PR не меняется:** 34 `package.json` возвращены к форме ствола (`tsc -b`, `tsc -b && vite build`,
+`yarn prepare && tsc -b`). Петля #2525 этим PR **не закрывается** — закрывается её невидимость: `verify:dist-fresh` называет
+отравленный пакет по имени файла, лечение — `yarn workspace <pkg> clean` и `yarn turbo run build --filter=<pkg> --force`.
+
+**Перерезка №2 инструментом:** блок b1 снят из плана, `//recut2` с поводом и ссылкой на слово; прежнее согласие (digest
+`70558221…`) снято, ратификация переподписана (`sprint:cut --ratify --at 2026-10-02T18:09:35+03:00`, digest `1abf55af…`),
+акт `recut_act` №2 в ленте, `sprint:cut` → `contract`. Оговорка честности: первый черновик текста `//recut2` был повреждён
+оболочкой (обратные кавычки в командной строке исполнились — в текст попало «copy-prompts: ok», а `tsc -p` пропало); до
+коммита текст исправлен файлом-фиксером без оболочки, ратификация переподписана ещё раз, черновик акта в ленте перезаписан —
+в истории остаётся одна запись перерезки №2 с верным дайджестом. Случайно исполненный `yarn prepare` офиса
+(`copy-prompts`) следов в отслеживаемых файлах не оставил.
+
 ## Не one shot
 
 Два предмета (сборочный контур 34 пакетов + новый прибор-зуб), две персоны с непересекающимися зонами,

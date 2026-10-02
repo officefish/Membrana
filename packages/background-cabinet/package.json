@@ -9,7 +9,7 @@
     "prisma:migrate": "prisma migrate deploy",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:seed": "prisma db seed",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -b",
     "dev": "node --watch -r ts-node/register ./src/main.ts",
     "start": "node ./dist/main.js",
     "clean": "rimraf dist .turbo .tsbuildinfo",
