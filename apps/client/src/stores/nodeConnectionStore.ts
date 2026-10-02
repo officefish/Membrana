@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+import type { ConnectionFailure } from '../lib/connection-fallback/classify';
+import { journalConnectionFailure } from '../lib/connection-fallback/journal';
 import type { NodeConnectionMode, PairedNodeCredentials, PairingInvalidReason } from '../lib/nodeConnectionMode';
 import { resolvePairingCredentialsStore, type PersistedNodeConnection } from '../lib/pairing-credentials-store';
 
@@ -26,7 +28,13 @@ interface NodeConnectionState extends PersistedNodeConnection {
   showFallbackDialog: boolean;
   showPairingInvalidDialog: boolean;
   pairingInvalidReason: PairingInvalidReason | null;
+  /**
+   * Сырая деталь последнего отказа (`HTTP 502 Bad Gateway`, `Failed to fetch`, …). Оставлена
+   * строкой ради совместимости читателей; правда целиком — в `lastConnectionFailure` (#2540).
+   */
   lastConnectionError: string | null;
+  /** Последний отказ соединения: с кем, какого класса, статус, деталь, когда (#2540). */
+  lastConnectionFailure: ConnectionFailure | null;
   /**
    * CX5: оператор выбрал «Остаться в связанном режиме» при недоступном сервере —
    * связь деградирована, шапка показывает предупреждение до восстановления.
@@ -46,7 +54,8 @@ interface NodeConnectionState extends PersistedNodeConnection {
   handlePairingInvalid: (reason: PairingInvalidReason) => void;
   dismissPairingInvalidDialog: () => void;
   clearPairing: () => void;
-  reportConnectionError: (message: string) => void;
+  /** Единственный вход отказа: открывает окно, кладёт причину и пишет строку в журнал (#2540). */
+  reportConnectionError: (failure: ConnectionFailure) => void;
   dismissFallbackDialog: () => void;
   acceptAutonomousFallback: () => void;
   /** CX5: закрыть диалог, остаться на связи — взводит linkDegraded (баннер в шапке). */
@@ -69,6 +78,7 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
   showPairingInvalidDialog: false,
   pairingInvalidReason: null,
   lastConnectionError: null,
+  lastConnectionFailure: null,
   linkDegraded: false,
 
   hydrate: () => {
@@ -118,6 +128,7 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
       showPairingInvalidDialog: false,
       pairingInvalidReason: null,
       lastConnectionError: null,
+      lastConnectionFailure: null,
       linkDegraded: false,
     });
   },
@@ -134,6 +145,7 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
       showPairingInvalidDialog: false,
       pairingInvalidReason: null,
       lastConnectionError: null,
+      lastConnectionFailure: null,
       linkDegraded: false,
     });
   },
@@ -150,6 +162,7 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
       showPairingInvalidDialog: false,
       pairingInvalidReason: null,
       lastConnectionError: null,
+      lastConnectionFailure: null,
       linkDegraded: false,
     });
   },
@@ -166,6 +179,7 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
       showPairingInvalidDialog: true,
       pairingInvalidReason: reason,
       lastConnectionError: null,
+      lastConnectionFailure: null,
     });
   },
 
@@ -177,10 +191,13 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
     get().disconnectFromMembrane();
   },
 
-  reportConnectionError: (message) => {
+  reportConnectionError: (failure) => {
     const { mode } = get();
     if (mode !== 'paired') return;
-    set({ lastConnectionError: message, showFallbackDialog: true });
+    // #2540: одна строка журнала на отказ — здесь, в единственной воронке обоих вызывающих
+    // (опрос кабинета и панель сопряжения), чтобы окно и журнал не разошлись.
+    journalConnectionFailure(failure);
+    set({ lastConnectionFailure: failure, lastConnectionError: failure.detail, showFallbackDialog: true });
   },
 
   dismissFallbackDialog: () => set({ showFallbackDialog: false }),
@@ -193,7 +210,7 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
 
   reportConnectionRestored: () => {
     if (!get().linkDegraded) return;
-    set({ linkDegraded: false, lastConnectionError: null });
+    set({ linkDegraded: false, lastConnectionError: null, lastConnectionFailure: null });
   },
 }));
 
@@ -213,6 +230,7 @@ export function resetNodeConnectionStoreForTests(): void {
     showPairingInvalidDialog: false,
     pairingInvalidReason: null,
     lastConnectionError: null,
+    lastConnectionFailure: null,
     linkDegraded: false,
   });
 }

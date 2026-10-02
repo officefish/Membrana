@@ -18,6 +18,7 @@ import { cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fetchPairStatus, pingMediaApi, type PairStatusLinked } from '@/api/pairing';
+import { HttpResponseError } from '@/lib/connection-fallback/httpResponseError';
 import type { PairedNodeCredentials } from '@/lib/nodeConnectionMode';
 import { resetMediaLibraryHubBridgeForTests } from '@/lib/mediaLibraryHubBridge';
 import { resetNodeConnectionStoreForTests, useNodeConnectionStore } from '@/stores/nodeConnectionStore';
@@ -144,15 +145,119 @@ describe('usePairStatusMonitor — тариф и предел прибора (#2
     expect(getQuota).not.toHaveBeenCalled();
   });
 
-  it('кабинет не ответил (бросок опроса): диалог с константой «cabinet unreachable», учётные данные целы — отдельный билет', async () => {
-    vi.mocked(fetchPairStatus).mockRejectedValue(new Error('HTTP 502'));
+  it('кабинет не ответил (бросок опроса): учётные данные целы, предел не читается', async () => {
+    vi.mocked(fetchPairStatus).mockRejectedValue(new HttpResponseError(502, 'Bad Gateway'));
     const getQuota = vi.spyOn(backend, 'getQuota');
 
     renderHook(() => usePairStatusMonitor());
 
-    await waitFor(() => expect(useNodeConnectionStore.getState().lastConnectionError).toBe('cabinet unreachable'));
+    await waitFor(() => expect(useNodeConnectionStore.getState().showFallbackDialog).toBe(true));
     expect(useNodeConnectionStore.getState().mode).toBe('paired');
     expect(useNodeConnectionStore.getState().pairing?.tariffId).toBe('free-v1');
     expect(getQuota).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * #2540 (b1): причина отказа опроса доходит до окна и журнала. На стволе 0eb88efa P1/P2/P3 красные
+ * (`catch {}` → константа «cabinet unreachable», журнала нет).
+ */
+describe('usePairStatusMonitor — причина отказа опроса кабинета (#2540)', () => {
+  const shellWrite = vi.fn().mockResolvedValue(undefined);
+
+  beforeEach(async () => {
+    resetNodeConnectionStoreForTests();
+    resetMediaLibraryHubBridgeForTests();
+    const backend = new MemoryStorageBackend({ limitBytes: 536_870_912, backend: 'server', serverReachable: true });
+    await configureDefaultMediaLibraryService(backend).refresh();
+    useNodeConnectionStore.setState({ mode: 'paired', pairing: PAIRING, hydrated: true });
+    vi.mocked(pingMediaApi).mockResolvedValue(true);
+    shellWrite.mockClear();
+    // Порт журнала оболочки Studio — как в renderer под Electron.
+    window.electronAPI = {
+      shellLog: { write: shellWrite, getLogsDir: vi.fn().mockResolvedValue('C:/logs'), flushScenarioTrace: vi.fn() },
+    };
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    cleanup();
+    resetDefaultMediaLibraryServiceForTests();
+    resetNodeConnectionStoreForTests();
+    vi.mocked(fetchPairStatus).mockReset();
+    vi.mocked(pingMediaApi).mockReset();
+    delete window.electronAPI;
+    vi.restoreAllMocks();
+  });
+
+  it('P1: HTTP 502 от кабинета → класс server_error, статус 502, деталь и строка окна несут «502»', async () => {
+    vi.mocked(fetchPairStatus).mockRejectedValue(new HttpResponseError(502, 'Bad Gateway'));
+
+    renderHook(() => usePairStatusMonitor());
+
+    await waitFor(() => expect(useNodeConnectionStore.getState().showFallbackDialog).toBe(true));
+    const { lastConnectionFailure, lastConnectionError } = useNodeConnectionStore.getState();
+    expect(lastConnectionFailure).toMatchObject({ source: 'cabinet', kind: 'server_error', httpStatus: 502 });
+    expect(lastConnectionError).toContain('502');
+    expect(lastConnectionError).toBe(lastConnectionFailure?.detail);
+  });
+
+  it('P2: сетевой отказ (TypeError: Failed to fetch) → класс unreachable, деталь = текст ошибки', async () => {
+    vi.mocked(fetchPairStatus).mockRejectedValue(new TypeError('Failed to fetch'));
+
+    renderHook(() => usePairStatusMonitor());
+
+    await waitFor(() => expect(useNodeConnectionStore.getState().showFallbackDialog).toBe(true));
+    expect(useNodeConnectionStore.getState().lastConnectionFailure).toMatchObject({
+      source: 'cabinet',
+      kind: 'unreachable',
+      httpStatus: null,
+      detail: 'Failed to fetch',
+    });
+    expect(useNodeConnectionStore.getState().lastConnectionError).toBe('Failed to fetch');
+  });
+
+  it('P3: отказ опроса → ровно одна строка в журнал оболочки, уровень warn, с ISO-меткой и классом', async () => {
+    vi.mocked(fetchPairStatus).mockRejectedValue(new HttpResponseError(503, 'Service Unavailable'));
+
+    renderHook(() => usePairStatusMonitor());
+
+    await waitFor(() => expect(useNodeConnectionStore.getState().showFallbackDialog).toBe(true));
+    expect(shellWrite).toHaveBeenCalledTimes(1);
+    const [level, , message] = shellWrite.mock.calls[0] as [string, string, string];
+    const at = useNodeConnectionStore.getState().lastConnectionFailure?.at ?? '';
+    expect(level).toBe('warn');
+    expect(at).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/u);
+    expect(message).toContain(at);
+    expect(message).toContain('server_error');
+    expect(message).toContain('503');
+  });
+
+  it('429 → rate_limited; 403 → forbidden', async () => {
+    vi.mocked(fetchPairStatus).mockRejectedValue(new HttpResponseError(429, 'Too Many Requests'));
+    const { unmount } = renderHook(() => usePairStatusMonitor());
+    await waitFor(() => expect(useNodeConnectionStore.getState().lastConnectionFailure?.kind).toBe('rate_limited'));
+    unmount();
+
+    resetNodeConnectionStoreForTests();
+    useNodeConnectionStore.setState({ mode: 'paired', pairing: PAIRING, hydrated: true });
+    vi.mocked(fetchPairStatus).mockRejectedValue(new HttpResponseError(403, 'Forbidden'));
+    renderHook(() => usePairStatusMonitor());
+    await waitFor(() => expect(useNodeConnectionStore.getState().lastConnectionFailure?.kind).toBe('forbidden'));
+  });
+
+  it('media недоступен: тот же тип отказа, источник media, прежняя строка-деталь (развилка 5)', async () => {
+    vi.mocked(fetchPairStatus).mockResolvedValue(linked({ id: 'free-v1', maxUserWorkspaces: 1 }));
+    vi.mocked(pingMediaApi).mockResolvedValue(false);
+
+    renderHook(() => usePairStatusMonitor());
+
+    await waitFor(() => expect(useNodeConnectionStore.getState().showFallbackDialog).toBe(true));
+    expect(useNodeConnectionStore.getState().lastConnectionFailure).toMatchObject({
+      source: 'media',
+      kind: 'unreachable',
+      detail: 'media-server unreachable',
+    });
+    expect(shellWrite).toHaveBeenCalledTimes(1);
   });
 });
