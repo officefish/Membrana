@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14249/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 398 (причины в op-log) -->
+Записей: 49 · бюджет 14263/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 399 (причины в op-log) -->
+
+### 2026-10-01 · позиция · team-evening-feedback
+
+> Веснин. Оценка артефактов: MAIN_DAY_ISSUE образцовый по разбору источников магистрали (таблица с «1 источник, 3 отражения» — это дисциплина). Code-review корректно поднял B3 и B6, протокол `duty/2026-09-27.md` помечен как требующий подтверждения. STRATEGY_DAY — не трогать, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-01.md#reply-1`
 
 ### 2026-09-30 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Vesnin. Оценка артефактов: `MAIN_DAY_ISSUE` даёт точный диагноз до гейта (файл, строки, серверная сторона, `moveTargets`) — редкий случай, когда постановка не требует разведки. Ревью корректно вывело oversized (три коммита >400 строк не развёрнуто); бестиарий чист по […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
-
-### 2026-08-31 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE хорошо разложил магистраль по посылкам с маркерами `holds`/`unknown`; явно отделил owner-choice от горизонта стендапа и не дал стендапу перебить слово владельца. Code-review правильно не заявил LGTM по непрочитанным oversized […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`

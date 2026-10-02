@@ -1,1 +1,4 @@
 {"ts":"2026-10-01T07:43:56.964Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-10-01T18:42:32.447Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-10-01-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-10-01T18:42:32.447Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-09-01-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-01T18:42:32.447Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
