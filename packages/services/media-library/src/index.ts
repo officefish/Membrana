@@ -46,6 +46,7 @@ export type {
   CollectionDetectorBatchVerdict,
   CollectionKind,
   MediaLibrarySnapshot,
+  MediaLibraryLoadState,
   MediaSample,
   MediaPluginManifest,
   MediaPluginState,
@@ -186,6 +187,7 @@ export {
   getDefaultMediaLibraryService,
   resetDefaultMediaLibraryServiceForTests,
   setDefaultMediaLibraryServiceForTests,
+  subscribeDefaultMediaLibraryService,
 } from './media-library-service.js';
 
 export { useMediaLibrary, type UseMediaLibraryResult } from './hooks.js';

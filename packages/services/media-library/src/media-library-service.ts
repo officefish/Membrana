@@ -69,6 +69,8 @@ export class MediaLibraryService {
       serverReachable: false,
     },
     version: 0,
+    // #2570: квота выше — заглушка до первого чтения, не запасной режим; баннер судит по loadState.
+    loadState: 'loading',
   };
 
   constructor(backend: IStorageBackend, config?: Partial<MediaLibraryConfig>) {
@@ -135,6 +137,13 @@ export class MediaLibraryService {
     });
   }
 
+  /**
+   * Полное чтение снимка. Порядок (#2570, инвариант I3 резчика): квота ПЕРВОЙ — одним запросом, с
+   * промежуточной публикацией (числа хранилища видны сразу, `loadState` прежний); затем коллекции и
+   * пробы (буфер — сотни страниц, #2571); в самом конце — пометка каталога базового набора (#2569:
+   * иначе сбой списков оставил бы «пробы загружены для нового каталога», и сверка открытия пропустила
+   * бы перечитывание) и `ready` (I1). Сбой списков бросает и `ready` не ставит.
+   */
   async refresh(): Promise<void> {
     const refreshStartedAt = performance.now();
     mediaLibraryTrace('refresh-start');
@@ -143,6 +152,12 @@ export class MediaLibraryService {
     mediaLibraryTrace('ensure-reserved-start');
     await this.backend.ensureReservedCollections();
     mediaLibraryTrace('ensure-reserved-done', { elapsedMs: traceElapsedMs(ensureStartedAt) });
+
+    const quotaStartedAt = performance.now();
+    const quota = await this.backend.getQuota();
+    mediaLibraryTrace('quota-done', { elapsedMs: traceElapsedMs(quotaStartedAt) });
+    this.snapshot = { ...this.snapshot, quota: this.mergeQuota(quota) };
+    this.emit();
 
     const listColStartedAt = performance.now();
     const collections = await this.backend.listCollections();
@@ -162,16 +177,14 @@ export class MediaLibraryService {
       });
     }
 
-    const quotaStartedAt = performance.now();
-    const quota = await this.backend.getQuota();
-    mediaLibraryTrace('quota-done', { elapsedMs: traceElapsedMs(quotaStartedAt) });
     if (quota.dataset) this.datasetSamplesCatalogId = quota.dataset.catalogId;
 
     this.snapshot = {
       collections,
       samplesByCollection,
-      quota: this.mergeQuota(quota),
+      quota: this.snapshot.quota,
       version: this.version,
+      loadState: 'ready',
     };
     this.emit();
     mediaLibraryTrace('refresh-done', { elapsedMs: traceElapsedMs(refreshStartedAt) });
@@ -288,6 +301,9 @@ export class MediaLibraryService {
 
   async init(): Promise<void> {
     if (this.initialized) return;
+    // #2570: временный ленивый default (до решения моста) не читается — иначе он засевает локальный
+    // каталог и становится «готовым запасным», и модуль рисует «Media-server недоступен».
+    if (provisionalServices.has(this)) return;
     if (!this.initPromise) {
       this.initPromise = this.runInit()
         .then(() => {
@@ -534,6 +550,27 @@ export class MediaLibraryService {
 
 let defaultService: MediaLibraryService | null = null;
 
+/**
+ * Временные сервисы (#2570): ленивый default, созданный ДО того, как мост решил, где хранилище
+ * (пинг media идёт до 3 попыток). Пишущие методы работают как прежде (их данные и раньше уходили
+ * вместе с заменой), но `init()` не исполняется: снимок остаётся `loading`.
+ */
+const provisionalServices = new WeakSet<MediaLibraryService>();
+
+const defaultServiceListeners = new Set<() => void>();
+
+/**
+ * Подписка на подмену default-сервиса (#2570, инвариант I4): ровно одна нотификация на каждую
+ * `configureDefaultMediaLibraryService`. До неё подмену никто не слышал, и `useMediaLibrary()`
+ * оставался на прежнем сервисе до случайного ререндера.
+ */
+export function subscribeDefaultMediaLibraryService(listener: () => void): () => void {
+  defaultServiceListeners.add(listener);
+  return () => {
+    defaultServiceListeners.delete(listener);
+  };
+}
+
 export function createMediaLibraryService(
   backend: IStorageBackend,
   config?: Partial<MediaLibraryConfig>,
@@ -546,17 +583,20 @@ export function getDefaultMediaLibraryService(): MediaLibraryService {
     defaultService = createMediaLibraryService(
       createBrowserLimitedStorageBackend(DEFAULT_MEDIA_LIBRARY_CONFIG.localQuotaBytes),
     );
+    provisionalServices.add(defaultService);
   }
   return defaultService;
 }
 
-/** Replace singleton backend (e.g. switch to remote-server after pairing). */
+/** Replace singleton backend (e.g. switch to remote-server after pairing). Оповещает подписчиков (#2570). */
 export function configureDefaultMediaLibraryService(
   backend: IStorageBackend,
   config?: Partial<MediaLibraryConfig>,
 ): MediaLibraryService {
-  defaultService = createMediaLibraryService(backend, config);
-  return defaultService;
+  const next = createMediaLibraryService(backend, config);
+  defaultService = next;
+  defaultServiceListeners.forEach((listener) => listener());
+  return next;
 }
 
 export function resetDefaultMediaLibraryServiceForTests(): void {
