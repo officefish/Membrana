@@ -1510,6 +1510,9 @@ const DeviceBoardShellInner: React.FC<{
         </div>
 
         <div className={`${BOARD_HEADER_LEAD_GROUP_CLASS} ${headerContentOffsetClass}`}>
+          {/* Бейдж удержания — ПЕРВЫЙ ребёнок (#2558): клип группы режет правый хвост,
+              значит он уступает последним — после крошки сценария и «Сохранить». */}
+          <BoardOverflowHoldBadge hold={overflowHold} />
           <div className="flex h-5 w-5 shrink-0 items-center justify-center">
             {isSaving ? (
               <span
@@ -1537,7 +1540,6 @@ const DeviceBoardShellInner: React.FC<{
               Только просмотр
             </span>
           ) : null}
-          <BoardOverflowHoldBadge hold={overflowHold} />
           {graph.isCompetitionMode ? (
             <span
               className="badge badge-warning badge-outline badge-sm shrink-0"

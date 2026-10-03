@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { BOARD_BREADCRUMB_SHRINK_CLASS } from '../types/board-ui.js';
+
 import type { BoardCanvasBreadcrumbSegment } from './board-context-breadcrumb.js';
 
 export interface BoardCanvasBreadcrumbProps {
@@ -10,6 +12,8 @@ export interface BoardCanvasBreadcrumbProps {
 
 /**
  * Breadcrumb контекста канваса в шапке device-board.
+ * При сжатии шапки уступает ПЕРВОЙ (#2558): вес `BOARD_BREADCRUMB_SHRINK_CLASS` выше, чем у бейджа
+ * удержания, `min-w-0` — до нуля.
  */
 export function BoardCanvasBreadcrumb({
   segments,
@@ -17,7 +21,7 @@ export function BoardCanvasBreadcrumb({
 }: BoardCanvasBreadcrumbProps): React.ReactElement {
   return (
     <nav
-      className="min-w-0 truncate text-[11px] leading-tight text-base-content/80"
+      className={`${BOARD_BREADCRUMB_SHRINK_CLASS} min-w-0 truncate text-[11px] leading-tight text-base-content/80`}
       aria-label="Контекст канваса"
       title={detailTitle}
     >

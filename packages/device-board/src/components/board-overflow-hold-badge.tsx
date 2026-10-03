@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { BOARD_HOLD_BADGE_MIN_WIDTH_CLASS } from '../types/board-ui.js';
+
 import type { BoardOverflowHoldView } from './board-overflow-hold.js';
 
 export interface BoardOverflowHoldBadgeProps {
@@ -12,9 +14,11 @@ export interface BoardOverflowHoldBadgeProps {
  * Тон — по месту: занято (error) / освобождено, ждёт человека (warning). Клик открывает то же
  * окно того же `overflowId` — не второе.
  *
- * Место в шапке (#2552): бейдж уступает — `min-w-0` вместо `shrink-0`, текст усекается многоточием
+ * Место в шапке (#2552): бейдж уступает — сжимается вместо `shrink-0`, текст усекается многоточием
  * во внутреннем span (`.badge` daisyUI — inline-flex, сам текст не усекает). Полный заголовок
  * остаётся в `title` и `aria-label`: усечение — форма, не потеря слов.
+ * Уступает ПОСЛЕДНИМ (#2558): пол `BOARD_HOLD_BADGE_MIN_WIDTH_CLASS` держит минимум «Буфер пол…»,
+ * внешний элемент сам не клипует (без `overflow-*`) — иначе клип съел бы пол.
  */
 export const BoardOverflowHoldBadge: React.FC<BoardOverflowHoldBadgeProps> = ({ hold }) => {
   if (hold === null) {
@@ -22,7 +26,7 @@ export const BoardOverflowHoldBadge: React.FC<BoardOverflowHoldBadgeProps> = ({ 
   }
   const label = hold.headline;
   const toneClass = hold.tone === 'warning' ? 'badge-warning' : 'badge-error';
-  const className = `badge ${toneClass} badge-sm min-w-0 gap-1`;
+  const className = `badge ${toneClass} badge-sm ${BOARD_HOLD_BADGE_MIN_WIDTH_CLASS} gap-1`;
   const text = <span className="min-w-0 truncate">{label}</span>;
   if (!hold.onOpenWindow) {
     return (
