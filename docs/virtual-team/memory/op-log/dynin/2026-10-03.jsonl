@@ -4,3 +4,7 @@
 {"ts":"2026-10-03T10:22:24.252Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-10-03T10:22:05.186Z","origin":"ask-persona"}
 {"ts":"2026-10-03T11:57:57.642Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-10-03T11:57:26.178Z","origin":"ask-persona"}
 {"ts":"2026-10-03T11:57:57.646Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-10-03T11:57:26.178Z","origin":"ask-persona"}
+{"ts":"2026-10-03T12:32:19.970Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-10-03T12:31:34.424Z","origin":"ask-persona"}
+{"ts":"2026-10-03T12:32:19.974Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-10-03T12:31:34.424Z","origin":"ask-persona"}
+{"ts":"2026-10-03T12:32:19.975Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-30-sprint-honest-m3-contract-review","reason":"там я уже формализовал ревью спринта как предикат match(C,D) с независимыми codeQuality и shipOk; тот же каркас применяю здесь к P4–P8 и приёмке.","origin":"ask-persona"}
+{"ts":"2026-10-03T12:32:19.976Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-24-logging-observability-cut-m1-incident-number","reason":"инвариант «одно пространство имён, одно значение в трёх местах» прямо ложится на loadState: snapshot, баннер, модуль должны согласовываться по одному источнику истины, а не склеиваться синонимами.","origin":"ask-persona"}
