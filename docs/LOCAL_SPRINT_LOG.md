@@ -5,6 +5,28 @@
 
 ---
 
+## 2026-10-03 — `header-badge-narrow-2558` — **CLOSED · gate pass 2/2 · experience hit (2/2; b1 147 > оценки 80, порог не пробит) · PR #2562 влит (`d8105f64`)**
+
+- **Closure:** [`local-sprint/header-badge-narrow-2558/CLOSURE.md`](./local-sprint/header-badge-narrow-2558/CLOSURE.md) —
+  ратификация 03.10 10:25:10Z инструментом с умолчаниями; b1 `abb03c11` (rodchenko); PR #2562 влит владельцем 03.10
+  (`d8105f64`; CONFLICTING по union-jsonl журнала снят `git merge origin/main`); живая приёмка b2 на приборе `9e86ec85`,
+  Studio `d8105f64`: ≈1290 px — бейдж первым, ничего не налезает; ≈1045 px — «Буфер пол…» держится, «Сохранить» уступил
+  целиком, правая группа целиком (02.10 здесь бейдж исчезал); ≈970 px — левая группа исчезает целиком — предел из
+  прогноза, вынесен в #2565; свёрнутый сайдбар / ≥1600 px / Tab — n/a.
+- **Goal:** при сжатии шапки доски бейдж удержания уступает последним — после крошки сценария и «Сохранить» — и всегда
+  оставляет минимум «Буфер пол…»: порядок уступки задан положением (первый ребёнок левой группы), весом (крошка
+  `shrink-[4]`) и полом (`min-w-[5.5rem]`); константы в `types/board-ui.ts`.
+- **Source:** [#2558](https://github.com/officefish/Membrana/issues/2558) — живая приёмка #2552 владельцем 02.10: при ≈1065 px
+  бейдж исчезал целиком, «Сохранить» → «Сохрани», крошка держала место.
+- **OPEN:** [`local-sprint/header-badge-narrow-2558/OPEN.md`](./local-sprint/header-badge-narrow-2558/OPEN.md)
+- **Cut:** [`sprint/cut/header-badge-narrow-2558.json`](./sprint/cut/header-badge-narrow-2558.json) — 2 блока (b1 вёрстка +
+  зубы/rodchenko · b2 приёмка/angelina), резчик rodchenko
+  ([конспект](./discussions/cut-header-badge-narrow-2558-rodchenko.md)); ратифицирован 2026-10-03T10:25:10Z.
+- **Finding at cut:** два сжимаемых ребёнка левой группы (бейдж, крошка) с одним весом `flex-shrink: 1` доходили до нуля
+  одновременно; остальные `shrink-0` вытекали, `overflow-x-clip` резал правый хвост, бейдж стоял в DOM правее «Сохранить» —
+  потому исчезал первым; коробка при 1065 px и открытом сайдбаре ≈100 px.
+- **Boundary:** правая группа, отступ сайдбара, server-first, тема, слова бейджа не тронуты; предел ≈970–1000 px — #2565.
+
 ## 2026-10-02 — `evening-reads-done-work-20261002` — **IMPLEMENTED · gate pass 3/3 · experience hit · PR #2551**
 
 - **Closure:** [`local-sprint/evening-reads-done-work-20261002/CLOSURE.md`](./local-sprint/evening-reads-done-work-20261002/CLOSURE.md) —
