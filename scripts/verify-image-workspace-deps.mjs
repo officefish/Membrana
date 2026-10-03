@@ -23,6 +23,13 @@
  *      того, как правило (2) оказалось зелёным на образе, который НЕ СОБИРАЛСЯ: строка `COPY
  *      docs/tariffs` в Dockerfile была, а корневой `.dockerignore` исключал `docs` дважды —
  *      `"/docs/tariffs": not found`. Сторож судил инструкцию и молчал о контексте.
+ *   4) ВЫХОД ЗА ПРЕДЕЛЫ ВЫВОДА (прод media 03.10): статический относительный импорт в исходнике
+ *      пакета графа, указывающий ЗА `src` (`../../templates/BIRDS.json`), после пофайловой сборки
+ *      tsc указывает за `dist`. Runtime-стадия копирует `dist` и `package.json` — правила (1)–(3)
+ *      зелёные, а импорт падает ERR_MODULE_NOT_FOUND. Так жил образ media с 29.09: оркестратор
+ *      детекции не грузился, detector-batch (а единым try — и витрины) на проде не регистрировались.
+ *      Судится ИСХОДНИК (по списку git — как правило контекста), а не локальный dist: локальный
+ *      dist бывает бандлом vite, где импорт вклеен, и правды об образе не скажет.
  *
  * Урок правила (3) стоит держать при себе и дальше: у проверки надо спрашивать не «что она
  * судит», а «что она читает». Пока `.dockerignore` не читался, зуб отвечал на другой вопрос,
@@ -37,7 +44,7 @@
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, posix, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { workspaceSearchPaths } from './lib/workspace-dirs.mjs';
@@ -513,8 +520,91 @@ export function runtimeReadFindings(service, dockerfileText, sources) {
   return findings;
 }
 
+const SOURCE_FILE = /\.(?:ts|tsx|mts)$/u;
+const NOT_PRODUCT = /(?:\.d\.ts|\.(?:test|spec)\.(?:ts|tsx|mts))$|\/__tests__\//u;
+const STATIC_RELATIVE_IMPORT = /(?:^|[\s;])(?:import|export)\s+(?:[^'";]*?\sfrom\s+)?['"](\.{1,2}\/[^'"]+)['"]/gmu;
+
+/**
+ * Статические относительные импорты исходника, указывающие ЗА `src` пакета, — репозиторными путями.
+ *
+ * Ловятся `import … from '…'`, `export … from '…'` и голый `import '…'`. ИЗВЕСТНАЯ ЩЕЛЬ
+ * (резчик, 03.10): динамический `import('…')` не судится — его цель не всегда известна
+ * статически. Чинить, когда появится первый живой случай.
+ *
+ * @returns {Array<{ from: string, spec: string, target: string }>}
+ */
+export function escapingRelativeImports(pkgDir, files) {
+  const srcRoot = `${pkgDir}/src/`;
+  const out = [];
+  for (const [path, text] of Object.entries(files)) {
+    if (!path.startsWith(srcRoot) || !SOURCE_FILE.test(path) || NOT_PRODUCT.test(path)) continue;
+    for (const m of text.matchAll(STATIC_RELATIVE_IMPORT)) {
+      const spec = m[1];
+      const target = posix.normalize(posix.join(posix.dirname(path), spec));
+      if (!target.startsWith(srcRoot)) out.push({ from: path, spec, target });
+    }
+  }
+  return out;
+}
+
+/**
+ * Находки правила (4): то, на что пофайловый dist укажет в образе, обязано там лежать.
+ *
+ * Модель — tsc с `rootDir: src`, `outDir: dist`: файл `<pkg>/src/a/b.ts` в образе лежит как
+ * `<dist в образе>/a/b.js`, и относительный путь из него разрешается от ЭТОГО места. Сравнивается
+ * разрешённый путь с тем, куда COPY кладёт цель, — не наличие строки COPY (урок правила 2).
+ * Пакет без dist в образе здесь не судится: это уже находка правила (1).
+ *
+ * `packageSources === undefined` — правило НЕ выполняется (не «прошло»), как у ленты актов.
+ * Веб-образ (стадия build) не судится: пакеты там лежат целиком.
+ */
+export function escapedImportFindings(service, map, dockerfileText, packageSources) {
+  if (packageSources === undefined || service.stage === 'build') return [];
+  const pkgName = Object.keys(map).find((n) => map[n].dir === service.pkg);
+  if (!pkgName) return [];
+  const workdir = runtimeWorkdir(dockerfileText) ?? '';
+  const pairs = dockerfileCopyPairs(dockerfileText, { runtimeOnly: true });
+  const findings = [];
+  for (const dep of transitiveWorkspaceDeps(map, pkgName)) {
+    const dir = map[dep].dir;
+    const distInImage = imagePathOfRepoFile(`${dir}/dist`, pairs, workdir);
+    if (distInImage === null) continue;
+    for (const hit of escapingRelativeImports(dir, packageSources)) {
+      const fromInDist = posix.dirname(`${distInImage}/${hit.from.slice(`${dir}/src/`.length)}`);
+      const wanted = posix.normalize(posix.join(fromInDist, hit.spec));
+      const landed = imagePathOfRepoFile(hit.target, pairs, workdir);
+      if (landed === wanted) continue;
+      findings.push({
+        service: service.id,
+        kind: 'relative-import-outside-dist',
+        detail: landed === null
+          ? `${dep}: ${hit.from} импортирует ${hit.spec} — ${hit.target} НЕ копируется в runtime-стадию; dist в образе ищет его по ${wanted}`
+          : `${dep}: ${hit.from} импортирует ${hit.spec} — ${hit.target} лежит в образе по ${landed}, а dist ищет по ${wanted}`,
+      });
+    }
+  }
+  return findings;
+}
+
+/**
+ * Исходники пакетов графа для правила (4) — по списку git (как контекст), не обходом ФС.
+ * Нет списка git — `undefined`: правило не выполняется, и main говорит об этом, а не молчит.
+ */
+export function readPackageSources(map, context, root = ROOT) {
+  if (!context) return undefined;
+  const dirs = Object.values(map).map((entry) => `${entry.dir}/src/`);
+  const files = {};
+  for (const path of context.files) {
+    if (!SOURCE_FILE.test(path) || NOT_PRODUCT.test(path)) continue;
+    if (!dirs.some((d) => path.startsWith(d))) continue;
+    const abs = resolve(root, path);
+    if (existsSync(abs)) files[path] = readFileSync(abs, 'utf8');
+  }
+  return files;
+}
+
 /** Вердикт по одному сервису значением: ни ФС, ни печати. */
-export function serviceFindings(service, map, dockerfileText, sources = {}, context = null) {
+export function serviceFindings(service, map, dockerfileText, sources = {}, context = null, packageSources = undefined) {
   const pkgName = Object.keys(map).find((n) => map[n].dir === service.pkg);
   if (!pkgName) return [{ service: service.id, kind: 'unreadable', detail: `не найден package.json в ${service.pkg}` }];
   const onBuildStage = service.stage === 'build';
@@ -534,6 +624,7 @@ export function serviceFindings(service, map, dockerfileText, sources = {}, cont
     }
   }
   findings.push(...runtimeReadFindings(service, dockerfileText, sources));
+  findings.push(...escapedImportFindings(service, map, dockerfileText, packageSources));
   // Контекст судится ПОСЛЕДНИМ и ОТДЕЛЬНО: «строка COPY написана» и «источник доедет до
   // сборки» — разные утверждения, и 05.09 первое было правдой, а второе ложью.
   if (context) {
@@ -565,6 +656,8 @@ function main(argv) {
   const only = argv.includes('--service') ? argv[argv.indexOf('--service') + 1] : null;
   const map = readWorkspaceMap();
   const context = readBuildContext();
+  if (!context) console.error('verify:image-workspace-deps — список git не прочитан: правила (3) и (4) не выполнялись');
+  const packageSources = readPackageSources(map, context);
   const findings = [];
   for (const service of IMAGE_SERVICES) {
     if (only && service.id !== only) continue;
@@ -580,7 +673,7 @@ function main(argv) {
       const abs = resolve(ROOT, need.constantsFrom);
       if (existsSync(abs)) sources[need.constantsFrom] = readFileSync(abs, 'utf8');
     }
-    findings.push(...serviceFindings(service, map, readFileSync(dockerfile, 'utf8'), sources, context));
+    findings.push(...serviceFindings(service, map, readFileSync(dockerfile, 'utf8'), sources, context, packageSources));
   }
   if (asJson) {
     console.log(JSON.stringify({ ok: findings.length === 0, findings }, null, 2));
@@ -590,6 +683,7 @@ function main(argv) {
     console.error(`verify:image-workspace-deps — находок: ${findings.length} (висячий симлинк в образе = ERR_MODULE_NOT_FOUND на проде):`);
     for (const f of findings) console.error(`  ✗ [${f.service}] ${f.detail}`);
     console.error('  лекарство runtime-образов: COPY dist+package.json пакета в runtime-стадию');
+    console.error('  лекарство относительного импорта за dist: COPY цели из build в тот же путь пакета runtime-стадии');
     console.error('  лекарство веб-образов: COPY каталога пакета в стадию сборки И имя в yarn workspaces focus');
   }
   return findings.length === 0 ? 0 : 1;

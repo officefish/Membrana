@@ -150,8 +150,12 @@ test('живые Dockerfile: образ несёт и граф пакетов, �
     for (const need of service.runtimeReads ?? []) {
       sources[need.constantsFrom] = readFileSync(new URL(`../${need.constantsFrom}`, import.meta.url), 'utf8');
     }
+    // Правило (4) — по исходникам графа из списка git, ровно как в `main` (прод media 03.10).
+    const { readBuildContext, readPackageSources } = await import('./verify-image-workspace-deps.mjs');
+    const packageSources = readPackageSources(map, readBuildContext());
+    assert.ok(packageSources && Object.keys(packageSources).length > 0, 'исходники графа обязаны читаться — иначе правило (4) молчит');
     assert.deepEqual(
-      serviceFindings(service, map, text, sources),
+      serviceFindings(service, map, text, sources, null, packageSources),
       [],
       `${service.id}: образ обязан нести весь граф И данные, которые читает рантайм`,
     );
@@ -204,4 +208,67 @@ test('copiedLocalBuildSources берёт только COPY из build context и
     'packages/background-cabinet',
     'packages/background-cabinet/docker/entrypoint.sh',
   ]);
+});
+
+// ПРАВИЛО (4) — относительный импорт за пределы dist (прод media 03.10). Образ media шесть дней
+// нёс dist trends-detector без шаблонов: пофайловый dist импортировал ../../templates/*.json,
+// импорт оркестратора падал ERR_MODULE_NOT_FOUND, правила (1)–(3) были зелёными.
+const ESC_MAP = {
+  '@membrana/svc': { dir: 'packages/background-svc', deps: ['@membrana/trends'] },
+  '@membrana/trends': { dir: 'packages/services/trends', deps: [] },
+};
+const ESC_SVC = { id: 'svc', pkg: 'packages/background-svc', stage: 'runtime' };
+const ESC_SOURCES = {
+  'packages/services/trends/src/data/templates.ts': "import birds from '../../templates/BIRDS.json' with { type: 'json' };\nexport { x } from './inner.js';\n",
+  'packages/services/trends/src/data/templates.test.ts': "import fixture from '../../fixtures/F.json' with { type: 'json' };\n",
+};
+const escDockerfile = (extra = '') => [
+  'FROM node:20 AS build',
+  'COPY packages/services packages/services',
+  'FROM node:20 AS runtime',
+  'WORKDIR /app/packages/background-svc',
+  'COPY --from=build /app/packages/services/trends/dist /app/packages/services/trends/dist',
+  'COPY --from=build /app/packages/services/trends/package.json /app/packages/services/trends/package.json',
+  extra,
+].join('\n');
+
+test('правило 4: импорт за src без COPY цели — находка с путём, где dist её ищет; тесты не судятся', async () => {
+  const { escapedImportFindings } = await import('./verify-image-workspace-deps.mjs');
+  const out = escapedImportFindings(ESC_SVC, ESC_MAP, escDockerfile(), ESC_SOURCES);
+  assert.equal(out.length, 1);
+  assert.equal(out[0].kind, 'relative-import-outside-dist');
+  assert.match(out[0].detail, /templates\/BIRDS\.json НЕ копируется/u);
+  assert.match(out[0].detail, /\/app\/packages\/services\/trends\/templates\/BIRDS\.json/u);
+});
+
+test('правило 4: COPY цели в тот же путь пакета — чисто', async () => {
+  const { escapedImportFindings } = await import('./verify-image-workspace-deps.mjs');
+  const df = escDockerfile('COPY --from=build /app/packages/services/trends/templates /app/packages/services/trends/templates');
+  assert.deepEqual(escapedImportFindings(ESC_SVC, ESC_MAP, df, ESC_SOURCES), []);
+});
+
+test('правило 4: цель скопирована НЕ туда, куда смотрит dist, — находка (судится путь, а не строка COPY)', async () => {
+  const { escapedImportFindings } = await import('./verify-image-workspace-deps.mjs');
+  const df = escDockerfile('COPY --from=build /app/packages/services/trends/templates /app/templates');
+  const out = escapedImportFindings(ESC_SVC, ESC_MAP, df, ESC_SOURCES);
+  assert.equal(out.length, 1);
+  assert.match(out[0].detail, /лежит в образе по \/app\/templates\/BIRDS\.json/u);
+});
+
+test('правило 4: без исходников правило НЕ выполняется (не «прошло»), веб-образ не судится', async () => {
+  const { escapedImportFindings } = await import('./verify-image-workspace-deps.mjs');
+  assert.deepEqual(escapedImportFindings(ESC_SVC, ESC_MAP, escDockerfile(), undefined), []);
+  assert.deepEqual(escapedImportFindings({ ...ESC_SVC, stage: 'build' }, ESC_MAP, escDockerfile(), ESC_SOURCES), []);
+});
+
+test('правило 4: живой media Dockerfile без строки шаблонов краснеет шестью находками (прод 03.10)', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { readWorkspaceMap, IMAGE_SERVICES, readBuildContext, readPackageSources } = await import('./verify-image-workspace-deps.mjs');
+  const map = readWorkspaceMap();
+  const media = IMAGE_SERVICES.find((s) => s.id === 'media');
+  const live = readFileSync(new URL(`../${media.dockerfile}`, import.meta.url), 'utf8');
+  const broken = live.split(/\r?\n/u).filter((line) => !/trends-detector\/templates/u.test(line) || line.startsWith('#')).join('\n');
+  assert.notEqual(broken, live, 'в живом Dockerfile обязана быть строка COPY шаблонов trends-detector');
+  const out = serviceFindings(media, map, broken, {}, null, readPackageSources(map, readBuildContext()));
+  assert.deepEqual(out.map((f) => f.kind), Array(6).fill('relative-import-outside-dist'));
 });

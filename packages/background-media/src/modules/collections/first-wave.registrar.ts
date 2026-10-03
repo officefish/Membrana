@@ -186,66 +186,24 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
     const onResult: FirstWaveDeps['onResult'] = async (_manifest, ctx, result) => {
       await toBridge(ctx, result);
     };
+    // Читатель проб от пресета не зависит: он нужен всем трём блокам ниже и строится ВНЕ их.
+    const reader = prismaSampleReader(this.prisma, this.blobs, handlers.sha256Hex);
+    // ТРИ НЕЗАВИСИМЫХ БЛОКА РЕГИСТРАЦИИ (прод media 03.10). До 03.10 здесь был ОДИН
+    // try на всё: импорт оркестратора упал в образе (шаблоны trends-detector не доехали), и вместе
+    // с detector-batch не зарегистрировались измеритель чарт-листа и обе витрины — кабинет получал
+    // 503 «is not registered». Сбой одного блока теперь гасит только свои плагины и пишет
+    // свою строку ошибки с их именами; остальные блоки регистрируются как ни в чём не бывало.
+    //   A — mfcc (пресет ворот + считалка); при сбое — пять заглушек, как прежде;
+    //   B — свод сеанса, измеритель чарт-листа, витрины библиотеки: нужен только читатель;
+    //   C — detector-batch: нужен живой оркестратор (отложенный импорт).
     try {
       const presetPath = join(resolveCatalogRoot(this.config), MFCC_GATES_PRESET_FILE);
       const { preset } = JSON.parse(await readFile(presetPath, 'utf8')) as { preset: Parameters<typeof handlers.mfccPipeSpecOf>[0] };
       const config = handlers.mfccConfigFromHash(preset.configHash);
       if (config === null) throw new Error(`отпечаток пресета «${preset.configHash}» не разбирается (${presetPath})`);
-      const mfcc = { reader: prismaSampleReader(this.prisma, this.blobs, handlers.sha256Hex), extract: await handlers.createMeydaExtractor(config), preset, strictness: 'normal' as const };
+      const mfcc = { reader, extract: await handlers.createMeydaExtractor(config), preset, strictness: 'normal' as const };
       this.mfccDeps = { ...mfcc, manifest: handlers.MFCC_HANDLER_MANIFEST };
       handlers.registerFirstWave(this.host, { mfcc, onResult });
-      // Свод сеанса — род `report`, своя волна (структурщик, j2): читатель тот же (звук лежит
-      // здесь), сид тот же (единственная точка выхода результата из media), но словарь родов
-      // не смешивается. Пороги отбора остаются рабочей точкой пакета до слуховой калибровки.
-      handlers.registerReportWave(this.host, { reader: mfcc.reader, onResult: onReportResult });
-
-      const detectorBatchManifest = handlers.DETECTOR_BATCH_MANIFEST;
-      const { analyzeDroneDetectionDetailed } = await loadDroneDetectionOrchestrator();
-      const detectorBatchExecutor = handlers.createDetectorBatchExecutor({
-        reader: mfcc.reader,
-        analyzer: {
-          analyze: async (sample, audio) => {
-            const detailed = await analyzeDroneDetectionDetailed(audio.samples, audio.sampleRate, {
-              sampleId: sample.id,
-              sampleTitle: sample.title,
-            });
-            return {
-              verdicts: detailed.verdicts.map((verdict) => ({
-                detectorId: verdict.detectorName,
-                isDrone: verdict.isDrone,
-                confidence: verdict.confidence,
-                latencyMs: verdict.latencyMsTotal,
-              })),
-            };
-          },
-        },
-      });
-      this.host.registerPlugin(detectorBatchManifest, {
-        execute: async (ctx) => {
-          const result = await detectorBatchExecutor.execute(ctx);
-          this.results.set(ctx.address.runId, result);
-          await toBridge(ctx, result);
-          return result;
-        },
-      });
-
-      this.contextBuilders.set(detectorBatchManifest.id, async (req) => ({
-        address: this.addressOf(detectorBatchManifest, req, handlers.uuidV7()),
-        fingerprints: await handlers.detectorBatchFingerprintsOf(
-          mfcc.reader,
-          req.deviceId,
-          req.collectionId,
-          req.sampleIds,
-        ),
-        resumeMode: 'fresh',
-        trigger: req.trigger ?? detectorBatchManifest.triggers[0]!,
-        payload: {
-          deviceId: req.deviceId,
-          collectionId: req.collectionId,
-          ...(req.sampleIds ? { sampleIds: req.sampleIds } : {}),
-          occurredAt: new Date(),
-        },
-      }));
 
       const mfccManifest = handlers.MFCC_HANDLER_MANIFEST;
       this.contextBuilders.set(mfccManifest.id, async (req) => ({
@@ -255,6 +213,16 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
         trigger: req.trigger ?? mfccManifest.triggers[0]!,
         payload: { deviceId: req.deviceId, collectionId: req.collectionId, sampleId: req.sampleId, occurredAt: new Date() },
       }));
+    } catch (error) {
+      this.logger.error({ error }, 'membrana.handler.mfcc не зарегистрирован: пресет ворот или считалка недоступны; регистрируются пять заглушек');
+      for (const manifest of handlers.STUB_HANDLER_MANIFESTS) this.host.registerPlugin(manifest, handlers.notImplementedExecutor(manifest));
+    }
+
+    try {
+      // Свод сеанса — род `report`, своя волна (структурщик, j2): читатель тот же (звук лежит
+      // здесь), сид тот же (единственная точка выхода результата из media), но словарь родов
+      // не смешивается. Пороги отбора остаются рабочей точкой пакета до слуховой калибровки.
+      handlers.registerReportWave(this.host, { reader, onResult: onReportResult });
 
       const measureManifest = handlers.CHART_LIST_MEASURE_MANIFEST;
       this.contextBuilders.set(measureManifest.id, async (req) => ({
@@ -271,7 +239,7 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
       this.host.registerPlugin(measureManifest, {
         execute: async (ctx) => {
           const outcome = await handlers.measureSampleSet(
-            { reader: mfcc.reader },
+            { reader },
             handlers.deviceIdOf(ctx.payload),
             ctx.address.collectionId,
             handlers.sampleIdsOf(ctx.payload),
@@ -346,7 +314,7 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
             ...(p.to ? { toMs: Date.parse(p.to) } : {}),
           };
           const outcome = await handlers.runLibraryChartList(
-            { measure: async (ids) => (await handlers.measureSampleSet({ reader: mfcc.reader }, p.deviceId, p.collectionId, ids)).candidates },
+            { measure: async (ids) => (await handlers.measureSampleSet({ reader }, p.deviceId, p.collectionId, ids)).candidates },
             samples,
             { volume: p.volume, criterion: p.criterion },
             window,
@@ -392,7 +360,7 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
             ...(p.to ? { toMs: Date.parse(p.to) } : {}),
           };
           const outcome = await handlers.runLibraryDuplicates(
-            { measure: async (ids) => (await handlers.measureSampleSet({ reader: mfcc.reader }, p.deviceId, p.collectionId, ids)).candidates },
+            { measure: async (ids) => (await handlers.measureSampleSet({ reader }, p.deviceId, p.collectionId, ids)).candidates },
             samples,
             window,
           );
@@ -408,7 +376,7 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
         return {
           address: this.addressOf(digestManifest, req, handlers.uuidV7()),
           fingerprints: await handlers.sessionDigestFingerprintsOf(
-            { reader: mfcc.reader }, req.deviceId, req.collectionId, window, handlers.sha256Hex,
+            { reader }, req.deviceId, req.collectionId, window, handlers.sha256Hex,
           ),
           resumeMode: 'fresh',
           trigger: req.trigger ?? digestManifest.triggers[0]!,
@@ -416,8 +384,62 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
         };
       });
     } catch (error) {
-      this.logger.error({ error }, 'membrana.handler.mfcc не зарегистрирован: пресет ворот или считалка недоступны; регистрируются пять заглушек');
-      for (const manifest of handlers.STUB_HANDLER_MANIFESTS) this.host.registerPlugin(manifest, handlers.notImplementedExecutor(manifest));
+      this.logger.error(
+        { error },
+        'membrana.report.session-digest, membrana.report.chart-list-measure, membrana.showcase.library-chart-list, membrana.showcase.library-duplicates не зарегистрированы',
+      );
+    }
+
+    try {
+      const detectorBatchManifest = handlers.DETECTOR_BATCH_MANIFEST;
+      const { analyzeDroneDetectionDetailed } = await loadDroneDetectionOrchestrator();
+      const detectorBatchExecutor = handlers.createDetectorBatchExecutor({
+        reader,
+        analyzer: {
+          analyze: async (sample, audio) => {
+            const detailed = await analyzeDroneDetectionDetailed(audio.samples, audio.sampleRate, {
+              sampleId: sample.id,
+              sampleTitle: sample.title,
+            });
+            return {
+              verdicts: detailed.verdicts.map((verdict) => ({
+                detectorId: verdict.detectorName,
+                isDrone: verdict.isDrone,
+                confidence: verdict.confidence,
+                latencyMs: verdict.latencyMsTotal,
+              })),
+            };
+          },
+        },
+      });
+      this.host.registerPlugin(detectorBatchManifest, {
+        execute: async (ctx) => {
+          const result = await detectorBatchExecutor.execute(ctx);
+          this.results.set(ctx.address.runId, result);
+          await toBridge(ctx, result);
+          return result;
+        },
+      });
+
+      this.contextBuilders.set(detectorBatchManifest.id, async (req) => ({
+        address: this.addressOf(detectorBatchManifest, req, handlers.uuidV7()),
+        fingerprints: await handlers.detectorBatchFingerprintsOf(
+          reader,
+          req.deviceId,
+          req.collectionId,
+          req.sampleIds,
+        ),
+        resumeMode: 'fresh',
+        trigger: req.trigger ?? detectorBatchManifest.triggers[0]!,
+        payload: {
+          deviceId: req.deviceId,
+          collectionId: req.collectionId,
+          ...(req.sampleIds ? { sampleIds: req.sampleIds } : {}),
+          occurredAt: new Date(),
+        },
+      }));
+    } catch (error) {
+      this.logger.error({ error }, 'membrana.report.detector-batch не зарегистрирован: оркестратор детекции не загрузился');
     }
     this.logger.log({ plugins: this.host.getRegisteredPlugins().map((m) => m.id) }, 'First-wave plugins registered');
   }
