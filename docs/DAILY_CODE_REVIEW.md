@@ -1,57 +1,96 @@
-<!-- Сгенерировано: 2026-10-02T16:58:04.732Z (yarn code-review; daily, llm-anthropic) -->
+<!-- Сгенерировано: 2026-10-03T16:02:56.027Z (yarn code-review; daily, llm-anthropic) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: 3eac5faa9739b78d8aeb5d1ce291ec36196e8ef2^..e5ee701d150ce311dc22f905f93437fccb1da88a (11 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 3eac5faa #2547 (1447), 19b95bb9 #2549 (403), 75668adb #2550 (1267), 606a13d8 #2553 (526), b17f5871 #2555 (810), b393eea4 #2556 (631), e5ee701d (679)
+> Период: b4c3a90a43ff5682c32eea5ef8f5cac9958a1f4a^..4455de089df5b568efe7d299109dbe08458b2470 (16 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): d8105f64 #2562 (406), ab4e6785 (406), 0d39cbad #2572 (542), 5c470fd1 (542), ee405f48 #2567 (524), ad246e03 (524), f4e74219 #2574 (563), 71b1bd5a (563), 4455de08 (646)
 
 ---
 
-Tier: T1 (ritual-артефакты + сетевой снимок + op-логи; продуктовый дифф — только в oversized-PR; untracked-файлы — docs, без runtime)
+Tier: T1
+
+*(Ведущий ревью: vesnin — скоуп охватывает 21 путь, два продуктовых пакета + ritual-слой)*
 
 ---
 
-**[Vesnin — ведущий ревью]:**
-Бестиарий: дифф чистый — B1–B10 не пойманы. PR size: 7 из 11 коммитов oversized (>400 строк каждый) — не развёрнуты по регламенту, ревьюировать как отдельные PR; по раскрытому диффу (#2548, #3651b525, #875a51b7, #118b3c5e) нарушений нет. Архитектурных находок в видимом диффе нет: `DAILY_STANDUP`, `MAIN_DAY_ISSUE`, `STRATEGY_DAY` — корректная замена заголовков и дат, логика документов не меняется. Сетевой снимок (#875a51b7): `latencyMs` Anthropic `8840→559`, DeepSeek `timeout→ok` — транспорт восстановлен, формат `env.snapshot.json` не нарушен; удаление блока «Встречная проба» из `.md` — opportunity (P2, документ стал короче, но практика сохранена в истории). Процессный долг, видимый в диффе: `ritual-day-2026-10-01-r2` остаётся в `runPhase: open` (`2026-10-02.jsonl` строка 1 — `started`, закрывающей нет); `main-day-assertions.json` не перечеканен под 02.10 (отмечено в `MAIN_DAY_ISSUE` — не блокер дня, но drift копится). Красный тест `@membrana/background-cabinet` — корень не назван третий день; P1, блокирует merge в затронутый пакет.
+**[Vesnin / Архитектор]:** Пропуск с оговорками.
+
+Дифф #2560 — чистая ротация ритуальных артефактов (стендап, план дня, главная задача, STRATEGY_DAY, morning-gates). Все четыре документа согласованы по дате и магистрали (`chart-list-plugin`); `morning-gates-state.json` корректно убрал `magistralManual`-блок и выставил `magistralAuthor: "snapshot"` — это регресс паттерна ручной чеканки, и это хорошо. `main-day-assertions.json` получил retirement-строку `//retired-evening-reads-02-10` с SHA (`b393eea4`) — вещдок закрытия есть, форма соблюдена.
+
+Бестиарий — чисто: B1 (инструкция-в-хвосте) не применимо (docs-only); B4 (маркер-предсказанное-имя) не обнаружен — посылки в `main-day-assertions.json` теперь с маркерами `unknown` и конкретными `file:`/`symbol:` путями; B6 (молчаливый зелёный) не применимо; B9 (проза) — граница не нарушена.
+
+**Единственная оговорка (P2 / не блокер):** `DAY_REPORT.md` за 03.10 обнулён в трёх блоках строкой «—задач со ссылками нет—», при этом блок «Экспериментальные» содержит `#2556 — MERGED` (статус подтверждён живой таблицей). Асимметрия: если скрипт генератора умеет вставлять PR-ссылки в «Экспериментальные», то «Магистраль» и «Подкрепление» за 03.10 тоже должны были получить ссылки после вечерних merge — либо они появятся в следующем прогоне, либо это систематический пропуск генератора (opportunity, не блок).
+
+#2562 (header-badge-narrow-2558, 406 строк) — oversized, развёрнутый дифф скрипт не передал, ревью невозможно без диффа. По регламенту: отдельный слот, **не ревьюирую сегодня**.
+
+#2564 (tariff-dataset-label-2561, 385 строк) — в диффе. Архитектурный контракт корректен: `TARIFF_DATASET_COLLECTION_NAME` / `LEGACY_TARIFF_DATASET_COLLECTION_NAME` — две именованные константы, no magic strings в продуктовом коде. Дублирование имени относительно `@membrana/media-library-service` задокументировано комментарием с объяснением (`shell не импортирует сервис в main`) — это сознательное решение, не антипаттерн B8. Граница пакета `apps/membrana-studio` ↔ `@membrana/media-library-service` не нарушена.
+
+Зверь B3 (DoD-на-механику): тест идемпотентности (`store3` — третий экземпляр после `store2`) закрывает механику полностью; но приёмочный блок b3 (`live-check-closure`) записан как живая проверка владельцем — **это правильный DoD**, не B3.
 
 ---
 
-**[Ozhegov — Структурщик]:**
-C1: границы пакетов в раскрытом диффе не затронуты — только `docs/`, `docs/field/`, `docs/procedure-runs/`, `docs/network/`, `docs/comms/`, `docs/virtual-team/memory/op-log/`. C4: сервисный код не присутствует. C7: `buffer-watch-2026-10-02-trail.jsonl` — новый append-only файл, одна строка, формат соответствует соседним `trail.jsonl`; тестов не требует. C8: `console.log` отсутствует в видимом диффе. `procedure-runs/trail/2026-10-02.jsonl` — `runPhase: open`, закрывающей записи нет; если вечерний ритуал не добавит `close`-запись, `ritual-day-2026-10-02` повторит судьбу `r2` за 01.10 — P1-риск на завтра.
+**[Структурщик / Ожегов]:** #2564 — структура слабосвязана, тест рядом с кодом, критические ветки покрыты.
 
-**[Dynin — Математик]:** —
+Три независимых экземпляра `MediaLibraryFsStore` в одном тест-кейсе (`store` → `store2` → `store3`) — единственный способ честно проверить идемпотентность при файловой персистенции: форма правильная. Тест `#2561: заводское имя переименовывается один раз` проверяет оба edge-case: старый манифест переименован, повторный вызов диск не трогает (байт-сравнение `before === after`) — C7 выполнен. `readFile`/`writeFile` импортированы явно, нет glob-импортов — C1 чист. `console.log` в продуктовом коде отсутствует — C8 чист.
 
-**[Kuryokhin — Музыкант]:** —
-
-**[Rodchenko — Верстальщик]:** —
+Одно наблюдение (P2): `LEGACY_TARIFF_DATASET_COLLECTION_NAME` — константа уровня модуля, но она не экспортируется и не тестируется напрямую; тест косвенно проверяет её через `writeFile` в манифест. Если в будущем появится третье «заводское имя» — паттерн потребует второго `else if`. Opportunity: вынести список legacy-имён в массив `LEGACY_TARIFF_DATASET_COLLECTION_NAMES` и итерировать — но это за рамками текущего scope.
 
 ---
 
-**Итоговый артефакт:** `docs/DAILY_CODE_REVIEW.md` (вечер 2026-10-02)
+**[Математик / Дынин]:** #2564 — логика ветки `else if` корректна для одного legacy-имени.
 
-**Definition of Done (утро 2026-10-03):**
+Граничные условия: пустой манифест (нет коллекции) → создаётся с правильным именем ✓; манифест с legacy-именем → переименовывается ✓; манифест с правильным именем → не трогается ✓; манифест с именем, данным человеком (не `TARIFF_DATASET_COLLECTION_NAME` и не `LEGACY_...`) → **не переименовывается** — это корректное поведение по замыслу (`ensureReserved` не должен трогать пользовательские имена). Off-by-one риска нет: ветка `else if` не итерирует. NaN/null не применимо — строковое сравнение.
+
+---
+
+**[Музыкант / Курёхин]:** — (аудио-путь не затронут)
+
+---
+
+**[Верстальщик / Родченко]:** — (UI не затронут в развёрнутом диффе; #2562 oversized, ревью отложено)
+
+---
+
+**[Teamlead / Тарасов]:**
+
+PR size: #2560 — 340 строк, OK. #2564 — 385 строк, OK. #2562 — 406 строк, oversized (+6 строк), P1-recommendation split не применяется (граница незначительная и PR уже MERGED по живой таблице — `#2562 MERGED`). Остальные oversized (#2572, #2567, #2574) — не развёрнуты, вне ревью сегодня.
+
+**Риски на завтра:**
+
+- **P1:** `ritual-day-2026-10-02` — статус `runPhase: open` упоминается в `DAY_REPORT` как не закрытый; первый коммит утра — закрывающая запись в `2026-10-02.jsonl`.
+- **P1:** `@membrana/background-cabinet` красный тест — третий день без диагноза; `yarn turbo run test --filter=@membrana/background-cabinet` → файл + строка до любого merge в пакет.
+- **P1:** `#2503` (`scripts/lib/personas.mjs`) — по `DAY_REPORT` записан как `MERGED`, но статус в живой таблице не присутствует явно; утром верифицировать `yarn ask vesnin --no-context "тест"`.
+- **P2:** `deps-watch-snapshot.json` — новые high-severity: `@fastify/busboy` (DoS через oversized boundary, GHSA-xjh9-v7x6-24jw; DoS через prototype-named header, GHSA-x8mw-p69m-v3mx), `braces` (stack-exhaustion, GHSA-vfj7-8cjw-p6xm), `http-cache-semantics` (cross-user cache disclosure, GHSA-ch52-4w7c-c8xp). Severity: high. Эти пакеты — в dev/транзитивном дереве или в продуктовом runtime? Требует тriage; при продуктовом runtime — P1.
+- **P2:** `DAY_REPORT.md` — асимметрия блоков (Магистраль/Подкрепление/Перспективные пусты при наличии Экспериментальных с `#2556`) — opportunity для генератора, не блокер.
+
+**Утренние команды:**
+
 ```bash
-# 1. Закрыть ritual-day-2026-10-02 (runPhase: open — риск повтора r2)
-yarn turbo run typecheck test lint --filter=@membrana/tooling
+# 1. Закрыть ritual-day-2026-10-02 (runPhase: open → closed)
+#    Записать close-запись в docs/archive/daily-day/.../2026-10-02.jsonl
 
-# 2. Назвать корень красного теста (P1, третий день)
+# 2. Верифицировать #2503
+yarn ask vesnin --no-context "тест"
+
+# 3. Диагностика красного теста кабинета
 yarn turbo run test --filter=@membrana/background-cabinet
 
-# 3. Ревью oversized-PR по одному — не пачкой
-yarn code-review:pr 2556   # fix: ritual: carry result evidence — 631 строк
-yarn code-review:pr 2555   # fix(build): stale-dist-turbo-cache — 810 строк
-yarn code-review:pr 2553   # fix(device-board): board-header-hold-badge — 526 строк
-yarn code-review:pr 2550   # fix(client): cabinet-unreachable-cause — 1267 строк
-# PR #2547 (1447 строк), #2549 (403), e5ee701d (679) — в очередь после
+# 4. Ревью oversized PR #2562 первым слотом (406 строк, badge UI)
+yarn code-review:pr 2562
 
-# 4. Закрыть #2503 (PERSONAS → scripts/lib/personas.mjs, XS, Ozhegov)
-# После правки: yarn ask vesnin --no-context "тест"
+# 5. Triage новых CVE из deps-watch-snapshot.json
+#    (@fastify/busboy ×2, braces, http-cache-semantics — runtime vs dev?)
 ```
 
-**Риски:**
-- **P1** — `ritual-day-2026-10-02` в `runPhase: open`; если вечерний ритуал не записал `close`-запись до коммита `e5ee701d`, утром повторится ситуация `r2` за 01.10
-- **P1** — `@membrana/background-cabinet` красный тест, корень не назван третий день; merge в затронутый пакет до диагноза — риск регрессии
-- **P1** — 7 oversized-PR в стволе без развёрнутого ревью; ревьюировать по одному утром, начиная с продуктовых (#2550, #2553, #2555, #2556)
-- **P2** — `main-day-assertions.json` не перечеканен под 02.10; drift реестра копится, при следующем owner-choice может создать конфликт источников
-- **P2** — `#2503` `PERSONAS → scripts/lib/personas.mjs` (Ozhegov, XS, седьмой день без движения)
+---
+
+**Итоговый артефакт:** `docs/DAILY_CODE_REVIEW.md`
+
+**Definition of Done (утро):**
+```bash
+yarn turbo run typecheck test --filter=@membrana/tooling
+yarn turbo run test --filter=@membrana/background-cabinet
+```
+
+**Риски:** P1 × 3 (ritual-day-2026-10-02 open, cabinet тест без диагноза, #2503 верификация), P2 × 2 (4 новых CVE high-severity — требуют triage на runtime/dev, DAY_REPORT асимметрия)
