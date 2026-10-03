@@ -208,6 +208,18 @@ export function useCabinetSampleLibrary() {
 
   const playback = useSamplePlayback();
 
+  /**
+   * Сверка с сервером при входе в библиотеку узла (#2569): сервис кэширован по устройству на всю
+   * SPA-сессию, и повторный вход давал пустой `init()` — серверное имя/состав базового набора не
+   * доезжали до перезагрузки вкладки. Лёгкая сверка, пробы буфера не читаются.
+   */
+  useEffect(() => {
+    if (!active) return;
+    service.reconcileOnOpen().catch((err: unknown) => {
+      console.error('[useCabinetSampleLibrary] reconcile on open failed', err);
+    });
+  }, [active, service]);
+
   useEffect(() => {
     if (selection.kind !== 'node' || !service || !active) {
       setNodePageData(null);

@@ -375,6 +375,9 @@ export class ServerStorageBackend implements IStorageBackend {
         serverReachable: this.serverReachable,
         bufferUsedBytes: data.buffer.usedBytes,
         bufferLimitBytes: data.buffer.limitBytes,
+        ...(data.dataset
+          ? { dataset: { catalogId: data.dataset.catalogId, sampleCount: data.dataset.sampleCount } }
+          : {}),
       };
     } catch {
       return {

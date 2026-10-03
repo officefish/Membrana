@@ -68,6 +68,9 @@ describe('ServerStorageBackend', () => {
       bufferUsedBytes: 200,
       bufferLimitBytes: 500_000,
     });
+    // P3 (#2569): назначенный каталог из /quota доезжает в снимок — по нему сверка открытия
+    // решает, перечитывать ли базовый набор.
+    expect(quota.dataset).toEqual({ catalogId: 'free-v1-catalog', sampleCount: 120 });
     expect(collections[0]?.id).toBe(BUFFER_COLLECTION_ID);
     expect(collections[0]?.sampleCount).toBe(3);
     expect(fetchMock).toHaveBeenCalledWith(

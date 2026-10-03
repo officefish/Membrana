@@ -155,6 +155,18 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     setSamplesPage(1);
   }, []);
 
+  /**
+   * Сверка с сервером при открытии библиотеки (#2569): сервис инициализирован мостом при старте,
+   * и `init()` из хука здесь пуст — без сверки имя и состав базового набора менялись только
+   * перезапуском Studio. Один раз на монтирование модуля; лёгкая (ensure-reserved + коллекции +
+   * квота), пробы буфера не читаются. Здесь, а не в `useMediaLibrary`: хук зовут и панели плагинов.
+   */
+  useEffect(() => {
+    service.reconcileOnOpen().catch((err: unknown) => {
+      console.error('[SampleLibraryModule] reconcile on open failed', err);
+    });
+  }, [service]);
+
   useEffect(() => {
     bindSamplePlaybackBlobReader((sampleId: string) => service.getSampleBlob(sampleId));
     return () => {
