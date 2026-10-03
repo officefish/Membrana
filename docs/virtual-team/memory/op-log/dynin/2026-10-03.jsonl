@@ -13,3 +13,7 @@
 {"ts":"2026-10-03T15:43:11.348Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-10-03T15:42:32.537Z","origin":"ask-persona"}
 {"ts":"2026-10-03T15:43:11.349Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-24-logging-observability-cut-m1-incident-number","reason":"там я формализовал инвариант «один идентификатор во всех пространствах имён»; здесь аналогично нужен инвариант «один путь к шаблонам в исходнике, в локальном dist и в образе» — расхождение пространств и есть корень P2.","origin":"ask-persona"}
 {"ts":"2026-10-03T15:43:11.351Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-30-sprint-honest-m3-contract-review","reason":"контракт как предикат match(C, D); здесь b2 ровно это: C = перечень плагинов в DoD, D = строка «First-wave plugins registered» + отсутствие 503, предикат должен быть явный, не «на глаз».","origin":"ask-persona"}
+{"ts":"2026-10-03T16:17:04.985Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-10-03-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-10-03T16:17:04.985Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-09-01-library-open-api-m4-extraction","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-03T16:17:04.985Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-04-static-mmbrn-container-m3-access","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-03T16:17:04.985Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

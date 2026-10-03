@@ -1,1 +1,5 @@
 {"ts":"2026-10-03T10:01:31.314Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-10-03T16:17:05.296Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-10-03-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-10-03T16:17:05.296Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-09-01-library-open-api-m4-extraction","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-03T16:17:05.296Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-08-06-static-mmbrn-container-m6-intake-delivery","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-03T16:17:05.296Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

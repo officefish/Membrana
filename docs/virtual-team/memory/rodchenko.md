@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14353/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 379 (причины в op-log) -->
+Записей: 50 · бюджет 14352/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 381 (причины в op-log) -->
+
+### 2026-10-03 · позиция · team-evening-feedback
+
+> Родченко. Оценка артефактов: Канон корректно отправил меня по магистрали `chart-list-plugin` после LGTM Teamlead на форму. `DAILY_CODE_REVIEW` правильно отложил ревью `#2562` (oversized, 406) до отдельного слота. Итоги дня: `#2562` (header-badge-narrow-2558, бейдж удержания в […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-03.md#reply-1`
 
 ### 2026-10-02 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > С витрины партнёра список — не «картотека метаданных», а пачка одноразовых пропусков. Если UI или прокси закеширует JSON целиком или положит его в лог доступа — связка ключей уехала без выдачи медиа. Презентация должна показывать `total` и страницу, не вываливать ключи в […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/library-open-api-m4-extraction-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · team-evening-feedback
-
-> Rodchenko. Оценка артефактов: `MAIN_DAY_ISSUE` называет UI-правку в двух местах (`~689`, `~757` в `SampleLibraryModule.tsx`) и требует единого текста сообщения «переносится… перенесено в X» — постановка достаточно точна для DoD. Итоги дня: UI сегодня не тронут. #2255 (удаление […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`

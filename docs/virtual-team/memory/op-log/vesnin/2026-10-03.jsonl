@@ -1,1 +1,4 @@
 {"ts":"2026-10-03T10:01:31.816Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-10-03T16:17:05.849Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-10-03-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-10-03T16:17:05.849Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-09-01-library-open-api-m4-extraction","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-03T16:17:05.849Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

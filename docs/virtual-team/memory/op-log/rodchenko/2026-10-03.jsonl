@@ -4,3 +4,6 @@
 {"ts":"2026-10-03T11:21:59.892Z","persona":"rodchenko","verb":"cloud_query","ref":"rodchenko-2026-10-03T11:21:38.054Z","origin":"ask-persona"}
 {"ts":"2026-10-03T11:21:59.914Z","persona":"rodchenko","verb":"surface_invoke","ref":"rodchenko-2026-10-03T11:21:38.054Z","origin":"ask-persona"}
 {"ts":"2026-10-03T11:21:59.927Z","persona":"rodchenko","verb":"emerge","ref":"rodchenko-2026-10-01-team-evening-feedback","reason":"вчерашняя оценка собственного PR #2541 с токенами и aria-label задаёт мой же стандарт самопроверки: называть закрытое закрытым, незакрытое — честно хвостом. Прямо применимо к текущему вердикту b1.","origin":"ask-persona"}
+{"ts":"2026-10-03T16:17:05.589Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-10-03-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-10-03T16:17:05.589Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-09-01-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-03T16:17:05.589Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14342/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 380 (причины в op-log) -->
+Записей: 50 · бюджет 14397/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 381 (причины в op-log) -->
+
+### 2026-10-03 · позиция · team-evening-feedback
+
+> Дынин. Оценка артефактов: Канон корректно не назначил мне магистраль — зоны ответственности соблюдены. P1 по красному тесту `@membrana/background-cabinet` назван в `MAIN_DAY_ISSUE` и подтверждён в вечернем ревью. Итоги дня: по магистрали — не задействован. По P1 […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-03.md#reply-1`
 
 ### 2026-10-02 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/library-open-api-m3-key-ttl-2026-09-01.md#reply-1`
 
-### 2026-09-01 · позиция · library-open-api-m4-extraction
+### 2026-08-31 · позиция · team-evening-feedback
 
-> Численно: потолок страницы 100, ответ несёт `total`. Ночь 23.08 — 1136 проб → минимум ⌈1136/100⌉ = 12 страниц при фильтре по окну. Счётчика выдач ключей нет, предела частоты на вход нет. Значит цикл `for page in 1..N: GET list → for id in page: GET link` не упирается ни в один […] _(реплик в сеансе: 6)_
+> Оценка артефактов: MAIN_DAY_ISSUE корректно зафиксировал посылку «сервер уже умеет перенос» со ссылкой на `samples.service.ts` — это сэкономило день: не стали переписывать сервер. Code-review разложил `deletionAcknowledgementRisk` по веткам (evidence → unknown → scale, […]
 
-— источник: `docs/seanses/library-open-api-m4-extraction-2026-09-01.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m3-access
-
-> Порядок ролей полный: `public < ally < operator < owner`. Решение строится одной функцией сравнения ролей, без permission-grant и без снижения роли субъекта. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
