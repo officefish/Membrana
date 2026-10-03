@@ -28,7 +28,7 @@ import {
 
 import { SampleLibraryPagination } from '../components/sample-library/SampleLibraryPagination';
 import { SampleLibraryTable } from '../components/sample-library/SampleLibraryTable';
-import { MediaLibraryQuotaBanner } from '../components/MediaLibraryQuotaBanner';
+import { LOADING_HINT, MediaLibraryQuotaBanner } from '../components/MediaLibraryQuotaBanner';
 import { SamplePlaybackBar } from '../components/sample-playback/SamplePlaybackBar';
 import { downloadBlob, extensionFromMime } from '../lib/downloadBlob';
 import { requestClearMediaLibraryBuffer } from '../lib/mediaLibraryHubBridge';
@@ -690,7 +690,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
         </div>
       ) : null}
 
-      <MediaLibraryQuotaBanner quota={snapshot.quota} />
+      <MediaLibraryQuotaBanner quota={snapshot.quota} loadState={snapshot.loadState} />
 
       {error ? (
         <div className="alert alert-error text-sm" role="alert">
@@ -898,7 +898,9 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
           <SampleLibraryTable
             rows={pageView.items}
             emptyText={
-              samples.length > 0
+              snapshot.loadState === 'loading'
+                ? LOADING_HINT
+                : samples.length > 0
                 ? 'Нет сэмплов с выбранной меткой.'
                 : isTariffDataset
                   ? 'Загрузка базового набора… (запустите yarn dataset:sync-free-v1 при dev)'
