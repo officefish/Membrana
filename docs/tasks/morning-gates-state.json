@@ -6,7 +6,12 @@
   ],
   "frozenDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
   "magistral": "chart-list-plugin",
-  "swallow": null,
+  "swallow": {
+    "draftDigest": "4110512847034613fd77f9b21d3ceb633f4699a086a04b1cb4ae9f4951abbf5e",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-10-03.md",
+    "ownerAck": true,
+    "day": "2026-10-03"
+  },
   "day": "2026-10-03",
   "magistralChosenAt": "2026-10-03",
   "magistralAuthor": "snapshot"
