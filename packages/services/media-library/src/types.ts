@@ -100,7 +100,15 @@ export interface MediaLibrarySnapshot {
   samplesByCollection: Record<string, MediaSample[]>;
   quota: StorageQuota;
   version: number;
+  /**
+   * Фаза загрузки (#2570): `loading` — ни одного успешного `refresh()` целиком ещё не было, и снимок
+   * не говорит ничего о хранилище (начальные 100 МБ browser-limited — заглушка, не запасной режим);
+   * `ready` — был. Сервис ставит поле всегда; отсутствие (снимки, собранные вне сервиса) — не загрузка.
+   */
+  loadState?: MediaLibraryLoadState;
 }
+
+export type MediaLibraryLoadState = 'loading' | 'ready';
 
 export interface MediaPluginManifest {
   id: string;
