@@ -1,0 +1,30 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "chart-list-plugin-20261003",
+  "taskId": "chart-list-plugin",
+  "mode": "explicit-honest",
+  "cutBy": "angelina",
+  "window": {
+    "from": "2026-10-03T00:00:00+03:00",
+    "to": "2026-10-04T12:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-live-cabinet-acceptance",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "docs/field/chart-list-acceptance-2026-08-22.md",
+        "docs/local-sprint/chart-list-plugin/CLOSURE.md"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "note": "Остаток не в коде: на origin/main кабинетный journal chart-list и его серверные носители закрывают DoD, но полевая приёмка по-прежнему не подписана. Владелец открывает кабинет, запускает чарт-лист на согласованном материале, сверяет три критерия и объём, а исполнитель записывает факт: среда, материал, runId/адреса, наблюдение по спискам, вердикт владельца. Если вердикт pass — CLOSURE.md предлагает архивировать карточку. Если найден дефект метрики — CLOSURE.md фиксирует split-out и карточку не архивирует без отдельного слова владельца."
+    }
+  ],
+  "//why": "Phase-1 audit 03.10 на HEAD 2e59a5c33b56df29e11d72db790029625e5ce32d: реализация chart-list-plugin видна в кабинете и тестах, Studio имеет отдельную sample-library витрину; старый acceptance-документ всё ещё говорит «НЕ ПРОВЕДЕНА», CLOSURE.md отсутствует, task:inspect показывает chart-list-plugin active. Поэтому это не кодовый спринт, а остаточный acceptance/closure cut.",
+  "//measure": "Свидетельства: docs/local-sprint/chart-list-plugin/AUDIT.md. Зелёные проверки после cold-worktree prep: @membrana/cabinet test 28/252; @membrana/plugin-handlers test 15/159; @membrana/background-cabinet test 55/543 + 1 skipped dist smoke; @membrana/media-library-service test 14/181; @membrana/background-media test -- src/modules/collections/first-wave.registrar.test.ts ran package suite 50/443 + 1 skipped dist smoke. Initial reds были инфраструктурой холодного дерева: несобранные local dist и отсутствующий generated/prisma.",
+  "//porcha": "На стволе красный: no docs/local-sprint/chart-list-plugin/CLOSURE.md and docs/field/chart-list-acceptance-2026-08-22.md contains НЕ ПРОВЕДЕНА. После блока зелёный: CLOSURE.md exists, acceptance doc no longer states НЕ ПРОВЕДЕНА, and CLOSURE contains explicit owner verdict pass or split-out.",
+  "//forecast": "b1: при live pass владелец видит рабочий chart-list в кабинете, три критерия дают осмысленные списки, CLOSURE.md несёт run/evidence/verdict и рекомендацию archive. При live fail не править код в этом блоке: записать finding and split-out candidate. Опровержение: если кабинетная surface отсутствует в среде владельца, это не кодовый дефект аудита — нужен owner choice по среде или deploy разрешение, иначе STOP."
+}
