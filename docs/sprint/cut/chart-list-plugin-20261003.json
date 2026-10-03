@@ -1,0 +1,52 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "chart-list-plugin-20261003",
+  "taskId": "chart-list-plugin",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-10-03T11:30:00Z",
+    "to": "2026-10-03T18:00:00Z"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-journal-run-record-office-trace",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/background-cabinet/src/modules/journal/journal.module.ts",
+        "packages/background-cabinet/src/modules/journal/plugin-host/journal-plugin-host.service.ts",
+        "packages/background-cabinet/src/modules/journal/plugin-host/journal-plugin-host.service.test.ts",
+        "packages/background-cabinet/src/modules/journal/plugin-host/journal-results-bridge.service.ts",
+        "packages/background-cabinet/src/modules/journal/plugin-host/journal-results-bridge.service.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 230
+      }
+    },
+    {
+      "blockId": "b2-owner-live-cabinet-acceptance",
+      "persona": "angelina",
+      "context": "angelina",
+      "zone": [
+        "docs/field/chart-list-acceptance-2026-08-22.md",
+        "docs/local-sprint/chart-list-plugin-20261003/",
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/sprint/experience/chart-list-plugin-20261003.segments.json"
+      ],
+      "estimate": {
+        "changedLines": 150
+      }
+    }
+  ],
+  "//why": "Аудит origin/main 2e59a5c3: кабинетный близнец существует и проходит целевые зубы. Не закрыты только два обещания задания: журнальный showcase не отправляет собственный RunRecord в office, а живая приёмка владельцем на часовом сеансе 21.08 не проведена. План не повторяет готовые ядро, UI, БД, адресацию или media-витрину.",
+  "//measure": "JournalPluginHostService.requestWithTask (journal-plugin-host.service.ts:152-183) проверяет задание, вызывает executor и возвращает result; отправителя /plugin-results/runs в packages/background-cabinet/src нет. Media PluginResultsBridgeService (background-media/.../plugin-results-bridge.service.ts:40-91) относится к прогону измерителя и не создаёт паспорт membrana.showcase.chart-list. docs/field/chart-list-acceptance-2026-08-22.md:8-18 остаётся НЕ ПРОВЕДЕНА. Базовые прогоны: plugin-handlers 51/51, cabinet UI 23/23, cabinet host/address/storage 27/27, chain rehearsal 9/9.",
+  "//order": "b1 → b2. B2 читает RunRecord после b1 и проводит живую приёмку; зоны не пересекаются. Точка перерезки: если b1 потребует менять @membrana/plugin-contracts, endpoint office или общий media-мост, СТОП и новая перерезка.",
+  "//forecast": "b1: после успешного executor журнал составляет RunRecord из неизменённых ctx address/fingerprints/resumeMode и RunResult, отправляет его в существующий office endpoint; недоступный office даёт именованный неблокирующий исход и не превращает состоявшийся отбор в отказ. Проверка: unit bridge + host integration + старые зубы. Опровержение: запись возможна только расширением контрактов, новым endpoint или синхронным отказом пользовательского прогона. b2: владелец в кабинете на корпусе 21.08 видит различимые результаты трёх критериев, строки играют тот же звук и паспорт showcase читается в office по runId; протокол фиксирует фактическое число записей (670 или 671 по живому источнику), снимки и вердикт. Опровержение: критерии совпадают, нужные источники не поднимаются, playback не тот либо RunRecord не читается — закрытие запрещено.",
+  "//porcha": "b1 porcha на стволе: тест подменяет office fetch, запускает requestWithTask с успешным executor и требует один POST /plugin-results/runs с address.pluginId=membrana.showcase.chart-list; на 2e59a5c3 вызовов 0, красный. Дополнительная порча меняет executor на throw: POST должен остаться 0. b2 porcha на стволе: проверка протокола требует статус ПРОВЕДЕНА, число фактически увиденных записей, три результата критериев и прочитанный office RunRecord; текущий документ содержит НЕ ПРОВЕДЕНА и красный.",
+  "//dod": "b1: RunRecord журнального showcase составляется только после успешного исполнения; поля адреса и отпечатков равны входному ctx, kind/completedAt равны RunResult; POST идёт на /plugin-results/runs с внутренним токеном; office-not-configured/unreachable/rejected именованы и логируются, но не стирают выборку; при отказе задания или executor запись не отправляется; контракты и office endpoint не меняются. b2: владелец проводит живую приёмку в кабинете на часовом корпусе 21.08; проверяет объём 20 по каждому из трёх критериев и объём 200 для разнообразия, playback/waveform, разбор вытеснений, источники разметки и чтение RunRecord showcase в office; протокол содержит реальное число записей, время, runId, результаты и честный PASS/BLOCK; sprint:gate и sprint:experience только после этой приёмки.",
+  "//out-of-scope": "Studio/library implementation, изменение метрик и порогов, четвёртый критерий, исчезновение собаки/машин, RecordingPassport, уборка буфера, schema telemetry-journal, plugin-contracts, деплой и архив карточки. Media RunRecord измерителя не переписывается.",
+  "//forks": "1. Повторно использовать реализацию media-моста через выделение общего пакета или сделать узкий кабинетный адаптер: умолчание — узкий адаптер в зоне b1, без межпакетного рефакторинга. 2. Недоставка в office блокирует пользовательский ответ или только называется в логе: умолчание — не блокирует уже состоявшийся отбор, как media-мост. 3. Корпус содержит 670 по старому протоколу или 671 по слову владельца: решает живой счётчик во время b2, число не подгоняется заранее.",
+  "ratification": null
+}
