@@ -5,27 +5,9 @@
     "chart-list-plugin"
   ],
   "frozenDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
-  "magistral": "evening-reads-done-work",
-  "swallow": {
-    "draftDigest": "419b30870c1ab3e73c857025a207256b8813a408840de180e5df0954bd0d3863",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-10-02.md",
-    "ownerAck": true,
-    "day": "2026-10-02",
-    "claimsProbe": {
-      "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-10-02.md",
-      "sha": "e5ee701d150c",
-      "at": "2026-10-02T17:59:27.825Z"
-    },
-    "gate": "evening:partner-swallow"
-  },
-  "day": "2026-10-02",
-  "magistralChosenAt": "2026-10-02",
-  "magistralAuthor": "human",
-  "magistralManual": {
-    "at": "2026-10-02",
-    "chosen": "evening-reads-done-work",
-    "snapshotDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
-    "inSnapshot": false
-  }
+  "magistral": "chart-list-plugin",
+  "swallow": null,
+  "day": "2026-10-03",
+  "magistralChosenAt": "2026-10-03",
+  "magistralAuthor": "snapshot"
 }

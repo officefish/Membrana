@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-02",
+  "date": "2026-10-03",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -7,6 +7,20 @@
       "severity": "low",
       "issue": "@babel/core: Arbitrary File Read via sourceMappingURL Comment",
       "url": "https://github.com/advisories/GHSA-4x5r-pxfx-6jf8"
+    },
+    {
+      "pkg": "@fastify/busboy",
+      "id": "1240981",
+      "severity": "high",
+      "issue": "@fastify/busboy vulnerable to Denial of Service via oversized multipart boundary",
+      "url": "https://github.com/advisories/GHSA-xjh9-v7x6-24jw"
+    },
+    {
+      "pkg": "@fastify/busboy",
+      "id": "1240982",
+      "severity": "high",
+      "issue": "@fastify/busboy vulnerable to Denial of Service via prototype-named multipart part header",
+      "url": "https://github.com/advisories/GHSA-x8mw-p69m-v3mx"
     },
     {
       "pkg": "@fastify/static",
@@ -499,6 +513,13 @@
       "url": "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p"
     },
     {
+      "pkg": "braces",
+      "id": "1240992",
+      "severity": "high",
+      "issue": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+      "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm"
+    },
+    {
       "pkg": "browserslist",
       "id": "1153171",
       "severity": "high",
@@ -763,6 +784,13 @@
       "severity": "moderate",
       "issue": "Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me",
       "url": ""
+    },
+    {
+      "pkg": "http-cache-semantics",
+      "id": "1240991",
+      "severity": "high",
+      "issue": "http-cache-semantics max-stale handling can disclose cross-user cached responses",
+      "url": "https://github.com/advisories/GHSA-ch52-4w7c-c8xp"
     },
     {
       "pkg": "inflight",
