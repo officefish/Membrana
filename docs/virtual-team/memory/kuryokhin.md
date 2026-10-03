@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14389/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 382 (причины в op-log) -->
+Записей: 50 · бюджет 14400/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 383 (причины в op-log) -->
+
+### 2026-10-03 · позиция · team-evening-feedback
+
+> Курёхин. Оценка артефактов: По магистрали аудио-путь не затронут, канон корректно не задействовал меня. `DAILY_STANDUP` правильно указал `node-duty-ready-predicate` как мою активную карточку и слот помощи по закрытию `ritual-day-2026-10-02`. Итоги дня: `ritual-day-2026-10-02` в […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-03.md#reply-1`
 
 ### 2026-10-02 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/library-open-api-m3-key-ttl-2026-09-01.md#reply-1`
 
-### 2026-09-01 · позиция · library-open-api-m4-extraction
+### 2026-08-12 · позиция · team-evening-feedback
 
-> С тракта: массовой раздачи медиа штормом нет — и правильно, трек по одному. Но ухо слышит другой риск: не «скачали zip двора», а «за вечер собрали связку предъявительских ссылок и унесли на свой CDN». Это та же выемка, только разрезанная на такты. Правило «по одному» без темпа — […] _(реплик в сеансе: 6)_
+> Курёхин Оценка артефактов: аудио-магистраль сегодня не в фокусе — стратегия и канон дня об этом не говорят, и это честно (тариф + санитария). MAIN_DAY_ISSUE не обещал ничего про DSP — согласовано. Итоги дня: по моему профилю — «—» на содержании. Но: закрыт […]
 
-— источник: `docs/seanses/library-open-api-m4-extraction-2026-09-01.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
-
-> Preview остаётся производной поверхностью. Он получает original только после `read-bytes` allow, сохраняет class и при любой ошибке возвращает `preview_unavailable`, не меняя original, registry или tip. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
