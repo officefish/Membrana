@@ -6,6 +6,7 @@ import {
   BUFFER_COLLECTION_ID,
   DEFAULT_MEDIA_LIBRARY_CONFIG,
   DEFAULT_SAMPLES_PAGE_SIZE,
+  TARIFF_DATASET_COLLECTION_ID,
   type MediaLibraryConfig,
 } from './constants.js';
 import { mediaLibraryTrace, traceElapsedMs } from './media-library-trace.js';
@@ -46,6 +47,17 @@ export class MediaLibraryService {
   private initialized = false;
 
   private initPromise: Promise<void> | null = null;
+
+  /** Идущая сверка открытия (#2569): параллельные вызовы (StrictMode) сливаются в один залп. */
+  private reconcilePromise: Promise<void> | null = null;
+
+  /**
+   * Каталог, для которого в снимке загружены пробы базового набора (#2569). Держится отдельно от
+   * `snapshot.quota.dataset`: квоту каждые 30 с перечитывает мост (`refreshQuota`), и сменённый
+   * каталог доехал бы в снимок раньше, чем перечитаны его пробы, — сверка открытия решила бы
+   * «тот же». Живёт в памяти сервиса: перезапуск и так читает всё через `init()`.
+   */
+  private datasetSamplesCatalogId: string | undefined;
 
   private snapshot: MediaLibrarySnapshot = {
     collections: [],
@@ -153,6 +165,7 @@ export class MediaLibraryService {
     const quotaStartedAt = performance.now();
     const quota = await this.backend.getQuota();
     mediaLibraryTrace('quota-done', { elapsedMs: traceElapsedMs(quotaStartedAt) });
+    if (quota.dataset) this.datasetSamplesCatalogId = quota.dataset.catalogId;
 
     this.snapshot = {
       collections,
@@ -179,6 +192,71 @@ export class MediaLibraryService {
     this.snapshot = { ...this.snapshot, quota: this.mergeQuota(quota) };
     this.emit();
     mediaLibraryTrace('refreshQuota-done', { elapsedMs: traceElapsedMs(startedAt) });
+  }
+
+  /**
+   * Сверка с сервером при открытии библиотеки (#2569; слово владельца 03.10: «коллекции должны
+   * пересматриваться при открытии библиотеки»; глубже — только при смене тарифа).
+   *
+   * Не инициализирован → `init()` и всё: init уже читает полностью, второй сверки нет.
+   * Иначе ЛЁГКАЯ сверка — всегда: ensure-reserved (сервер чинит заводское имя набора) + список
+   * коллекций + квота, три малых запроса, ни одного списка проб. Коллекции снимка заменяются,
+   * пробы не трогаются. ГЛУБЖЕ — только базовый набор и только когда сменился назначенный каталог
+   * (`quota.dataset.catalogId`) или `sampleCount` набора разошёлся с загруженным списком (фоновый
+   * досев). Пробы буфера (тысячи, постранично по 40) на этом пути не читаются никогда.
+   * Зовёт модуль библиотеки при монтировании, НЕ хук `useMediaLibrary` (его зовут и панели).
+   */
+  async reconcileOnOpen(): Promise<void> {
+    if (!this.initialized) {
+      await this.init();
+      return;
+    }
+    if (!this.reconcilePromise) {
+      this.reconcilePromise = this.runReconcileOnOpen().finally(() => {
+        this.reconcilePromise = null;
+      });
+    }
+    await this.reconcilePromise;
+  }
+
+  private async runReconcileOnOpen(): Promise<void> {
+    const startedAt = performance.now();
+    mediaLibraryTrace('reconcile-start');
+    await this.backend.ensureReservedCollections();
+    const collections = await this.backend.listCollections();
+    const quota = await this.backend.getQuota();
+
+    const live = new Set(collections.map((c) => c.id));
+    const prev = this.snapshot.samplesByCollection;
+    let samplesByCollection = Object.keys(prev).every((id) => live.has(id))
+      ? prev
+      : Object.fromEntries(Object.entries(prev).filter(([id]) => live.has(id)));
+
+    const dataset = collections.find((c) => c.id === TARIFF_DATASET_COLLECTION_ID);
+    const loadedCount = prev[TARIFF_DATASET_COLLECTION_ID]?.length ?? 0;
+    const catalogChanged =
+      quota.dataset !== undefined && quota.dataset.catalogId !== this.datasetSamplesCatalogId;
+    const reseeded = dataset?.sampleCount !== undefined && dataset.sampleCount !== loadedCount;
+    if (dataset && (catalogChanged || reseeded)) {
+      const rows = await this.backend.listSamples(TARIFF_DATASET_COLLECTION_ID);
+      samplesByCollection = { ...samplesByCollection, [TARIFF_DATASET_COLLECTION_ID]: rows };
+      if (quota.dataset) this.datasetSamplesCatalogId = quota.dataset.catalogId;
+    }
+
+    this.snapshot = {
+      ...this.snapshot,
+      collections,
+      samplesByCollection,
+      quota: this.mergeQuota(quota),
+    };
+    this.emit();
+    mediaLibraryTrace('reconcile-done', {
+      collections: collections.length,
+      datasetReloaded: dataset !== undefined && (catalogChanged || reseeded),
+      catalogChanged,
+      reseeded,
+      elapsedMs: traceElapsedMs(startedAt),
+    });
   }
 
   /**
