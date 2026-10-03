@@ -5,6 +5,30 @@
 
 ---
 
+## 2026-10-03 — `library-loading-state-2570` — **CLOSED · gate pass 2/2 · experience hit (2/2; b1 345 > оценки 260, порог не пробит) · PR #2574 влит (`f4e74219`)**
+
+- **Closure:** [`local-sprint/library-loading-state-2570/CLOSURE.md`](./local-sprint/library-loading-state-2570/CLOSURE.md) —
+  ратификация 03.10 12:35:56Z с умолчаниями; окно перерезано по слову владельца (b1 исполнен раньше `window.from` фазы 1,
+  поставленного на глаз; `recut_act` 15:50:39Z, повторная ратификация 15:51:41Z); b1 `f16f5db0` (dynin); живая приёмка
+  Studio `f4e74219`, прибор `9e86ec85`: «Загрузка коллекций…» вместо жёлтого, числа квоты раньше списков.
+- **Goal:** однозначное состояние загрузки библиотеки; предупреждение о недоступности — только по факту отказа.
+- **Source:** [#2570](https://github.com/officefish/Membrana/issues/2570) — наблюдение владельца 03.10.
+- **Cut:** [`sprint/cut/library-loading-state-2570.json`](./sprint/cut/library-loading-state-2570.json) — 2 блока, резчик dynin
+  ([конспект](./discussions/cut-library-loading-state-2570-dynin.md)).
+- **Boundary:** мост, пинги, `quota-status.ts`, бэкенды, сервер не тронуты; микрофон — #2573; загрузка буфера — #2571.
+
+## 2026-10-03 — `library-reconcile-on-open-2569` — **CLOSED · gate pass 2/2 · experience hit (2/2; b1 321 > оценки 220, порог не пробит) · PR #2572 влит (`0d39cbad`)**
+
+- **Closure:** [`local-sprint/library-reconcile-on-open-2569/CLOSURE.md`](./local-sprint/library-reconcile-on-open-2569/CLOSURE.md) —
+  ратификация 03.10 12:05:39Z; b1 `b736e739` (dynin); живая приёмка Studio `f4e74219`, прибор `9e86ec85`: «Базовый
+  набор», 120 без перезапуска; сеть в devtools и смена каталога — n/a.
+- **Goal:** коллекции сверяются с сервером при открытии библиотеки; глубже — только базовый набор при смене каталога или
+  досеве; буфер не читается.
+- **Source:** [#2569](https://github.com/officefish/Membrana/issues/2569) — слово владельца 03.10.
+- **Cut:** [`sprint/cut/library-reconcile-on-open-2569.json`](./sprint/cut/library-reconcile-on-open-2569.json) — 2 блока,
+  резчик dynin ([конспект](./discussions/cut-library-reconcile-on-open-2569-dynin.md)).
+- **Boundary:** порт `IStorageBackend`, сервер, хук `useMediaLibrary` не тронуты; #2563 сужен до бейджа; #2571 отдельно.
+
 ## 2026-10-03 — `header-badge-narrow-2558` — **CLOSED · gate pass 2/2 · experience hit (2/2; b1 147 > оценки 80, порог не пробит) · PR #2562 влит (`d8105f64`)**
 
 - **Closure:** [`local-sprint/header-badge-narrow-2558/CLOSURE.md`](./local-sprint/header-badge-narrow-2558/CLOSURE.md) —
