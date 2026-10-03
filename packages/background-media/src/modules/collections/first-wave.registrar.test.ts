@@ -89,8 +89,6 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
       'membrana.handler.spectral-flux', 'membrana.handler.template-match', 'membrana.handler.yamnet',
       // Свод сеанса смонтирован в том же доме отдельной волной — род report, не детектор (j2, #1961).
       'membrana.report.session-digest',
-      // Batch использует тот же read-only reader и живой detector orchestrator, не новый runtime.
-      'membrana.report.detector-batch',
       // Измеритель чарт-листа — ВТОРОЕ внедрение одного функционала (Т6, c5b): показывает
       // человеку чарт-лист в доме журнала, а меряет здесь, где звук лежит локально.
       'membrana.report.chart-list-measure',
@@ -100,6 +98,10 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
       // Витрина дублей набора (#2109) — третий показ семейства: пары похожих во всём наборе,
       // ничего не удаляет; результат вызывающему по runId, как у соседей.
       'membrana.showcase.library-duplicates',
+      // Batch использует тот же read-only reader и живой detector orchestrator, не новый runtime.
+      // ПОСЛЕДНИМ с 03.10 осознанно: он в своём блоке регистрации (C) — сбой импорта оркестратора
+      // больше не гасит измеритель и витрины (прод media 03.10). Порядок — следствие блоков.
+      'membrana.report.detector-batch',
     ]);
     expect(registered.filter((m) => m.kind === 'handler')).toHaveLength(6);
     expect(registered.filter((m) => m.kind === 'report')).toHaveLength(3);
@@ -119,12 +121,24 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
     await expect(reader.readAudio({ ...list[0]!, deviceId: 'dev-2' })).rejects.toThrow(/not found/);
   });
 
-  it('без пресета mfcc не регистрируется, пять заглушек — регистрируются (не тихо)', async () => {
+  it('без пресета mfcc не регистрируется, пять заглушек — регистрируются (не тихо); прочие блоки живы', async () => {
     const host = new CollectionsPluginHostService();
     await host.onModuleInit();
     await new FirstWavePluginsRegistrar(host, prisma, blobs, { MEDIA_CATALOG_ROOT: join(CATALOG_ROOT, 'nope') } as unknown as AppConfig, spyBridge().bridge).onModuleInit();
-    expect(host.getRegisteredPlugins().map((m) => m.id)).toHaveLength(5);
-    expect(host.getRegisteredPlugins().some((m) => m.id === 'membrana.handler.mfcc')).toBe(false);
+    const ids = host.getRegisteredPlugins().map((m) => m.id);
+    expect(ids.some((id) => id === 'membrana.handler.mfcc')).toBe(false);
+    // Контракт catch блока A прежний: ровно пять заглушек-детекторов.
+    expect(ids.filter((id) => id.startsWith('membrana.handler.'))).toEqual([
+      'membrana.handler.harmonic', 'membrana.handler.cepstral', 'membrana.handler.spectral-flux',
+      'membrana.handler.template-match', 'membrana.handler.yamnet',
+    ]);
+    // До 03.10 вместе с mfcc гасло всё: пресет ворот не нужен ни своду, ни измерителю, ни
+    // витринам, ни batch — им нужен только читатель проб. Теперь они регистрируются (блоки B, C).
+    expect(ids.filter((id) => !id.startsWith('membrana.handler.'))).toEqual([
+      'membrana.report.session-digest', 'membrana.report.chart-list-measure',
+      'membrana.showcase.library-chart-list', 'membrana.showcase.library-duplicates',
+      'membrana.report.detector-batch',
+    ]);
   });
 
   describe('requestRun — вход без скрипта (b4, #1961)', () => {
