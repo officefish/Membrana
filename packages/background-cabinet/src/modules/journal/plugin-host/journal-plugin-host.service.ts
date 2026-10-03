@@ -35,6 +35,7 @@ import type {
   PluginId,
   PluginManifest,
   PluginTrigger,
+  RunRecord,
   RunResult,
 } from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
 import { JOURNAL_HOME } from './home';
@@ -49,6 +50,10 @@ interface Registration {
 /** Чем модуль отдаёт плагину ленту. Порт, а не служба: хосту не нужен весь `JournalService`. */
 export interface JournalEntriesReader {
   listEntries(userId: string): Promise<readonly LiveJournalItemRow[]>;
+}
+
+export interface JournalRunRecorder {
+  send(run: RunRecord): Promise<unknown>;
 }
 
 @Injectable()
@@ -85,7 +90,10 @@ export class JournalPluginHostService implements IPluginHost, OnModuleInit {
     this.contracts = await this.contractsPromise;
   }
 
-  constructor(private readonly entries: JournalEntriesReader) {}
+  constructor(
+    private readonly entries: JournalEntriesReader,
+    private readonly recorder: JournalRunRecorder | null = null,
+  ) {}
 
   registerPlugin(manifest: PluginManifest, executor: PluginExecutor): void {
     if (!this.contracts) throw new ServiceUnavailableException('Plugin host is not initialized');
@@ -180,6 +188,21 @@ export class JournalPluginHostService implements IPluginHost, OnModuleInit {
       trigger,
       payload: { ...(ctx.payload as object), entries: verdict.entries, kinds },
     });
+    if (result && this.recorder) {
+      const record: RunRecord = {
+        completedAt: result.completedAt,
+        kind: result.kind,
+        address: ctx.address,
+        fingerprints: ctx.fingerprints,
+        resumeMode: ctx.resumeMode,
+      };
+      await this.recorder.send(record).catch((error: unknown) => {
+        this.logger.error(
+          { error, pluginId, runId: ctx.address.runId },
+          'Journal RunRecord bridge failed after successful plugin run',
+        );
+      });
+    }
     return { verdict, kinds, result };
   }
 
