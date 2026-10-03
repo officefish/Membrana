@@ -1,73 +1,57 @@
-<!-- Сгенерировано: 2026-10-02T06:04:37.862Z (yarn main-day-issue@cc58d6f6) -->
+<!-- Сгенерировано: 2026-10-03T09:59:15.948Z (yarn main-day-issue@78de7702) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
-<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"0eb88efaeda016876b628e72086e547c33ca8cb3","digest":"ec492c4e1ad7fe7ddf009656ea9126d9ed0d5d170d07f788ad5040bdc028b51d","versionAt":"2026-10-02T08:59:59+03:00"},"DAILY_STANDUP":{"version":"cc58d6f60369516d89d8ed5a7302373394c2e664","digest":"4556153d1a5d2d31fc0cb10b9ce82fc6a05966fb5bb8faae97953f2ff3ce59e1","versionAt":"2026-10-02T09:02:52+03:00"}}} -->
+<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"b1f113d32967d04a482e73b5d29bd6cdc10851df","digest":"075bf685e7d65cf03f176aa956b9152015b66974b4f68f2535f742d1690af43b","versionAt":"2026-10-03T12:51:04+03:00"},"DAILY_STANDUP":{"version":"78de770204cf170318caab44fb5e9b85623d32fc","digest":"2236549dc16326f6b16675e04a86e8cdce956cd5a128dc227673988f076db0aa","versionAt":"2026-10-03T12:57:38+03:00"}}} -->
 <!-- Звено канала: provider=anthropic model=claude-sonnet-4-6 source=overlay generations=1 -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
 <!-- active в реестре: trace-freeze-e-adr-gate-pr, trace-freeze-d-probe-truth-tooth, trace-freeze-c-library-render, trace-freeze-b-live-sendsync, trace-freeze-a-cut, cowork-library-open-api, node-duty-ready-predicate, studio-package-av-refusal, session-digest-library-face, dedup-pairs-show-and-wait, obs-sentry-container, logging-observability-contour, chart-list-plugin, media-per-device-token, capture-sidecar-protocol, plugin-results-payload-pocket, firebat-node-device, server-plugin-foundation, static-mmbrn-retirement, static-mmbrn-live-services, static-mmbrn-cutover, static-mmbrn-m6-alignment, static-mmbrn-rehydrate-parity, static-mmbrn-ingress-auth, static-mmbrn-target-provision, static-mmbrn-disposition-ledger, static-mmbrn-container, frame-holders-reassign-twenty, workflow-examples-marathon, procedure-run-journal-f1-local-trail, procedure-run-journal-2026-08-01, meeting-evening-review-predicate, evening-chain-review-predicate, mfcc-compare-sprint, insight-mandate-for-new, frame-rails-2307, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, membrane-node-runtime-remote, mp7b-rt7-prod-hardening, device-board-three-hosts-2026-06-26, db3h-s4-microphone-detectors, neural-free-tier-dataset-report, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, detection-alarm-loop-refactor -->
 
-# MAIN_DAY_ISSUE — 2026-10-02
+# MAIN_DAY_ISSUE — 2026-10-03
 
-<!-- Сгенерировано: 2026-10-02 (yarn main-day-issue) -->
-<!-- Магистраль: evening-reads-done-work · источник: owner-choice@chat/magistral-02-10 · author=human -->
+<!-- Сгенерировано: 2026-10-03 (yarn main-day-issue) -->
+<!-- Источник магистрали: owner-choice@chat/magistral-03-10 · morning-gates-state.json day=2026-10-03 -->
 
 ## Метаданные
 
 | Поле | Значение |
 |---|---|
-| `primaryFocusId` | `evening-reads-done-work` |
-| `primaryTitle` | Вечер и ревью читают сделанное: CLOSURE спринтов и влитые PR не превращаются в несделанное |
+| `primaryFocusId` | `chart-list-plugin` |
+| `primaryTitle` | Плагин кабинетного чарт-листа — сверка со стволом, спринт на остаток |
 | `githubIssue` | — |
 | `size` | L |
-| `promptPath` | — (фокус вне реестра задач; магистраль ручной чеканки владельца) |
-| `сгенерировано` | 2026-10-02 |
-
----
+| `promptPath` | `docs/prompts/SESSION_B_CHART_LIST_TASK.md` |
+| `сгенерировано` | 2026-10-03 |
 
 ## Магистраль
 
-**`evening-reads-done-work`** — прямое волеизъявление владельца от 02.10 (ручная чеканка вне снимка топ-3, author=human, origin=`owner-choice@chat/magistral-02-10`).
+Владелец 03.10 назначил магистраль дня — **`chart-list-plugin`**: плагин журнала «чарт-лист» (отбор звуков поверх почвы). Карточка существует с 22.08; витрина отбора уже живёт в media и Studio (#2110), кабинетный близнец остаётся незакрытым хвостом с 24.08. Порядок работы строго двухфазный: сначала **сверка** — пройти по пунктам задания `SESSION_B_CHART_LIST_TASK.md` и установить, что уже есть в стволе с доказательствами (символ/файл, а не «issue open»); затем **спринт** — только на подтверждённый остаток. Если при сверке окажется, что значительная часть уже в проде, карточка архивируется словом владельца, а не превращается в дублирующую работу. Прибор под нагрузкой (95% на тарифе «Наблюдательный пункт», 3891/4096 МБ — вход `sources[0]`), поэтому время дорого.
 
-Три вечера подряд (29.09, 30.09, 01.10) вечернее ревью объявляло сделанное несделанным: 01.10 влитые PR #2543 и #2544 не были прочитаны вечерним генератором, и он записал «магистраль не продвинута, #2503 шестой день». PR #2547 получил два BLOCK на опровергнутых посылках («r2 открыт» при закрытии в стволе, «красный тест кабинета» без свидетельства). Корень — генераторы вечернего ревью и MAIN_DAY_ISSUE не читают CLOSURE-файлы завершённых спринтов и не разворачивают oversized-диффы перед формулировкой посылок.
-
-Задача сегодня: зафиксировать диагноз, назвать конкретные места в скриптах и документах, где посылки берутся без чтения CLOSURE/влитых PR, и либо починить механику (если S/M), либо сформировать карточку реестра с точным DoD (если L). Вторым шагом — закрыть четыре P1-хвоста вечернего ревью (ritual r2, protocol опыта, cabinet-тест, PR #2529), чтобы сегодняшний вечер не воспроизвёл ту же ошибку.
-
-**Критерий успеха к вечеру:** вечернее ревью 02.10 НЕ выдаёт BLOCK на посылках, опровергнутых влитыми PR; `ritual-day-2026-10-02` закрыт без `runPhase: open`; все четыре P1 из code-review либо закрыты, либо имеют именованный корень и карточку задачи.
-
----
+**Критерий успеха к вечеру:** сверочный артефакт (таблица «есть в стволе / нет») зафиксирован и прочитан владельцем; либо первый рабочий артефакт кабинетного близнеца влит в PR с зелёным CI, либо карточка архивирована с явным словом владельца.
 
 ## Подкрепление
 
-- **Закрыть `ritual-day-2026-10-01-r2`** (первый коммит дня): `yarn turbo run typecheck test lint --filter=@membrana/tooling`; записать закрывающую строку в `2026-10-01.jsonl`; без этого вечернее ревью снова объявит день незавершённым — прямой воспроизвод бага, который составляет суть магистрали.
-- **Закрыть `#2503`** (`PERSONAS → scripts/lib/personas.mjs`, Ozhegov, XS): шестой день простоя; роутинг скелета Ангелины опирается на этот файл, и именно его отсутствие давало ложный сигнал «магистраль не продвинута» в трёх вечерних ревью — закрытие убирает один из источников ложных BLOCK-посылок.
-
----
+- **Закрыть `#2503` (PERSONAS → `scripts/lib/personas.mjs`, XS, Ozhegov)** — седьмой день простоя; одна правка импорта + коммит; без этого `yarn ask` и любой ритуал с роутингом персон ломается на этапе разрешения имён, что блокирует чистый прогон вечернего ревью магистрали.
+- **Назвать корень красного теста `@membrana/background-cabinet`** (`yarn turbo run test --filter=@membrana/background-cabinet` → файл + строка) — третий день без диагноза; P1, блокирует merge в затронутый пакет; без диагноза нельзя честно считать вечернее CI зелёным.
 
 ## Перспективные
 
-- После диагноза `evening-reads-done-work` — сформировать карточку реестра с точным DoD: «генератор вечернего ревью читает CLOSURE спринтов дня и git-log oversized-PR перед формулировкой посылок» — это сделает починку атомарной и верифицируемой.
-- Прохождение гейта `secret-parser-built` (резак + датированный проход с манифестом ротации) снимает амнистию на правку архива и открывает нормальную работу с историей сессий — следующий претендент на магистраль после закрытия P1-долга.
-- Ревью PR #2529 (`fuseDetectorConfidences`, 7627 строк, Vesnin, T2) разморозит benchmark-путь в `@membrana/core` — сигнал для планирования следующего детекционного спринта.
-
----
+- Пройденная сверка `chart-list-plugin` создаёт прецедент «архив вместо дублирования» — паттерн переносится на другие карточки с 24.08, чьи задачи могут уже быть в стволе.
+- Закрытый `#2503` разблокирует чистый прогон `yarn ask` / `yarn consilium` — дальнейшие ритуалы перестают зависеть от ручного обхода роутинга персон.
+- Диагноз красного теста `@membrana/background-cabinet` открывает merge-окно для всех задач, затрагивающих этот пакет, включая будущие шаги по парсеру секретов (`secret-parser-built`).
 
 ## Экспериментальные
 
-- **Проба A:** `grep -r "runPhase" docs/archive/daily-day/ | tail -20` — узнаем, сколько раз за последние две недели r2-прогон оставался `open` к вечеру; если паттерн системный — диагноз подтверждён цифрой, не ощущением.
-- **Проба B:** `head -5 docs/DAILY_CODE_REVIEW.md` и `head -5 docs/archive/daily-day/2026-10-01*/MAIN_DAY_ISSUE.md` — проверить, несёт ли вчерашний MAIN_DAY_ISSUE ссылку на CLOSURE #2543/#2544; если нет — место инъекции найдено.
-- **Проба C:** `ls docs/procedures/duty/2026-09-27.md` — проверить существование протокола опыта трёх дорог; если файла нет — P1 подтверждён немедленно, не требует разворачивания диффа.
-
----
+- **Запустить `night-triage-secret-scan.mjs` в режиме «только лог» на одном архивном файле** — узнать, детектор уже видит то, что нужно резать, или паттерны неполны; делать только если остался слот после сверки магистрали.
+- **Прогнать `pr:ship` на ветке с намеренно засвеченной строкой в диффе** — узнать, блокирует ли текущий CI засвеченный секрет; слот — после закрытия `#2503`.
+- **Сымитировать ротацию одного ключа вручную (без реального отзыва)** — проверить, достаточен ли формат манифеста ротации для датированного прохода; слот — вечер, если P1-хвосты закрыты.
 
 ## Санитарные
 
-- **`ritual-day-2026-10-01-r2`** — `runPhase: open`, закрывающей записи нет; P1; закрыть первым коммитом (`yarn turbo run typecheck test lint --filter=@membrana/tooling`).
-- **PR #2529** (`fuseDetectorConfidences`, 7627 строк) — пятый перенос T2-ревью; P1; `yarn code-review:pr 2529`; до завершения — никаких правок benchmark-пути в `@membrana/core`.
-- **`@membrana/background-cabinet` красный тест** — корень не назван; P1; `yarn turbo run test --filter=@membrana/background-cabinet` до любого merge в пакет.
-- **`docs/procedures/duty/2026-09-27.md`** — в диффе вчерашнего ревью не появился; P1; подтвердить коммитом с фактами по трём дорогам (если файла нет — создать до вечера).
-- **`#2503` (`PERSONAS → scripts/lib/personas.mjs`)** — Ozhegov, XS, шестой день; P2; `yarn ask vesnin --no-context "тест"` после правки.
-- **a11y пагинации (#2476)** — три чекбокса (`aria-current`, focus trap, Tab/Enter) не верифицированы вторую неделю; P2; Rodchenko.
-- **Зубы адаптера (`buildBoardOverflowHoldView`)** — лежат в `OverflowWindowHost.test.tsx`; рекомендация Vesnin: вынести в отдельный файл до следующей правки зоны; P2.
+- `ritual-day-2026-10-02` в `runPhase: open` — закрыть первым коммитом утра; проверить, что `2026-10-02.jsonl` получила `close`-запись; без этого паттерн `r2` за 01.10 повторится третий раз подряд.
+- `#2503` (`PERSONAS → scripts/lib/personas.mjs`, XS) — седьмой день простоя; одна правка импорта + коммит; `yarn ask vesnin --no-context "тест"` — финальная проверка.
+- Красный тест `@membrana/background-cabinet` — назвать корень (файл + строка), третий день без диагноза; P1.
+- PR `#2556` (631 строка, `fix: ritual: carry result evidence`) — ревью первым слотом по регламенту «один oversized-PR в день»; остальные (#2555, #2553, #2550, #2547, #2549) — в очередь.
+- `buildBoardOverflowHoldView` — вынести в отдельный тест-файл; замечание висит вторую неделю; XS, делать только при наличии свободного слота.
 
 ---
 
@@ -75,82 +59,69 @@
 
 | Утверждение | Происхождение | Первоисточник | Свежесть |
 |---|---|---|---|
-| Магистраль — `evening-reads-done-work` (ручная чеканка владельца) | owner-choice | `docs/tasks/main-day-assertions.json` → `sources[0]`, author=human | 2026-10-02 |
-| Гейт `morning-gates-state.json` несёт `magistral: "evening-reads-done-work"`, `day: "2026-10-02"`, `magistralAuthor: "human"` | owner-choice (гейт) | `docs/tasks/morning-gates-state.json` | 2026-10-02 |
-| **Расхождение (У1):** assertions `sources[0]` и гейт совпадают по выбору (`evening-reads-done-work`) и по дате (2026-10-02) — расхождения нет, но `magistralManual.inSnapshot: false` фиксирует, что выбор сделан вне снимка топ-3 (`angelina-hostess-impl`/`assets-container`/`chart-list-plugin`); **магистраль взята с гейта, assertions не перечеканены** | оба источника владельческие, спор не нужен — они согласны | `morning-gates-state.json` + `main-day-assertions.json` | 2026-10-02 |
-| Три вечера подряд вечернее ревью BLOCK на опровергнутых посылках (влитые PR не прочитаны) | сессия / code-review | `docs/DAILY_CODE_REVIEW.md` (2026-10-01) | 2026-10-01 |
-| `ritual-day-2026-10-01-r2` в `runPhase: open` — закрывающей записи нет | код / JSONL | `docs/archive/daily-day/*/2026-10-01.jsonl` | 2026-10-01 |
-| Стендап подтверждает магистраль `evening-reads-done-work` и называет те же P1-хвосты | план | `docs/DAILY_STANDUP.md` (2026-10-02) — **отражение тех же источников владельца** | 2026-10-02 |
+| Владелец выбрал `chart-list-plugin` из топ-3 в чате | сессия | `owner-choice@chat/magistral-03-10` (реплика владельца) | 2026-10-03 |
+| `morning-gates-state.json` несёт `magistral: chart-list-plugin`, `day: 2026-10-03` | снимок-хардкод | `docs/tasks/morning-gates-state.json` | 2026-10-03 |
+| `main-day-assertions.json` `sources[0].claim` совпадает с гейтом (`chart-list-plugin`) | план | `docs/tasks/main-day-assertions.json` | 2026-10-03 |
+| **Расхождение:** `morning-gates-state.json` и `sources[0]` несут одно имя, но это два разных артефакта; `morning-gates-state.json magistralChosenAt=2026-10-03` — волеизъявление позднее; **магистраль взята с гейта, assertions не перечеканены** | снимок-хардкод | `docs/tasks/morning-gates-state.json` (`magistralAuthor: snapshot`) | 2026-10-03 |
+| Витрина отбора уже в стволе (media + Studio, #2110); кабинетный близнец — незакрытый хвост с 24.08 | план / стендап | `docs/DAILY_STANDUP.md` (читает реестр, `registry.json`) | 2026-10-03 |
+| Топ-3 кандидатов детерминировано из реестра; `chart-list-plugin` — наиболее контекстуально горячий | план | `docs/DAY_PLAN.md` (генератор #592 читает `registry.json`) | 2026-10-03 |
 
-> 1 независимый первоисточник (слово владельца, 02.10) + 1 независимый первоисточник (вчерашнее code-review, 01.10). Стендап — отражение первых двух, не третий голос.
-
----
+> **1 независимый источник — слово владельца (реплика в чате 03.10).** `morning-gates-state.json` и `main-day-assertions.json` — два артефакта-отражения одного волеизъявления. `DAILY_STANDUP.md` и `DAY_PLAN.md` — контекст, не источник выбора. Синтез запрещён; магистраль взята с гейта как более позднего владельческого артефакта. Перечеканка `main-day-assertions.json` предписана каноном и не сделана — это открытый drift, не блокер дня.
 
 ## Посылки
 
 | Посылка | Маркер | Вердикт |
 |---|---|---|
-| Генератор вечернего ревью не читает CLOSURE влитых PR при формулировке посылок | `file:scripts/_daily-code-review.mjs` — отсутствие вызова чтения CLOSURE-файлов спринтов | `unknown` — требует probe; диагноз назван владельцем, механика требует верификации |
-| `ritual-day-2026-10-01-r2` висит `runPhase: open` | `file:docs/archive/daily-day/*/2026-10-01.jsonl` — закрывающей строки нет | `holds` (подтверждено code-review 01.10) |
-| `docs/procedures/duty/2026-09-27.md` отсутствует или не закоммичен с фактами | `file:docs/procedures/duty/2026-09-27.md` | `unknown` — `ls` первым действием |
-| `@membrana/background-cabinet` красный тест, корень не назван | `symbol:` — нет; диагностика: `yarn turbo run test --filter=@membrana/background-cabinet` | `holds` (подтверждено code-review 01.10) |
-
----
+| Кабинетный близнец чарт-листа отсутствует в стволе как самостоятельный плагин | `file:apps/client/src/plugins/chart-list-plugin/` — наличие/отсутствие директории | `unknown` — сверка первым шагом дня |
+| Витрина отбора для media и Studio уже в проде (#2110) — повтор не нужен | `symbol:ChartListPlugin` в `apps/studio` или `apps/media` | `unknown` — проверяется при сверке |
+| `#2503` не закрыт, роутинг персон сломан | `file:scripts/lib/personas.mjs` — наличие актуального импорта `PERSONAS` | `holds` (седьмой день без движения, подтверждено стендапом и ревью) |
+| Красный тест `@membrana/background-cabinet` не диагностирован | `yarn turbo run test --filter=@membrana/background-cabinet` — exit non-zero | `holds` (третий день, подтверждено ревью 02.10) |
 
 ## Сегодня делаем
 
-1. `ls docs/procedures/duty/2026-09-27.md` — подтвердить существование; если нет — создать и закоммитить с фактами по трём дорогам (P1).
-2. `yarn turbo run typecheck test lint --filter=@membrana/tooling` — закрыть `ritual-day-2026-10-01-r2`, записать закрывающую строку в `2026-10-01.jsonl`.
-3. `yarn turbo run test --filter=@membrana/background-cabinet` — диагностировать красный тест, назвать корень (файл + строка), открыть карточку задачи или закрыть тест.
-4. Закрыть `#2503` (`PERSONAS → scripts/lib/personas.mjs`, Ozhegov, XS): правка + коммит + проверка `yarn ask vesnin --no-context "тест"`.
-5. Диагностика `evening-reads-done-work`: прочитать `scripts/_daily-code-review.mjs` и `scripts/_main-day-issue.mjs`, найти точки, где посылки берутся без чтения CLOSURE/влитых PR; зафиксировать находку в `docs/discussions/evening-reads-done-work-diagnosis.md`.
-6. По итогам диагностики: если правка S/M — внести и закоммитить; если L — оформить карточку реестра с точным DoD и маркером проверки.
-7. `yarn code-review:pr 2529` — начать T2-ревью PR #2529 (Vesnin); если не завершить за день — зафиксировать частичный прогресс и корень блокера.
-
----
+1. Закрыть `ritual-day-2026-10-02` (`runPhase: open`) — записать `close`-запись в `2026-10-02.jsonl`, убедиться что `runPhase` меняется на `closed`.
+2. Сверка `chart-list-plugin`: пройти по пунктам `SESSION_B_CHART_LIST_TASK.md`, для каждого пункта указать маркер (`symbol:` или `file:`) — есть в стволе или нет; результат — таблица «есть / нет» с доказательствами.
+3. По итогу сверки: если остаток есть — спринт на кабинетный близнец (минимальный PR с зелёным CI); если всё в стволе — архивировать карточку словом владельца.
+4. Закрыть `#2503` (PERSONAS → `scripts/lib/personas.mjs`): правка импорта + коммит + `yarn ask vesnin --no-context "тест"`.
+5. Назвать корень красного теста `@membrana/background-cabinet`: `yarn turbo run test --filter=@membrana/background-cabinet` → файл + строка + письменный диагноз.
+6. Ревью PR `#2556` (631 строка) — первый и единственный oversized-PR сегодня по регламенту.
 
 ## Definition of Done (фокус)
 
-- [ ] `docs/procedures/duty/2026-09-27.md` существует и содержит факты по трём дорогам (коммит с датой).
-- [ ] `ritual-day-2026-10-01-r2` имеет закрывающую запись в `2026-10-01.jsonl` (`runPhase` не `open`).
-- [ ] `@membrana/background-cabinet` тест: корень назван (файл + строка) и зафиксирован в задаче реестра или закрыт.
-- [ ] `#2503` закрыт: `PERSONAS` живёт в `scripts/lib/personas.mjs`, `yarn ask vesnin --no-context "тест"` отвечает без ошибки роутинга.
-- [ ] `docs/discussions/evening-reads-done-work-diagnosis.md` содержит точки инъекции ложных посылок с маркерами (`file:` или `symbol:`).
-- [ ] Вечернее ревью 02.10 не выдаёт BLOCK на посылках, опровергнутых влитыми PR дня.
-- [ ] PR #2529: либо `yarn code-review:pr 2529` завершён и результат зафиксирован, либо частичный прогресс + именованный блокер в `docs/discussions/`.
-
----
+- [ ] Таблица сверки `chart-list-plugin` (пункты задания × маркеры ствола) зафиксирована в артефакте и прочитана владельцем
+- [ ] Принято решение: спринт на остаток ИЛИ архивация карточки словом владельца — результат зафиксирован письменно
+- [ ] Если спринт: PR кабинетного близнеца открыт, CI зелёный (или диагностирована причина красного)
+- [ ] Если архив: карточка `SESSION_B_CHART_LIST_TASK.md` помечена archived с датой и подписью владельца
+- [ ] `#2503` закрыт: `yarn ask vesnin --no-context "тест"` проходит без ошибки роутинга персон
+- [ ] Красный тест `@membrana/background-cabinet` — корень назван (файл + строка), диагноз зафиксирован письменно
+- [ ] `ritual-day-2026-10-02` — `runPhase` переведён в `closed`, запись в `2026-10-02.jsonl` есть
 
 ## Сознательно не делаем сегодня
 
-- **`angelina-hostess-impl`** (L, контракт `docs/procedures/angelina-hostess-contract.md`) — план дня назначил её магистралью, но владелец 02.10 явно перевыбрал `evening-reads-done-work`; L-задача требует чистого стола, стол сейчас занят P1-долгом.
-- **`assets-container`** и **`chart-list-plugin`** (оба L) — не привязаны к сегодняшнему гейту и не входят в owner-выбор; откладываются до следующего owner-choice после закрытия P1.
-- **Повторный DSP-бенчмарк (harmonic/cepstral/flux на free-v1)** — потолок эшелона 0 зафиксирован (`FFT_METRICS_POTENTIAL_AND_LIMITS.md` §6); без нового датасета или fusion-гипотезы информации не даёт.
-- **Правки в `@membrana/core` (benchmark-путь)** — заморожены до завершения `yarn code-review:pr 2529`.
-- **Гейт `secret-parser-built`** (резак + манифест ротации) — следующий претендент, не сегодня: сначала закрыть P1-хвосты.
-
----
+- `angelina-hostess-impl` и `assets-container` — стол не чист (P1-хвосты не закрыты); L-задача поверх незакрытых P1 воспроизведёт паттерн трёх предыдущих вечеров.
+- Oversized PR пачкой (#2555, #2553, #2550, #2547, #2549) — регламент: один за день; сегодня только #2556.
+- DSP-бенчмарк (harmonic / cepstral / flux на free-v1) — потолок зафиксирован (`FFT_METRICS_POTENTIAL_AND_LIMITS.md` §6), без смены датасета информации не добавит.
+- Любое касание `@membrana/core` benchmark-пути — PR #2529 (`fuseDetectorConfidences`, 7627 строк, шестой день заморозки) не закрыт; регрессия необнаруживаема.
+- `buildBoardOverflowHoldView` вынос в тест — XS, но только при свободном слоте после магистрали и P1-хвостов.
+- Запуск `secret-parser-built` / `night-triage-secret-scan.mjs` как основная работа — только экспериментальный слот, если магистраль закрыта.
 
 ## Вторично (если останется время)
 
-- a11y пагинации (#2476): Rodchenko верифицирует три чекбокса (`aria-current`, focus trap, Tab/Enter) и закрывает issue.
-- Вынести зубы адаптера (`buildBoardOverflowHoldView`) из `OverflowWindowHost.test.tsx` в отдельный тест-файл (рекомендация Vesnin из вчерашнего ревью).
-
----
+- Ревью PR #2555 (`fix(build): stale-dist-turbo-cache`, 810 строк) — второй в очереди oversized-PR, только после #2556.
+- `buildBoardOverflowHoldView` — вынести в отдельный тест-файл (XS, замечание висит вторую неделю).
 
 ## Зависимости и риски
 
-- **Блокер 1:** `ritual-day-2026-10-01-r2` не закрыт → вечернее ревью снова объявит день незавершённым; закрыть первым коммитом.
-- **Блокер 2:** `yarn code-review:pr 2529` не выполнено → benchmark-путь в `@membrana/core` заморожен; любые коммиты в эту зону создают необнаруживаемую регрессию.
-- **Риск 1:** диагностика `evening-reads-done-work` может вскрыть L-правку (перепись логики чтения CLOSURE в нескольких скриптах) — тогда сегодня только карточка задачи, не правка; вечер это выдержит, если r2 и P1-хвосты закрыты.
-- **Риск 2:** `docs/procedures/duty/2026-09-27.md` отсутствует → опыт трёх дорог не задокументирован → fusion-задача не имеет фактической основы; проверить первым `ls`-действием.
-
----
+- **Блокер сверки:** если `SESSION_B_CHART_LIST_TASK.md` не читается или промпт устарел — сверка невозможна без уточнения у владельца; запросить немедленно, не тратить день на угадывание.
+- **P1 — `ritual-day-2026-10-02` в `runPhase: open`:** если не закрыть первым коммитом, вечернее ревью упрётся в третий рецидив паттерна `r2`.
+- **P1 — красный тест `@membrana/background-cabinet`:** без диагноза merge в затронутый пакет создаёт необнаруживаемую регрессию; спринт магистрали может потребовать merge в этот пакет.
+- **Риск «всё уже в стволе»:** сверка может показать, что кабинетный близнец фактически готов; тогда артефакт дня — архивация, а не код; это не провал, а честный исход.
 
 ## Ссылки
 
-- [DAILY_STANDUP.md](../docs/DAILY_STANDUP.md) — стендап 2026-10-02
-- [DAILY_CODE_REVIEW.md](../docs/DAILY_CODE_REVIEW.md) — вчерашнее ревью (P1-хвосты)
-- [morning-gates-state.json](../docs/tasks/morning-gates-state.json) — гейт магистрали
-- [main-day-assertions.json](../docs/tasks/main-day-assertions.json) — sources[0] владельца
-- [FFT_METRICS_POTENTIAL_AND_LIMITS.md](../docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) — потолок эшелона 0 (не трогать)
+- [DAILY_STANDUP.md](../docs/DAILY_STANDUP.md) — стендап 2026-10-03
+- [SESSION_B_CHART_LIST_TASK.md](../docs/prompts/SESSION_B_CHART_LIST_TASK.md) — task-промпт магистрали
+- [DAY_PLAN.md](../docs/DAY_PLAN.md) — план дня, топ-3 кандидатов
+- [main-day-assertions.json](../docs/tasks/main-day-assertions.json) — sources[0], owner-choice@chat/magistral-03-10
+- [morning-gates-state.json](../docs/tasks/morning-gates-state.json) — гейт утра, `magistral: chart-list-plugin`
+- [DAILY_CODE_REVIEW.md](../docs/DAILY_CODE_REVIEW.md) — вечернее ревью 02.10 (P1-хвосты)
