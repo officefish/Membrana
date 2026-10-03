@@ -5,6 +5,7 @@ import { JournalService } from './journal.service';
 import { JournalPluginHostService } from './plugin-host/journal-plugin-host.service';
 import { JournalPluginsController } from './plugin-host/journal-plugins.controller';
 import { JournalServiceEntriesReader } from './plugin-host/journal-entries.reader';
+import { JournalResultsBridgeService } from './plugin-host/journal-results-bridge.service';
 import { ChartListMeasureAdapter } from './selection/measure.adapter';
 import { ChartListOrchestrator } from './selection/chart-list.orchestrator';
 import { ChartListSelectionController, MembraneResolver } from './selection/selection.controller';
@@ -13,6 +14,7 @@ import { MediaRunPort } from './selection/media-run.port';
 import { ChartListRegistrar } from './selection/chart-list.registrar';
 import { APP_CONFIG } from '../../config/config.tokens';
 import type { AppConfig } from '../../config/env.schema';
+import type { CabinetConfigWithOffice } from '../../config/office-env.schema';
 import { PrismaService } from '../../prisma/prisma.service';
 import { MediaBridgeService } from '../pair/media-bridge.service';
 
@@ -23,10 +25,16 @@ import { MediaBridgeService } from '../pair/media-bridge.service';
     JournalService,
     JournalServiceEntriesReader,
     {
+      provide: JournalResultsBridgeService,
+      useFactory: (config: CabinetConfigWithOffice) => new JournalResultsBridgeService(config),
+      inject: [APP_CONFIG],
+    },
+    {
       // Хост принимает ПОРТ ленты, а не службу: связывание порта со службой — акт сборки (И-8).
       provide: JournalPluginHostService,
-      useFactory: (reader: JournalServiceEntriesReader) => new JournalPluginHostService(reader),
-      inject: [JournalServiceEntriesReader],
+      useFactory: (reader: JournalServiceEntriesReader, bridge: JournalResultsBridgeService) =>
+        new JournalPluginHostService(reader, bridge),
+      inject: [JournalServiceEntriesReader, JournalResultsBridgeService],
     },
     ChartListSelectionService,
     {
