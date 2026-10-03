@@ -14,6 +14,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { ScenarioRuntimeState } from '../runtime/index.js';
+import { BOARD_HOLD_BADGE_MIN_WIDTH_CLASS } from '../types/board-ui.js';
 
 import { BoardOverflowHoldBadge } from './board-overflow-hold-badge.js';
 import type { BoardOverflowHoldView } from './board-overflow-hold.js';
@@ -85,11 +86,15 @@ describe('BoardOverflowHoldBadge', () => {
     expect(screen.getByRole('status').textContent).toBe('Заголовок из клиента · Причина из таблицы клиента');
   });
 
-  it('#2552: бейдж уступает место в шапке — без shrink-0, с min-w-0, текст усекается во внутреннем span', () => {
+  it('#2552/#2558: бейдж уступает место в шапке — без shrink-0, с полом min-w-[…], текст усекается во внутреннем span', () => {
     render(<BoardOverflowHoldBadge hold={view(vi.fn())} />);
     const btn = screen.getByRole('button');
     expect(btn.className).not.toContain('shrink-0');
-    expect(btn.className).toContain('min-w-0');
+    // P1 (#2558): пол из константы — бейдж сжимается, но не ниже «Буфер пол…».
+    expect(btn.className.split(/\s+/u)).toContain(BOARD_HOLD_BADGE_MIN_WIDTH_CLASS);
+    expect(BOARD_HOLD_BADGE_MIN_WIDTH_CLASS).toMatch(/^min-w-\[[^\]]+\]$/u);
+    // Пол и есть min-width: второго `min-w-*` на внешнем элементе нет (гонка порядка CSS).
+    expect(btn.className.split(/\s+/u).filter((c) => c.startsWith('min-w-'))).toHaveLength(1);
     const text = btn.querySelector('.truncate');
     expect(text).not.toBeNull();
     expect(text?.className).toContain('min-w-0');
@@ -99,8 +104,22 @@ describe('BoardOverflowHoldBadge', () => {
     render(<BoardOverflowHoldBadge hold={view()} />);
     const status = screen.getByRole('status');
     expect(status.className).not.toContain('shrink-0');
-    expect(status.className).toContain('min-w-0');
+    expect(status.className.split(/\s+/u)).toContain(BOARD_HOLD_BADGE_MIN_WIDTH_CLASS);
     expect(status.querySelector('.truncate')?.textContent).toBe('Заголовок из клиента · Причина из таблицы клиента');
+  });
+
+  it('#2558 P4/P5: внешний элемент бейджа сам не клипует (без overflow-*), пол и внутренний truncate живут вместе', () => {
+    for (const hold of [view(vi.fn()), view()]) {
+      cleanup();
+      render(<BoardOverflowHoldBadge hold={hold} />);
+      const outer = hold.onOpenWindow ? screen.getByRole('button') : screen.getByRole('status');
+      const classes = outer.className.split(/\s+/u);
+      // P4: клип на внешнем элементе съел бы пол — усекает только внутренний span.
+      expect(classes.some((c) => c.startsWith('overflow-') || c === 'truncate')).toBe(false);
+      // P5: пол без усечения — текст вытек бы за пол; усечение без пола — бейдж ушёл бы в ноль.
+      expect(classes).toContain(BOARD_HOLD_BADGE_MIN_WIDTH_CLASS);
+      expect(outer.querySelector('.truncate')).not.toBeNull();
+    }
   });
 
   it('#2552: усечение — форма, не потеря слов: title и aria-label несут длинный заголовок целиком', () => {
