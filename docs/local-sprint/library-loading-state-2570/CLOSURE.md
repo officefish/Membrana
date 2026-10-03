@@ -3,12 +3,12 @@
 | Поле | Значение |
 |------|----------|
 | Sprint | `library-loading-state-2570` · [`OPEN.md`](./OPEN.md) · Issue [#2570](https://github.com/officefish/Membrana/issues/2570) (закрыт ведущей 03.10) |
-| Plan | [`library-loading-state-2570.json`](../../sprint/cut/library-loading-state-2570.json) — ратифицирован владельцем 2026-10-03T12:35:56Z («Ратифицирую с умолчаниями»), дайджест `f4c93721…`; `sprint:cut` → `contract` |
+| Plan | [`library-loading-state-2570.json`](../../sprint/cut/library-loading-state-2570.json) — ратифицирован владельцем 2026-10-03T12:35:56Z («Ратифицирую с умолчаниями», дайджест `f4c93721…`); **перерезка окна** по слову владельца «Перерезать окно» — `window.from` 13:00:00Z → 12:35:56Z, `recut_act` 15:50:39Z, повторная ратификация 2026-10-03T15:51:41Z, дайджест `c6f75491…`; блоки и их `revisionAt` без изменений; `sprint:cut` → `contract` |
 | Blocks | b1 `f16f5db0` (dynin) · b2 — живая приёмка владельца 03.10 + закрытие (angelina, гейт) |
 | Traces | [`execution-traces.jsonl`](./execution-traces.jsonl) · ревью персон в [`reviews/`](./reviews/) |
 | Segments | [`library-loading-state-2570.segments.json`](../../sprint/experience/library-loading-state-2570.segments.json) |
-| Gate | см. §«Гейт и опыт» |
-| Experience | см. §«Гейт и опыт» |
+| Gate | **pass** 2/2 `honest_pair`, находок 0; close-запись `pass` в `docs/procedure-runs/trail/2026-10-03.jsonl` (прогон открыт ратификацией 03.10 12:35:56Z, закрыт 03.10 15:53:17Z) |
+| Experience | `dynin-library-loading-state-2570-cut-1` · исход по правилу инструмента **hit** (точность 2/2, `overflowRate` 0/2, `missOverflow=0`, `missOverCut=0`) · b1 345 строк против оценки 260 — выше оценки, порог 400 не пробит · архив персоны dynin +1 |
 | PR | **#2574** — влит 03.10 12:55:44Z, в main как `f4e74219`; голова ветки `f16f5db0`; сдача `pr:ship --no-merge --issue-mention 2570`. Закрытие — PR от ветки `chore/close-library-2569-2570` (`--no-merge`), общий с закрытием #2569 |
 | Branch / tree | `fix/library-loading-state-2570` от `origin/main` `0d39cbad` · `Membrana-sanitation-b`; закрытие — `chore/close-library-2569-2570` от `origin/main` `f4e74219` · `Membrana-installstate` |
 | Registry | карточки `library-loading-state-2570` в `docs/tasks/registry.json` **нет** — `task:archive` применять не к чему |
@@ -70,20 +70,55 @@ n/a — не hit: путь настоящего отказа живьём не �
 
 ## Ревью персон
 
-_заполняется после прогона ревью_
+- dynin b1 — [`reviews/dynin.md`](./reviews/dynin.md): **LGTM**; I1–I4 «имеют и зуб, и красный на мутации»; перебор
+  345/260 «назван честно, локализован в зубах»; необязательное `loadState` — «корректное ослабление типа при сохранении
+  инварианта на стороне продьюсера»; n/a отказа и P11 — «честная граница». Не блок: таблица `Bi → зуб` (добавлена выше) и
+  перерезка окна задним числом с отметкой владельца (сделана, см. шапку и шероховатость 1).
+- angelina b2 — [`reviews/angelina.md`](./reviews/angelina.md): **LGTM**, находок BLOCK нет: приёмка привязана к Studio
+  `f4e74219` и прибору `9e86ec85`; n/a отказа и P11 «не подогнаны»; перебор 345/260 «назван трижды, оговорка держится»;
+  #2571/#2573 «ни одно не замаскировано под сделанное»; перерезка окна — «вся цепочка в шапке и шероховатости 1».
 
 ## Гейт и опыт
 
-_заполняется после прогона инструментов_
+Порядок — опыт прежде гейта (ADR-0026).
+
+```
+sprint:experience --plan docs/sprint/cut/library-loading-state-2570.json --traces …/execution-traces.jsonl
+  --segments docs/sprint/experience/library-loading-state-2570.segments.json --now 2026-10-03T15:53:30Z
+Запись рода собрана из ЖИВЫХ файлов: dynin-library-loading-state-2570-cut-1 · исход записи: hit
+точность нарезки: 100.0% (2/2) · blocksCount=2 · overflowRate=0.0% (0/2) · withoutOutcome=0 · unattributed=0 · missOverflow=0 · missOverCut=0
+Архив персон: доехало 1, отклонено 0, без исхода 0 (из 1)
+```
+
+Род опыта по правилу инструмента — **hit**: оба блока под порогом 400 (b1 345, b2 ≈250 по файлу сегментов). Оговорка:
+hit — про порог, не про оценку: b1 перебрал оценку резчика на 33 % (345/260).
+
+```
+sprint:gate --plan docs/sprint/cut/library-loading-state-2570.json --traces …/execution-traces.jsonl --now 2026-10-03T15:53:17Z
+  b1-loading-state · dynin · honest_pair — пара полна (context_run + review_pass): 2 вещдоков (в окне 2, валидных 2)
+      вещдоки: packages/services/media-library/src/media-library-service.ts, docs/local-sprint/library-loading-state-2570/reviews/dynin.md
+  b2-live-check-closure · angelina · honest_pair — пара полна: 2 вещдоков
+      вещдоки: docs/local-sprint/library-loading-state-2570/CLOSURE.md, docs/local-sprint/library-loading-state-2570/reviews/angelina.md
+итог: остановок 0 из 2 блоков · зелёных 2 · вторая дверь 0 · корпус: следов 4 · находок 0 · код возврата: 0
+журнал: прогон спринта закрыт — close-запись pass в docs/procedure-runs/trail/2026-10-03.jsonl
+```
+
+Следы — реальным временем (отметки коммита и файлов) внутри перерезанного окна (12:35:56Z 03.10 → 20:00Z 06.10):
+контекст b1 12:44:31Z (коммит `f16f5db0`), ревью dynin 15:47:15Z, правка CLOSURE 15:52:28Z, ревью angelina 15:53:06Z. До перерезки окна проба гейта (без записи в журнал — стоп ADR-0026 по отсутствию опыта)
+дала b1 `incomplete_trace` и находку `eg-window-after-first-trace`; это и было поводом перерезки.
 
 ## Шероховатости (найдены прогоном, не рассуждением)
 
 1. **Окно плана назначено позже начала работ.** В фазе 1 окно поставлено с 13:00Z «на глаз», а владелец ратифицировал в
    12:35:56Z, и b1 исполнен сразу: коммит `f16f5db0` в 12:44:31Z, слияние в 12:55:44Z — оба раньше `window.from`.
    Класс `eg-window-after-first-trace` (шот A, 03.08): врёт окно, не следы; лечение по канону — перерезка окна с
-   ратификацией владельца.
+   ратификацией владельца. **Сделано:** слово владельца «Перерезать окно», `recut_act` 15:50:39Z, повторная ратификация
+   15:51:41Z; прежние следы b1 остались свежими (тело блоков не менялось, `revisionAt` 12:35:56Z). Урок: окно плана —
+   от момента ратификации, не «на глаз»; ставить `window.from` не позже ожидаемой ратификации.
 2. **Объём b1 — 345 строк против оценки 260 (+33 %)**, порог 400 не пробит; перебор — в зубах (226 строк), код ≈119.
 3. **Литерал `MediaLibrarySnapshot` вне зоны** (`ledger.test.ts`) — поле `loadState` сделано необязательным, чтобы не
    выходить за границы; замечено только при исполнении.
 4. **Шелл съедал обратные кавычки** в комментариях кода при правке через `node -e` — правлено повторно через Edit.
 5. **`pr:ship` остановил сдачу порогом размера** (550 строк вместе с планом фазы 1) — сдано с `--size-reason`.
+6. **`--now` опыта задан с опережением часов** (15:53:30Z при реальном ≈15:52:40Z; у 2569 так же — 15:45:30Z) — момент
+   записи опыта на ~минуту позже факта; вердикт не меняет. `--now` брать из `date -u`, не набирать.
