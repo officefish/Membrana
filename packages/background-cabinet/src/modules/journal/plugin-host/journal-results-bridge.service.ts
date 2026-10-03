@@ -1,5 +1,5 @@
 /** Отправляет паспорт журнального прогона в существующий дом результатов office. */
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import type { RunRecord } from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
 import { ProxyAgent } from 'undici';
 
@@ -34,6 +34,7 @@ function proxyUrl(): string | null {
   return value.length > 0 ? value : null;
 }
 
+@Injectable()
 export class JournalResultsBridgeService {
   private readonly logger = new Logger(JournalResultsBridgeService.name);
   private readonly fetchImpl: JournalResultsFetch;
