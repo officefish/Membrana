@@ -13,7 +13,11 @@ import type {
   PluginManifest,
   RunResult,
 } from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
-import { JournalPluginHostService, type JournalEntriesReader } from './journal-plugin-host.service';
+import {
+  JournalPluginHostService,
+  type JournalEntriesReader,
+  type JournalRunRecorder,
+} from './journal-plugin-host.service';
 import { verifyJournalTask } from './journal-task';
 
 const PLUGIN = 'membrana.showcase.chart-list' as PluginId;
@@ -22,8 +26,11 @@ const PLUGIN = 'membrana.showcase.chart-list' as PluginId;
  * Хост, доведённый до готовности. Значения контрактов приезжают динамическим импортом ESM-пакета,
  * поэтому до `onModuleInit` регистрация честно отвечает «не инициализирован», а не молча пропускает.
  */
-async function readyHost(rows: readonly LiveJournalItemRow[] = []): Promise<JournalPluginHostService> {
-  const host = new JournalPluginHostService(reader(rows));
+async function readyHost(
+  rows: readonly LiveJournalItemRow[] = [],
+  recorder: JournalRunRecorder | null = null,
+): Promise<JournalPluginHostService> {
+  const host = new JournalPluginHostService(reader(rows), recorder);
   await host.onModuleInit();
   return host;
 }
@@ -185,6 +192,62 @@ describe('задание проверяется ДО вызова плагина
     const payload = exec.calls[0]!.payload as { entries: LiveJournalItemRow[]; kinds: unknown };
     expect(payload.entries.map((e) => e.id)).toEqual(['e1', 'e2']);
     expect(payload.kinds).toEqual({ tracks: 1, reports: 1 });
+  });
+
+  it('после успешного задания пишет паспорт showcase с исходными адресом и отпечатками', async () => {
+    const records: RunRecord[] = [];
+    const h = await readyHost([entry('e1')], { send: async (record) => records.push(record) });
+    h.registerPlugin(manifest(), stubExecutor());
+    await h.requestWithTask(PLUGIN, 'journal.entry_created', ctx(), 'u1', {
+      entryIds: ['e1'],
+      needs: ['entries'],
+    });
+    expect(records).toEqual([
+      {
+        completedAt: new Date('2026-08-22T12:00:00Z'),
+        kind: 'showcase',
+        address: ctx().address,
+        fingerprints: ctx().fingerprints,
+        resumeMode: 'fresh',
+      },
+    ]);
+  });
+
+  it('отказ задания и бросок executor не пишут RunRecord', async () => {
+    const records: RunRecord[] = [];
+    const h = await readyHost([entry('e1')], { send: async (record) => records.push(record) });
+    h.registerPlugin(manifest(), {
+      execute: async () => {
+        throw new Error('executor failed');
+      },
+    });
+    const refused = await h.requestWithTask(PLUGIN, 'journal.entry_created', ctx(), 'u1', {
+      entryIds: ['ghost'],
+      needs: ['entries'],
+    });
+    expect(refused.verdict.ok).toBe(false);
+    await expect(
+      h.requestWithTask(PLUGIN, 'journal.entry_created', ctx(), 'u1', {
+        entryIds: ['e1'],
+        needs: ['entries'],
+      }),
+    ).rejects.toThrow('executor failed');
+    expect(records).toHaveLength(0);
+  });
+
+  it('недоставка паспорта не отменяет уже состоявшийся пользовательский прогон', async () => {
+    const h = await readyHost([entry('e1')], {
+      send: async () => {
+        throw new Error('office unavailable');
+      },
+    });
+    h.registerPlugin(manifest(), stubExecutor());
+    await expect(
+      h.requestWithTask(PLUGIN, 'journal.entry_created', ctx(), 'u1', {
+        entryIds: ['e1'],
+        needs: ['entries'],
+      }),
+    ).resolves.toMatchObject({ verdict: { ok: true }, result: { kind: 'showcase' } });
   });
 
   it('чужая запись неотличима от несуществующей — модуль не рассказывает о чужих данных', () => {
