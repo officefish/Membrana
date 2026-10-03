@@ -5,6 +5,7 @@ import {
   DEFAULT_LOCAL_QUOTA_BYTES,
   DEFAULT_SAMPLES_PAGE_SIZE,
   TARIFF_DATASET_COLLECTION_ID,
+  TARIFF_DATASET_COLLECTION_NAME,
   TARIFF_DATASET_SYSTEM_KEY,
 } from '../constants.js';
 import type { IStorageBackend } from '../ports/storage-backend.js';
@@ -105,7 +106,7 @@ export class MemoryStorageBackend implements IStorageBackend {
     if (!this.collections.has(TARIFF_DATASET_COLLECTION_ID)) {
       this.collections.set(TARIFF_DATASET_COLLECTION_ID, {
         id: TARIFF_DATASET_COLLECTION_ID,
-        name: 'Базовый набор (free-v1)',
+        name: TARIFF_DATASET_COLLECTION_NAME,
         kind: 'system',
         systemKey: TARIFF_DATASET_SYSTEM_KEY,
         createdAt: t,

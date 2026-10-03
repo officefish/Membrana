@@ -3,6 +3,13 @@ export const BUFFER_COLLECTION_ID = '__buffer__';
 /** Read-only system dataset provisioned per tariff (bundled + server). */
 export const TARIFF_DATASET_COLLECTION_ID = '__tariff_dataset__';
 export const TARIFF_DATASET_SYSTEM_KEY = 'tariff-dataset' as const;
+/**
+ * Человеческое имя системного набора. Идентификатора тарифа в нём НЕТ (#2561): назначенный
+ * каталог живёт в `Device.datasetCatalogId` и едет в `/quota`, имя про него молчит — иначе после
+ * смены тарифа одна из двух надписей обязательно лжёт. Сервер записей и Studio держат копии
+ * (shell не импортирует сервис в main, сервер записей не читает констант библиотеки).
+ */
+export const TARIFF_DATASET_COLLECTION_NAME = 'Базовый набор';
 /** Default catalog for free-v1 tariff (120 × 5s samples). */
 export const FREE_V1_CATALOG_ID = 'free-v1-catalog';
 
