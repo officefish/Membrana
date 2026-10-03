@@ -1,0 +1,54 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "media-image-trends-templates",
+  "taskId": "media-image-trends-templates",
+  "mode": "explicit-honest",
+  "cutBy": "dynin",
+  "window": {
+    "from": "2026-10-03T15:45:00+00:00",
+    "to": "2026-10-04T20:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-image-templates-and-isolated-registration",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-media/Dockerfile",
+        "packages/background-media/src/modules/collections/first-wave.registrar.ts",
+        "packages/background-media/src/modules/collections/first-wave.registrar.test.ts",
+        "packages/background-media/src/modules/collections/first-wave.registrar.isolation.test.ts",
+        "scripts/verify-image-workspace-deps.mjs",
+        "scripts/verify-image-workspace-deps.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 220
+      }
+    },
+    {
+      "blockId": "b2-deploy-and-live-check",
+      "persona": "angelina",
+      "context": "angelina",
+      "zone": [
+        "docs/local-sprint/media-image-trends-templates/",
+        "docs/deploy/deploy-2026-10-03-media.md",
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/sprint/experience/media-image-trends-templates.segments.json"
+      ],
+      "estimate": {
+        "changedLines": 80
+      }
+    }
+  ],
+  "//why": "Срочно, слово владельца 03.10: «Срочная починка сейчас». media выкачен 03.10 11:22Z на 2e59a5c3 — впервые с #2519 (bedaa375, 29.09). На проде не зарегистрированы membrana.report.chart-list-measure (кабинет → 503 «Plugin … is not registered»), витрины библиотеки (library-chart-list, library-duplicates) и membrana.report.detector-batch.",
+  "//measure": "Ствол origin/main f4e74219, дерево Membrana-sanitation-b, замер 03.10 15:20–15:40Z. ДВА СЛОЯ КОРНЯ. (1) ОБРАЗ: `packages/background-media/Dockerfile` собирает `@membrana/drone-detection-orchestrator-service` командой `tsc -b`, а её tsconfig ссылается на `../trends-detector` (references) — trends-detector собирается ПОФАЙЛОВО через tsc, а не своим `build` (там `vite build` вклеил бы JSON в бандл; локальный dist/index.js — бандл без импортов, поэтому локально не воспроизводится). Пофайловый `dist/data/free-v1-templates.js` импортирует `../../templates/{BIRDS,GUNSHOT,MACHINE_HUM,SILENCE,SPEECH,WIND}.json` with type json — путь ВНЕ dist. Runtime-стадия (:76-77) копирует только `trends-detector/dist` и `package.json` → ERR_MODULE_NOT_FOUND при импорте оркестратора. Build-стадия шаблоны имеет (`COPY packages/services`; `.dockerignore` пропускает `packages/services/trends-detector/**`). (2) РЕГИСТРАЦИЯ: `first-wave.registrar.ts` — один try (:189–417) на всё: пресет mfcc, считалка, report-волна, `await loadDroneDetectionOrchestrator()` (:203), detector-batch, chart-list-measure, витрины, свод; catch (:418) лишь регистрирует STUB_HANDLER_MANIFESTS. Сбой импорта оркестратора на :203 обрывает всё, что ниже. Поправка к первичному диагнозу: mfcc и report-волна (свод сеанса) регистрируются ДО :203, поэтому живы; заглушками катч ставит пять детекторов. Читатель проб (`prismaSampleReader`) от пресета не зависит, но живёт внутри того же try. ПОРЧА на стволе f4e74219: P1 — временный `porcha-media-trends.test.ts` (vi.mock модуля оркестратора, фабрика бросает «Cannot find module …/templates/BIRDS.json»), прогнан vitest, удалён: КРАСНЫЙ — зарегистрированы ровно [mfcc, harmonic, cepstral, spectral-flux, template-match, yamnet, session-digest]; `expected [ 'membrana.handler.mfcc', …(6) ] to include 'membrana.report.chart-list-measure'`. Это и есть прод-картина. P2 — модель образа самого зуба (`dockerfileCopyPairs` runtime + `imagePathOfRepoFile`) по media Dockerfile: `trends-detector/dist/data/free-v1-templates.js` → /app/packages/services/trends-detector/dist/data/free-v1-templates.js (едет), все шесть `trends-detector/templates/*.json` → null (не едут); trends-detector в транзитивном графе media; при этом `node scripts/verify-image-workspace-deps.mjs --service media` — exit 0, «✓ образы несут весь транзитивный граф». Зуб слеп к классу: правила (1) код, (2) объявленные данные, (3) контекст — относительного импорта за пределы dist не судит никто. Других таких импортов в графе media (src/**/*.ts вне тестов, выход за src) нет — только trends-detector.",
+  "//carriers": "(а) Dockerfile runtime: `COPY --from=build /app/packages/services/trends-detector/templates /app/packages/services/trends-detector/templates` рядом с :76-77 — тот же относительный путь, что видит пофайловый dist. Сборку trends-detector не трогаем (переход на vite-бандл или resolveJsonModule-копию — другое решение, вне срочного). (б) Регистратор: читатель проб строится ДО любых try; три независимых блока со своими catch и своими строками лога: [A] mfcc (пресет + считалка) — как сейчас, catch → пять заглушек; [B] report-волна, chart-list-measure, витрины library-chart-list и library-duplicates — не зависят ни от пресета, ни от оркестратора (им нужен только читатель); [C] `await loadDroneDetectionOrchestrator()` + detector-batch — catch пишет error с именем плагина и причиной, остальные не гаснут. Если блоку B из пресета что-то нужно (порядок/зависимости уточняются при правке) — он берёт это из A только при успехе A, иначе регистрируется без этого или явно пишет причину. Итоговая строка «First-wave plugins registered» с перечнем — без изменений (по ней живая проверка). (в) Зуб P2 — расширение существующего `verify:image-workspace-deps`, а не новый зуб: правило (4) «ОТНОСИТЕЛЬНЫЙ ИМПОРТ ЗА ПРЕДЕЛЫ ВЫВОДА» — для каждого пакета транзитивного графа runtime-сервисов читаются его `src/**/*.ts` (без тестов), статические относительные импорты/экспорты, выходящие за `src` (tsc rootDir=src, outDir=dist на той же глубине ⇒ путь из dist указывает в тот же файл пакета), сводятся к репозиторному пути и судятся тем же `imagePathOfRepoFile` по runtime-парам COPY; null → находка `relative-import-outside-dist`. Судится исходник, а не локальный dist: локальный dist бывает бандлом vite и правды об образе не скажет. Для веб-образа (stage build) правило не применяется — там пакеты целиком в сборке.",
+  "//cutter": "Резчик dynin. Прогон контекста 03.10 ~15:50Z — yarn ask dynin --ticket-file <замеры по стволу f4e74219>, конспект docs/discussions/cut-media-image-trends-templates-dynin.md. Вердикт: корень двухслойный подтверждён; воспроизведение через vi.mock честное (класс сбоя тот же); нарезка b1/b2 принята; развилки 1а и 2а — согласен. Инварианты (назвать в PR): I1 для каждого статического относительного импорта за пределы src в транзитивном графе runtime-сервиса есть runtime-пара COPY, покрывающая репо-путь; I2 сбой импорта/регистрации одного плагина не вычёркивает другие, каждый сбой — своя error-строка с именем плагина и причиной; I3 перечень в «First-wave plugins registered» ⊇ DoD-списка; I4 локальный dist (зависит от сборщика) — не свидетельство об образе, судится исходник. Зубы: существующий «без пресета — пять заглушек» обязан остаться зелёным. Известная щель: динамические import() правило (4) не ловит — фиксируется в коде зуба, не чинится сейчас. BLOCK: B1 --service media на ветке не exit 0; B2 тот же прогон на стволе не красный; B3 isolation-тест зелёный, а «пять заглушек» покраснел; B4 порядок в тесте полного перечня изменён без отметки в PR; B5 (b2) в стартовом логе нет хотя бы одного имени из DoD или есть ERR_MODULE_NOT_FOUND. Расхождение: строковый зуб на стартовый лог media резчик предлагает — в этом спринте проверка лога в b2 руками модератора по предикату I3, автоматический зуб — вне рамок.",
+  "//order": "b1 → b2. b2 — выкатка media и живая проверка: делает модератор/владелец, исполнитель НЕ выкатывает. Точка перерезки в b1: если разнесение регистрации требует менять `@membrana/plugin-handlers` или контракты хоста — стоп и перерезка.",
+  "//dod": "b1: Dockerfile — COPY templates в runtime; регистратор — три независимых блока, читатель вне try. Зубы: `first-wave.registrar.isolation.test.ts` (отдельный файл — vi.mock файловый) — P1: модуль оркестратора бросает при импорте → зарегистрированы chart-list-measure, library-chart-list, library-duplicates, mfcc, свод; detector-batch отсутствует; в логе ошибка с именем detector-batch. Сторож: без пресета (существующий тест «пять заглушек») по-прежнему пять заглушек + теперь chart-list-measure и витрины живы. Существующий тест полного перечня — зелёный без изменений порядка, либо порядок меняется осознанно и это сказано в PR. `verify-image-workspace-deps.test.mjs` — P2: фикстура Dockerfile без COPY templates + пакет с `../../templates/X.json` → находка `relative-import-outside-dist`; с COPY → чисто; живой прогон `--service media` на стволе КРАСНЫЙ (проверяется откатом строки Dockerfile в ветке), на ветке зелёный; cabinet/office/cabinet-web — без новых находок. `yarn test` background-media зелёный; typecheck, eslint; `node scripts/verify-image-workspace-deps.mjs` exit 0. b2 (модератор/владелец): выкатка media по регламенту; в стартовом логе строка «First-wave plugins registered» содержит membrana.report.chart-list-measure, membrana.showcase.library-chart-list, membrana.showcase.library-duplicates, membrana.report.detector-batch, membrana.handler.mfcc; нет ERR_MODULE_NOT_FOUND; кабинет: прогон chart-list-measure больше не 503 «is not registered». Вещдок — `docs/deploy/deploy-2026-10-03-media.md`, `CLOSURE.md`, `sprint:gate` pass, `sprint:experience`.",
+  "//out-of-scope": "Переход сборки trends-detector в образе на vite-бандл или копирование JSON в dist сборкой (иное решение того же слоя — отдельно). Почему media шесть дней (с 29.09) не выкатывался и почему CI-сборки образа media нет — отдельный билет. Изменения plugin-handlers, кабинета, офиса.",
+  "//forecast": "b1: P1 и P2 красные на f4e74219 (проверено 03.10), зелёные на ветке; ≈220 строк в 6 файлах (Dockerfile 2, регистратор ≈60 перестановки, зуб ≈70, зубы ≈90). Живьём: после выкатки в стартовом логе 11 плагинов вместо 7, кабинет открывает измеритель. Опровержение: (а) после выкатки detector-batch всё ещё не зарегистрирован — значит в образе отсутствует ещё что-то из графа оркестратора; благодаря разнесению остальные живы, причина — в строке error блока C; (б) chart-list-measure не зарегистрирован при живом образе — блок B всё ещё зависит от пресета, стоп и замер.",
+  "//forks": "1. ЗУБ P2: (а) УМОЛЧАНИЕ — правило (4) внутри `verify:image-workspace-deps` (класс «сборка зелёная, падение на проде» уже живёт там, модель образа готова); (б) узкий отдельный зуб на trends-detector. 2. ГРАНУЛЯРНОСТЬ РАЗНЕСЕНИЯ: (а) УМОЛЧАНИЕ — три блока A/B/C; (б) отдельный try на каждый плагин — дольше и шире зона, выгода только против будущих неизвестных сбоев.",
+  "//not-one-shot": "Прод-инцидент и меняется порядок регистрации плагинов на старте media; выкатка — за модератором/владельцем. Нужна ратификация."
+}
