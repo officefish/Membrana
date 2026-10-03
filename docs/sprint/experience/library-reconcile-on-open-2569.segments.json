@@ -1,0 +1,9 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "library-reconcile-on-open-2569",
+  "measuredAt": "2026-10-03T15:45:00Z",
+  "segments": [
+    { "cutBlockId": "b1-reconcile-on-open", "changedLines": 321, "evidence": "git diff --numstat 955f8913..b736e739 по файлам зоны b1 — library-reconcile-on-open.test.ts 207/0 (новый) + media-library-service.ts 78/0 + SampleLibraryModule.tsx 12/0 + useCabinetSampleLibrary.ts 12/0 + types.ts 6/0 + server-storage-backend.ts 3/0 + server-storage-backend.test.ts 3/0 = 321+/0− (код ~111, зубы ~210; файлы ратификации в диапазоне исключены; коммит b736e739, PR #2572 влит 0d39cbad)" },
+    { "cutBlockId": "b2-live-check-closure", "changedLines": 230, "evidence": "ветка chore/close-library-2569-2570 от f4e74219 — CLOSURE.md ~100 (+ разделы ревью/гейта/опыта ~35) + reviews/dynin.md ~35 + reviews/angelina.md ~40 + execution-traces.jsonl 4 + segments ~10 + доля LOCAL_SPRINT_ACTIVE/LOG ~10 (wc -l на момент замера 15:45Z + прогноз дельты до сдачи)" }
+  ]
+}
