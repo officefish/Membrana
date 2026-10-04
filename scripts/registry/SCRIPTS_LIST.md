@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-10-03 |
-| Head SHA | 71b1bd5af43745f7f5b1ba0021e0b2ded8700ef1 |
+| Date | 2026-10-04 |
+| Head SHA | efff4e62f09d321eea1b8486ab9729cc839515c7 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,12 +16,12 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1280 |
+| Code files under `scripts/` | 1285 |
 | Yarn scripts (package.json) | 477 |
 | Yarn → `scripts/` | 423 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 940 |
+| Code files without yarn ref | 945 |
 
 ## Yarn → scripts/ (423)
 
@@ -449,7 +449,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (940)
+## Code files without yarn ref (945)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -895,8 +895,10 @@
 - `scripts/lib/night-report-gate.mjs`
 - `scripts/lib/night-research.mjs`
 - `scripts/lib/night-summary.mjs`
+- `scripts/lib/noncritical-streak.mjs`
 - `scripts/lib/norm-liveness.mjs`
 - `scripts/lib/office-image-smoke.mjs`
+- `scripts/lib/office-store-probe.mjs`
 - `scripts/lib/office-token.mjs`
 - `scripts/lib/one-shot-rank.mjs`
 - `scripts/lib/one-shot-run.mjs`
@@ -1173,10 +1175,13 @@
 - `scripts/node-duty-ready.test.mjs`
 - `scripts/node-link-probe.test.mjs`
 - `scripts/node-link-state.test.mjs`
+- `scripts/noncritical-streak.test.mjs`
 - `scripts/norm-liveness.test.mjs`
+- `scripts/office-env-credentials.test.mjs`
 - `scripts/office-image-smoke-workflow.test.mjs`
 - `scripts/office-image-smoke.test.mjs`
 - `scripts/office-prod-up-tar-coverage.test.mjs`
+- `scripts/office-store-probe.test.mjs`
 - `scripts/office-token.test.mjs`
 - `scripts/one-shot-rank.test.mjs`
 - `scripts/one-shot-run.test.mjs`
@@ -1402,7 +1407,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1280)
+## All code files (1285)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1996,8 +2001,10 @@
 - `scripts/lib/night-report-gate.mjs`
 - `scripts/lib/night-research.mjs`
 - `scripts/lib/night-summary.mjs`
+- `scripts/lib/noncritical-streak.mjs`
 - `scripts/lib/norm-liveness.mjs`
 - `scripts/lib/office-image-smoke.mjs`
+- `scripts/lib/office-store-probe.mjs`
 - `scripts/lib/office-token.mjs`
 - `scripts/lib/one-shot-rank.mjs`
 - `scripts/lib/one-shot-run.mjs`
@@ -2322,12 +2329,15 @@
 - `scripts/node-link-probe.test.mjs`
 - `scripts/node-link-state.mjs`
 - `scripts/node-link-state.test.mjs`
+- `scripts/noncritical-streak.test.mjs`
 - `scripts/norm-liveness.test.mjs`
+- `scripts/office-env-credentials.test.mjs`
 - `scripts/office-image-smoke-workflow.test.mjs`
 - `scripts/office-image-smoke.mjs`
 - `scripts/office-image-smoke.test.mjs`
 - `scripts/office-prod-up-tar-coverage.test.mjs`
 - `scripts/office-research-digest.mjs`
+- `scripts/office-store-probe.test.mjs`
 - `scripts/office-token.test.mjs`
 - `scripts/one-shot-rank.mjs`
 - `scripts/one-shot-rank.test.mjs`

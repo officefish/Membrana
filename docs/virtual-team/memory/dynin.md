@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14397/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 383 (причины в op-log) -->
+Записей: 50 · бюджет 14385/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 384 (причины в op-log) -->
+
+### 2026-10-04 · позиция · team-evening-feedback
+
+> Дынин. Оценка артефактов: `DAILY_CODE_REVIEW` корректно разобрало реляционную операцию сравнения двух списков (7/20 по позиции, 18/20 пересечение) без off-by-one. `inputHash` одинаковый для обоих прогонов — условие корректности эксперимента соблюдено. Итоги дня: прикладной […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-04.md#reply-1`
 
 ### 2026-10-03 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/library-open-api-m2-contract-2026-09-01.md#reply-1`
 
-### 2026-09-01 · позиция · library-open-api-m3-key-ttl
+### 2026-09-01 · позиция · team-evening-feedback
 
-> Сформулирую точнее. Есть два различных объекта: `NodeAccessKey` с полями `duration`, `expiresAt`, `revokedAt` — это модель узлового ключа. И есть ключ-предъявитель трека, который лежит в JSON-списке и по фактуре не имеет собственного блока настроек. Это разные сущности. […] _(реплик в сеансе: 5)_
+> Dynin. Оценка артефактов: ревью справедливо выделило P1 в `repo-links.mjs` — regex `ISSUE_LINK` с флагом `/g` в модульном скоупе; `lastIndex` не сбрасывается между вызовами, зубы косвенно покрывают через `assert.equal(rewritten.length, N)`, но прямого теста «два вызова с одним […]
 
-— источник: `docs/seanses/library-open-api-m3-key-ttl-2026-09-01.md#reply-1`
-
-### 2026-08-31 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE корректно зафиксировал посылку «сервер уже умеет перенос» со ссылкой на `samples.service.ts` — это сэкономило день: не стали переписывать сервер. Code-review разложил `deletionAcknowledgementRisk` по веткам (evidence → unknown → scale, […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
