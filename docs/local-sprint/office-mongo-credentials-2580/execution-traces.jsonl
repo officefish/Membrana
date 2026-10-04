@@ -1,1 +1,2 @@
 {"traceId":"omc-2580-b1-run","blockId":"b1-env-and-compose","kind":"context_run","subject":"tarasov","at":"2026-10-04T17:02:02Z","ref":"deploy/generate-office-env.sh","relatesToSprint":true}
+{"traceId":"omc-2580-b2-run","blockId":"b2-deploy-store-probe","kind":"context_run","subject":"dynin","at":"2026-10-04T18:40:18Z","ref":"scripts/lib/office-store-probe.mjs","relatesToSprint":true}

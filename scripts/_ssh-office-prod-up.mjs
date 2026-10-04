@@ -10,6 +10,7 @@ import { pathToFileURL } from 'node:url';
 import { Client } from 'ssh2';
 import { getOfficeSshConfig, repoRoot } from './_ssh-office-config.mjs';
 import { copiedLocalBuildSources } from './verify-image-workspace-deps.mjs';
+import { formatProbeVerdict, judgeOfficeStoreProbe } from './lib/office-store-probe.mjs';
 
 // Не tmpdir(): держим архив внутри репо, чтобы путь для tar был ОТНОСИТЕЛЬНЫМ.
 const cacheDir = join(repoRoot, 'scripts', 'cache');
@@ -111,7 +112,8 @@ const tarArgs = [
   ...officeProdUpTarSources,
 ];
 
-const remoteScript = `#!/bin/bash
+// Экспорт — для зуба scripts/office-store-probe.test.mjs (P3c): порядок up → probe.
+export const officeProdUpRemoteScript = `#!/bin/bash
 set -euo pipefail
 cd /root/membrana
 mkdir -p deploy packages/background-office/docker
@@ -129,11 +131,27 @@ ln -sf /etc/membrana/office.env packages/background-office/.env.docker
 
 ./deploy/office-stack.sh build
 ./deploy/office-stack.sh up
-sleep 12
 ./deploy/office-stack.sh ps
-curl -fsS http://127.0.0.1:3000/health && echo ""
+# #2580: вместо sleep 12 + curl /health — ожидание healthy базы и office и чтения через
+# хранилища записи. Проба печатает только строки probe …; вердикт выносится ЛОКАЛЬНО
+# (assertOfficeStoreProbeOk ниже), не на сервере.
+./deploy/office-stack.sh probe
 rm -f ${remoteTar}
 `;
+
+/**
+ * Суд пробы хранилищ после up (#2580): не-ok → выкатка падает (exit≠0), с названным исходом.
+ * Контейнеры при этом уже подняты — откат здесь не делается, это решение владельца.
+ * @param {string} output stdout удалённого скрипта
+ */
+export function assertOfficeStoreProbeOk(output) {
+  const verdict = judgeOfficeStoreProbe(output);
+  console.log(`\n${formatProbeVerdict(verdict)}`);
+  if (!verdict.ok) {
+    throw new Error(`office-prod-up: проба хранилищ не ok — ${verdict.outcome}`);
+  }
+  return verdict;
+}
 
 function sftpPut(conn, local, remote) {
   return new Promise((resolvePromise, rejectPromise) => {
@@ -150,6 +168,13 @@ function sftpPut(conn, local, remote) {
   });
 }
 
+/**
+ * Выполнить скрипт на VPS через `bash -s`, транслируя вывод в консоль.
+ * Вывод возвращается потому, что его судит assertOfficeStoreProbeOk (строки `probe …`, #2580).
+ * @param {import('ssh2').Client} conn
+ * @param {string} script
+ * @returns {Promise<string>} stdout удалённого скрипта (при exit 0; иначе reject)
+ */
 function execBash(conn, script) {
   return new Promise((resolvePromise, rejectPromise) => {
     conn.exec('bash -s', (err, stream) => {
@@ -159,10 +184,15 @@ function execBash(conn, script) {
       }
       stream.write(script);
       stream.end();
-      stream.on('data', (d) => process.stdout.write(d));
+      // stdout копится для суда пробы; секретов в нём нет (проба печатает имена и коды).
+      let out = '';
+      stream.on('data', (d) => {
+        out += d.toString();
+        process.stdout.write(d);
+      });
       stream.stderr.on('data', (d) => process.stderr.write(d));
       stream.on('close', (code) => {
-        if (code === 0) resolvePromise(code);
+        if (code === 0) resolvePromise(out);
         else rejectPromise(new Error(`remote exit ${code}`));
       });
     });
@@ -183,7 +213,8 @@ function runDeploy() {
           console.log('Uploading tarball...');
           await sftpPut(conn, tarPath, remoteTar);
           console.log('Building and starting office stack on VPS...\n');
-          await execBash(conn, remoteScript);
+          const output = await execBash(conn, officeProdUpRemoteScript);
+          assertOfficeStoreProbeOk(output);
           clearTimeout(timeout);
           conn.end();
           resolvePromise(0);
