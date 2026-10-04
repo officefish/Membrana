@@ -37,6 +37,8 @@ mongo_host="archivarius-mongo:27017"
 # Права 600 — до записи секретов, не после.
 umask 077
 
+# Heredoc без кавычек намеренно: ${mongo_user}/${mongo_password}/${mongo_host} подставляет оболочка
+# при записи файла; пароль hex — экранирование не требуется; в stdout ничего не выводится.
 cat >"$OUT" <<ENV
 # @membrana/background-office — generated $(date -u +%Y-%m-%dT%H:%M:%SZ)
 OFFICE_PORT=3000
