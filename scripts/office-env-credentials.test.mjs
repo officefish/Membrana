@@ -256,6 +256,7 @@ test('P2e: yarn office:docker:prod:build и :prod:up зовут оверлей �
   }
   // Сборка и подъём обязаны читать ОДИН env: иначе build пройдёт интерполяцию по одному
   // файлу, а up — по другому (ревью Teamlead PR #2582).
+  // Оба скрипта — только для VPS (/etc/membrana/office.env); на CI и локально — office:docker:up.
   assert.ok(
     paths['office:docker:prod:build'] !== null && paths['office:docker:prod:build'] === paths['office:docker:prod:up'],
     '--env-file у office:docker:prod:build и office:docker:prod:up расходятся',
