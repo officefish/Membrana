@@ -24,6 +24,7 @@ import {
   PROBE_ENV_URIS,
   PROBE_OUTCOMES,
   judgeOfficeStoreProbe,
+  worstOutcome,
 } from './lib/office-store-probe.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -104,6 +105,13 @@ test('P3: дверь 5xx → door-5xx; неожиданный код (200 вме
   assert.equal(judgeOfficeStoreProbe(okOutput({ 'archivarius-span': '200' })).outcome, 'door-unexpected');
   assert.equal(judgeOfficeStoreProbe(okOutput({ 'plugin-results-runs': '000' })).outcome, 'door-unexpected');
   assert.equal(judgeOfficeStoreProbe(okOutput({ 'plugin-results-runs': '401' })).outcome, 'door-unexpected');
+});
+
+test('P3: находка с outcome ok (или вне словаря) в непустом списке не даёт зелёного (ревью #2583)', () => {
+  assert.equal(worstOutcome([]), 'ok');
+  assert.notEqual(worstOutcome([{ outcome: 'ok', subject: 'x', detail: 'подстановка' }]), 'ok');
+  assert.equal(worstOutcome([{ outcome: 'ok' }, { outcome: 'door-5xx' }]), 'door-5xx');
+  assert.equal(worstOutcome([{ outcome: 'nonsense' }]), 'door-unexpected');
 });
 
 test('P3: пустой или оборванный вывод — не ok (молчание пробы не зелёное)', () => {

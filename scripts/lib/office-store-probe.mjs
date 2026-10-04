@@ -98,11 +98,18 @@ export function judgeOfficeStoreProbe(text) {
     else if (code !== String(door.expect)) add('door-unexpected', door.name, `HTTP ${code}, ожидался ${door.expect} (${door.why})`);
   }
 
-  const outcome =
-    findings.length === 0
-      ? 'ok'
-      : PROBE_OUTCOMES.find((o) => findings.some((f) => f.outcome === o)) ?? 'door-unexpected';
+  const outcome = worstOutcome(findings);
   return { ok: outcome === 'ok', outcome, findings };
+}
+
+/**
+ * Худший исход по приоритету словаря. 'ok' — только при ПУСТОМ списке: выбор идёт по словарю
+ * без 'ok', так что находка с outcome 'ok' (или вне словаря) зелёного не даёт (ревью PR #2583).
+ * @param {Array<{outcome: string}>} findings
+ */
+export function worstOutcome(findings) {
+  if (findings.length === 0) return 'ok';
+  return PROBE_OUTCOMES.filter((o) => o !== 'ok').find((o) => findings.some((f) => f.outcome === o)) ?? 'door-unexpected';
 }
 
 /** Человеческая сводка вердикта — без значений (их в выводе пробы и нет). */
