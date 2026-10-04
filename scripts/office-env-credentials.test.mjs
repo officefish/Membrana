@@ -21,6 +21,7 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const GENERATOR = join(repoRoot, 'deploy', 'generate-office-env.sh');
 const BASE_COMPOSE = join(repoRoot, 'packages', 'background-office', 'docker-compose.yml');
 const PROD_COMPOSE = join(repoRoot, 'deploy', 'background-office.prod.compose.yml');
+const OFFICE_DOCKERFILE = join(repoRoot, 'packages', 'background-office', 'Dockerfile');
 
 const MONGO_KEYS = Object.freeze([
   'ARCHIVARIUS_MONGO_USERNAME',
@@ -144,6 +145,11 @@ test('P1b: на существующем env — отказ и предупре�
       assert.ok(r.stderr.includes(key), `предупреждение не называет ${key}`);
     }
     assert.match(r.stderr, /непуст\S* том/iu, 'предупреждение молчит, что на непустом томе пароль сам не применится');
+    assert.match(
+      r.stderr,
+      /Необязательны:.*ARCHIVARIUS_MONGO_DB.*TASK_ARCHIVE_MONGO_DB.*membrana_archivarius.*membrana_task_archive/u,
+      'предупреждение не называет необязательные *_MONGO_DB и их умолчания',
+    );
     assert.ok(!r.stderr.includes(sentinel) && !r.stdout.includes(sentinel), 'генератор напечатал значение из существующего env');
     assert.equal(readFileSync(out, 'utf8').includes(sentinel), true, 'существующий env испорчен');
   });
@@ -254,4 +260,16 @@ test('P2e: yarn office:docker:prod:build и :prod:up зовут оверлей �
     paths['office:docker:prod:build'] !== null && paths['office:docker:prod:build'] === paths['office:docker:prod:up'],
     '--env-file у office:docker:prod:build и office:docker:prod:up расходятся',
   );
+});
+
+// --env-file на build питает только интерполяцию compose; в образ значения уходят лишь через
+// объявленные build.args → ARG. Ни того, ни другого быть не должно (ревью Teamlead PR #2582).
+test('P2f: секреты базы не могут уйти в слои образа office (нет build.args и ARG с MONGO/PASSWORD/URI)', () => {
+  for (const [file, text] of [['docker-compose.yml', baseText()], ['background-office.prod.compose.yml', prodText()]]) {
+    assert.ok(!/^\s+args:/mu.test(text), `${file} объявляет build.args — значения из --env-file уйдут в сборку`);
+  }
+  const argLines = readFileSync(OFFICE_DOCKERFILE, 'utf8')
+    .split(/\r?\n/u)
+    .filter((line) => /^\s*ARG\s/iu.test(line) && /MONGO|PASSWORD|URI/iu.test(line));
+  assert.equal(argLines.length, 0, 'Dockerfile office объявляет ARG с MONGO/PASSWORD/URI — секрет попадёт в слои образа');
 });

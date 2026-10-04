@@ -20,6 +20,7 @@ if [[ -f "$OUT" ]]; then
   echo "  ARCHIVARIUS_MONGO_URI        — mongodb://<user>:<пароль>@archivarius-mongo:27017/membrana_archivarius?authSource=admin" >&2
   echo "  TASK_ARCHIVE_MONGO_URI       — mongodb://<user>:<пароль>@archivarius-mongo:27017/membrana_task_archive?authSource=admin" >&2
   echo "Пароль в обоих URI — тот же, что в ARCHIVARIUS_MONGO_PASSWORD; пользователь — ARCHIVARIUS_MONGO_USERNAME (умолчание archivarius)." >&2
+  echo "Необязательны: ARCHIVARIUS_MONGO_DB / TASK_ARCHIVE_MONGO_DB — умолчания membrana_archivarius / membrana_task_archive." >&2
   echo "На НЕПУСТОМ томе archivarius-mongo новый пароль сам не применится: MONGO_INITDB_ROOT_* действуют" >&2
   echo "только на пустом томе — пользователя завести/сменить руками (runbook: docs/deploy/BACKGROUND_OFFICE_DEPLOY.md §3)." >&2
   echo "Дописывать — решение владельца, не скрипта. Значения в вывод не печатаются." >&2
