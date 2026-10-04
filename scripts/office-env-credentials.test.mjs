@@ -184,6 +184,7 @@ function hasDocker() {
  * `docker compose config` над КОПИЯМИ файлов во временном дереве: базовый compose ссылается
  * на `env_file: .env.docker`, которого в чистом дереве нет (он в .gitignore) — без копии
  * отказ был бы про отсутствующий файл, а не про пароль (ложный красный на стволе).
+ * На раннере без docker в PATH P2c уходит в skip — интеграционная часть держится Linux-CI и ручным прогоном.
  */
 function composeConfig(envLines) {
   return withTmp((dir) => {
@@ -239,9 +240,18 @@ test('P2d: базовый compose сохраняет локальные умол
 
 test('P2e: yarn office:docker:prod:build и :prod:up зовут оверлей с --env-file', () => {
   const scripts = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8')).scripts ?? {};
+  const envFileOf = (cmd) => /--env-file\s+(\S+)/u.exec(cmd)?.[1] ?? null;
+  const paths = {};
   for (const name of ['office:docker:prod:build', 'office:docker:prod:up']) {
     const cmd = scripts[name] ?? '';
     assert.ok(cmd.includes('background-office.prod.compose.yml'), `${name} не зовёт прод-оверлей`);
     assert.ok(cmd.includes('--env-file'), `${name} без --env-file — оверлей с :? упадёт на интерполяции`);
+    paths[name] = envFileOf(cmd);
   }
+  // Сборка и подъём обязаны читать ОДИН env: иначе build пройдёт интерполяцию по одному
+  // файлу, а up — по другому (ревью Teamlead PR #2582).
+  assert.ok(
+    paths['office:docker:prod:build'] !== null && paths['office:docker:prod:build'] === paths['office:docker:prod:up'],
+    '--env-file у office:docker:prod:build и office:docker:prod:up расходятся',
+  );
 });
