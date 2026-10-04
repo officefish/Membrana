@@ -93,3 +93,34 @@ test('#2413 порядок трений фиксирован: отказы, за
     'frictionIndex — адрес поправки; плавающий порядок делает амандмент неадресуемым',
   );
 });
+
+// ── #2580 (P4): некритичный отказ оставляет трение — носитель серии красных вечеров ──
+//
+// Вещдок: archivarius-evening (noncritical) падал exit 1 восемь вечеров подряд (27.09–04.10),
+// а close писал gaps только критичных и трения только находок — в ленте ни одного следа.
+
+test('P4 #2580: некритичный отказ → трение «noncritical-fail <id> exit N», статус остаётся pass', () => {
+  const args = eveningCloseArgs({
+    failed: [],
+    findings: [],
+    noncriticalFailed: [{ id: 'archivarius-evening', exitCode: 1 }],
+  });
+  assert.equal(args[args.indexOf('--status') + 1], 'pass');
+  assert.deepEqual(frictionsOf(args), ['noncritical-fail archivarius-evening exit 1']);
+  assert.deepEqual(gapsOf(args), []);
+});
+
+test('P4 #2580: эскалированный шаг — gap + «отказ шага» + noncritical-fail; трения некритичных последними', () => {
+  const args = eveningCloseArgs({
+    failed: [{ id: 'archivarius-evening', exitCode: 1 }],
+    findings: [{ id: 'day-memo', exitCode: 3 }],
+    noncriticalFailed: [{ id: 'archivarius-evening', exitCode: 1 }],
+  });
+  assert.equal(args[args.indexOf('--status') + 1], 'fail');
+  assert.deepEqual(gapsOf(args), ['archivarius-evening']);
+  assert.deepEqual(frictionsOf(args), [
+    'archivarius-evening: отказ шага, exit 1 (корень не назван)',
+    'day-memo: finding exit 3',
+    'noncritical-fail archivarius-evening exit 1',
+  ]);
+});

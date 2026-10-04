@@ -41,6 +41,7 @@ import {
 } from './lib/ritual-exit-codes.mjs';
 import { blockedInputs, explainStatus, isBlocking, isFinding, stepStatus } from './lib/step-status.mjs';
 import { eveningCloseArgs } from './lib/ritual-evening-close-args.mjs';
+import { applyNoncriticalEscalation, eveningCloses, priorRedStreak, readEveningTrail } from './lib/noncritical-streak.mjs';
 import { sessionState, writeSessionState } from './lib/angelina-session.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -120,6 +121,20 @@ function main() {
     }
   }
 
+  // #2580: серия красных вечеров читается из ленты журнала ДО шагов; сегодняшний вечер
+  // (его close ещё не записан, а повторный прогон дня уже мог записать) исключается по дате.
+  // Лента не читается — эскалации нет, вечер идёт: громко, но не заложником журнала.
+  let priorCloses = [];
+  if (!dry) {
+    try {
+      const trail = readEveningTrail(root);
+      if (trail.skippedLines > 0) console.error(`⚠ лента журнала: нечитаемых строк ${trail.skippedLines} — пропущены`);
+      priorCloses = eveningCloses(trail.records, { excludeDate: new Date().toISOString().slice(0, 10) });
+    } catch (err) {
+      console.error(`⚠ лента журнала не прочитана (${err?.message ?? err}) — серия некритичных отказов сегодня не считается`);
+    }
+  }
+
   for (const step of steps) {
     if (only && !only.has(step.id)) {
       // Статус НЕ выставляем: «не выбран» — это не «ok». Иначе частичный прогон
@@ -180,21 +195,43 @@ function main() {
       throw err;
     }
 
-    const status = stepStatus(step, outcome);
+    const baseStatus = stepStatus(step, outcome);
+    // #2580: некритичный отказ продлевает серию красных вечеров; на пороге шаг эскалируется
+    // до failed-critical. Серия читается только для упавшего некритичного — у остальных 0.
+    const esc = applyNoncriticalEscalation(
+      step,
+      baseStatus,
+      baseStatus === 'skipped-noncritical' ? priorRedStreak(priorCloses, step.id) : 0,
+    );
+    const status = esc.status;
     statuses[step.id] = status;
-    console.error(explainStatus(step, status, outcome));
-    report.push({ id: step.id, status, ran: true, exitCode: outcome.exitCode, finding: isFinding(step, outcome) });
+    console.error(explainStatus(step, baseStatus, outcome));
+    if (esc.escalated) {
+      console.error(`✗ ${step.id}: красный ${esc.streak}-й вечер подряд (порог ${esc.threshold}) — эскалирован до критичного`);
+    } else if (esc.streak > 0) {
+      console.error(`⚑ ${step.id}: красный ${esc.streak}-й вечер подряд (порог эскалации ${esc.threshold})`);
+    }
+    report.push({
+      id: step.id,
+      status,
+      ran: true,
+      exitCode: outcome.exitCode,
+      finding: isFinding(step, outcome),
+      ...(esc.streak > 0 ? { noncriticalFail: true, streak: esc.streak, threshold: esc.threshold, escalated: esc.escalated } : {}),
+    });
   }
 
   const failed = report.filter((r) => isBlocking(r.status));
   const findings = report.filter((r) => r.finding);
+  const noncriticalFailed = report.filter((r) => r.noncriticalFail);
 
   if (fullRun) {
     // Статус close — ПО ФАКТУ прогона; gaps называют упавшие критичные шаги.
     const closeStatus = failed.length > 0 ? 'fail' : 'pass';
     console.error(`\n=== ritual:evening → журнал: close прогона (${closeStatus}) ===`);
     // #2081 хвост: находки (deliver-to-main pending-ci) — в журнал, не сирота назавтра.
-    journal.close = journalCall(eveningCloseArgs({ failed, findings, evidence: 'docs/HANDOFF.md' }));
+    // #2580: некритичные отказы — трением noncritical-fail (носитель серии на завтра).
+    journal.close = journalCall(eveningCloseArgs({ failed, findings, noncriticalFailed, evidence: 'docs/HANDOFF.md' }));
     if (journal.close !== 0) {
       console.error('✗ журнал: close не записан — прогон останется открытым, его закроет fail/orphaned следующий open');
     }
@@ -210,6 +247,14 @@ function main() {
     if (findings.length > 0) {
       console.error(`\n⚑ Шаги с находками: ${findings.map((f) => `${f.id} (exit ${f.exitCode})`).join(', ')}`);
       console.error('  Это НЕ отказ — репортёры отработали. Их вывод выше требует чтения.');
+    }
+    // #2580: многодневный некритичный красный всплывает в итоге, а не тонет в «⊘ некритичен».
+    if (noncriticalFailed.length > 0) {
+      console.error(
+        `\n⚑ Некритичные красные: ${noncriticalFailed
+          .map((r) => `${r.id} — ${r.streak}-й вечер подряд${r.escalated ? ' (эскалирован)' : ` (порог ${r.threshold})`}`)
+          .join(', ')}`,
+      );
     }
     if (failed.length > 0) {
       console.error(`\n✗ Критичных отказов: ${failed.length} (${failed.map((f) => f.id).join(', ')})`);

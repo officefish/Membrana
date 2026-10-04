@@ -1,3 +1,5 @@
+import { noncriticalFailSymptom } from './noncritical-streak.mjs';
+
 /**
  * Аргументы `procedure-run-record close` для вечерней цепочки — чистая сборка.
  *
@@ -35,10 +37,18 @@
  * `frictionIndex` амандмента — позиция в этом массиве; плавающий порядок сделал бы
  * адрес поправки неустойчивым.
  *
- * @param {{ failed: Array<{id: string, exitCode?: number|null}>, findings: Array<{id: string, exitCode?: number|null}>, evidence?: string }} p
+ * ── #2580: некритичный отказ тоже оставляет трение ──────────────────────────────
+ *
+ * `noncriticalFailed` — шаги, упавшие как некритичные (`skipped-noncritical`) или
+ * эскалированные из них серией. Каждый пишет трение `noncritical-fail <id> exit N` — это
+ * носитель серии красных вечеров (scripts/lib/noncritical-streak.mjs). Статус close они НЕ
+ * меняют: эскалированный шаг уже стоит в `failed`. Трения некритичных идут ПОСЛЕДНИМИ —
+ * индексы прежних трений (адрес амандмента) не сдвигаются.
+ *
+ * @param {{ failed: Array<{id: string, exitCode?: number|null}>, findings: Array<{id: string, exitCode?: number|null}>, noncriticalFailed?: Array<{id: string, exitCode?: number|null}>, evidence?: string }} p
  * @returns {string[]}
  */
-export function eveningCloseArgs({ failed, findings, evidence = 'docs/HANDOFF.md' }) {
+export function eveningCloseArgs({ failed, findings, noncriticalFailed = [], evidence = 'docs/HANDOFF.md' }) {
   const closeStatus = failed.length > 0 ? 'fail' : 'pass';
   return [
     'close',
@@ -51,6 +61,7 @@ export function eveningCloseArgs({ failed, findings, evidence = 'docs/HANDOFF.md
     ...failed.flatMap((f) => ['--gap', f.id]),
     ...failed.flatMap((f) => ['--friction', failureSymptom(f)]),
     ...findings.flatMap((f) => ['--friction', `${f.id}: finding exit ${f.exitCode ?? '?'}`]),
+    ...noncriticalFailed.flatMap((f) => ['--friction', noncriticalFailSymptom(f)]),
   ];
 }
 

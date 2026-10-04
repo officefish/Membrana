@@ -17,7 +17,7 @@
 
 /** @typedef {'ok'|'failed-critical'|'skipped-noncritical'} StepStatus */
 /** @typedef {'critical'|'noncritical'} Criticality */
-/** @typedef {{id:string, script?:string, criticality?:Criticality, kind?:'mechanic'|'gate', label?:string}} Step */
+/** @typedef {{id:string, script?:string, criticality?:Criticality, kind?:'mechanic'|'gate', label?:string, escalateAfterConsecutive?:number}} Step */
 /** @typedef {{exitCode?:number|null, ran?:boolean}} Outcome */
 
 /**
@@ -163,6 +163,15 @@ export function validateManifest(steps) {
     }
     if (criticalityOf(s) === 'noncritical' && !s?.whyNoncritical) {
       problems.push(`${at} (${s.id}): объявлен noncritical без whyNoncritical — некритичность без причины протухнет`);
+    }
+    // #2580: порог эскалации серии красных вечеров (scripts/lib/noncritical-streak.mjs).
+    // Смысл есть только у некритичного шага; кривое значение — претензия, а не тихое умолчание.
+    if (s?.escalateAfterConsecutive !== undefined) {
+      if (!Number.isInteger(s.escalateAfterConsecutive) || s.escalateAfterConsecutive < 1) {
+        problems.push(`${at} (${s.id}): escalateAfterConsecutive «${s.escalateAfterConsecutive}» — нужно целое ≥ 1`);
+      } else if (criticalityOf(s) !== 'noncritical') {
+        problems.push(`${at} (${s.id}): escalateAfterConsecutive у критичного шага — эскалировать нечего`);
+      }
     }
   }
   return problems;
