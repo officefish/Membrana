@@ -1,1 +1,5 @@
 {"ts":"2026-10-04T14:06:05.748Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-10-04T20:07:08.945Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-10-04-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-10-04T20:07:08.945Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-09-01-library-open-api-m3-key-ttl","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-04T20:07:08.945Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-31-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-04T20:07:08.945Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

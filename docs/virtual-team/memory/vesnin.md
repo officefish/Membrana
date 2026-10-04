@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14245/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 402 (причины в op-log) -->
+Записей: 50 · бюджет 14382/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 405 (причины в op-log) -->
+
+### 2026-10-04 · позиция · team-evening-feedback
+
+> Веснин. Оценка артефактов: `MAIN_DAY_ISSUE` впервые за цикл имеет честную таблицу обоснования с тремя первоисточниками и явной отметкой «расхождение не обнаружено». CLOSURE спринта и `reviews/angelina.md` замыкают цепочку acceptance → OPEN → CLOSURE без разрывов. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-04.md#reply-1`
 
 ### 2026-10-03 · позиция · team-evening-feedback
 
@@ -296,8 +302,8 @@
 
 — источник: `docs/seanses/library-open-api-m2-contract-2026-09-01.md#reply-1`
 
-### 2026-09-01 · позиция · library-open-api-m3-key-ttl
+### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 
-> Из конструкции следует однозначно: умолчание срока ключа-предъявителя живёт не в UI и не в блоке настроек кабинета (его нет), а в серверном коде — в том месте, где ключ генерируется при выдаче ссылки. Носитель умолчания — код генератора ключа на сервере. Исполнитель — серверный […] _(реплик в сеансе: 5)_
+> Единственный источник решений доступа — Panel. `registry.jsonl` остаётся источником тождества и истории материала по M2, но не становится авторизатором. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/library-open-api-m3-key-ttl-2026-09-01.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
