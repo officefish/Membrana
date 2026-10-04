@@ -5,6 +5,16 @@
 
 ---
 
+## 2026-10-04 — `chart-list-plugin-20261003` — **CLOSED · gate pass 2/2 · experience hit 2/2 · PR #2567 влит (`ee405f48`)**
+
+- **Closure:** [`local-sprint/chart-list-plugin-20261003/CLOSURE.md`](./local-sprint/chart-list-plugin-20261003/CLOSURE.md) —
+  кабинет выкачен; владелец принял три критерия, объёмы 20/200, playback/waveform и вытеснения. Повторная сверка на
+  одинаковом inputHash и 1838 измеренных записях: 7/20 совпадений по позиции, 18/20 пересечение, первое различие 8.
+- **Goal:** доказать, что разнообразие на малом объёме не совпадает целиком с превышением над фоном, и объяснить общий
+  громкостный префикс жадным порядком до первого вытеснения.
+- **External block:** prod RunRecord в office не проверен из-за #2580; починка базы вне спринта.
+- **Archive:** карточка `chart-list-plugin` остаётся active до отдельного решения владельца.
+
 ## 2026-10-03 — `library-loading-state-2570` — **CLOSED · gate pass 2/2 · experience hit (2/2; b1 345 > оценки 260, порог не пробит) · PR #2574 влит (`f4e74219`)**
 
 - **Closure:** [`local-sprint/library-loading-state-2570/CLOSURE.md`](./local-sprint/library-loading-state-2570/CLOSURE.md) —
