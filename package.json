@@ -292,7 +292,7 @@
     "office:docker:up": "docker compose -f packages/background-office/docker-compose.yml up -d",
     "office:docker:down": "docker compose -f packages/background-office/docker-compose.yml down",
     "office:docker:logs": "docker compose -f packages/background-office/docker-compose.yml logs -f office-api",
-    "office:docker:prod:build": "docker compose -f packages/background-office/docker-compose.yml -f deploy/background-office.prod.compose.yml build",
+    "office:docker:prod:build": "docker compose -f packages/background-office/docker-compose.yml -f deploy/background-office.prod.compose.yml --env-file /etc/membrana/office.env build",
     "office:docker:prod:up": "docker compose -f packages/background-office/docker-compose.yml -f deploy/background-office.prod.compose.yml --env-file /etc/membrana/office.env up -d",
     "media:dev": "yarn workspace @membrana/background-media dev",
     "media:build": "yarn turbo run build --filter=@membrana/background-media",
