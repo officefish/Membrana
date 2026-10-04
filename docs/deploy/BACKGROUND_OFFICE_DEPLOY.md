@@ -91,6 +91,39 @@ sudo ./deploy/generate-office-env.sh /etc/membrana/office.env
 # затем вручную замените REPLACE_BEFORE_PROD на реальные ключи (перед O4)
 ```
 
+**База архивариуса (#2580).** Генератор сам пишет `ARCHIVARIUS_MONGO_USERNAME`,
+`ARCHIVARIUS_MONGO_PASSWORD` и обе формы URI — `ARCHIVARIUS_MONGO_URI` и
+`TASK_ARCHIVE_MONGO_URI` — с одним и тем же паролем (`?authSource=admin`). Прод-оверлей
+`deploy/background-office.prod.compose.yml` требует пароль и оба URI (`${…:?…}`): без них
+`office-stack.sh build|up` падает громко на интерполяции, а не поднимается на публичном
+умолчании базового compose (оно оставлено только для локального `yarn office:docker:up`).
+
+`yarn office:docker:prod:build` и `yarn office:docker:prod:up` — только для VPS: оба читают
+`/etc/membrana/office.env` (`--env-file`); на CI и локально без этого файла не запускаются.
+Локальный стек — `yarn office:docker:up` (базовый compose без прод-оверлея).
+
+Существующий `office.env` генератор не трогает — недостающие ключи дописывает владелец
+руками (подсказка — в stderr генератора, без значений).
+
+**Непустой том.** `MONGO_INITDB_ROOT_*` создают пользователя только на ПУСТОМ томе
+`membrana-office_archivarius-mongo-data`. Если том уже был (пересоздание контейнера,
+смена пароля в env), auth включён, а пользователя с новым паролем нет — healthcheck базы
+`unhealthy`, office отвечает 500 на запись (инцидент 24.09–04.10). Тогда пользователя
+заводят руками, не печатая пароль: значения берутся из окружения контейнера.
+
+```bash
+# пользователей в базе нет (localhost exception Mongo) — завести root из env контейнера;
+# команда агентом не прогонялась, вещдок ручной починки 04.10 — #2580
+./deploy/office-stack.sh ps   # убедиться, что archivarius-mongo запущен
+docker compose -f packages/background-office/docker-compose.yml \
+  -f deploy/background-office.prod.compose.yml --env-file /etc/membrana/office.env \
+  exec archivarius-mongo mongosh admin --quiet --eval \
+  'db.createUser({ user: process.env.MONGO_INITDB_ROOT_USERNAME, pwd: process.env.MONGO_INITDB_ROOT_PASSWORD, roles: ["root"] })'
+```
+
+Пользователь уже есть, но с другим паролем, — смена пароля под действующей учётной
+записью; это решение владельца, не скрипта.
+
 ---
 
 ## 4. Деплой compose на сервере

@@ -1,1 +1,5 @@
 {"ts":"2026-10-04T14:06:06.400Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-10-04T16:36:07.007Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-10-04T16:35:36.974Z","origin":"ask-persona"}
+{"ts":"2026-10-04T16:36:07.013Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-10-04T16:35:36.974Z","origin":"ask-persona"}
+{"ts":"2026-10-04T16:36:07.015Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-19-security-posture-m1-watch","reason":"та же конструкция: решаем ГДЕ живёт проверка, КАКОЙ порог, КАКОЙ каденс; версии и реализацию не тащим внутрь шва.","origin":"ask-persona"}
+{"ts":"2026-10-04T16:36:07.018Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-30-sprint-honest-m7-second-door","reason":"честный спринт требует явной «второй двери»: noncritical не должен молча проходить, нужен предикат эскалации до assign.","origin":"ask-persona"}

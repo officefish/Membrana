@@ -27,9 +27,27 @@ services:
     environment:
       DREAMS_ENABLED: ${DREAMS_ENABLED:-true}
       DREAMS_VOLUME_PATH: ${DREAMS_VOLUME_PATH:-/var/lib/membrana-dreams}
+      # #2580: прод не поднимается на публичном умолчании пароля из базового compose.
+      # Нет значения в --env-file → compose падает громко на интерполяции, а не молча.
+      ARCHIVARIUS_MONGO_URI: ${ARCHIVARIUS_MONGO_URI:?ARCHIVARIUS_MONGO_URI обязателен в прод-env (mongodb://user:пароль@archivarius-mongo:27017/membrana_archivarius?authSource=admin), см. deploy/generate-office-env.sh}
+      TASK_ARCHIVE_MONGO_URI: ${TASK_ARCHIVE_MONGO_URI:?TASK_ARCHIVE_MONGO_URI обязателен в прод-env (тот же пользователь и пароль, база membrana_task_archive), см. deploy/generate-office-env.sh}
     volumes:
       - panel-users-data:/var/lib/membrana-office
       - dreams-data:/var/lib/membrana-dreams
+
+  # #2580: база архивариуса в проде — без умолчаний. MONGO_INITDB_ROOT_* действуют только
+  # на ПУСТОМ томе; на непустом пароль заводится руками (BACKGROUND_OFFICE_DEPLOY.md §3).
+  archivarius-mongo:
+    environment:
+      MONGO_INITDB_ROOT_PASSWORD: ${ARCHIVARIUS_MONGO_PASSWORD:?ARCHIVARIUS_MONGO_PASSWORD обязателен в прод-env, см. deploy/generate-office-env.sh}
+    # Пароль берётся из окружения КОНТЕЙНЕРА ($$), а не интерполяцией compose: секрет не
+    # попадает в `docker compose config` и в Healthcheck.Test конфигурации контейнера.
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'mongosh --quiet --username "$$MONGO_INITDB_ROOT_USERNAME" --password "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval "db.adminCommand({ ping: 1 }).ok"',
+        ]
 
 volumes:
   panel-users-data:
