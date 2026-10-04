@@ -1,0 +1,4 @@
+{"traceId":"clp-20261003-b1-run","blockId":"b1-journal-run-record-office-trace","kind":"context_run","subject":"vesnin","at":"2026-10-03T12:05:00Z","ref":"packages/background-cabinet/src/modules/journal/plugin-host/journal-results-bridge.service.ts","relatesToSprint":true}
+{"traceId":"clp-20261003-b1-review","blockId":"b1-journal-run-record-office-trace","kind":"review_pass","subject":"vesnin","at":"2026-10-03T12:13:54Z","ref":"docs/discussions/pr-2567-code-review.md","relatesToSprint":true}
+{"traceId":"clp-20261003-b2-run","blockId":"b2-owner-live-cabinet-acceptance","kind":"context_run","subject":"angelina","at":"2026-10-04T16:23:32Z","ref":"docs/field/chart-list-acceptance-2026-08-22.md","relatesToSprint":true}
+{"traceId":"clp-20261003-b2-review","blockId":"b2-owner-live-cabinet-acceptance","kind":"review_pass","subject":"angelina","at":"2026-10-04T16:27:00Z","ref":"docs/local-sprint/chart-list-plugin-20261003/reviews/angelina.md","relatesToSprint":true}

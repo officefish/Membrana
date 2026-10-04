@@ -4,6 +4,11 @@
 
 ## Focus
 
+- **chart-list-plugin-20261003** · b1 влит PR #2567 (`ee405f48`) и выкачен в cabinet; владелец 04.10 принял три
+  критерия, объёмы 20/200, playback/waveform и вытеснения. Контрольная пара на одном корпусе 1838: loudness-over-floor
+  и spectral-variety совпали на 7/20 позициях, пересечение 18/20, первое различие 8; **gate pass 2/2 `honest_pair`**,
+  experience **hit 2/2** (331/230 и 299/220, порог 400 не пробит). [`CLOSURE.md`](./local-sprint/chart-list-plugin-20261003/CLOSURE.md).
+  Prod RunRecord в office не проверен из-за внешнего блока #2580; карточка ждёт отдельного решения владельца об архиве.
 - **library-loading-state-2570** ([#2570](https://github.com/officefish/Membrana/issues/2570)) ·
   ратифицирован 03.10 12:35:56Z с умолчаниями; окно перерезано по слову владельца «Перерезать окно» (`window.from` →
   12:35:56Z, повторная ратификация 15:51:41Z) · b1 `f16f5db0` (dynin) — PR #2574 влит (`f4e74219`) · живая приёмка b2 на
