@@ -130,13 +130,20 @@ function writeExec(path, body) {
   chmodSync(path, 0o755);
 }
 
+/** Временная папка только для владельца: в ней env со сторожами-секретами (на Windows chmod без эффекта). */
+function privateTmpDir() {
+  const dir = mkdtempSync(join(tmpdir(), 'office-probe-2580-'));
+  chmodSync(dir, 0o700);
+  return dir;
+}
+
 /**
  * Прогон `office-stack.sh probe` с подставными docker и curl (крючья OFFICE_STACK_DOCKER /
  * OFFICE_STACK_CURL — только для зуба). Подставной curl пишет свой argv и stdin в файлы:
  * так проверяется, что токен идёт конфигом через stdin (`-K -`), а не аргументом.
  */
 function runProbe({ envText, dbHealth = 'healthy', officeHealth = 'healthy', codes = {}, timeoutSec = '30' }) {
-  const dir = mkdtempSync(join(tmpdir(), 'office-probe-2580-'));
+  const dir = privateTmpDir();
   try {
     const envFile = join(dir, 'office.env');
     writeFileSync(envFile, envText);
@@ -245,6 +252,36 @@ test('P3b: сбор на unhealthy базе и 500 на двери → db-unheal
 test('P3b: база застряла в starting → db-timeout по таймауту ожидания', () => {
   const r = runProbe({ envText: goodEnv, dbHealth: 'starting', timeoutSec: '1' });
   assert.equal(judgeOfficeStoreProbe(r.stdout).outcome, 'db-timeout');
+});
+
+function runUriForm(key, envText) {
+  const dir = privateTmpDir();
+  try {
+    const envFile = join(dir, 'office.env');
+    writeFileSync(envFile, envText);
+    const r = spawnSync('bash', bashArgv(STACK, ['probe-uri-form', key]), {
+      env: { ...process.env, LC_ALL: 'C', OFFICE_ENV_FILE: bashScriptArg(envFile) },
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    const why = explainBashFailure(r, STACK);
+    if (why) throw new Error(why);
+    return { code: r.status ?? 1, stdout: r.stdout ?? '', stderr: r.stderr ?? '' };
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+test('P3b: имя ключа env — только ^[A-Z0-9_]+$; regex-имя не выдаёт чужую строку за свою (ревью #2583)', () => {
+  // Искомого ключа в env нет; regex-имя `ARCHIVARIUS.*` без зуба совпало бы с ARCHIVARIUS_MONGO_URI.
+  const env = goodEnv.replace(/^TASK_ARCHIVE_MONGO_URI=.*\n/mu, '');
+  assert.equal(runUriForm('ARCHIVARIUS_MONGO_URI', env).stdout.trim(), 'credentials', 'допустимое имя не прочитано');
+  for (const bad of ['ARCHIVARIUS.*', 'A|B', 'archivarius_mongo_uri', '']) {
+    const r = runUriForm(bad, env);
+    assert.equal(r.code, 2, `имя «${bad}» не отвергнуто`);
+    assert.equal(r.stdout, '', `по имени «${bad}» напечатана форма`);
+    assert.ok(!r.stderr.includes(PW_SENTINEL) && !r.stdout.includes(PW_SENTINEL), 'отказ напечатал секрет');
+  }
 });
 
 test('P3b: имена дверей сбора совпадают со словарём суда', () => {

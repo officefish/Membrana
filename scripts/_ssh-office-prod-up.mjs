@@ -168,6 +168,13 @@ function sftpPut(conn, local, remote) {
   });
 }
 
+/**
+ * Выполнить скрипт на VPS через `bash -s`, транслируя вывод в консоль.
+ * Вывод возвращается потому, что его судит assertOfficeStoreProbeOk (строки `probe …`, #2580).
+ * @param {import('ssh2').Client} conn
+ * @param {string} script
+ * @returns {Promise<string>} stdout удалённого скрипта (при exit 0; иначе reject)
+ */
 function execBash(conn, script) {
   return new Promise((resolvePromise, rejectPromise) => {
     conn.exec('bash -s', (err, stream) => {

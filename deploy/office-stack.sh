@@ -31,6 +31,30 @@ if [[ ! -f "$ENV_FILE" ]]; then
   exit 1
 fi
 
+# Значение ключа env без печати: последнее вхождение (как у compose --env-file), кавычки сняты.
+# Имя ключа идёт в regex grep — допускается только ^[A-Z0-9_]+$, иначе отказ (exit 2, ревью #2583):
+# имя вида `A.*` совпало бы с чужой строкой env и выдало бы её форму за форму искомого ключа.
+env_value() {
+  if [[ ! "$1" =~ ^[A-Z0-9_]+$ ]]; then
+    echo "office-stack: недопустимое имя переменной env (ожидается ^[A-Z0-9_]+\$)" >&2
+    return 2
+  fi
+  local v
+  v="$(grep -E "^$1=" "$ENV_FILE" | tail -1 | cut -d= -f2- || true)"
+  v="${v%\"}"; v="${v#\"}"; v="${v%\'}"; v="${v#\'}"
+  printf '%s' "$v"
+}
+# Форма URI: credentials | no-credentials | missing. Ловушка памяти: без URI office молча
+# берёт in-memory хранилище, и двери на памяти зелёные — поэтому форма судится отдельно.
+uri_form() {
+  local v
+  v="$(env_value "$1")" || return 2
+  if [[ -z "$v" ]]; then echo missing
+  elif [[ "$v" =~ ^mongodb(\+srv)?://[^:/@]+:[^@/]+@ ]]; then echo credentials
+  else echo no-credentials
+  fi
+}
+
 cmd="${1:-up}"
 shift || true
 
@@ -77,23 +101,6 @@ case "$cmd" in
     PROBE_POLL_SEC="${PROBE_POLL_SEC:-5}"
     PROBE_KEY="__deploy-probe-2580__"
 
-    # Значение ключа env без печати: последнее вхождение (как у compose --env-file), кавычки сняты.
-    env_value() {
-      local v
-      v="$(grep -E "^$1=" "$ENV_FILE" | tail -1 | cut -d= -f2- || true)"
-      v="${v%\"}"; v="${v#\"}"; v="${v%\'}"; v="${v#\'}"
-      printf '%s' "$v"
-    }
-    # Форма URI: credentials | no-credentials | missing. Ловушка памяти: без URI office молча
-    # берёт in-memory хранилище, и двери на памяти зелёные — поэтому форма судится отдельно.
-    uri_form() {
-      local v
-      v="$(env_value "$1")"
-      if [[ -z "$v" ]]; then echo missing
-      elif [[ "$v" =~ ^mongodb(\+srv)?://[^:/@]+:[^@/]+@ ]]; then echo credentials
-      else echo no-credentials
-      fi
-    }
     health_of() {
       local id
       id="$("${COMPOSE[@]}" ps -q "$1" 2>/dev/null | head -1 || true)"
@@ -133,8 +140,13 @@ case "$cmd" in
     probe_door task-archive-closure "/v1/task-archive/closures/${PROBE_KEY}"
     echo "probe end"
     ;;
+  probe-uri-form)
+    # Форма одного URI из env без значения (credentials|no-credentials|missing) — для ручной
+    # проверки на VPS и для зуба office-store-probe.test.mjs; недопустимое имя → exit 2.
+    uri_form "${1:-}"
+    ;;
   *)
-    echo "Usage: $0 {build|up|down|ps|logs|smoke|probe}" >&2
+    echo "Usage: $0 {build|up|down|ps|logs|smoke|probe|probe-uri-form <KEY>}" >&2
     exit 1
     ;;
 esac
