@@ -98,6 +98,10 @@ sudo ./deploy/generate-office-env.sh /etc/membrana/office.env
 `office-stack.sh build|up` падает громко на интерполяции, а не поднимается на публичном
 умолчании базового compose (оно оставлено только для локального `yarn office:docker:up`).
 
+`yarn office:docker:prod:build` и `yarn office:docker:prod:up` — только для VPS: оба читают
+`/etc/membrana/office.env` (`--env-file`); на CI и локально без этого файла не запускаются.
+Локальный стек — `yarn office:docker:up` (базовый compose без прод-оверлея).
+
 Существующий `office.env` генератор не трогает — недостающие ключи дописывает владелец
 руками (подсказка — в stderr генератора, без значений).
 
