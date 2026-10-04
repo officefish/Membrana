@@ -6,7 +6,7 @@
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
 Записей: 50 · бюджет 14397/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 381 (причины в op-log) -->
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 383 (причины в op-log) -->
 
 ### 2026-10-03 · позиция · team-evening-feedback
 
