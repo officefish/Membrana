@@ -109,7 +109,7 @@ test('P3: дверь 5xx → door-5xx; неожиданный код (200 вме
 
 test('P3: находка с outcome ok (или вне словаря) в непустом списке не даёт зелёного (ревью #2583)', () => {
   assert.equal(worstOutcome([]), 'ok');
-  assert.notEqual(worstOutcome([{ outcome: 'ok', subject: 'x', detail: 'подстановка' }]), 'ok');
+  assert.equal(worstOutcome([{ outcome: 'ok', subject: 'x', detail: 'подстановка' }]), 'door-unexpected');
   assert.equal(worstOutcome([{ outcome: 'ok' }, { outcome: 'door-5xx' }]), 'door-5xx');
   assert.equal(worstOutcome([{ outcome: 'nonsense' }]), 'door-unexpected');
 });
