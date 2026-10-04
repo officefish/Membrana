@@ -44,7 +44,14 @@ node scripts/_ssh-office-inventory.mjs        # смоук доступа чер
 docker pull node:20-alpine    # retry сквозь 429 (циклический лимит)
 DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 ./deploy/office-stack.sh build && ./deploy/office-stack.sh up
 curl -fsS http://127.0.0.1:3000/health
+./deploy/office-stack.sh probe   # #2580: строки probe … (без секретов); вердикт — scripts/lib/office-store-probe.mjs
 ```
+
+**Проба хранилищ (#2580).** `/health` зелёный и при мёртвой базе (10 дней unhealthy, 24.09–04.10).
+`node scripts/_ssh-office-prod-up.mjs` после `up` сам зовёт `office-stack.sh probe` и падает при
+не-ok (`db-unhealthy`, `db-timeout`, `env-uri-without-credentials`, `door-5xx`, `door-unexpected`);
+`node scripts/_ssh-office-smoke.mjs` — тот же суд пунктом [7]. При ручной сборке на хосте вывод
+пробы читать глазами: `health archivarius-mongo healthy`, двери 200/404/404, оба URI `credentials`.
 
 Обязательно в prod-compose: `build.network: host` (bridge NAT душит TLS к Cloudflare).
 rag-service должен быть в build-контексте (`.dockerignore` whitelist + Dockerfile COPY build+runtime).
