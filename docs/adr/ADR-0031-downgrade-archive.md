@@ -1,6 +1,7 @@
 # ADR-0031 — Понижение тарифа: избыток буфера уходит в архив понижения, удаление только по сроку партии
 
 > **Статус:** ACCEPTED · 2026-10-05 — вердикты 1–6 консилиума приняты владельцем 05.10 (передано ведущей Ангелиной; протокол `docs/seanses/tariff-downgrade-freeze-consilium-2026-10-05-2026-10-05.md`).
+> **Трассируемость:** вердикты 1–6, 32 реплики (шесть ролей, протокол :45–:109), итоговая таблица — раздел «Итоговое решение консилиума» (протокол :113–:123), Definition of Done — :125–:134; протокол `docs/seanses/tariff-downgrade-freeze-consilium-2026-10-05-2026-10-05.md`. Решения ниже — пересказ этой таблицы; расхождение — дефект ADR, а не протокола.
 > **Внимание:** статус записи и сила решений — разные вещи. Решения действуют по слову владельца 05.10; этот документ их фиксирует и грунтует для кода. Код по #2587 / #2588 начинается только после этой записи и правок канона M5 со ссылкой сюда (вердикт Teamlead, протокол :109). Изменение любого пункта — новый консилиум, не правка файла.
 
 ## Контекст
@@ -46,6 +47,76 @@ Retain остаётся нормой для всего остального: п�
 ### 6. Отбор «оставить, пока хватает байт» — новый чистый модуль
 
 Режимы chart-list считают штуки, квота — байты. Новый pure-модуль в `@membrana/plugin-handlers` (`selectKeepWithinBytes`): жадное заполнение живого набора под бюджет байт поверх порядка трёх режимов. Приоритет keep: **размеченные и «хранить»** (`isPinnedByHuman`) — первыми; затем порядок режима (`CHART_LIST_CRITERIA` не расширяется, компараторы — адаптеры); при равенстве — **более новая `createdAt` остаётся** (старые в freeze раньше), затем стабильный `sampleId` asc. Неизмеримые пробы (тишина, ниже порога, не декодируются) — **после** измеренных и в v1 уходят в freeze, чтобы не ломать инвариант байт. Без Nest, без I/O, unit-тесты с фикстурами равных меток времени обязательны. Байтовый отбор, размазанный по UI, — BLOCK.
+
+## Схема (DDL-очертание под b2 плана)
+
+Очертание, а не миграция: имена и типы — Prisma/Postgres как в `packages/background-media/prisma/schema.prisma`. Это грунт для блока b2 ратифицированного плана, новых решений здесь нет: колонки и индексы названы в стыке с #2588 (план `//junction-2588`) и в решениях 2 и 4.
+
+**`DowngradeArchiveBatch`** — партия: единица заморозки, возврата и удаления.
+
+| Поле | Тип | Null | Индекс / примечание |
+|---|---|---|---|
+| `id` | `String @id @default(uuid()) @db.Uuid` | нет | PK |
+| `deviceId` | `String @db.Uuid` | нет | FK → `Device` (`onDelete: Cascade`); составной `(deviceId, state)` |
+| `membraneId` | `String @db.Uuid` | нет | владелец в кабинете, для списка партий пользователя |
+| `reason` | `String` | нет | закрытый словарь, v1 одно значение `tariff_downgrade` |
+| `fromTariffId` | `String` | нет | тариф до понижения |
+| `toTariffId` | `String` | нет | тариф после понижения |
+| `criterion` | `String` | нет | режим chart-list (`loudness-over-floor` \| `spectral-variety` \| `drone-likeness`) |
+| `planDigest` | `String` | нет | хеш подтверждённого предпросмотра; `@@unique([deviceId, planDigest])` — идемпотентность freeze |
+| `retentionDays` | `Int` | нет | снимок срока, переданного кабинетом (решение 4) |
+| `frozenAt` | `DateTime @default(now())` | нет | момент заморозки |
+| `expiresAt` | `DateTime` | нет | `= frozenAt + retentionDays` суток; `@@index([expiresAt])` — предикат уборки #2588 |
+| `state` | enum `DowngradeArchiveState { frozen, restored, deleted, failed }` | нет | `@@index([deviceId, state])` |
+| `restoredAt` | `DateTime` | да | ставится при `restored` |
+| `deletedAt` | `DateTime` | да | ставится уборкой #2588 при `deleted` |
+| `keptBytes` | `BigInt` | нет | сумма живого после заморозки — вещдок post-condition |
+| `frozenBytes` | `BigInt` | нет | сумма ушедшего в партию |
+
+**`DowngradeArchivedSample`** — строка пробы, перенесённая из `Sample` целиком; блоб на месте.
+
+| Поле | Тип | Null | Индекс / примечание |
+|---|---|---|---|
+| `id` | `String @id @db.Uuid` | нет | **тот же** `Sample.id` — возврат восстанавливает строку под прежним адресом |
+| `batchId` | `String @db.Uuid` | нет | FK → `DowngradeArchiveBatch` (`onDelete: Restrict` — партия не удаляется, пока есть строки); `@@index([batchId])` |
+| `deviceId` | `String @db.Uuid` | нет | `@@index([deviceId])` |
+| `collectionId` | `String` | нет | куда вернуть (v1 всегда `__buffer__`) |
+| `title`, `class`, `label`, `source`, `durationSec`, `sampleRate`, `channels`, `audioFormat`, `contentType`, `sizeBytes`, `storageRef`, `notes`, `createdAt` | как у `Sample` | как у `Sample` | копия один-в-один, чтобы restore был переносом без догадок |
+| `modeRank` | `Int` | да | ранг режима на момент заморозки; `null` — неизмеримая (решение 6) |
+| `archivedAt` | `DateTime @default(now())` | нет | — |
+
+Инварианты схемы: строки одной пробы не бывает одновременно в `Sample` и в `DowngradeArchivedSample` (перенос — транзакция); `getQuota` не меняется, потому что считает только `Sample`; хвост `failed`-партии подбирает повторный freeze (строки переносятся в новую партию, `failed` остаётся следом с нулём строк).
+
+## Контракт приказа freeze (под b3/b4 плана)
+
+Дверь media `POST /v1/devices/:deviceId/downgrade-archive/freeze`; вызывающий — кабинет (b4), **до** commit тарифа (решение 5).
+
+Вход:
+
+| Поле | Тип | Смысл |
+|---|---|---|
+| `deviceId` | uuid (путь) | прибор |
+| `membraneId` | uuid | владелец в кабинете |
+| `criterion` | режим chart-list | тот же, что в предпросмотре |
+| `planDigest` | sha256 hex | **хеш подтверждённого предпросмотра** (`preview` вернул его над отсортированным списком `sampleId` keep/freeze и `bufferLimitBytes`); расхождение с текущим состоянием буфера — отказ, а не «заморозим что есть» |
+| `retentionDays` | int ≥ 1 | снимок срока от кабинета (`ArchiveRetentionReader.daysFor(membraneId)`, #2588) |
+| `fromTariffId`, `toTariffId` | string | для журнала партии |
+| `bufferLimitBytes` | int ≥ 0 | лимит оси на новом тарифе — предмет post-condition |
+
+Выход (200): `{ batchId, state: 'frozen', frozenAt, expiresAt, frozenBytes, keptBytes, sampleCount }`. Повтор с тем же `planDigest` — та же партия, без второй заморозки.
+
+Отказы — закрытый список (литералы чеканятся в `downgrade-archive.dto.ts`, как у словаря переполнения):
+
+| Причина | Когда |
+|---|---|
+| `preview_required` | `planDigest` не задан или не найден среди предпросмотров прибора |
+| `plan_stale` | буфер изменился после предпросмотра: хеш текущего состава ≠ `planDigest` |
+| `invalid_retention` | `retentionDays` не целое ≥ 1 |
+| `partial_freeze` | часть проб не перенесена (исчезла между preview и freeze) — партия `failed`, тариф не коммитить |
+| `quota_invariant_violated` | post-condition `sum(active buffer bytes) ≤ bufferLimitBytes` ложен после переноса — партия `failed` |
+| `device_not_found` | прибора нет |
+
+Остальные двери (`preview`, `GET`-список, `restore` с отказами `restore_exceeds_quota` / `archive_expired`) — по `//dod` b3 плана; их словарь — в том же dto, тем же закрытым списком.
 
 ## Разведение: downgrade-archive ≠ tariff-cold
 
