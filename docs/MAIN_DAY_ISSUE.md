@@ -1,23 +1,20 @@
-<!-- Сгенерировано: 2026-10-05T12:31:17.047Z (yarn main-day-issue@cc60af1d) -->
+<!-- Сгенерировано: 2026-10-05T12:44:52.009Z (yarn main-day-issue@dc77f87b) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
-<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"c51bb4a3805fb2aa63699130cc3232dc4c5beee7","digest":"2f8bc0e50890cde050c5eebe54c4b7b4a76bd00e29dad628f8e7f9084d4ddbec","versionAt":"2026-10-04T18:42:49+03:00"},"DAILY_STANDUP":{"version":"c51bb4a3805fb2aa63699130cc3232dc4c5beee7","digest":"13fe544eec596d1f8347eebebca5d05809b1514cc30a9e45e50a2cd583cde7e7","versionAt":"2026-10-04T18:42:49+03:00"}}} -->
+<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"37a00f4a4596d0ad93593c1c616bf11fe4b5f5d8","digest":"2f8bc0e50890cde050c5eebe54c4b7b4a76bd00e29dad628f8e7f9084d4ddbec","versionAt":"2026-10-05T15:40:07+03:00"},"DAILY_STANDUP":{"version":"dc77f87b1c77a4c273ad9ba88f483561eb6c1958","digest":"b19695715e2abdf8bd1f307afbd740f00b5e40db19d1240a007e4f95b4a94654","versionAt":"2026-10-05T15:43:04+03:00"}}} -->
 <!-- Звено канала: provider=anthropic model=claude-sonnet-4-6 source=overlay generations=1 -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
 <!-- active в реестре: trace-freeze-e-adr-gate-pr, trace-freeze-d-probe-truth-tooth, trace-freeze-c-library-render, trace-freeze-b-live-sendsync, trace-freeze-a-cut, cowork-library-open-api, node-duty-ready-predicate, studio-package-av-refusal, session-digest-library-face, dedup-pairs-show-and-wait, obs-sentry-container, logging-observability-contour, chart-list-plugin, media-per-device-token, capture-sidecar-protocol, plugin-results-payload-pocket, firebat-node-device, server-plugin-foundation, static-mmbrn-retirement, static-mmbrn-live-services, static-mmbrn-cutover, static-mmbrn-m6-alignment, static-mmbrn-rehydrate-parity, static-mmbrn-ingress-auth, static-mmbrn-target-provision, static-mmbrn-disposition-ledger, static-mmbrn-container, frame-holders-reassign-twenty, workflow-examples-marathon, procedure-run-journal-f1-local-trail, procedure-run-journal-2026-08-01, meeting-evening-review-predicate, evening-chain-review-predicate, mfcc-compare-sprint, insight-mandate-for-new, frame-rails-2307, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, membrane-node-runtime-remote, mp7b-rt7-prod-hardening, device-board-three-hosts-2026-06-26, db3h-s4-microphone-detectors, neural-free-tier-dataset-report, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, detection-alarm-loop-refactor -->
 
 # MAIN_DAY_ISSUE — 2026-10-05
 
-<!-- Сгенерировано: 2026-10-05 (yarn main-day-issue) -->
-<!-- Источник магистрали: morning-gates-state.json · day=2026-10-04; assertions sources[0] · date=2026-10-04 -->
-
 ## Метаданные
 
 | Поле | Значение |
 |------|----------|
-| `primaryFocusId` | `chart-list-plugin` |
-| `primaryTitle` | Живая приёмка `chart-list-plugin`: ADR по контракту шины + закрытие хвоста спринта |
-| `githubIssue` | — |
+| `primaryFocusId` | `tariff-downgrade-freeze` |
+| `primaryTitle` | Понижение тарифа со старшего на младший с заморозкой избыточных данных |
+| `githubIssue` | #2587, #2588 |
 | `size` | L |
 | `promptPath` | — |
 | `сгенерировано` | 2026-10-05 |
@@ -26,43 +23,48 @@
 
 ## Магистраль
 
-Спринт `chart-list-plugin-20261003` закрыт живой приёмкой владельца 04.10 (PR #2581, след в трейле), однако архитектурный хвост не урегулирован: отсутствует ADR по контракту шины, без которого Родченко не получает LGTM Тарасова на презентационный компонент. Магистраль дня — зафиксировать этот контракт: Веснин оформляет ADR, Тарасов даёт LGTM, Родченко получает разблокировку. Параллельно — словесно подтвердить P1 Веснина (порядок `sprint:gate` → запись `"status":"pass"` в трейле) и передать ADR в реестр как closure-артефакт спринта.
+**Магистраль взята с гейта (`morning-gates-state.json`, `day: 2026-10-05`), который несёт выбор владельца ПОЗЖЕ, чем `sources[0]` в `main-day-assertions.json`. Оба источника владельческие — спор решается свежестью. Расхождение не замалчивается: `magistral` в гейте (`tariff-downgrade-freeze`) совпадает по смыслу с `sources[0].claim` от 05.10, но `main-day-assertions.json` не перечеканен под это имя — перечеканка предписана каноном и не сделана. Это находка, а не блок.**
 
-**Критерий успеха к вечеру:** ADR по контракту шины `chart-list-plugin` принят (LGTM Тарасова), файл влит в `docs/`, Родченко уведомлён о разблокировке; P1 порядкового разрыва (12 мин) закрыт письменным подтверждением.
+Владелец 05.10 назначил магистраль вручную вне топ-3: **понижение тарифа со старшего на младший с заморозкой избыточных данных** (`tariff-downgrade-freeze`). Два продуктовых блока: #2587 — формат заморозки (избыток буфера → холодный архив, «живое» отбирается одним из трёх режимов журнальной витрины, настройка в кабинете + подтверждение при понижении, разморозка рукой пользователя) и #2588 — срок хранения архива (умолчание 14 дней, тест 1 день, per-user в office выпадающим списком). Консилиум 05.10 зафиксировал шесть вердиктов (исключение из M5 Retain, отдельные таблицы архива в media, дверь office→кабинет минимальная, срок — снимок при заморозке, порядок freeze→tariff, отбор «в пределах байт»), все приняты владельцем.
+
+Шаг дня — **ADR-0031**, перерезка планов #2587/#2588 под вердикты 1–6 → ратификация владельцем → код b1. Порядок исполнения строгий: сначала Тарасов фиксирует границу «что замораживаем / что неприкосновенно для активных задач», затем Дынин исполняет и верифицирует буфет; Ожегов проверяет связность сервисов.
+
+**Критерий успеха к вечеру:** ADR-0031 в стволе; планы #2587 и #2588 перерезаны под вердикты 1–6 и ратифицированы владельцем; первый кодовый блок #2587 (b1 — отбор «в пределах байт») в работе или в PR. Живое понижение тарифа и приёмка — не сегодня: это конец спринта, после b1–b5.
 
 ---
 
 ## Подкрепление
 
-- **P0 — проверить #2582 на plain-text секреты:** `git show de3b29a1 -- "*.env*" "*.yml" "*.json" | grep -iE "password|mongodb\+srv|uri"` — вывод должен быть пуст; при находке немедленно заводить инцидент. Дынин + Тарасов, выполнить первым делом до любой архитектурной работы.
-- **P1 — triage четырёх CVE** (`@fastify/busboy` ×2, `braces`, `http-cache-semantics`): письменный вердикт runtime vs dev; при runtime-статусе — P1-блок на merge-очередь до исправления. Дынин, результат фиксируется текстом, не устно.
+- **P0 C9 — проверка #2582 на plain-text секреты** (`git show de3b29a1 -- "*.env*" "*.yml" "*.json" | grep -iE "password|mongodb\+srv|uri"`): выполняется первым действием до любой работы с данными; без чистого результата магистраль `secret-parser-built` не может опереться на историю credentials-генератора, и работа с буфером небезопасна. Исполнитель: Дынин + Тарасов.
+- **Triage четырёх CVE** (`@fastify/busboy` ×2, `braces`, `http-cache-semantics`) — письменный вердикт runtime vs dev; при runtime — P1 до следующего merge. Разблокирует merge-очередь и даёт чистое основание для операции с буфером. Исполнитель: Дынин.
 
 ---
 
 ## Перспективные
 
-- ADR по контракту шины разблокирует Родченко: следующий день получает живой презентационный компонент `chart-list-plugin` — UI-слой без сегодняшней архитектурной задолженности.
-- Закрытие P0 по секретам в #2582 создаёт чистое основание для прохождения вехи `secret-parser-built`: парсер получит верифицированный кейс и сможет встать в CI-гейт без риска закрепить утечку в архиве.
-- Triage CVE даёт письменный реестр runtime-рисков и разблокирует merge-очередь, стоящую за oversized PR (#2562 и другие); после тriage разбор #2562 (`header-badge-narrow`, 406 строк) становится первым из 20 неразобранных.
+- После закрытия P0 по #2582 разблокируется прохождение вехи `secret-parser-built`: парсер получит проверенный кейс реального засвеченного ключа и сможет встать в CI-гейт; амнистия на правку архива снимается этим гейтом.
+- ADR-0031 ратифицированный → код b1 (#2587/#2588) даёт продуктовый каркас тарифной лестницы и открывает следующий виток: UI-компонент подтверждения заморозки (Родченко) и probe манифеста в ночном трейле.
+- Подтверждение порядка `sprint:gate` → `"status":"pass"` в трейле за 04.10 (запрос Веснина из code-review) закроет P1-инверсию и позволит открыть разбор #2562 (`header-badge-narrow`, 406 строк) — первый из 20 неразобранных PR.
 
 ---
 
 ## Экспериментальные
 
-- **Dry-run резака `night-triage-secret-scan.mjs`:** запустить с флагом `--dry-run` и посмотреть, что инструмент вырежет рядом с реальными секретами — не снесёт ли легитимный контент. Узнаём: безопасна ли агрессивная стратегия для кейса #2582 до того, как резак встанет в поток.
-- **Один датированный проход манифеста ротации на мок-файле:** подать парсеру синтетический файл с одним засвеченным ключом и проверить, что манифест содержит дату и id. Узнаём: достаточен ли формат манифеста для прохождения гейта `secret-parser-built` прямо сейчас.
-- **Верификация #2503 живой проверкой** `yarn ask vesnin --no-context "тест"` — закрыть статус `unknown` утреннего канона; при успехе снять с санитарного списка, при неудаче завести отдельный тикет.
+- **Проба dry-run резака:** запустить `night-triage-secret-scan.mjs --dry-run` до любой записи в буфер — убедиться, что агрессивный рез не сносит безопасный контент рядом с секретом; результат сверить с тем, что найдёт `grep` по #2582.
+- **Проба манифеста на мок-файле:** подать парсеру синтетический файл с одним засвеченным ключом, проверить, что манифест несёт дату, id ключа и признак заморозки — достаточен ли формат для прохождения гейта `secret-parser-built` без правки критериев.
+- **Проба отбора «в пределах байт»:** на локальном срезе буфера (≤100 записей) прогнать три режима журнальной витрины и замерить расхождение в итоговом объёме — убедиться, что вердикт 6 консилиума («в пределах байт») вычислим детерминированно, прежде чем код b1 пойдёт в ревью.
 
 ---
 
 ## Санитарные
 
-- **P0 первым делом:** `git show de3b29a1 -- "*.env*" "*.yml" "*.json" | grep -iE "password|mongodb\+srv|uri"` — проверить #2582 на plain-text секреты (перенос с 04.10, Дынин + Тарасов).
-- **Подтвердить порядок** `sprint:gate` → `"status":"pass"` в трейле 04.10: `cat docs/procedure-runs/trail/2026-10-04.jsonl | grep chart-list | jq '.at, .status'`; при порядковой инверсии — завести билет (запрос Веснина из ревью).
-- **Triage CVE** `@fastify/busboy` ×2, `braces`, `http-cache-semantics` — runtime vs dev письменно; при runtime → P1-блок до merge (перенос с 04.10, Дынин).
-- **Верифицировать #2503** живой проверкой `yarn ask vesnin --no-context "тест"` — закрыть статус `unknown` (Ожегов, перенос).
-- **P2 opportunity Родченко:** завести issue «label выборки в UI не следует за сохранённым criterion» (наблюдение Ангелины из ревью 04.10; не блок, но не терять).
-- **P2 — дублирующие forecast-записи** в `vesnin.jsonl` (три записи, одна без замера `cut-1`): добавить дедупликацию по `id` или убрать `cut-1`; при агрегации дают тройной счёт.
+- Triage четырёх CVE (`@fastify/busboy` ×2, `braces`, `http-cache-semantics`): runtime vs dev письменно; при продуктовом runtime — P1 до любого merge.
+- #2590 — подпись выборки chart-list не следует за сохранённым критерием (P2, заведено ведущей 05.10; Родченко при свободном слоте).
+
+> **Снято сверкой ведущей 05.10** (генератор перенёс пункты из ревью 04.10):
+> - «P0: секреты в #2582» — команда прогнана 04.10 вечером: в диффе de3b29a1 только шаблоны `${…:?…}`/`$$…`, 48-hex строк 0; чисто.
+> - «порядок sprint:gate → status pass» — проверен: `review_pass` 16:27:00Z, close `pass` 16:39:00Z (19:39+03:00); порядок верный, инверсии нет.
+> - «верифицировать #2503» — это влитый PR (MERGED), не задача.
 
 ---
 
@@ -70,12 +72,15 @@
 
 | Утверждение | Происхождение | Первоисточник | Свежесть |
 |-------------|---------------|---------------|----------|
-| Магистраль — `chart-list-plugin` | `morning-gates-state.json` · поле `magistral` | `morning-gates-state.json` · `day=2026-10-04`, `magistralAuthor=snapshot` | 2026-10-04 |
-| Магистраль — `chart-list-plugin` (тот же выбор) | `main-day-assertions.json` · `sources[0]` | Слово владельца `owner-choice@chat/magistral-04-10` | 2026-10-04 |
-| **Расхождение:** `morning-gates-state.json` несёт `magistral` с `day=2026-10-04`; `main-day-assertions.json` несёт `sources[0].date=2026-10-04` — оба владельческие, оба совпадают по значению (`chart-list-plugin`). Расхождение источников формально есть (гейт vs assertions), содержательно нет. **Магистраль взята с гейта, assertions не перечеканены** — перечеканка `main-day-assertions.json` каноном предписана и не сделана. | — | — | — |
-| Спринт `chart-list-plugin-20261003` закрыт живой приёмкой 04.10, архитектурный хвост (ADR шины) открыт | `снимок` DAILY_CODE_REVIEW.md 04.10 | `DAILY_CODE_REVIEW.md` · Vesnin-блок | 2026-10-04 |
-| ADR по контракту шины блокирует Родченко (1 источник, 2 отражения: стендап + план) | `план` DAY_PLAN.md + `сессия` DAILY_STANDUP.md | `DAY_PLAN.md` (генератор читает реестр) | 2026-10-05 |
-| P0 C9 (#2582) и P1 порядковый разрыв — переносы из ревью, требуют закрытия до новых работ | `код`/`снимок` DAILY_CODE_REVIEW.md | `DAILY_CODE_REVIEW.md` · Tarasov-блок | 2026-10-04 |
+| Магистраль = `tariff-downgrade-freeze` | гейт (`morning-gates-state.json`, `magistral`, `magistralChosenAt: 2026-10-05`, `magistralAuthor: human`) | слово владельца в гейте утра | 2026-10-05 |
+| Та же магистраль по содержанию: «понижение тарифа + заморозка избыточных данных» | `main-day-assertions.json`, `sources[0].claim`, `origin: owner-choice@chat/magistral-05-10-manual` | слово владельца в чате | 2026-10-05 |
+| **Расхождение:** гейт несёт `tariff-downgrade-freeze`, assertions не перечеканены под это имя — магистраль взята с гейта как более позднего владельческого источника; assertions не перечеканены — это находка, перечеканка предписана каноном | сравнение двух файлов | оба владельческих источника | 2026-10-05 |
+| Буфер давит на квоту: 1727 проб / 797 МБ — операционный риск, который счётчик приоритетов не поднял | стендап `DAILY_STANDUP.md` (цитирует реестр задач и мониторинг буфера) | реестр задач + мониторинг | 2026-10-05 |
+| Консилиум 05.10 — вердикты 1–6 приняты владельцем; порядок freeze→tariff, отдельные таблицы архива в media | `sources[0].claim` | слово владельца, чат 05.10 | 2026-10-05 |
+| `angelina-hostess-impl`, `assets-container`, `chart-list-plugin` — топ-3 плана дня (`DAY_PLAN.md`) | план дня `DAY_PLAN.md` | генератор плана (детерминированный ранг реестра) | 2026-10-05 |
+| Владелец выбрал магистраль **вне топ-3** (`magistralManual.inSnapshot: false`) — суверенный выбор; синтезировать свою магистраль из топ-3 **запрещено** правилом промпта | `morning-gates-state.json`, поле `magistralManual.inSnapshot` | гейт утра | 2026-10-05 |
+
+> Счёт независимых первоисточников: 2 владельческих (гейт + assertions, один день, взаимоподтверждают) + 1 мониторинг буфера + 1 генератор плана. Топ-3 плана — 1 источник (генератор), 3 отражения; их вес = вес одного.
 
 ---
 
@@ -83,67 +88,70 @@
 
 | Посылка | Маркер | Вердикт |
 |---------|--------|---------|
-| ADR по контракту шины `chart-list-plugin` ещё не написан | `file:docs/` — ADR-файл с именем `chart-list-plugin` отсутствует (проверить: `ls docs/adr/ | grep chart-list`) | `unknown` — требует живой проверки в начале дня; если файл существует — посылка нарушена, ADR уже есть, работа переформулируется в LGTM-pass |
-| Родченко заблокирован до LGTM Тарасова на форму ADR | `план` DAY_PLAN.md: «Родченко в блоке до LGTM Тарасова на форму ADR по контракту шины» | `holds` — подтверждено планом и стендапом |
-| Спринт закрыт по живой приёмке (не гипотетически) | `file:docs/procedure-runs/trail/2026-10-04.jsonl` — запись `"status":"pass"` присутствует | `holds` — подтверждено DAILY_CODE_REVIEW.md (Vesnin-блок) |
+| Код заморозки b1 (#2587/#2588) ещё не написан — ADR-0031 не существует | `file:docs/adr/ADR-0031.md` — файл отсутствует; issues #2587/#2588 в статусе open | holds |
+| Манифест замороженных данных не зафиксирован письменно | `file:docs/freeze-manifest-*.md` или аналог — не упоминается в стендапе и code-review | holds |
+| P0 C9 (#2582) не закрыт — plain-text секреты в диффе не проверены | `git show de3b29a1 -- "*.env*" "*.yml" "*.json"` — дифф не раскрыт по code-review, ручная проверка не выполнена | holds (требует проверки утром) |
+
+Развилок нет; все посылки держатся.
 
 ---
 
 ## Сегодня делаем
 
-1. **P0-проверка #2582:** выполнить `git show de3b29a1 -- "*.env*" "*.yml" "*.json" | grep -iE "password|mongodb\+srv|uri"` — вывод пуст или инцидент заведён.
-2. **P1-подтверждение порядка:** `cat docs/procedure-runs/trail/2026-10-04.jsonl | grep chart-list | jq '.at, .status'` — порядок корректен или билет заведён.
-3. **Triage CVE:** письменный вердикт по `@fastify/busboy` ×2, `braces`, `http-cache-semantics` — runtime vs dev; результат зафиксирован текстом.
-4. **Проверить наличие ADR:** `ls docs/adr/ | grep chart-list` — если файла нет, Веснин начинает ADR по контракту шины немедленно.
-5. **Веснин оформляет ADR** по контракту шины `chart-list-plugin` (границы, контракт события/команды, пример payload) — черновик готов к LGTM Тарасова.
-6. **Тарасов даёт LGTM** на форму ADR; Родченко получает уведомление о разблокировке.
-7. **Верификация #2503:** `yarn ask vesnin --no-context "тест"` — статус `unknown` снят или заведён тикет.
+1. **P0 первым:** `git show de3b29a1 -- "*.env*" "*.yml" "*.json" | grep -iE "password|mongodb\+srv|uri"` — зафиксировать результат письменно; при нахождении — стоп и ротация до продолжения.
+2. **Тарасов фиксирует границу заморозки** — письменный вердикт: какие данные замораживаем, какие неприкосновенны для `assets-container` и `mfcc-compare-sprint`; без этого вердикта Дынин и Ожегов не трогают данные.
+3. **ADR-0031 — написать и ратифицировать** под вердикты консилиума 05.10 (1–6): исключение из M5 Retain, отдельные таблицы архива в media, дверь office→кабинет минимальная, срок — снимок при заморозке, порядок freeze→tariff, отбор «в пределах байт».
+4. **Дынин — техническое исполнение заморозки:** понизить тариф, переместить избыток буфера в холодный архив, верифицировать, что буфер укладывается в новый лимит.
+5. **Ожегов — проверка связности:** убедиться, что хуки/сторы не тянут данные напрямую из зоны заморозки; сервисы, читающие замороженный контейнер, не сломаны.
+6. **Triage CVE** (`@fastify/busboy` ×2, `braces`, `http-cache-semantics`) — письменный вердикт runtime vs dev.
+7. **Тарасов — LGTM** после п. 4–5: манифест зафиксирован, тариф понижен, активные задачи подтвердили чистоту своих датасетов.
 
 ---
 
 ## Definition of Done (фокус)
 
-- [ ] `git show de3b29a1 -- "*.env*" "*.yml" "*.json" | grep -iE "password|mongodb\+srv|uri"` возвращает пустой вывод или инцидент зарегистрирован письменно
-- [ ] Порядок `sprint:gate` → `"status":"pass"` в трейле 04.10 подтверждён командой `jq` или заведён билет об инверсии
-- [ ] Вердикт по четырём CVE зафиксирован текстом (runtime/dev для каждой); при runtime — P1-блок на merge проставлен
-- [ ] ADR по контракту шины `chart-list-plugin` оформлен Весниным и влит в `docs/adr/` (или подтверждено, что файл уже существует)
-- [ ] LGTM Тарасова на ADR проставлен
-- [ ] Родченко уведомлён о разблокировке (письменно в треде задачи)
-- [ ] Статус #2503 закрыт: либо `unknown` снят живой проверкой, либо заведён тикет
+- [ ] P0 C9: `git show de3b29a1` проверен, результат зафиксирован письменно (нет plain-text секретов / ротация выполнена)
+- [ ] Тарасов зафиксировал письменную границу «что замораживаем / что неприкосновенно»
+- [ ] ADR-0031 написан, покрывает вердикты 1–6 консилиума 05.10, ратифицирован владельцем
+- [ ] Тариф понижен (старший → младший), буфер укладывается в новый лимит — верифицировано Дыниным
+- [ ] Манифест замороженных данных зафиксирован письменно (дата, список, режим отбора)
+- [ ] Ожегов подтвердил: хуки/сторы не тянут данные из зоны заморозки, связность не нарушена
+- [ ] Тарасов поставил LGTM — день по магистрали считается закрытым
 
 ---
 
 ## Сознательно не делаем сегодня
 
-- **Не берём вторую L-задачу параллельно** (`angelina-hostess-impl`, `assets-container`) — стол не чист: P0 C9 и P1 CVE открыты, расширять фронт до их закрытия запрещено (стендап).
-- **Не пишем презентационный компонент `chart-list-plugin`** — Родченко в блоке до LGTM Тарасова на ADR; ADR первичен.
-- **Не повторяем DSP-бенчмарк** (harmonic / cepstral / flux) — потолок зафиксирован (`FFT_METRICS_POTENTIAL_AND_LIMITS.md` §6), без новых данных или fusion повтор ничего не добавит.
-- **Не разбираем #2562** (`header-badge-narrow`, 406 строк) — первый из 20 неразобранных PR, но открывается только после закрытия P0/P1 (стендап).
-- **Не трогаем эшелон-2 (yamnet) как самостоятельную задачу** — де-факто открыт, F1 0.803 в prod-бенчмарке; следующий шаг только при fusion с trends или новом датасете.
+- **`angelina-hostess-impl`** — стол не чист (P0 C9 открыт, граница заморозки не зафиксирована); брать параллельную магистраль запрещено.
+- **`assets-container`** как магистраль — входит в топ-3 плана, но владелец выбрал `tariff-downgrade-freeze` вне топ-3; синтезировать свою магистраль из топ-3 запрещено.
+- **ADR по контракту шины `chart-list-plugin`** — Родченко остаётся в блоке; ADR переходит в перспективный слот, Тарасов даёт LGTM только после закрытия магистрали.
+- **DSP-бенчмарк** (harmonic / cepstral / flux) — потолок эшелона 0 зафиксирован; без смены датасета или fusion повтор не добавляет ничего.
+- **Разбор #2562** (`header-badge-narrow`, 406 строк) — открывается только после закрытых P0/P1.
+- **`mfcc-compare-sprint`** — работа не останавливается, но не становится магистралью; датасет проверяется на исключение из зоны заморозки (п. 2 «Сегодня делаем»).
 
 ---
 
 ## Вторично (если останется время)
 
-- **Dry-run `night-triage-secret-scan.mjs` с `--dry-run`** — проверить, не снесёт ли агрессивный рез легитимный контент рядом с секретом; результат информирует будущий CI-гейт `secret-parser-built`.
-- **P2-дедупликация** `vesnin.jsonl`: убрать или пометить `cut-1` (без замера), чтобы при агрегации не давал тройной счёт.
+- Подтвердить порядок `sprint:gate` → `"status":"pass"` в трейле за 04.10 (`cat docs/procedure-runs/trail/2026-10-04.jsonl | grep chart-list | jq '.at, .status'`); при инверсии завести билет.
+- Верифицировать #2503 (`yarn ask vesnin --no-context "тест"`) — закрыть статус `unknown`.
 
 ---
 
 ## Зависимости и риски
 
-- **Блокер:** P0 C9 (#2582) должен быть закрыт до начала любой архитектурной работы — если в диффе окажутся plain-text пароли, весь день уходит на инцидент-менеджмент.
-- **Риск P1:** порядковая инверсия `sprint:gate` → трейл (разрыв 12 мин); вероятно корректна, но без подтверждения — формальный долг ревью Веснина, оставлять открытым нельзя.
-- **Риск ADR-посылки:** если ADR по контракту шины уже существует (`ls docs/adr/ | grep chart-list` непуст) — магистраль дня переформулируется в LGTM-pass и уведомление Родченко; трудоёмкость падает, но факт надо проверить в начале дня.
-- **Риск CVE runtime:** если хотя бы одна из четырёх CVE окажется runtime — P1-блок на merge-очередь, что задерживает разбор #2562 и потенциально ADR (если ADR идёт отдельным PR).
+- **Блокер 1 (P0):** до проверки #2582 на plain-text секреты любая работа с данными буфера небезопасна — C9 стоит первым.
+- **Блокер 2:** граница заморозки (вердикт Тарасова) должна быть зафиксирована до того, как Дынин или Ожегов трогают данные; без неё исполнители работают вслепую.
+- **Риск:** заморозка может задеть датасеты `assets-container` или `mfcc-compare-sprint` — проверить явно при фиксации границы (п. 2).
+- **Риск:** `main-day-assertions.json` не перечеканен под имя `tariff-downgrade-freeze` — расхождение с гейтом остаётся открытой находкой; перечеканка предписана каноном, не сделана сегодня = долг на следующий ритуал.
 
 ---
 
 ## Ссылки
 
-- [DAILY_STANDUP.md](docs/DAILY_STANDUP.md) — стендап 2026-10-05
-- [DAILY_CODE_REVIEW.md](docs/DAILY_CODE_REVIEW.md) — вечернее ревью 04.10 (P0/P1 перенесены)
-- [DAY_PLAN.md](docs/DAY_PLAN.md) — план дня 05.10 (магистраль, подкрепление)
-- [morning-gates-state.json](docs/tasks/morning-gates-state.json) — источник магистрали (`magistral: "chart-list-plugin"`, `day: "2026-10-04"`)
-- [main-day-assertions.json](docs/tasks/main-day-assertions.json) — sources[0]: владелец 04.10, совпадает с гейтом
-- [FFT_METRICS_POTENTIAL_AND_LIMITS.md](docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) — потолок эшелона 0, §6
+- [DAILY_STANDUP.md](docs/DAILY_STANDUP.md) — стендап дня
+- [DAY_PLAN.md](docs/DAY_PLAN.md) — план дня (топ-3 кандидатов)
+- [morning-gates-state.json](docs/tasks/morning-gates-state.json) — гейт утра, источник магистрали
+- [main-day-assertions.json](docs/tasks/main-day-assertions.json) — assertions владельца (не перечеканены под `tariff-downgrade-freeze`)
+- [DAILY_CODE_REVIEW.md](docs/DAILY_CODE_REVIEW.md) — вчерашнее code-review (P0 C9, P1 инверсия)
+- GitHub Issues: [#2587](../../issues/2587), [#2588](../../issues/2588), [#2582](../../issues/2582)
