@@ -22,7 +22,9 @@
       ],
       "estimate": {
         "changedLines": 130
-      }
+      },
+      "revisionAt": "2026-10-05T15:43:58Z",
+      "revisionOf": "ff32d88db71a20334228e3f4b84a32a8f9fb5fc26774760c3ef4e22759ae6b7e"
     },
     {
       "blockId": "b1-select-keep-within-bytes",
@@ -35,7 +37,9 @@
       ],
       "estimate": {
         "changedLines": 240
-      }
+      },
+      "revisionAt": "2026-10-05T15:43:58Z",
+      "revisionOf": "b23e4212da29741c4127a1772acf1136b50322c56d7b350acc0cf3958c00f599"
     },
     {
       "blockId": "b2-media-downgrade-archive-tables",
@@ -50,7 +54,9 @@
       ],
       "estimate": {
         "changedLines": 320
-      }
+      },
+      "revisionAt": "2026-10-05T15:43:58Z",
+      "revisionOf": "4dedde757cd87a253756ed4708b8e2b5123721d17fd0e76fce3e23a06b54596b"
     },
     {
       "blockId": "b3-media-downgrade-archive-doors",
@@ -66,7 +72,9 @@
       ],
       "estimate": {
         "changedLines": 400
-      }
+      },
+      "revisionAt": "2026-10-05T15:43:58Z",
+      "revisionOf": "00e9de2b1a8356dd1692cf51b4a0118d3779dea21321a6d13e3500021f13d792"
     },
     {
       "blockId": "b4-cabinet-freeze-first-downgrade",
@@ -85,7 +93,9 @@
       ],
       "estimate": {
         "changedLines": 400
-      }
+      },
+      "revisionAt": "2026-10-05T15:43:58Z",
+      "revisionOf": "f65805dd3d752e28b606eb0b756833ef0f6df1a69824791810a8d2becd0ef0af"
     },
     {
       "blockId": "b5-cabinet-ui-preview-confirm-restore",
@@ -102,7 +112,9 @@
       ],
       "estimate": {
         "changedLines": 390
-      }
+      },
+      "revisionAt": "2026-10-05T15:43:58Z",
+      "revisionOf": "7827edcf66ac737f06e150fde5dc972b4122e2a8f7374ac4975ed3bf0464d1a7"
     },
     {
       "blockId": "b6-live-acceptance-closure",
@@ -116,7 +128,9 @@
       ],
       "estimate": {
         "changedLines": 140
-      }
+      },
+      "revisionAt": "2026-10-05T15:43:58Z",
+      "revisionOf": "a1446765199245acf961e33c42abc58bf7d5d013cf7f5eaf0bee8da1b07c51a6"
     }
   ],
   "//why": "Issue #2587 (блок 1 из двух; блок 2 — #2588). Слово владельца 05.10: при понижении тарифа данные сверх квоты младшего тарифа не удаляются, а уходят в холодный архив; живыми остаются отобранные одним из трёх режимов chart-list (превышение над фоном / разнообразие звука / похожесть на дрон). Режим — настройка в кабинете с умолчанием + подтверждение или смена в момент понижения, кабинет показывает, сколько уйдёт в архив. Разморозка — рукой пользователя («вернуть из архива»), целой партией, только если помещается. Срок и удаление по сроку — #2588. Сегодня понижение не делает ничего, кроме смены ссылки мембраны на тариф и перезаписи лимитов прибора; used > limit, и каждая новая запись в ось отказывает обычным путём переполнения — данные висят сверх квоты без статуса.",
@@ -132,5 +146,10 @@
   "//forks": "Открытая после решений владельца и консилиума — одна, для ведущей: время предпросмотра. measureSampleSet декодирует все WAV буфера (до 4 ГиБ) синхронно — рекомендация: preview в media фоновым прогоном по runId (как витрина библиотеки first-wave.registrar.ts:283-323), кабинет опрашивает; замер времени на живом приборе в b3; провал (>30 с на полном буфере) — карточка кэша признаков. Очерёдность с #2588 по ArchiveRetentionStore закрыта порядком (//order: порт в зоне b4, реализация — #2588). Закрытые владельцем 05.10 развилки v1 (пересмотр M5, носитель, дом настройки, tariff-cold, вещдоки, оси, неизмеримые, разморозка, failed-партии, единица срока) — в //owner-decisions.",
   "//junction-2588": "СВЕДЕНО ВЕДУЩЕЙ 05.10 (не предложение). (а) Запись архива и метки времени — media: DowngradeArchiveBatch.frozenAt, expiresAt (снимок), state frozen|restored|deleted|failed, restoredAt, deletedAt; индексы (expiresAt) и (deviceId, state) — зона b2 ЭТОГО спринта. Партия — единица заморозки, разморозки и удаления; файлы на месте под MEDIA_BLOB_DIR. (б) Срок живёт в кабинете на мембране в ДНЯХ (retentionDays, умолчание 14, тест 1); поле, дверь office→кабинет под CABINET_OFFICE_TOKEN (GET пользователей мембраны минимумом полей, PUT retentionDays) и именованный вход ArchiveRetentionStore.daysFor(membraneId) — зона #2588. (в) Срок доезжает до media СНИМКОМ: b4 читает daysFor(membraneId) и передаёт retentionDays в приказ заморозки; b3 пишет expiresAt = frozenAt + retentionDays суток; смена срока на мембране старые партии не трогает. Перевод единиц, если понадобится, — на стороне блока 1. (г) Удаление исполняет media: purgeExpired по state='frozen' AND expiresAt<=now условным обновлением (frozen → deleted, блобы и строки DowngradeArchivedSample удаляются, партия остаётся следом); failed-партии уборка НЕ трогает — их хвост подбирает повторная заморозка блока 1 (b3). Пуск — office @Cron ежечасно с выключателем и dry-run «только показать» — зона #2588 (их b5/b6). (д) Что блок 1 отдаёт блоку 2: схему партии с колонками и индексами (b2); GET .../downgrade-archive отдаёт expiresAt и state (b3); restore отказывает archive_expired при expiresAt ≤ now (b3); имена причин отказа — закрытый список в downgrade-archive.dto.ts. Блок 2 не меняет схему партии; нужна новая колонка — перерезка обоих планов.",
   "//recut": "Перерезка v2 05.10 по заданию ведущей Ангелиной после решений владельца и консилиума (протокол docs/seanses/tariff-downgrade-freeze-consilium-2026-10-05-2026-10-05.md, d8cbb117). Ратификации v1 не было — снимать нечего; дайджест v1 a6aafb46…. Изменения: b0 из «консилиум + ADR» стал «ADR-0031 + отсылки в M5 и tariff-transition.ts» и исполнен в фазе 1 (консилиум провела ведущая); окно сдвинуто с 06.10 08:00Z на 05.10 12:00Z, чтобы коммит b0 лёг внутрь окна (прецедент 2561). b1: модуль переименован в select-keep-within-bytes, tie-break newer createdAt keep first → sampleId asc, неизмеримые — во freeze (было «после измеренных, новее раньше»), без объединения коллекций. b2: имена с префиксом DowngradeArchive*, колонки expiresAt/state/deletedAt и индексы (expiresAt), (deviceId,state) — явно. b3: только ось buffer; freeze принимает retentionDays и пишет expiresAt; post-condition перед ack; partial → failed; повторная заморозка подбирает хвост failed; restore — отказ archive_expired; +10 строк прогноза. b4: порядок ИЗМЕНЁН с «тариф → freeze → лимиты» на «подтверждённый предпросмотр → freeze → commit тарифа → рассылка лимитов»; отказ media/partial — тариф не коммитить; срок берётся из ArchiveRetentionStore.daysFor(membraneId). b5: тексты и тосты по вердикту Верстальщика; срок только читается. Стык: было предложение «читать срок заново на каждый вызов» — заменено снимком; поле на мембране, вход daysFor и дверь office — #2588; failed-партии — блок 1. Вопросы владельцу сняты (все шесть решены), осталась одна развилка ведущей (время предпросмотра). Прогноз объёма 2090 → 2020 строк.",
-  "//owner-questions": "Все шесть вопросов фазы 1 решены владельцем 05.10 — см. //owner-decisions. Новых вопросов владельцу нет; оставшаяся развилка (время предпросмотра) — ведущей."
+  "//owner-questions": "Все шесть вопросов фазы 1 решены владельцем 05.10 — см. //owner-decisions. Новых вопросов владельцу нет; оставшаяся развилка (время предпросмотра) — ведущей.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-10-05T15:43:58Z",
+    "digest": "5054240dcebd7820f387b340d0aa35805f754f071a2f158a7f56134c638ddac2"
+  }
 }
