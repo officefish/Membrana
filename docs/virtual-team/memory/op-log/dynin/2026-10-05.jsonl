@@ -1,1 +1,5 @@
+{"ts":"2026-10-05T15:49:58.477Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-10-05T15:49:24.164Z","origin":"ask-persona"}
+{"ts":"2026-10-05T15:49:58.482Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-10-05T15:49:24.164Z","origin":"ask-persona"}
+{"ts":"2026-10-05T15:49:58.484Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-01-evening-review-predicate-m4-memoization","reason":"там я уже разбирал пару несовместимых предикатов на одном органе; тут та же техника: pinned и «влезает в бюджет» задают два разных отбора, и важно формально показать, что они сведены в один линейный порядок без противоречия.","origin":"ask-persona"}
+{"ts":"2026-10-05T15:49:58.486Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-28-memory-subconscious-m2-priority","reason":"ровно задача «pinned ⊈ бюджетного конкурса»: pinned-неизмеримая не участвует в knapsack, остаётся по инварианту. Здесь та же структура, перенесённая на байты.","origin":"ask-persona"}
 {"ts":"2026-10-05T13:01:32.574Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

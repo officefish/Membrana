@@ -28,6 +28,7 @@ import type { TariffGridDocument, TariffSku } from './tariff-grid';
 import { quotaLimit, resolveEntitlement } from './tariff-resolve';
 
 /** Класс памяти. Закрытый список: новый класс — правка контракта, не строка. */
+// `cold` — тарифная ячейка `storage.cold`; архив понижения к ней не относится: downgrade-archive ≠ tariff-cold (ADR-0031).
 export type MemoryClass = 'hot' | 'cold' | 'buffer';
 
 /** Право в сетке, задающее потолок каждого класса. */

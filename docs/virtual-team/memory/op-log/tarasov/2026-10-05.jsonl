@@ -1,1 +1,5 @@
 {"ts":"2026-10-05T13:01:33.123Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-10-05T15:58:28.618Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-10-05T15:57:51.649Z","origin":"ask-persona"}
+{"ts":"2026-10-05T15:58:28.620Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-10-05T15:57:51.649Z","origin":"ask-persona"}
+{"ts":"2026-10-05T15:58:28.621Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-30-task-archive-cold-store-m3-repo-checkpoint","reason":"там же держал планку «что лежит в хранилище, какие поля, как доказать тождество, что уборка не значит»; тот же каркас применим к b2 здесь (поля партии, post-condition, предикат уборки).","origin":"ask-persona"}
+{"ts":"2026-10-05T15:58:28.622Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-19-insight-archive-lifecycle-c2-state-axes-r4","reason":"«форма следует функции»: имена DowngradeArchive vs ColdTariff — ровно тот случай, где разведение словарей защищает от смешения через месяц; подпирает мой пункт (2).","origin":"ask-persona"}
