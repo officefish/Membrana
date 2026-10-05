@@ -1,3 +1,6 @@
 {"ts":"2026-10-05T12:31:47.759Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-10-05T12:31:04.624Z","origin":"ask-persona"}
 {"ts":"2026-10-05T12:31:47.760Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-10-05T12:31:04.624Z","origin":"ask-persona"}
 {"ts":"2026-10-05T13:01:33.234Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-10-05T17:54:28.949Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-10-05T17:53:55.909Z","origin":"ask-persona"}
+{"ts":"2026-10-05T17:54:28.958Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-10-05T17:53:55.909Z","origin":"ask-persona"}
+{"ts":"2026-10-05T17:54:28.969Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-09-01-library-open-api-m1-ownership","reason":"та же магистраль владения Device → Sample: здесь архив живёт на том же корне, и каскад от Device — продолжение той цепочки, не новая.","origin":"ask-persona"}
