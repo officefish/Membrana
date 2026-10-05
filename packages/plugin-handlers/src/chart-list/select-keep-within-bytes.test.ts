@@ -307,4 +307,18 @@ describe('modeRanksFromPicks', () => {
       /x/,
     );
   });
+
+  it('undefined из ranks.get(отсутствующий) мимо типов нормализуется в null: запись неизмеримая, во freeze', () => {
+    const ranks = modeRanksFromPicks([{ sampleId: 'measured', rank: 1 }]);
+    const input = [
+      cand({ sampleId: 'measured', modeRank: ranks.get('measured') as number }),
+      // Намеренно мимо типа: так выглядит забытый `?? null` у вызывающего.
+      cand({ sampleId: 'missing', modeRank: ranks.get('missing') as unknown as number | null }),
+    ];
+    const out = selectKeepWithinBytes(input, 10_000);
+    expect(out.refusal).toBeNull();
+    expect(ids(out.keep)).toEqual(['measured']);
+    expect(ids(out.freeze)).toEqual(['missing']);
+    expect(out.freeze[0]?.modeRank).toBeNull();
+  });
 });

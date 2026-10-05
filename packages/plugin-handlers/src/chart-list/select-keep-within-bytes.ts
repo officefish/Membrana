@@ -33,6 +33,16 @@
  *
  * ОТКАЗ — ВМЕСТО СПИСКОВ, не исключением и не пустым keep: пустой keep законен (лимит 0), а
  * «вход не читается» — другое событие. Пустой вход — не ошибка: нечего морозить.
+ *
+ * КОНТРАКТ (каждый пункт держит зуб в `select-keep-within-bytes.test.ts`, номер строки — `it`):
+ *   · `limitBytes = 0` → весь вход во freeze, keep пуст, отказа нет — :64;
+ *   · `sum(keep.bytes) ≤ limitBytes`, keep ∪ freeze = вход без потерь и дублей — :33;
+ *   · pinned, не влезший в остаток, → во freeze (защита не ворует квоту) — :106;
+ *   · pinned-неизмеримая → в keep и ВХОДИТ в `keepBytes` (лимит один для всего keep) — :150, :226;
+ *   · неизмеримая (`modeRank: null`) без pinned → во freeze даже при свободном бюджете — :140;
+ *   · повторный прогон на keep ∪ freeze с тем же лимитом даёт тот же ответ (идемпотентность) — :239;
+ *   · `modeRank` в публичном типе — `number | null` строго; `undefined`, пришедший мимо типов
+ *     (`ranks.get(id)` без `?? null`), нормализуется на входе в `null` — зуб в конце файла.
  */
 
 /** Запись-кандидат. Байты известны всегда (размер блоба); ранг режима — нет. */
@@ -129,12 +139,18 @@ export function selectKeepWithinBytes(
   candidates: readonly KeepCandidate[],
   limitBytes: number,
 ): KeepWithinBytesResult {
-  const refusal = validate(candidates, limitBytes);
+  // Публичный тип — `number | null` строго; `undefined` сюда попадает только мимо типов (например,
+  // `ranks.get(id)` из `modeRanksFromPicks` подставлен без `?? null`). Это не ошибка входа, а
+  // «режим запись не измерил» — нормализуем в `null` явно, чтобы один смысл не жил в двух формах.
+  const normalized = candidates.map((c) =>
+    (c.modeRank as number | null | undefined) === undefined ? { ...c, modeRank: null } : c,
+  );
+  const refusal = validate(normalized, limitBytes);
   if (refusal) {
     return { keep: [], freeze: [], keepBytes: 0, freezeBytes: 0, limitBytes, refusal };
   }
 
-  const ordered = [...candidates].sort(compareKeepPriority);
+  const ordered = normalized.sort(compareKeepPriority);
   const keep: KeepCandidate[] = [];
   const freeze: KeepCandidate[] = [];
   let keepBytes = 0;
