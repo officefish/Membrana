@@ -24,7 +24,9 @@
       ],
       "estimate": {
         "changedLines": 220
-      }
+      },
+      "revisionAt": "2026-10-05T15:45:29Z",
+      "revisionOf": "aee8b847958dffb9f12951fca25c871d92613ff5044671b7b62d62c019618d44"
     },
     {
       "blockId": "b2-cabinet-office-door",
@@ -43,7 +45,9 @@
       ],
       "estimate": {
         "changedLines": 320
-      }
+      },
+      "revisionAt": "2026-10-05T15:45:29Z",
+      "revisionOf": "4fe75e08e29acf2b4357a6619b4d3a42ce3891a90805615891d1b4f72f20f3da"
     },
     {
       "blockId": "b3-office-cabinet-users-proxy",
@@ -60,7 +64,9 @@
       ],
       "estimate": {
         "changedLines": 280
-      }
+      },
+      "revisionAt": "2026-10-05T15:45:29Z",
+      "revisionOf": "12b3863abecebd681001c2aee2469f188ef9b86430d8bdf15fc7acf69d803b1a"
     },
     {
       "blockId": "b4-panel-retention-select",
@@ -74,7 +80,9 @@
       ],
       "estimate": {
         "changedLines": 260
-      }
+      },
+      "revisionAt": "2026-10-05T15:45:29Z",
+      "revisionOf": "ab0dfc474afdcd41095fc6526907a27c2a30fbb91293a820d3e15f062b91a8ef"
     },
     {
       "blockId": "b5-media-downgrade-archive-purge",
@@ -91,7 +99,9 @@
       ],
       "estimate": {
         "changedLines": 360
-      }
+      },
+      "revisionAt": "2026-10-05T15:45:29Z",
+      "revisionOf": "72d13c520eb23f0e6408cdcca5f8e010070805393ff935a55c5a28d4b4b6ac72"
     },
     {
       "blockId": "b6-office-sweep-trigger",
@@ -108,7 +118,9 @@
       ],
       "estimate": {
         "changedLines": 240
-      }
+      },
+      "revisionAt": "2026-10-05T15:45:29Z",
+      "revisionOf": "887220dba49d2effdb434625ecf2cc45b36cace8f8f8f2c5abc1d0c7f27edcc1"
     },
     {
       "blockId": "b7-live-acceptance-closure",
@@ -122,7 +134,9 @@
       ],
       "estimate": {
         "changedLines": 100
-      }
+      },
+      "revisionAt": "2026-10-05T15:45:29Z",
+      "revisionOf": "34d3532793b87045cce5df0cbba8dc5b075ede1567e20fa603eaefbcce681fb9"
     }
   ],
   "//why": "#2588 (блок 2 из двух, соседний #2587 — заморозка, режим отбора, разморозка). Слово владельца 05.10: данные, замороженные при понижении тарифа, хранятся в холодном архиве ограниченный срок и затем удаляются; умолчание 14 дней каждому пользователю, для тестов 1 день; срок задаётся в office, в разделе пользователей, выпадающим списком, отдельно для каждого пользователя.",
@@ -136,5 +150,10 @@
   "//forecast": "b1 ≈220 (домен ≈45, зуб домена ≈70, store+module ≈45, зуб store ≈40, схема+миграция ≈20). b2 ≈320 (охрана ≈40 + зуб ≈50, контроллер+сервис+dto ≈120, зуб двери ≈100, env/app.module ≈10). b3 ≈280 (клиент ≈70, контроллер ≈60, зуб ≈120, env/модуль ≈30). b4 ≈260 (компонент ≈150, api ≈50, зуб ≈60). b5 ≈360 (ядро ≈50 + зуб ≈60, сервис ≈100 + зуб ≈90, контроллер ≈30 + зуб ≈30) — условно до влития схемы блока 1. b6 ≈240 (scheduler ≈50, client ≈50, controller ≈30, зубы ≈100, модуль ≈10). b7 ≈100 доков. Код ≈1680 строк в 6 PR, ни один не oversized (>400); против первой редакции +180 строк (пагинация и фильтр полей двери, sweep-preview, store для блока 1). Опровержения: (а) b5 за 400, если блок 1 положит DowngradeArchivedSample без storageRef/sizeBytes (уборке придётся ходить за байтами) — перерезка b5 на ядро и исполнение; (б) b2 за 400, если кабинету нужен e2e на живом Postgres (сейчас зубы на fake prisma, как tariff-transition.service.test.ts).",
   "//out-of-scope": "Заморозка, режим отбора, разморозка, экран архива в кабинете, DowngradeArchiveBatch/DowngradeArchivedSample, ADR-0031, передача retentionDays в приказ заморозки — блок 1 (#2587). Пересчёт сроков уже замороженного — отвергнут вердиктом 4 (снимок священен). Уборка партий state=failed (неполная заморозка) — не удаляется этим планом: партия failed не несёт согласия пользователя на срок; их чистит блок 1 при повторе понижения (решение владельца 05.10), отдельный глагол не в v1. Напоминание пользователю о скором удалении — нет канала, отдельный вопрос. Связь пользователя панели с пользователем кабинета — не нужна для срока, не делается. Смена срока самим пользователем в кабинете — слово владельца «в office», кабинет показывает срок read-only (зона блока 1). Расширение двери кабинета сверх GET/PUT — только новым ADR (вердикт 3).",
   "//owner-questions": "ЗАКРЫТЫ словом владельца 05.10 (через ведущую). 1. displayLabel в GET двери = login пользователя кабинета — ДА, годится (login — имя входа, не email/телефон/секрет). 2. Партии state=failed чистит БЛОК 1 при повторе понижения; уборка этого плана их не трогает; отдельный глагол не в v1. 3. При выключенном COLD_ARCHIVE_SWEEP_ENABLED media НЕ звать вовсе — выключено значит тишина; «только показать» — отдельный флаг COLD_ARCHIVE_SWEEP_DRY_RUN при включённом cron (умолчание включён) плюс ручная кнопка sweep-preview в панели, которая остаётся и от флагов не зависит. РЕШЕНИЕ ВЛАДЕЛЬЦА 05.10 (после перерезки, через ведущую): развилка P7a — ДА, CHECK (\"days\" IN (1,7,14,30,90)) в миграции кабинета; домен остаётся вторым поясом (P5a); смена списка = миграция.",
-  "//recut": "Перерезка 05.10 ~12:48Z по вердиктам консилиума 1–6 и решениям владельца (через ведущую). Что изменилось против редакции 52c72ad0: (1) ключ `//consilium` (нужен консилиум) → `//consilium-verdicts` (проведён, вердикты и решения зафиксированы); `//forks` снят — развилки 1–6 решены, решения внесены в `//design`; `//not-one-shot` снят как исчерпанный. (2) `//seam-2587` — из предложения стал сведённым стыком: retentionDays кладёт блок 1; поле и миграция — наш b1; колонки DowngradeArchiveBatch (frozenAt, expiresAt, state frozen|restored|deleted|failed, индекс по expiresAt) — блок 1 b2; срок в днях, перевод — на стороне блока 1. (3) b1: добавлен `ArchiveRetentionStore` с именованным входом `daysFor(membraneId)` для блока 1 (+70 строк); обоснована таблица вместо колонки (TS2394 на `requireOwnedMembrane`). (4) b2: дверь сужена по вердикту 3 — минимум полей, запрет PII/credentials/проб зубом P8, пагинация P9, идемпотентный PUT P10, «ровно два маршрута» P13, dto отдельным файлом. (5) b5: переименован в `b5-media-downgrade-archive-purge`, переехал в модуль архива блока 1 (`modules/downgrade-archive/downgrade-archive-purge.*`, регистрация в их `downgrade-archive.module.ts` после слияния); словарь state по стыку; dryRun обязателен в теле (P25). (6) b6: добавлен `GET /v1/panel/admin/cold-archive/sweep-preview` под @OwnerAdmin (таблица «только показать» по слову Верстальщика); выключенный выключатель = dryRun ежечасно с цифрами в логе (вопрос 3 владельцу). (7) `//order`: b1 после ADR-0031 блока 1 и до их кабинетной стороны; b5 после их b2+b3. (8) `//owner-questions` — три новых вопроса (displayLabel, failed-партии, dryRun при выключенном). Окно сдвинуто на 20.10 (как у блока 1). Прогноз ≈1500 → ≈1680 строк. ДОПОЛНЕНИЕ 05.10 (ответы владельца на три вопроса): //owner-questions закрыты; //design и b6 (P26/P26b): выключатель = тишина, второй флаг COLD_ARCHIVE_SWEEP_DRY_RUN (умолчание включён) при включённом cron, sweep-preview независим от флагов; //seam-2587 и //out-of-scope: failed-партии чистит блок 1 при повторе понижения. Прогноз b6 не меняется (второй флаг ≈ +10 строк внутри 240). ВЫРАВНИВАНИЕ ПОД ADR-0031 05.10 (план v2 блока 1, 8f72b868): имена таблиц DowngradeArchiveBatch / DowngradeArchivedSample; модуль media блока 1 — modules/downgrade-archive/ (b5 → b5-media-downgrade-archive-purge, файлы downgrade-archive-purge.*, регистрация в их downgrade-archive.module.ts); глагол уборки purgeExpired(now, {dryRun}), дверь POST /v1/internal/downgrade-archive/purge-expired; в //design и //seam-2587 вписан порт ArchiveRetentionReader { daysFor } + DI-токен ARCHIVE_RETENTION_READER (блок 1 ждёт его как порт с умолчанием 14 до b1). Объёмы блоков не меняются."
+  "//recut": "Перерезка 05.10 ~12:48Z по вердиктам консилиума 1–6 и решениям владельца (через ведущую). Что изменилось против редакции 52c72ad0: (1) ключ `//consilium` (нужен консилиум) → `//consilium-verdicts` (проведён, вердикты и решения зафиксированы); `//forks` снят — развилки 1–6 решены, решения внесены в `//design`; `//not-one-shot` снят как исчерпанный. (2) `//seam-2587` — из предложения стал сведённым стыком: retentionDays кладёт блок 1; поле и миграция — наш b1; колонки DowngradeArchiveBatch (frozenAt, expiresAt, state frozen|restored|deleted|failed, индекс по expiresAt) — блок 1 b2; срок в днях, перевод — на стороне блока 1. (3) b1: добавлен `ArchiveRetentionStore` с именованным входом `daysFor(membraneId)` для блока 1 (+70 строк); обоснована таблица вместо колонки (TS2394 на `requireOwnedMembrane`). (4) b2: дверь сужена по вердикту 3 — минимум полей, запрет PII/credentials/проб зубом P8, пагинация P9, идемпотентный PUT P10, «ровно два маршрута» P13, dto отдельным файлом. (5) b5: переименован в `b5-media-downgrade-archive-purge`, переехал в модуль архива блока 1 (`modules/downgrade-archive/downgrade-archive-purge.*`, регистрация в их `downgrade-archive.module.ts` после слияния); словарь state по стыку; dryRun обязателен в теле (P25). (6) b6: добавлен `GET /v1/panel/admin/cold-archive/sweep-preview` под @OwnerAdmin (таблица «только показать» по слову Верстальщика); выключенный выключатель = dryRun ежечасно с цифрами в логе (вопрос 3 владельцу). (7) `//order`: b1 после ADR-0031 блока 1 и до их кабинетной стороны; b5 после их b2+b3. (8) `//owner-questions` — три новых вопроса (displayLabel, failed-партии, dryRun при выключенном). Окно сдвинуто на 20.10 (как у блока 1). Прогноз ≈1500 → ≈1680 строк. ДОПОЛНЕНИЕ 05.10 (ответы владельца на три вопроса): //owner-questions закрыты; //design и b6 (P26/P26b): выключатель = тишина, второй флаг COLD_ARCHIVE_SWEEP_DRY_RUN (умолчание включён) при включённом cron, sweep-preview независим от флагов; //seam-2587 и //out-of-scope: failed-партии чистит блок 1 при повторе понижения. Прогноз b6 не меняется (второй флаг ≈ +10 строк внутри 240). ВЫРАВНИВАНИЕ ПОД ADR-0031 05.10 (план v2 блока 1, 8f72b868): имена таблиц DowngradeArchiveBatch / DowngradeArchivedSample; модуль media блока 1 — modules/downgrade-archive/ (b5 → b5-media-downgrade-archive-purge, файлы downgrade-archive-purge.*, регистрация в их downgrade-archive.module.ts); глагол уборки purgeExpired(now, {dryRun}), дверь POST /v1/internal/downgrade-archive/purge-expired; в //design и //seam-2587 вписан порт ArchiveRetentionReader { daysFor } + DI-токен ARCHIVE_RETENTION_READER (блок 1 ждёт его как порт с умолчанием 14 до b1). Объёмы блоков не меняются.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-10-05T15:45:29Z",
+    "digest": "bed64417baa527b538d3339b5aedb40c64f61fc458d6395178a0f557a9800ab6"
+  }
 }
