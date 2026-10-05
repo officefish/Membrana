@@ -110,6 +110,30 @@ model MembraneBufferPolicy {
   @@unique([membraneId])
 }
 
+/// Срок хранения архива понижения на МЕМБРАНЕ, в днях (#2588 b1; ADR-0031 п.4, вердикт
+/// консилиума 05.10). Истина срока — кабинет; office только показывает и меняет значение,
+/// media получает число снимком в приказе заморозки и за сроком никуда не ходит.
+///
+/// ОТДЕЛЬНОЙ ТАБЛИЦЕЙ, не колонкой `Membrane` — по той же причине, что `MembraneBufferPolicy`
+/// выше: скалярная колонка на `Membrane` рушит перегрузки `requireOwnedMembrane`
+/// (`sample-library.service.ts`, TS2394). Ключ — `membraneId`, одна строка на мембрану держит схема.
+///
+/// ОТСУТСТВИЕ СТРОКИ = УМОЛЧАНИЕ (14 дней, `DEFAULT_RETENTION_DAYS` в `domain/archive-retention.ts`).
+/// Миграция backfill НЕ делает: строка появляется только движением владельца в панели, и по её
+/// отсутствию дверь office отвечает `isDefault: true`. Закрытый список значений держат два пояса:
+/// CHECK в миграции и домен (значение вне списка на чтении → 14, fail-safe в сторону хранения).
+model MembraneArchiveRetention {
+  id         String   @id @default(uuid()) @db.Uuid
+  membraneId String   @db.Uuid
+  /// Дней хранения; допустимые значения — 1 (тест), 7, 14 (умолчание), 30, 90.
+  days       Int
+  /// Кто поставил срок (panelIdentity.sub владельца в office) — след, не право.
+  updatedBy  String
+  updatedAt  DateTime @updatedAt
+
+  @@unique([membraneId])
+}
+
 model Node {
   id         String          @id @default(uuid()) @db.Uuid
   membraneId String          @db.Uuid
