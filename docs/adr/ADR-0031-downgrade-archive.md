@@ -78,7 +78,7 @@ Retain остаётся нормой для всего остального: п�
 | Поле | Тип | Null | Индекс / примечание |
 |---|---|---|---|
 | `id` | `String @id @db.Uuid` | нет | **тот же** `Sample.id` — возврат восстанавливает строку под прежним адресом |
-| `batchId` | `String @db.Uuid` | нет | FK → `DowngradeArchiveBatch` (`onDelete: Restrict` — партия не удаляется, пока есть строки); `@@index([batchId])` |
+| `batchId` | `String @db.Uuid` | нет | FK → `DowngradeArchiveBatch` (`onDelete: NoAction`, не `Restrict`: обе таблицы висят каскадом на `Device`, `RESTRICT` проверяется немедленно и ломал бы каскад прибора, `NO ACTION` — в конце оператора; смысл «партия не удаляется, пока есть строки» сохранён — явное удаление живой партии получает отказ БД; принято ведущей 05.10, PR #2594); `@@index([batchId])` |
 | `deviceId` | `String @db.Uuid` | нет | `@@index([deviceId])` |
 | `collectionId` | `String` | нет | куда вернуть (v1 всегда `__buffer__`) |
 | `title`, `class`, `label`, `source`, `durationSec`, `sampleRate`, `channels`, `audioFormat`, `contentType`, `sizeBytes`, `storageRef`, `notes`, `createdAt` | как у `Sample` | как у `Sample` | копия один-в-один, чтобы restore был переносом без догадок |
