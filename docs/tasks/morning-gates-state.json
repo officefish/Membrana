@@ -6,7 +6,12 @@
   ],
   "frozenDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
   "magistral": "tariff-downgrade-freeze",
-  "swallow": null,
+  "swallow": {
+    "draftDigest": "a55c8f07ae6f588010d4bbb167dddd3ed718c1aa065c0469f6ff38be4476bf8c",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-10-05.md",
+    "ownerAck": true,
+    "day": "2026-10-05"
+  },
   "day": "2026-10-05",
   "magistralChosenAt": "2026-10-05",
   "magistralAuthor": "human",
