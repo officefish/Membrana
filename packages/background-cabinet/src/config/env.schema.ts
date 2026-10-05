@@ -37,16 +37,28 @@ export const envSchema = z.object({
   ALLOW_REGISTRATION: boolFromEnv.optional(),
   /** MP7: WebSocket gateway at /v1/nodes/realtime (default enabled). */
   NODE_REALTIME_ENABLED: boolFromEnv.optional(),
+  /**
+   * Ключ ВХОДЯЩЕЙ служебной двери для office (#2588 b2, ADR-0031 п.3): `/v1/internal/office/*`.
+   * Отдельный от API_INTERNAL_TOKEN (тот — исходящий к media): пустой/не задан → дверь отвечает
+   * 503 с названной причиной (OfficeTokenGuard); совпадение с API_INTERNAL_TOKEN — отказ конфига.
+   */
+  CABINET_OFFICE_TOKEN: z.preprocess((v) => (typeof v === 'string' && v.trim() === '' ? undefined : v), z.string().min(1).optional()),
 });
 
-const envSchemaWithDefaults = envSchema.transform((data) => ({
-  ...data,
-  MEDIA_API_TOKEN: data.MEDIA_API_TOKEN ?? data.API_INTERNAL_TOKEN,
-  MEDIA_PUBLIC_API_URL: (data.MEDIA_PUBLIC_API_URL ?? data.MEDIA_API_URL).replace(/\/$/, ''),
-  SWAGGER_ENABLED: data.SWAGGER_ENABLED ?? data.NODE_ENV !== 'production',
-  ALLOW_REGISTRATION: data.ALLOW_REGISTRATION ?? data.NODE_ENV === 'development',
-  NODE_REALTIME_ENABLED: data.NODE_REALTIME_ENABLED ?? true,
-}));
+/** Экспорт ради зубов конфига (`parseEnv` зовёт process.exit и в тесте непригоден). */
+export const envSchemaWithDefaults = envSchema
+  .transform((data) => ({
+    ...data,
+    MEDIA_API_TOKEN: data.MEDIA_API_TOKEN ?? data.API_INTERNAL_TOKEN,
+    MEDIA_PUBLIC_API_URL: (data.MEDIA_PUBLIC_API_URL ?? data.MEDIA_API_URL).replace(/\/$/, ''),
+    SWAGGER_ENABLED: data.SWAGGER_ENABLED ?? data.NODE_ENV !== 'production',
+    ALLOW_REGISTRATION: data.ALLOW_REGISTRATION ?? data.NODE_ENV === 'development',
+    NODE_REALTIME_ENABLED: data.NODE_REALTIME_ENABLED ?? true,
+  }))
+  .refine((data) => data.CABINET_OFFICE_TOKEN === undefined || data.CABINET_OFFICE_TOKEN !== data.API_INTERNAL_TOKEN, {
+    path: ['CABINET_OFFICE_TOKEN'],
+    message: 'CABINET_OFFICE_TOKEN must differ from API_INTERNAL_TOKEN (one key must not open two directions)',
+  });
 
 export type AppConfig = z.infer<typeof envSchemaWithDefaults>;
 
