@@ -172,4 +172,10 @@ describe('схема и миграция (текстовые предикаты)
     expect(migration).not.toMatch(/INSERT INTO/);
     expect(migration).not.toMatch(/ALTER TABLE "Membrane"/);
   });
+
+  it('P7b: PrismaModule глобален — @Global() стоит непосредственно перед export class PrismaModule (иначе модуль без imports не получит PrismaService)', () => {
+    const prismaModule = read('src/prisma/prisma.module.ts');
+    expect(prismaModule).toMatch(/@Global\(\)\s*\n@Module\(\{[\s\S]*?\}\)\s*\nexport class PrismaModule\b/);
+    expect(read('src/modules/archive-retention/archive-retention.module.ts')).not.toMatch(/imports:/);
+  });
 });
