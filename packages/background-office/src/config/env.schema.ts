@@ -19,6 +19,14 @@ export const envSchema = z.object({
   MEDIA_API_URL: z.string().url().optional(),
   /** Optional override; defaults to API_INTERNAL_TOKEN (same X-Membrana-Token class). */
   MEDIA_API_TOKEN: z.string().min(1).optional(),
+  /**
+   * Кабинет (#2588 b3, ADR-0031 п.3): адрес и ключ служебной двери `/v1/internal/office/*`.
+   * Пара опциональна и без умолчаний: нет любого из двух — ручки «Пользователи кабинета» отвечают
+   * 503 `cabinet_not_configured` с именами недостающих переменных. Ключ — тот же, что
+   * `CABINET_OFFICE_TOKEN` в env кабинета; отдельный от API_INTERNAL_TOKEN/MEDIA_API_TOKEN.
+   */
+  CABINET_API_URL: z.preprocess((v) => (typeof v === 'string' && v.trim() === '' ? undefined : v), z.string().url().optional()),
+  CABINET_OFFICE_TOKEN: z.preprocess((v) => (typeof v === 'string' && v.trim() === '' ? undefined : v), z.string().min(1).optional()),
   GITHUB_TOKEN: z.string().min(1, 'GITHUB_TOKEN is required'),
   GITHUB_OWNER: z.string().min(1, 'GITHUB_OWNER is required'),
   GITHUB_REPO: z.string().min(1, 'GITHUB_REPO is required'),
