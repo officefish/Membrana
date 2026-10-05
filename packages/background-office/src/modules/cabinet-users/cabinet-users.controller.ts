@@ -33,12 +33,14 @@ export function unwrapCabinetOutcome<T>(outcome: CabinetOutcome<T>): T {
         HttpStatus.SERVICE_UNAVAILABLE,
       );
     case 'cabinet-unreachable':
-      throw new HttpException({ code: 'cabinet_unreachable', detail: outcome.detail }, HttpStatus.BAD_GATEWAY);
+      // Тело 502 — только код (ревью #2596 P1): detail сети остаётся в логе office, в браузер не едет.
+      throw new HttpException({ code: 'cabinet_unreachable' }, HttpStatus.BAD_GATEWAY);
     case 'cabinet-rejected':
       throw new HttpException({ code: outcome.code ?? 'cabinet_rejected', status: outcome.status }, outcome.status);
     default: {
       const never: never = outcome;
-      throw new HttpException({ code: 'cabinet_unreachable', detail: `unknown outcome ${String((never as { kind?: unknown }).kind)}` }, HttpStatus.BAD_GATEWAY);
+      void never;
+      throw new HttpException({ code: 'cabinet_unreachable' }, HttpStatus.BAD_GATEWAY);
     }
   }
 }

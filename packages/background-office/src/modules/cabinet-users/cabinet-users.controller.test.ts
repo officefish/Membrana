@@ -31,6 +31,7 @@ import {
   CabinetUsersClient,
   refusalCodeFrom,
   resolveCabinetPair,
+  sanitizeNetworkDetail,
   type CabinetFetch,
   type CabinetOutcome,
 } from './cabinet-users.client';
@@ -157,6 +158,33 @@ describe('P17 сторож секрета: токен уходит только 
     expect(everything).not.toContain(BASE); // адрес кабинета тоже не нужен в исходах — путь достаточен
     expect(warn).toHaveBeenCalled();
   });
+
+  it('P17b: сетевая ошибка с адресом кабинета из env → ни тело 502, ни текст исключения, ни Logger.warn хоста не несут', async () => {
+    const warn = vi.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+    const host = new URL(BASE).host; // 'cabinet.test'
+    const errors = [
+      Object.assign(new Error(`getaddrinfo ENOTFOUND ${host}`), { name: 'Error' }),
+      Object.assign(new Error('connect ECONNREFUSED 203.0.113.7:3020'), { name: 'Error' }),
+      Object.assign(new Error(`fetch failed: ${BASE}${CABINET_MEMBRANES_PATH} (${host}:443)`), { name: 'TypeError' }),
+    ];
+    for (const netError of errors) {
+      const { client } = makeClient(async () => { throw netError; });
+      const outcome = await client.listMembranes({});
+      expect(outcome.kind).toBe('cabinet-unreachable');
+      let thrown = '';
+      try { unwrapCabinetOutcome(outcome); } catch (e) { thrown = JSON.stringify((e as HttpException).getResponse()) + (e as Error).message; }
+      const everything = JSON.stringify(outcome) + thrown + JSON.stringify(warn.mock.calls);
+      expect(everything, netError.message).not.toContain(host);
+      expect(everything, netError.message).not.toContain('203.0.113.7');
+      expect(everything, netError.message).not.toContain(BASE);
+      expect(thrown).toContain('cabinet_unreachable');
+      expect(thrown).not.toContain('detail');
+    }
+    expect(sanitizeNetworkDetail(errors[0])).toBe('Error: getaddrinfo ENOTFOUND <host>');
+    expect(sanitizeNetworkDetail(errors[1])).toBe('Error: connect ECONNREFUSED <host>');
+    expect(sanitizeNetworkDetail(errors[2])).toBe('TypeError: fetch failed: <url> (<host>)');
+    expect(sanitizeNetworkDetail('not an error')).toBe('fetch failed');
+  });
 });
 
 describe('CabinetUsersController — тонкий прокси, ошибки своим кодом', () => {
@@ -192,7 +220,8 @@ describe('CabinetUsersController — тонкий прокси, ошибки с�
   it('недоступен → 502 cabinet_unreachable; отказ кабинета → его статус и его код (не 500)', async () => {
     const e502 = await makeController({ kind: 'cabinet-unreachable', detail: 'TimeoutError: x' }).controller.list(undefined, undefined).catch((e: unknown) => e as HttpException);
     expect(e502.getStatus()).toBe(502);
-    expect(e502.getResponse()).toEqual({ code: 'cabinet_unreachable', detail: 'TimeoutError: x' });
+    // тело 502 — только код: detail сети в браузер не едет (ревью #2596 P1)
+    expect(e502.getResponse()).toEqual({ code: 'cabinet_unreachable' });
     const e400 = await makeController({ kind: 'cabinet-rejected', status: 400, code: 'invalid_retention_days' }).controller.setArchiveRetention(M1, { days: 2 }, req('s')).catch((e: unknown) => e as HttpException);
     expect(e400.getStatus()).toBe(400);
     expect(e400.getResponse()).toEqual({ code: 'invalid_retention_days', status: 400 });

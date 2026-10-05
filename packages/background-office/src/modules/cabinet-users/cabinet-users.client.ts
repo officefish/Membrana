@@ -83,6 +83,21 @@ export function resolveCabinetPair(config: Pick<AppConfig, 'CABINET_API_URL' | '
   return missing.length > 0 ? { ok: false, missing } : { ok: true, baseUrl, token };
 }
 
+/**
+ * Detail сетевого отказа без адресов (ревью #2596 P1). Выбор: оставить класс И сообщение ошибки,
+ * вырезав URL и хост:порт, — `ECONNREFUSED`, `ENOTFOUND` и таймаут различимы в логе office, а хост
+ * кабинета (он же в env) наружу не выходит. Только `error.name` сузил бы диагностику до класса.
+ * Вырезаются: `https?://…` до пробела, `имя.домен(:порт)` и IPv4(:порт) — на их месте `<url>` / `<host>`.
+ */
+export function sanitizeNetworkDetail(error: unknown): string {
+  if (!(error instanceof Error)) return 'fetch failed';
+  const message = error.message
+    .replace(/https?:\/\/\S+/giu, '<url>')
+    .replace(/\b(?:\d{1,3}\.){3}\d{1,3}(?::\d+)?\b/gu, '<host>')
+    .replace(/\b[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}(?::\d+)?\b/giu, '<host>');
+  return `${error.name}: ${message}`;
+}
+
 /** Код отказа кабинета из тела `{code}`; иное тело → null (статус остаётся). */
 export function refusalCodeFrom(text: string): string | null {
   try {
@@ -140,8 +155,9 @@ export class CabinetUsersClient {
         signal: AbortSignal.timeout(CABINET_TIMEOUT_MS),
       });
     } catch (error) {
-      // Сообщение сети не содержит заголовков; URL и токен в лог не пишем — только метод, путь, класс.
-      const detail = error instanceof Error ? `${error.name}: ${error.message}` : 'fetch failed';
+      // Сообщение сети может нести хост кабинета (`getaddrinfo ENOTFOUND <host>`): в исход и лог
+      // идёт ТОЛЬКО санированный detail (ревью #2596 P1), в тело 502 ручки — вообще ничего, кроме кода.
+      const detail = sanitizeNetworkDetail(error);
       this.logger.warn({ method, path, detail }, 'cabinet door unreachable');
       return { kind: 'cabinet-unreachable', detail };
     }
