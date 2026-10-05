@@ -1,3 +1,7 @@
+{"ts":"2026-10-05T12:32:56.578Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-10-05T12:32:22.055Z","origin":"ask-persona"}
+{"ts":"2026-10-05T12:32:56.581Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-10-05T12:32:22.055Z","origin":"ask-persona"}
+{"ts":"2026-10-05T12:32:56.583Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-09-01-library-open-api-m3-key-ttl","reason":"тот же паттерн «умолчание срока живёт в сервере-владельце ключа/ресурса, не в UI»; здесь — у кабинета-владельца мембраны, не в office-экране.","origin":"ask-persona"}
+{"ts":"2026-10-05T12:32:56.585Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-09-01-library-open-api-m1-ownership","reason":"граф владения User→Membrane→Device→Collection→Sample с единственной точкой пересечения Device.membraneId; срок цепляется за ту же ось — Membrane, не за Device и не за User панели.","origin":"ask-persona"}
 {"ts":"2026-10-05T12:31:47.759Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-10-05T12:31:04.624Z","origin":"ask-persona"}
 {"ts":"2026-10-05T12:31:47.760Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-10-05T12:31:04.624Z","origin":"ask-persona"}
 {"ts":"2026-10-05T13:01:33.234Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
