@@ -1,0 +1,132 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "tariff-downgrade-freeze-2587",
+  "taskId": "tariff-downgrade-freeze-2587",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-10-06T08:00:00+00:00",
+    "to": "2026-10-20T20:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b0-consilium-retain-revision-and-archive-carrier",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "docs/seanses/tariff-downgrade-freeze-2587-consilium.md",
+        "docs/adr/ADR-0031-downgrade-archive-carrier.md"
+      ],
+      "estimate": {
+        "changedLines": 180
+      }
+    },
+    {
+      "blockId": "b1-keep-under-byte-budget-selector",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/plugin-handlers/src/chart-list/downgrade-keep.ts",
+        "packages/plugin-handlers/src/chart-list/downgrade-keep.test.ts",
+        "packages/plugin-handlers/src/index.ts"
+      ],
+      "estimate": {
+        "changedLines": 260
+      }
+    },
+    {
+      "blockId": "b2-media-archive-entity",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/background-media/prisma/schema.prisma",
+        "packages/background-media/prisma/migrations/",
+        "packages/background-media/src/modules/archive/archive.store.ts",
+        "packages/background-media/src/modules/archive/archive.store.test.ts",
+        "packages/background-media/src/modules/archive/archive.module.ts"
+      ],
+      "estimate": {
+        "changedLines": 330
+      }
+    },
+    {
+      "blockId": "b3-media-archive-doors",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-media/src/modules/archive/archive.controller.ts",
+        "packages/background-media/src/modules/archive/archive.controller.test.ts",
+        "packages/background-media/src/modules/archive/archive.service.ts",
+        "packages/background-media/src/modules/archive/archive.service.test.ts",
+        "packages/background-media/src/modules/archive/archive.dto.ts",
+        "packages/background-media/src/app.module.ts"
+      ],
+      "estimate": {
+        "changedLines": 390
+      }
+    },
+    {
+      "blockId": "b4-cabinet-keep-setting-and-confirmed-downgrade",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/background-cabinet/prisma/schema.prisma",
+        "packages/background-cabinet/prisma/migrations/",
+        "packages/background-cabinet/src/modules/tariff/",
+        "packages/background-cabinet/src/modules/membrane/membrane-downgrade-keep.service.ts",
+        "packages/background-cabinet/src/modules/membrane/membrane-downgrade-keep.service.test.ts",
+        "packages/background-cabinet/src/modules/membrane/membrane.controller.ts",
+        "packages/background-cabinet/src/modules/membrane/membrane.module.ts",
+        "packages/background-cabinet/src/modules/pair/media-bridge.service.ts",
+        "packages/background-cabinet/src/modules/pair/media-archive.port.ts"
+      ],
+      "estimate": {
+        "changedLines": 400
+      }
+    },
+    {
+      "blockId": "b5-cabinet-ui-preview-confirm-restore",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/cabinet/src/api/tariff.ts",
+        "apps/cabinet/src/api/archive.ts",
+        "apps/cabinet/src/pages/MembranePage.tsx",
+        "apps/cabinet/src/components/membrane/DowngradeKeepCard.tsx",
+        "apps/cabinet/src/components/membrane/DowngradeConfirmDialog.tsx",
+        "apps/cabinet/src/components/membrane/DowngradeConfirmDialog.test.tsx",
+        "apps/cabinet/src/components/nodes/NodeArchivePanel.tsx"
+      ],
+      "estimate": {
+        "changedLines": 390
+      }
+    },
+    {
+      "blockId": "b6-live-acceptance-closure",
+      "persona": "angelina",
+      "context": "angelina",
+      "zone": [
+        "docs/local-sprint/tariff-downgrade-freeze-2587/",
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/sprint/experience/tariff-downgrade-freeze-2587.segments.json"
+      ],
+      "estimate": {
+        "changedLines": 140
+      }
+    }
+  ],
+  "//why": "Issue #2587 (блок 1 из двух; блок 2 — #2588). Слово владельца 05.10: при понижении тарифа данные сверх квоты младшего тарифа не удаляются, а уходят в холодный архив; живыми остаются отобранные одним из трёх режимов chart-list (превышение над фоном / разнообразие звука / похожесть на дрон). Режим — настройка в кабинете с умолчанием + подтверждение или смена в момент понижения, кабинет показывает, сколько уйдёт в архив. Разморозка — рукой пользователя («вернуть из архива»), пока не истёк срок. Срок и удаление по сроку — #2588. Сегодня понижение не делает ничего, кроме смены ссылки мембраны на тариф и перезаписи лимитов прибора; used > limit, и каждая новая запись в ось отказывает обычным путём переполнения — данные висят сверх квоты без статуса.",
+  "//measure": "Ствол 796dfd87, 05.10, только чтение кода, серверы не трогались. (1) Смена тарифа живёт ТОЛЬКО в кабинете: POST /v1/membranes/me/tariff (packages/background-cabinet/src/modules/tariff/tariff.controller.ts:113-134) → TariffTransitionService.selectTariff (tariff-transition.service.ts:181; условный updateMany + TariffChangeLog :271-287; ворота self открыты :405-407) → contextFanout.syncAllNodes (tariff.controller.ts:133) → media PATCH /v1/devices/:id/membrane (pair/media-bridge.service.ts:200-202) → devices.service.ts:179-212 перезаписывает Device.userStorageQuotaBytes/bufferQuotaBytes БЕЗ сверки с занятым. Промокод вниз запрещён (domain/tariff-transition.ts:159) и разноски не делает (tariff.controller.ts:152-156); админской двери смены тарифа нет ('admin' только тип, :40); office и panel тарифа не знают (grep tariff по background-office/src — пусто). Значит понижение = одна дверь self. (2) Что происходит сейчас: только смена ссылки и разноска лимитов; UI говорит «Ниже текущего: пределы уменьшатся» (apps/cabinet/src/pages/MembranePage.tsx:198,213-214). После разноски used > limit; отказ новой записи — axisRefuses used+incoming>limit (packages/background-media/src/modules/samples/buffer-overflow-refusal.ts:100-102), эпизод в памяти процесса (overflow-episode-registry.ts:43-69); инвариант «used ≤ limit на сервере держится всегда» (overflow-episode-registry.ts:7, buffer-overflow-refusal.ts:99) после понижения ложен. quota-ledger.isOverQuota называет случай законным (packages/background-cabinet/src/domain/quota-ledger.ts:159-166), но ledger никем не позван (tariff-transition.service.ts:10-13). Удержание прибора (held_local|held, packages/core/src/contracts/node-realtime/events.ts:136-158; apps/client/src/lib/device-overflow-hold/deviceOverflowHold.ts) не знает о понижении: снимается рукой человека или событием очистки буфера; строк «освобождено» / «снимите удержание» в apps/ и packages/ нет. Узлы сверх нового лимита (nodes.max 9/4/1) остаются — isNodeLimitReached только при добавлении (membrane.service.ts:202). (3) Квота — байты на ПРИБОРЕ, не на пользователе: Device.* копии из строки тарифа (packages/background-media/prisma/schema.prisma:65-72); getQuota (devices.service.ts:231-293) суммирует sizeBytes всех Sample прибора по kind коллекции: buffer → buffer, user и system кроме __tariff_dataset__ → userStorage, тарифный набор — только счёт. Статуса у Sample нет (schema.prisma:148-171) — флагом запись из квоты не исключить, только коллекция решает. Квоты в штуках нет нигде. (4) Файлы — локальный диск MEDIA_BLOB_DIR (по умолчанию ./data/blobs, env.schema.ts:30; прод /var/lib/membrana/media-blobs → /data/blobs, deploy/background-media.prod.compose.yml:26), путь <deviceId>/<sampleId>.<ext> (blob/blob-storage.service.ts:24-26); удаление жёсткое: blob rm + prisma.sample.delete (samples.service.ts:313-322); удаление коллекции — каскад строк без удаления блобов (collections.service.ts:48-56). archive/archived/frozen/deletedAt/expireAt/retention в схемах media и кабинета — не найдено; TTL есть только у ссылок ключа треков (TrackKeyTtlSetting). Защита вещдока — соглашением: isPinnedByHuman = label≠unlabeled или notes «keep/хранить/не удалять» (packages/services/media-library/src/buffer-cleanup.ts:89-96). (5) Режимы отбора: packages/plugin-handlers/src/chart-list/selection.ts — CHART_LIST_CRITERIA (:42) loudness-over-floor / spectral-variety / drone-likeness; selectChartList(candidates, criterion, volume, tuning, window) (:294) — top-K ПО ЧИСЛУ, volume ∈ {200,100,60,20} (:32), иначе отказ unknown-volume (:337); компараторы без финального tie-break по sampleId (:214,:217); spectral-variety может вернуть меньше K (dedupeGreedy, порог 0.05 провизорный). Кандидаты меряются на лету measureSampleSet (chart-list-measure/executor.ts): декод WAV, фон — по ПОДАННОМУ набору (deltaDb относителен набору), пробы ниже 12 дБ выпадают; признаки не хранятся (THRESHOLDS.md:83). drone-likeness = наименьшая spectral flatness, не детектор. Мера — в одной коллекции (measureSampleSet(reader, deviceId, collectionId, ids)). Media уже импортирует пакет (packages/background-media/package.json:27; first-wave.registrar.ts:44, витрина библиотеки :283-323, результат в памяти по runId :320). Вывод: режимы переиспользуются как КОМПАРАТОРЫ, но не как есть — нужен отбор под бюджет байт, финальный tie-break и судьба неизмеренных. (6) Кабинет: сущности настроек пользователя нет (User — login/passwordHash/role, background-cabinet/prisma/schema.prisma:24-32); настройки живут на мембране (MembraneBufferPolicy :101-111, PUT membranes/me/buffer-policy, membrane.controller.ts:28,37,49; карточка BufferOverflowPolicyCard в MembranePage.tsx:344). Пользователь ↔ мембрана — один к одному (getOrCreateMembraneForUser). UI смены тарифа — MembranePage.tsx:297-339 (TariffSelector :113). (7) Office: раздел пользователей панели (apps/panel/src/components/panel-users/PanelUsersBoard.tsx; background-office/src/modules/panel-users/panel-users.controller.ts:112-210) — это операторы панели в JSON-файле (/var/lib/membrana-office/panel-users.json, panel-users.store.ts:9), НЕ пользователи кабинета; grep membrane/cabinet user по apps/panel/src и background-office/src — пусто. (8) Гранула tariff-cold (docs/containers/strategic-docs/granules/tariff-cold/resource.json:21-25): storage.cold MiB free 0 «нельзя» / checkpoint 2048 / observatory 2048, НЕ ратифицирована; quota-ledger класс cold = «хранилище треков» (quota-ledger.ts:7,36). Porcha НЕ прогонялась (фаза 1 без правок кода) — предсказания ниже проверяются в фазе 2 первым делом.",
+  "//canon-conflict": "Слово владельца 05.10 ПЕРЕСМАТРИВАЕТ ратифицированный канон, а не применяет его: (а) вердикт M5 tariff-grid 29.07 — «Retain (сохраняется)… Не delete, не hide-as-missing» (docs/seanses/tariff-grid-m5-produce-2026-07-29.md:135); (б) domain/tariff-transition.ts:18-19 «Понижение ничего не разрушает… Запрещается новое»; (в) quota-ledger.ts:17-19 «Автовытеснение и тихая деградация запрещены: система не решает за пользователя, что стереть». Заморозка с выбором режима пользователем и явным подтверждением формально не «тихая» и не «удаление», но запись исчезает из живого вида (hide) и через #2588 удаляется по сроку (delete). Поэтому b0 обязателен ДО b1: консилиум/заседание с одним вопросом «пересмотр M5 retain для понижения» + ADR носителя архива. Без ратификации пересмотра b1..b5 исполняются вне канона.",
+  "//cutter": "Резчик vesnin. Прогон контекста 05.10: yarn ask vesnin --ticket-file <замер #2587 по стволу 796dfd87> --save-as cut-tariff-downgrade-freeze-2587-vesnin → docs/discussions/cut-tariff-downgrade-freeze-2587-vesnin.md; акт в ленте docs/sprint/cut/trail/tariff-downgrade-freeze-2587.jsonl. Вердикт резчика: против канона (M5) — b0 консилиум обязателен, до него b1 не резать («чистая функция без дома»); носитель — отдельная таблица, не флаг на Sample; бюджет в байтах переписывает контракт отбора, а не параметризует; CHART_LIST_CRITERIA не расширять; точка перерезки — между b2 и b3 (b1+b2 сдаются первым спринтом: носитель + отбор; b3–b5 — кабинетный путь вторым). Резчик предлагал включить ратификацию гранулы tariff-cold в b0 — принято как развилка владельцу (4), не как условие b0. BLOCK-условия. b0: в протоколе нет явного вердикта по каждому из пунктов 1–3 развилок (пересмотр M5, носитель, дом настройки) — не сдан. b1: функция делает I/O, знает про media, расширяет CHART_LIST_CRITERIA или меняет selectChartList — не сдан; разбиение keep/freeze недетерминировано (нет финального tie-break) — не сдан. b2: замороженное учитывается в used оси; путь заморозки удаляет blob; миграция необратима без потери строк — не сдан. b3: preview мутирует; freeze не идемпотентен по (deviceId, sampleId) или по планDigest; restore проходит при нехватке места под текущим лимитом (тихо ворует квоту) — не сдан. b4: понижение с избытком без подтверждённого предпросмотра проходит; промо-дверь вниз открылась; заморозка сделана до успешной смены тарифа — не сдан. b5: предпросмотр без байт И штук по осям; смена режима не пересчитывает предпросмотр — не сдан. b6: нет сценария «старший → младший с избытком → вернуть из архива после повышения» на живом приборе — не сдан.",
+  "//order": "b0 → (b1 ∥ b2) → [точка перерезки, отдельная ратификация] → b3 → b4 → b5 → b6. b1 и b2 не пересекаются по зонам (plugin-handlers vs background-media/archive + схема). b3 требует b1 (отбор) и b2 (носитель). b4 требует b3 (двери media). b5 требует b4 (двери кабинета). Перерезка после b2 обязательна: если b0 выберет флаг на Sample вместо отдельной таблицы, зона b2 расширится на samples.service.ts, devices.service.ts (getQuota) и все чтения проб — это >400 строк и новая нарезка.",
+  "//forecast": "b1: на ветке packages/plugin-handlers — planKeepUnderBudget(candidates, unmeasured, criterion, budgetBytes) возвращает keep/freeze, сумма keep ≤ budget, разбиение покрывает вход без потерь и дублей, порядок стабилен при перестановке входа; на стволе 796dfd87 тест красный — модуля нет (import падает). Опровержение: бюджет недостижим без расширения selectChartList (компараторы не экспортируются) — тогда экспорт компараторов в зону b1 и перерезка не нужна, если правка ≤ 20 строк. b2: getQuota прибора с одной замороженной пробой не считает её байты в оси; на стволе красный (сущности нет). Опровержение: исключение из квоты требует правки getQuota (devices.service.ts вне зоны) — тогда отдельная таблица оправдана тем, что getQuota НЕ меняется (строка Sample уходит из таблицы), и прогноз сбывается без правки. b3: preview на приборе с 10 пробами и бюджетом на 6 даёт freeze=4 и digest; freeze по тому же digest дважды — одна партия; restore при нехватке места — отказ с причиной. b4: POST /v1/membranes/me/tariff вниз при избытке без previewDigest — отказ downgrade_preview_required; с digest — смена, заморозка по приборам, затем разноска лимитов; счёт «заморожено N, не удалось M». b5/b6: владелец видит на понижении число и объём уходящего по каждому узлу, меняет режим — числа меняются; после повышения кнопка «вернуть из архива» возвращает пробы в живой вид, квота растёт на их байты.",
+  "//porcha": "Красная на стволе 796dfd87 (прогнать в фазе 2 ДО правки, вывод в CLOSURE): P1 (b1) packages/plugin-handlers/src/chart-list/downgrade-keep.test.ts — import ./downgrade-keep падает. P2 (b2) archive.store.test.ts — после archiveSamples(deviceId, [id]) getQuota().buffer.usedBytes не уменьшился (на стволе сущности нет — красный). P3 (b3) archive.service.test.ts — freeze дважды по одному planDigest даёт одну партию; restore при used+bytes>limit — отказ restore_exceeds_quota. P4 (b4) tariff-transition.service.test.ts — понижение при избытке без previewDigest проходит на стволе (красный: ожидается отказ). P5 (b5) DowngradeConfirmDialog.test.tsx — смена режима пересчитывает числа.",
+  "//dod": "b0: протокол консилиума с вердиктом по пунктам развилок 1–3 и ADR-0031 носителя архива; ратификация пересмотра M5 словом владельца. b1: чистый отбор под бюджет байт поверх CHART_LIST_CRITERIA (без расширения списка), финальный tie-break (at, затем sampleId), неизмеренные пробы — после измеренных, новее раньше; защищённые isPinnedByHuman — первыми в keep (если развилка 5 решена так); зубы P1. b2: сущность архива в media (ArchiveBatch {id, deviceId, membraneId, reason 'tariff_downgrade', fromTariffId, toTariffId, criterion, planDigest, frozenAt, restoredAt?, purgedAt?} + ArchivedSample — строка пробы целиком, перенесённая из Sample; blob остаётся на месте); перенос в архив и обратно — транзакция; getQuota, списки, чтение и chart-list не меняются, потому что замороженной строки в Sample нет; зубы P2. b3: двери media POST /v1/devices/:id/archive/preview {bufferLimitBytes, userStorageLimitBytes, criterion} → план + planDigest (не мутирует); POST .../archive/freeze {planDigest} (идемпотентно); GET .../archive (партии со сроком — см. стык); POST .../archive/:batchId/restore (отказ при нехватке места); зубы P3. b4: настройка мембраны downgradeKeepCriterion (умолчание — развилка 3) + GET/PUT; POST membranes/me/tariff/downgrade-preview {toTariffId, criterion} → сводка по узлам; selectTariff принимает {criterion, previewDigests} и при избытке без них отказывает; порядок: смена тарифа → freeze по узлам → разноска лимитов; зубы P4. b5: карточка настройки режима на MembranePage, диалог подтверждения понижения с числами по узлам и осям, панель архива узла с «вернуть из архива» и сроком; зубы P5. b6: живая приёмка владельцем на узле с избытком: понижение → числа совпали с предпросмотром → квота ≤ лимита → повышение → вернуть из архива → квота выросла; CLOSURE.md, LOCAL_SPRINT_LOG.md, sprint:gate pass, sprint:experience.",
+  "//out-of-scope": "Срок хранения, выпадающий список в office, удаление архива по сроку — #2588 (блок 2). Узлы сверх нового nodes.max (9→4→1) — не трогаются, отдельный вопрос владельцу. Ратификация значений гранулы tariff-cold — слово владельца (развилка 4), спринт её не пишет. Кэш признаков измерения — отдельная карточка при провале замера времени в b3. Перенос блобов в отдельное «холодное» хранилище (другой диск/S3) — не в v1. Админская смена тарифа и промо вниз — закрыты, не трогаются.",
+  "//forks": "1. Пересмотр M5 «retain» для понижения — только слово владельца + консилиум b0 (рекомендация: принять как исключение «переход вниз по явному подтверждению пользователя», retain остаётся нормой для всего остального). 2. Носитель архива — отдельная таблица ArchiveBatch + ArchivedSample (рекомендация резчика и моя: getQuota, списки, chart-list и все чтения проб не меняются, ноль риска «заморожено, но посчитано») против флага frozenAt на Sample (меньше миграции, но правка всех запросов и >400 строк). 3. Дом настройки режима — мембрана (рекомендация: рядом с MembraneBufferPolicy, пользователь ↔ мембрана 1:1, сущности настроек пользователя нет) против новой сущности UserSettings; умолчание режима — loudness-over-floor (рекомендация: самый понятный и не возвращает «меньше K»). 4. Архив понижения против тарифной ячейки storage.cold (free 0 = «нельзя»): рекомендация — архив понижения ВНЕ квоты cold, ограничен только сроком #2588; иначе понижение на «Датчик» обязано удалять сразу — против слова 05.10. 5. Вещдоки (isPinnedByHuman — размеченные и «хранить») — рекомендация: в keep первыми, режим ранжирует остальное; если размеченные одни превышают бюджет — замораживаются и они, по режиму, с отдельной строкой в предпросмотре. 6. Ось userStorage (пользовательские наборы) — рекомендация: тот же режим по объединению всех пользовательских наборов прибора (мера по нескольким коллекциям — правка measure в b1/b3); альтернатива v1 — замораживать только буфер, избыток наборов оставлять как сегодня. 7. Неизмеримые пробы (тишина, ниже 12 дБ, не декодируются) — рекомендация: ранжировать после измеренных, новее раньше (не морозить молча всё неизмеримое). 8. Разморозка — рекомендация: целой партией и только если влезает под текущий лимит; поштучно — второй итерацией. 9. Время меры: measureSampleSet декодирует все WAV прибора (до 4 ГиБ буфера) — рекомендация: предпросмотр асинхронным прогоном по runId (как витрина библиотеки), с замером времени на живом приборе в b3; провал — карточка кэша признаков.",
+  "//junction-2588": "ПРЕДЛОЖЕНИЕ — сводит ведущая. (а) Где запись архива и метка времени: media, ArchiveBatch.frozenAt (+ restoredAt, purgedAt); партия — единица заморозки, разморозки и удаления; строки проб — ArchivedSample, блобы на месте под MEDIA_BLOB_DIR. (б) Носитель срока: офис НЕ знает пользователей кабинета (раздел пользователей панели — операторы панели, JSON-файл; grep membrane по office/panel пусто) — поэтому «per-user в office» требует от #2588 решения, где живёт значение. Предложение: значение живёт в кабинете на мембране (archiveRetentionSeconds, умолчание 14 сут = 1209600, тест 1 сут = 86400); office/panel получает выпадающий список через служебную дверь кабинета под ApiTokenGuard (прецедент двери cabinet-register #2393), список мембран — оттуда же. (в) Как срок доезжает до исполнителя: тем же PATCH /v1/devices/:id/membrane, что квоты и bufferPolicy (новое необязательное поле archiveRetentionSeconds в DeviceMembraneContext → Device.archiveRetentionSeconds); media читает его заново на каждый вызов, как квоту (без кеша). Срок считается от frozenAt по ТЕКУЩЕМУ значению (не снимок при заморозке) — изменение в office действует на уже замороженное; альтернатива-снимок — развилка #2588. (г) Кто исполняет удаление: media (у неё блобы) — метод ArchiveService.purgeExpired(now) по ArchiveBatch где restoredAt null, purgedAt null и frozenAt + retention ≤ now: удалить блобы, строки ArchivedSample, поставить purgedAt (партия остаётся как след). Пусковик (таймер в процессе media или ночной прогон) — #2588. (д) Что даёт блок 1 блоку 2: схему ArchiveBatch с frozenAt/restoredAt/purgedAt и индексом (deviceId, purgedAt, frozenAt); GET /v1/devices/:id/archive отдаёт expiresAt, если срок известен прибору (иначе null — кабинет пишет «срок не задан», не выдумывает); restore отказывает archive_expired при expiresAt ≤ now. Поле archiveRetentionSeconds, его разноска, purgeExpired и пусковик — зона #2588; в зоне b2 только колонки партии.",
+  "//owner-questions": "1. Пересматриваем ли M5 «retain при понижении» — да/нет (без этого спринт не начинается). 2. Архив понижения входит в тарифную ячейку «холодное хранилище» (у Датчика 0 = нельзя) или живёт отдельно, ограничен только сроком? 3. Умолчание режима — превышение над фоном? 4. Размеченные и «хранить» — всегда оставлять живыми первыми? 5. Пользовательские наборы тоже морозить по режиму или в v1 только буфер? 6. Узлы сверх нового лимита узлов — оставить как есть (вне спринта)?",
+  "//recut": "Перерезок нет (версия 1)."
+}
