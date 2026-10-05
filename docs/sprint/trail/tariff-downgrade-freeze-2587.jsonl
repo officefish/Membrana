@@ -1,0 +1,2 @@
+{"traceId":"tariff-downgrade-freeze-2587-b1-context","blockId":"b1-select-keep-within-bytes","kind":"context_run","subject":"dynin","at":"2026-10-05T15:51:16Z","ref":"docs/discussions/b1-select-keep-within-bytes-2587-dynin.md"}
+{"traceId":"tariff-downgrade-freeze-2587-b1-review","blockId":"b1-select-keep-within-bytes","kind":"review_pass","subject":"dynin","at":"2026-10-05T15:51:16Z","ref":"packages/plugin-handlers/src/chart-list/select-keep-within-bytes.test.ts"}

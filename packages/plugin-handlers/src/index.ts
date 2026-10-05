@@ -94,6 +94,15 @@ export {
   type ChartListTuning,
   type ChartListVolume,
 } from './chart-list/selection.js';
+export {
+  selectKeepWithinBytes,
+  compareKeepPriority,
+  modeRanksFromPicks,
+  type KeepCandidate,
+  type KeepRefusal,
+  type KeepRefusalReason,
+  type KeepWithinBytesResult,
+} from './chart-list/select-keep-within-bytes.js';
 export { CHART_LIST_MANIFEST, CHART_LIST_ID } from './chart-list/manifest.js';
 export {
   findDuplicatePairs,
