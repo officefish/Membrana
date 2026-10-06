@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14387/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 386 (причины в op-log) -->
+Записей: 50 · бюджет 14367/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 387 (причины в op-log) -->
+
+### 2026-10-06 · позиция · team-evening-feedback
+
+> Dynin Оценка артефактов: sprint-cut tariff-downgrade-freeze-2587 с //measure, //owner-decisions и //recut — точный формат, инварианты заморозки описаны строго. Code-review выделил post-condition b3a (sum(active buffer bytes) ≤ bufferLimitBytes) как BLOCK-условие — корректно. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-06.md#reply-1`
 
 ### 2026-10-05 · позиция · tariff-downgrade-freeze-consilium
 
@@ -301,9 +307,3 @@
 > Формализую граф G = ({1,2,3,4}, E). Ребро (A,B) ∈ E тогда и только тогда, когда вердикт A является необходимым входом для постановки задачи B, то есть без A задача B недоопределена. Из аргументов выше: (1)→(2) — чем адресовать, не зная чьё; (2)→(3) — ключ едет в теле списка, […] _(реплик в сеансе: 4)_
 
 — источник: `docs/seanses/library-open-api-m0-order-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m1-ownership
-
-> Формализую. Пусть функция `owner: Sample → Membrane` строится как транзитивное замыкание по цепочке. `owner(s) = membrane(device(collection(s)))`. Если `device.membraneId = null`, то `owner(s) = ⊥` — значение неопределено. Это не ошибка вычисления, это область определения […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/library-open-api-m1-ownership-2026-09-01.md#reply-1`

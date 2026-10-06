@@ -7,8 +7,8 @@
   "frozenDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
   "magistral": "tariff-downgrade-freeze",
   "swallow": {
-    "draftDigest": "b0e11a3df8d8bab7686f887315fc45dc07c64b4f702b6624fdecfaa1ec189742",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-10-06.md",
+    "draftDigest": "69ebc028a1ef319b244fb8410d86e94eb6dd65989985c0ddc82251e71152a349",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-10-06.md",
     "ownerAck": true,
     "day": "2026-10-06",
     "claimsProbe": {
@@ -16,7 +16,8 @@
       "protocol": "docs/seanses/team-evening-feedback-2026-10-06.md",
       "sha": "ececbf3af7af",
       "at": "2026-10-06T19:20:36.065Z"
-    }
+    },
+    "gate": "evening:partner-swallow"
   },
   "day": "2026-10-06",
   "magistralChosenAt": "2026-10-06",
