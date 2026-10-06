@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-05",
+  "date": "2026-10-06",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -21,6 +21,13 @@
       "severity": "high",
       "issue": "@fastify/busboy vulnerable to Denial of Service via prototype-named multipart part header",
       "url": "https://github.com/advisories/GHSA-x8mw-p69m-v3mx"
+    },
+    {
+      "pkg": "@fastify/busboy",
+      "id": "1241276",
+      "severity": "moderate",
+      "issue": "@fastify/busboy vulnerable to CRLF injection via multipart Content-Disposition filename and name",
+      "url": "https://github.com/advisories/GHSA-gxm5-99cw-xjw9"
     },
     {
       "pkg": "@fastify/static",
@@ -884,6 +891,13 @@
       "url": "https://github.com/advisories/GHSA-r3ph-w7gj-g6xm"
     },
     {
+      "pkg": "katex",
+      "id": "1241206",
+      "severity": "low",
+      "issue": "KaTeX: Existing prototype pollution can bypass trust restrictions",
+      "url": "https://github.com/advisories/GHSA-238p-pmpm-9mq7"
+    },
+    {
       "pkg": "lodash",
       "id": "1115806",
       "severity": "high",
@@ -947,11 +961,25 @@
       "url": "https://github.com/advisories/GHSA-w9m9-85wc-3x92"
     },
     {
+      "pkg": "postcss-selector-parser",
+      "id": "1241232",
+      "severity": "moderate",
+      "issue": "PostCSS: Quadratic complexity in flat selector parsing allows CPU exhaustion",
+      "url": "https://github.com/advisories/GHSA-rj75-hqrm-r3gf"
+    },
+    {
       "pkg": "prebuild-install",
       "id": "prebuild-install (deprecation)",
       "severity": "moderate",
       "issue": "No longer maintained. Please contact the author of the relevant native addon; alternatives are available.",
       "url": ""
+    },
+    {
+      "pkg": "proxy-addr",
+      "id": "1241210",
+      "severity": "critical",
+      "issue": "proxy-addr vulnerable to IP spoofing via IPv4-mapped IPv6 trust subnet",
+      "url": "https://github.com/advisories/GHSA-jqcg-44mw-7w3h"
     },
     {
       "pkg": "puppeteer",
@@ -1024,11 +1052,39 @@
       "url": "https://github.com/advisories/GHSA-2m8v-j782-fhvr"
     },
     {
+      "pkg": "source-map-js",
+      "id": "1241209",
+      "severity": "high",
+      "issue": "source-map-js allows event-loop denial of service through indexed source-map section offsets",
+      "url": "https://github.com/advisories/GHSA-68fv-2mgg-jv7q"
+    },
+    {
+      "pkg": "sprintf-js",
+      "id": "1241202",
+      "severity": "moderate",
+      "issue": "sprintf-js vulnerable to denial of service through unbounded precision specifiers",
+      "url": "https://github.com/advisories/GHSA-hp3w-g68c-fv3c"
+    },
+    {
       "pkg": "tar",
       "id": "1145647",
       "severity": "high",
       "issue": "node-tar: Uncontrolled recursion in mapHas/filesFilter allows uncatchable stack-overflow DoS via crafted long-path tar with member selection",
       "url": "https://github.com/advisories/GHSA-r292-9mhp-454m"
+    },
+    {
+      "pkg": "tinypool",
+      "id": "1241260",
+      "severity": "critical",
+      "issue": "Tinypool: Prototype Pollution gadget in worker options leads to Remote Code Execution",
+      "url": "https://github.com/advisories/GHSA-5gmw-xhrv-c9v3"
+    },
+    {
+      "pkg": "tinypool",
+      "id": "1241261",
+      "severity": "critical",
+      "issue": "Tinypool: Prototype Pollution Gadget to RCE in run() options",
+      "url": "https://github.com/advisories/GHSA-85c8-ppgw-ccpr"
     },
     {
       "pkg": "turbo",
