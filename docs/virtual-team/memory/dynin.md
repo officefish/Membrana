@@ -5,8 +5,20 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14385/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 384 (причины в op-log) -->
+Записей: 50 · бюджет 14387/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 386 (причины в op-log) -->
+
+### 2026-10-05 · позиция · tariff-downgrade-freeze-consilium
+
+> Пункт (4) — численно однозначен. `expiresAt = frozenAt + retentionDays` как снимок в партии даёт инвариант: уборка = предикат `now >= expiresAt`, без гонок на «пользователь сменил срок между freeze и cron». Чтение срока при уборке = скрытое изменение контракта задним числом. […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/tariff-downgrade-freeze-consilium-2026-10-05-2026-10-05.md#reply-1`
+
+### 2026-10-05 · позиция · team-evening-feedback
+
+> Dynin Оценка артефактов: `MAIN_DAY_ISSUE` поставил мне P0 C9 первым действием (проверка #2582 на plain-text секреты) — правильная последовательность. Code-review вечера снял эту задачу: в диффе `de3b29a1` только шаблоны `${…:?…}`/`$$…`, 48-hex строк 0 — чисто. Это зафиксировано […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-05.md#reply-1`
 
 ### 2026-10-04 · позиция · team-evening-feedback
 
@@ -295,15 +307,3 @@
 > Формализую. Пусть функция `owner: Sample → Membrane` строится как транзитивное замыкание по цепочке. `owner(s) = membrane(device(collection(s)))`. Если `device.membraneId = null`, то `owner(s) = ⊥` — значение неопределено. Это не ошибка вычисления, это область определения […] _(реплик в сеансе: 4)_
 
 — источник: `docs/seanses/library-open-api-m1-ownership-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m2-contract
-
-> Зафиксирую по полноте. Факт входа: потолок страницы 100, ответ несёт `total`. Это не решение о полноте — это только то, что есть. Решение: ответ должен нести `page` и `limit` явно, чтобы читатель снаружи мог знать, получил ли он всё. Если `total ≤ limit` — страница полная и […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/library-open-api-m2-contract-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · team-evening-feedback
-
-> Dynin. Оценка артефактов: ревью справедливо выделило P1 в `repo-links.mjs` — regex `ISSUE_LINK` с флагом `/g` в модульном скоупе; `lastIndex` не сбрасывается между вызовами, зубы косвенно покрывают через `assert.equal(rewritten.length, N)`, но прямого теста «два вызова с одним […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`

@@ -1,0 +1,5 @@
+{"ts":"2026-10-06T03:34:11.781Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-10-05-tariff-downgrade-freeze-consilium","origin":"persona-extract"}
+{"ts":"2026-10-06T03:34:11.781Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-10-05-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-10-06T03:34:11.781Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-09-01-library-open-api-m2-contract","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-06T03:34:11.781Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-09-01-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-06T03:34:11.781Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
