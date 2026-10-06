@@ -22,3 +22,8 @@ export interface SetBufferPolicyBindingDto {
   applyToAll?: unknown;
   confirmed?: unknown;
 }
+
+/** Режим отбора при понижении (#2587 b4a). Сырым: вне закрытой тройки судит домен причиной `unknown_criterion`. */
+export interface SetDowngradePolicyDto {
+  criterion?: unknown;
+}
