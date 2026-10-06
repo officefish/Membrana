@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14395/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 407 (причины в op-log) -->
+Записей: 50 · бюджет 14375/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 408 (причины в op-log) -->
+
+### 2026-10-06 · позиция · team-evening-feedback
+
+> Vesnin Оценка артефактов: MAIN_DAY_ISSUE корректно обозначил ADR-0031 как блокер DoD; code-review дал точные команды проверки oversized-диффов утром. Расхождение гейт↔assertions задокументировано, но не закрыто — это сам факт качества артефактов, не оценка команды. Итоги дня: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-06.md#reply-1`
 
 ### 2026-10-05 · позиция · tariff-downgrade-freeze-consilium
 
@@ -295,12 +301,6 @@
 > Оценка артефактов: STRATEGY_DAY и MAIN_DAY_ISSUE задают ясную картину: владельческая магистраль (перенос между наборами) против операционного блокера (красные тесты). DAILY_CODE_REVIEW качественно разложил дифф: два fix-PR укрепляют границу `pr:ship` — поведенческий зуб вместо […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m0-order
-
-> Конструкция. Граф Математика точен, но проверю (1)→(3) и (1)→(4) строже. Вопрос (3) спрашивает «на что распространяется выключатель». Без (1) мы не знаем единицу владения — пользователя, мембрану или набор. Это не выводимо из формы списка (2). Прямое ребро (1)→(3) держится […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/library-open-api-m0-order-2026-09-01.md#reply-1`
 
 ### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 

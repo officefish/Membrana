@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14205/14400 · статус ok
+Записей: 50 · бюджет 14391/14400 · статус ok
 <!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 394 (причины в op-log) -->
+
+### 2026-10-06 · позиция · team-evening-feedback
+
+> Ozhegov Оценка артефактов: LIVE_SERVICES.md декларирует маршруты новых рёбер с env-ключами — хороший уровень точности термина; sprint-cut перерезок v3/v4 с named findings — образец. Code-review корректно отметил системный паттерн root:null в procedure-runs — это слабая […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-06.md#reply-1`
 
 ### 2026-10-05 · позиция · tariff-downgrade-freeze-consilium
 
@@ -296,8 +302,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
 
-### 2026-09-01 · позиция · library-open-api-m0-order
+### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 
-> Формулирую лемму зависимости решения так, как мы её применяли на logging-observability-cut-m0 и hunt-and-canon-m0: «вердикт A раньше B», если без зафиксированного вердикта A обсуждение B либо бессмысленно, либо требует высокой цены переделки контракта. Применяю к (1) и (2): ключ […] _(реплик в сеансе: 4)_
+> Operation surface является одной закрытой таблицей. Вне неё нет скрытых CLI-команд, server endpoints или операций из примечаний; у каждой строки ровно один M3 action и ровно один authority object. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/library-open-api-m0-order-2026-09-01.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`

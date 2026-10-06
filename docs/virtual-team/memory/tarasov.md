@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14396/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 398 (причины в op-log) -->
+Записей: 50 · бюджет 14367/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 399 (причины в op-log) -->
+
+### 2026-10-06 · позиция · team-evening-feedback
+
+> Tarasov Оценка артефактов: STRATEGY_DAY — вещдок, не рабочий документ (помечено 17.07), в контуре дня не участвует; MAIN_DAY_ISSUE перевыпущен словом владельца, артикулирует tariff-downgrade-freeze и честно фиксирует расхождение гейт↔assertions; DAILY_STANDUP задаёт точный […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-06.md#reply-1`
 
 ### 2026-10-05 · позиция · tariff-downgrade-freeze-consilium
 
@@ -301,9 +307,3 @@
 > Оценка артефактов: Артефакты дня согласованы между собой: стендап и MAIN_DAY_ISSUE едины в определении P0-блокера (красные тесты media-library и background-cabinet), а магистраль `sample-move-between-collections` корректно выведена из владельческого sources[0] от 31.08. […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m0-order
-
-> Задача комнаты одна — порядок и рёбра, не решения. Напоминаю команде: сами вопросы сегодня не трогаем. Смотрю на подсказки повестки: «Ось владения — вход для формы контракта». Это ребро (1)→(2), если оно держится. Дальше оба опираются на форму списка — значит (2) входит и в (3), […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/library-open-api-m0-order-2026-09-01.md#reply-1`
