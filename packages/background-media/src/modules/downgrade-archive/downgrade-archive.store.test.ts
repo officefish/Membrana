@@ -38,6 +38,7 @@ function fakePrisma() {
   const matches = (row: Row, where: Record<string, unknown>): boolean =>
     Object.entries(where).every(([k, v]) => {
       if (k === 'batch') return (batch.get(row['batchId'] as string) as Row)['state'] === (v as { state: string }).state;
+      if (v !== null && typeof v === 'object' && 'not' in (v as object)) return row[k] !== (v as { not: unknown }).not;
       if (v !== null && typeof v === 'object' && 'in' in (v as object)) return ((v as { in: string[] }).in).includes(row[k] as string);
       if (v !== null && typeof v === 'object' && 'lte' in (v as object)) return (row[k] as Date).getTime() <= ((v as { lte: Date }).lte).getTime();
       return row[k] === v;
@@ -119,6 +120,11 @@ function fakePrisma() {
         const victims = [...archived.values()].filter((r) => matches(r, where));
         for (const v of victims) archived.delete(v.id);
         return { count: victims.length };
+      },
+      updateMany: async ({ where, data }: { where: Record<string, unknown>; data: Row }) => {
+        const hits = [...archived.values()].filter((r) => matches(r, where));
+        for (const h of hits) archived.set(h.id, { ...h, ...data });
+        return { count: hits.length };
       },
     },
     /** Интерактивная транзакция С ОТКАТОМ: исключение внутри возвращает все три таблицы к снимку. */
@@ -326,13 +332,15 @@ describe('уборка по сроку — контракт для #2588', () =>
     expect((db.batch.get('batch-2') as Row)['state']).toBe('failed');
   });
 
-  it('listBatches отдаёт партии прибора с состоянием, сроком и счётом строк', async () => {
+  it('listBatches отдаёт партии прибора с состоянием, сроком и счётом строк (хвост failed подобран третьей)', async () => {
     const { store } = await threeBatches();
     const list = await store.listBatches(DEV);
+    // d-fresh шла ПОСЛЕ d-failed и переподчинила себе её строку s2: у failed ноль строк (след),
+    // у d-fresh две — слово владельца 05.10 о хвосте failed-партий.
     expect(list.map((b) => [b.planDigest, b.state, b.sampleCount])).toEqual([
       ['d-frozen', 'frozen', 1],
-      ['d-failed', 'failed', 1],
-      ['d-fresh', 'frozen', 1],
+      ['d-failed', 'failed', 0],
+      ['d-fresh', 'frozen', 2],
     ]);
     expect(list[2]?.expiresAt.getTime()).toBe(NOW.getTime() + 30 * DAY);
   });
@@ -397,5 +405,51 @@ describe('чистые предикаты', () => {
     for (const state of ['failed', 'restored', 'deleted'] as const) {
       expect(isPurgeDue({ state, expiresAt: exp }, new Date(exp.getTime() + DAY))).toBe(false);
     }
+  });
+});
+
+describe('b3: подбор хвоста failed и post-condition до ack', () => {
+  it('следующая заморозка переподчиняет строки failed-партии себе; failed остаётся следом с нулём строк', async () => {
+    const { db, store } = setup();
+    const failed = await store.archiveSamples(order({ planDigest: 'd-failed', picks: [{ sampleId: 's1', modeRank: 0 }, { sampleId: 'ghost', modeRank: 1 }] }), NOW);
+    expect(failed.batch?.state).toBe('failed');
+
+    const next = await store.archiveSamples(order({ planDigest: 'd-next', picks: [{ sampleId: 's2', modeRank: 0 }] }), NOW);
+    expect(next.refusal).toBeNull();
+    expect(next.batch?.state).toBe('frozen');
+    expect(next.adopted).toBe(1);
+    expect(next.batch?.sampleCount).toBe(2);
+    expect(db.archived.get('s1')?.['batchId']).toBe(next.batch?.batchId);
+    expect(db.archived.get('s2')?.['batchId']).toBe(next.batch?.batchId);
+    expect([...db.archived.values()].filter((r) => r['batchId'] === failed.batch?.batchId)).toHaveLength(0);
+    expect(await store.failedTailOf(DEV)).toEqual([]);
+  });
+
+  it('post-condition: живых байт после переноса ≤ лимита → frozen, activeBufferBytes назван', async () => {
+    const { store } = setup();
+    // Остаётся s3 (300): лимит 300 — ровно на границе, включительно.
+    const out = await store.archiveSamples(order({ postCondition: { bufferLimitBytes: 300, bufferCollectionId: '__buffer__' } }), NOW);
+    expect(out.refusal).toBeNull();
+    expect(out.batch?.state).toBe('frozen');
+    expect(out.activeBufferBytes).toBe(300);
+  });
+
+  it('post-condition ложен → партия failed + quota_invariant_violated; строки остаются в ней хвостом', async () => {
+    const { db, store } = setup();
+    const out = await store.archiveSamples(order({ postCondition: { bufferLimitBytes: 299, bufferCollectionId: '__buffer__' } }), NOW);
+    expect(out.refusal?.reason).toBe('quota_invariant_violated');
+    expect(out.refusal?.detail).toContain('300 > лимита 299');
+    expect(out.batch?.state).toBe('failed');
+    expect(out.activeBufferBytes).toBe(300);
+    expect(db.archived.size).toBe(2);
+    expect((db.batch.get(out.batch!.batchId) as Row)['state']).toBe('failed');
+    expect([...(await store.failedTailOf(DEV))].sort()).toEqual(['s1', 's2']);
+  });
+
+  it('без postCondition проверки нет — activeBufferBytes null (b2-совместимость)', async () => {
+    const { store } = setup();
+    const out = await store.archiveSamples(order(), NOW);
+    expect(out.activeBufferBytes).toBeNull();
+    expect(out.adopted).toBe(0);
   });
 });

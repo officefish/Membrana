@@ -51,6 +51,12 @@ export interface ArchiveSamplesInput {
   /** Сумма байт, оставшихся живыми по плану — вещдок post-condition для b3. */
   readonly keptBytes: number;
   readonly picks: readonly ArchivePick[];
+  /**
+   * Post-condition ДО ack (ADR-0031, решение 5): после переноса `sum(sizeBytes живых проб коллекции)`
+   * обязана быть ≤ `bufferLimitBytes`. Проверяется в той же транзакции; ложь ⇒ партия `failed` и отказ
+   * `quota_invariant_violated`. Не задано — проверки нет (b2-совместимость; дверь b3 задаёт всегда).
+   */
+  readonly postCondition?: { readonly bufferLimitBytes: number; readonly bufferCollectionId: string };
 }
 
 export type ArchiveRefusalReason =
@@ -58,6 +64,7 @@ export type ArchiveRefusalReason =
   | 'duplicate_plan'
   | 'partial_freeze'
   | 'concurrent_change'
+  | 'quota_invariant_violated'
   | 'batch_not_found'
   | 'batch_not_frozen'
   | 'archive_expired'
@@ -78,6 +85,8 @@ export interface ArchiveBatchView {
   readonly retentionDays: number;
   readonly criterion: string;
   readonly planDigest: string;
+  readonly fromTariffId: string;
+  readonly toTariffId: string;
   readonly frozenBytes: number;
   readonly keptBytes: number;
   readonly sampleCount: number;
@@ -85,8 +94,12 @@ export interface ArchiveBatchView {
 
 export interface ArchiveSamplesOutcome {
   readonly batch: ArchiveBatchView;
-  /** Пробы, которых в "Sample" прибора не оказалось; непусто ⇔ `batch.state === 'failed'`. */
+  /** Пробы, которых в "Sample" прибора не оказалось; непусто ⇒ `batch.state === 'failed'`. */
   readonly missing: readonly string[];
+  /** Строки прежних `failed`-партий прибора, переподчинённые этой партии (слово владельца 05.10). */
+  readonly adopted: number;
+  /** Сумма байт живых проб коллекции после переноса — если post-condition задан, иначе `null`. */
+  readonly activeBufferBytes: number | null;
   readonly refusal: ArchiveRefusal | null;
 }
 
@@ -138,6 +151,8 @@ function viewOf(row: BatchRow): ArchiveBatchView {
     retentionDays: row.retentionDays,
     criterion: row.criterion,
     planDigest: row.planDigest,
+    fromTariffId: row.fromTariffId,
+    toTariffId: row.toTariffId,
     frozenBytes: Number(row.frozenBytes),
     keptBytes: Number(row.keptBytes),
     sampleCount: row._count.samples,
@@ -222,15 +237,38 @@ export class DowngradeArchiveStore {
           if (count !== rows.length) throw new ConcurrentChange(rows.length, count);
         }
 
-        const view = viewOf({ ...batch, _count: { samples: rows.length } });
-        return {
-          batch: view,
-          missing,
-          refusal:
-            missing.length > 0
-              ? { reason: 'partial_freeze', detail: `${missing.length} из ${ids.length} проб не найдено в буфере прибора; партия ${batch.id} — failed, тариф не коммитить` }
-              : null,
-        };
+        // Хвост прежних `failed`-партий прибора переподчиняется новой партии (слово владельца
+        // 05.10): строки едут под её срок, `failed` остаётся следом с нулём строк.
+        const { count: adopted } = await tx.downgradeArchivedSample.updateMany({
+          where: { deviceId: input.deviceId, batch: { state: 'failed' }, batchId: { not: batch.id } },
+          data: { batchId: batch.id },
+        });
+
+        // Post-condition до ack: живых байт в коллекции не больше нового лимита. Ложь — партия
+        // `failed` (строки остаются в ней хвостом) и отказ: тариф коммитить нельзя.
+        let activeBufferBytes: number | null = null;
+        let violated = false;
+        if (input.postCondition) {
+          const live = await tx.sample.findMany({
+            where: { deviceId: input.deviceId, collectionId: input.postCondition.bufferCollectionId },
+            select: { sizeBytes: true },
+          });
+          activeBufferBytes = live.reduce((s, r) => s + r.sizeBytes, 0);
+          violated = activeBufferBytes > input.postCondition.bufferLimitBytes;
+        }
+        const failed = missing.length > 0 || violated;
+        const stored = failed && batch.state !== 'failed'
+          ? await tx.downgradeArchiveBatch.update({ where: { id: batch.id }, data: { state: 'failed' } })
+          : batch;
+
+        const view = viewOf({ ...stored, _count: { samples: rows.length + adopted } });
+        let refusal: ArchiveRefusal | null = null;
+        if (missing.length > 0) {
+          refusal = { reason: 'partial_freeze', detail: `${missing.length} из ${ids.length} проб не найдено в буфере прибора; партия ${batch.id} — failed, тариф не коммитить` };
+        } else if (violated) {
+          refusal = { reason: 'quota_invariant_violated', detail: `после переноса живых байт ${activeBufferBytes} > лимита ${input.postCondition!.bufferLimitBytes}; партия ${batch.id} — failed, тариф не коммитить` };
+        }
+        return { batch: view, missing, adopted, activeBufferBytes, refusal };
       });
     } catch (e) {
       if (e instanceof ConcurrentChange) {
@@ -249,6 +287,8 @@ export class DowngradeArchiveStore {
       return {
         batch: viewOf(existing),
         missing: [],
+        adopted: 0,
+        activeBufferBytes: null,
         refusal: { reason: 'duplicate_plan', detail: `партия ${existing.id} по этому planDigest уже существует — повторной заморозки нет` },
       };
     }
@@ -281,6 +321,19 @@ export class DowngradeArchiveStore {
       });
       return { batch: viewOf({ ...updated, _count: { samples: 0 } }), restored: rows.map((r) => r.id), refusal: null };
     });
+  }
+
+  /**
+   * Партия по ключу идемпотентности `(deviceId, planDigest)` — для повтора приказа freeze: после
+   * успешной заморозки буфер уже другой, пересчитанный план дал бы `plan_stale`, а повтор обязан
+   * вернуть ТУ ЖЕ партию (ADR-0031, контракт freeze). `null` — такого приказа не было.
+   */
+  async findByPlan(deviceId: string, planDigest: string): Promise<ArchiveBatchView | null> {
+    const row = await this.prisma.downgradeArchiveBatch.findUnique({
+      where: { deviceId_planDigest: { deviceId, planDigest } },
+      include: BATCH_INCLUDE,
+    });
+    return row ? viewOf(row) : null;
   }
 
   /** Одна партия — для предпросмотра возврата в b3. `null` — нет такой. */
