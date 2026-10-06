@@ -19,6 +19,7 @@ import { LinearSnapshotModule } from './linear-snapshot/linear-snapshot.module';
 import { FirebatNodeModule } from './modules/firebat-node';
 import { PluginResultsBridgeModule } from './modules/plugin-results-bridge/plugin-results-bridge.module';
 import { DeployPreflightModule } from './modules/deploy-preflight/deploy-preflight.module';
+import { DowngradeArchiveModule } from './modules/downgrade-archive/downgrade-archive.module';
 
 const testImports =
   process.env.NODE_ENV === 'test'
@@ -75,6 +76,7 @@ const testImports =
     PluginResultsBridgeModule,
     DeployPreflightModule,
     FirebatNodeModule,
+    DowngradeArchiveModule,
   ],
   controllers: [HealthController],
 })
