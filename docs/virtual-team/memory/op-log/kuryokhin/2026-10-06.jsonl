@@ -1,0 +1,5 @@
+{"ts":"2026-10-06T03:34:12.007Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-10-05-tariff-downgrade-freeze-consilium","origin":"persona-extract"}
+{"ts":"2026-10-06T03:34:12.007Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-10-05-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-10-06T03:34:12.007Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-09-01-library-open-api-m2-contract","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-06T03:34:12.007Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-09-01-library-open-api-m3-key-ttl","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-06T03:34:12.007Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

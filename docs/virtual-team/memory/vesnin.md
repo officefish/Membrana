@@ -5,8 +5,20 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14382/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 405 (причины в op-log) -->
+Записей: 50 · бюджет 14395/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 407 (причины в op-log) -->
+
+### 2026-10-05 · позиция · tariff-downgrade-freeze-consilium
+
+> Пункт (1). Канон M5 «Понижение ничего не разрушает» (tariff-transition.ts:18) и «Retain» — про запрет **немедленного уничтожения** при downgrade. Заморозка избытка + удаление только по `expiresAt` — **не разрушение в момент перехода**, а отложенная политика хранения. Исключение […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/tariff-downgrade-freeze-consilium-2026-10-05-2026-10-05.md#reply-1`
+
+### 2026-10-05 · позиция · team-evening-feedback
+
+> Vesnin Оценка артефактов: `MAIN_DAY_ISSUE` ссылается на ADR-0031 как на шаг дня, но файла ADR в затронутых путях нет и в git log за день он не упомянут — расхождение между каноном и стволом. `DAILY_CODE_REVIEW` справедливо фиксирует: два коммита oversized (579 и 668 строк), […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-05.md#reply-1`
 
 ### 2026-10-04 · позиция · team-evening-feedback
 
@@ -290,20 +302,8 @@
 
 — источник: `docs/seanses/library-open-api-m0-order-2026-09-01.md#reply-1`
 
-### 2026-09-01 · позиция · library-open-api-m1-ownership
+### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 
-> Конструкция. Цепочка `User → Membrane → Device → Collection → Sample` — это граф владения с одним корнем (`User`) и одним узлом пересечения кабинет/media (`Membrane ↔ Device`). Пересечение проходит через `Device.membraneId`. Это единственная точка, где media знает о кабинете. […] _(реплик в сеансе: 4)_
+> До object gate `recordId` разрешается в `canonicalRef`, current tip, policy version и object-version vector. Неизвестный record, binding, action или version даёт fail-closed, а не fallback. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/library-open-api-m1-ownership-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m2-contract
-
-> Адресация сегодня: `/v1/devices/:deviceId/collections`, `…/:collectionId/samples`, `…/:sampleId/blob`. Для открытого API форма остаётся той же — `deviceId` есть технический ключ прибора, `collectionId` — группировка, `sampleId` — идентификатор пробы. Это не переоткрытие M1: мы […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/library-open-api-m2-contract-2026-09-01.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m3-access
-
-> Единственный источник решений доступа — Panel. `registry.jsonl` остаётся источником тождества и истории материала по M2, но не становится авторизатором. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
