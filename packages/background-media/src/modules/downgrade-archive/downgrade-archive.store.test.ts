@@ -453,3 +453,34 @@ describe('b3: подбор хвоста failed и post-condition до ack', () =
     expect(out.adopted).toBe(0);
   });
 });
+
+describe('граница BigInt ↔ number (ревью #2604)', () => {
+  it('строки партий в хранилище несут настоящий BigInt (как Prisma в проде), представление отдаёт number: сумма без TypeError, сравнение с лимитом верно', async () => {
+    const { db, store } = setup();
+    const { batch } = await store.archiveSamples(order({ postCondition: { bufferLimitBytes: 300, bufferCollectionId: '__buffer__' } }), NOW);
+    const row = db.batch.get(batch!.batchId) as Row;
+    // Прод-форма: store пишет BigInt(...) в create — стаб хранит как есть, без приведения.
+    expect(typeof row['keptBytes']).toBe('bigint');
+    expect(row['frozenBytes']).toBe(300n);
+    // Смешение bigint и number в арифметике — TypeError; это и есть опасность, которую снимает граница.
+    expect(() => (row['frozenBytes'] as bigint) + (300 as unknown as bigint)).toThrow(TypeError);
+
+    // Граница store (viewOf → Number(...)): наружу — только number. Убрать Number(...) в viewOf —
+    // зуб красный на typeof и на сумме.
+    const view = await store.getBatch(batch!.batchId);
+    expect(typeof view!.keptBytes).toBe('number');
+    expect(typeof view!.frozenBytes).toBe('number');
+    expect(view!.keptBytes + view!.frozenBytes).toBe(600);
+    expect(view!.frozenBytes <= 300).toBe(true);
+
+    const [listed] = await store.listBatches(DEV);
+    expect(typeof listed!.frozenBytes).toBe('number');
+    expect(listed!.frozenBytes + listed!.keptBytes).toBe(600);
+
+    // Исход archiveSamples и partial/failed-ветка — тоже number.
+    expect(typeof batch!.frozenBytes).toBe('number');
+    const failed = await store.archiveSamples(order({ planDigest: 'd-f', picks: [{ sampleId: 's3', modeRank: 0 }, { sampleId: 'ghost', modeRank: 1 }] }), NOW);
+    expect(typeof failed.batch!.frozenBytes).toBe('number');
+    expect(failed.batch!.frozenBytes).toBe(300);
+  });
+});
