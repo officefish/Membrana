@@ -134,6 +134,23 @@ model MembraneArchiveRetention {
   @@unique([membraneId])
 }
 
+/// Режим отбора живого при понижении тарифа — настройка МЕМБРАНЫ (#2587 b4a; ADR-0031, решение
+/// владельца 05.10 п.3). Значения — зеркало словаря сервера записей (`downgrade-archive.vocabulary.ts`):
+/// `loudness-over-floor` (умолчание) | `spectral-variety` | `drone-likeness`; CHECK в миграции —
+/// первый пояс, домен (`domain/downgrade-policy.ts`) — второй: мусор на чтении → умолчание.
+///
+/// ОТДЕЛЬНОЙ ТАБЛИЦЕЙ, не колонкой `Membrane` — как `MembraneBufferPolicy` и
+/// `MembraneArchiveRetention` выше (перегрузки `requireOwnedMembrane`, TS2394). Нет строки =
+/// умолчание; backfill миграция не делает.
+model MembraneDowngradePolicy {
+  id         String   @id @default(uuid()) @db.Uuid
+  membraneId String   @db.Uuid
+  criterion  String
+  updatedAt  DateTime @updatedAt
+
+  @@unique([membraneId])
+}
+
 model Node {
   id         String          @id @default(uuid()) @db.Uuid
   membraneId String          @db.Uuid
