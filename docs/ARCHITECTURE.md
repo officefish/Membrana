@@ -177,6 +177,14 @@ interface AudioWindow {
 
 **Не смешивать:** пользовательские WAV и шаблоны trends — только **media**; секреты LLM/тикетов и webhook'и — только **office**; login/узлы/lease/runtime WS — **cabinet** (не media).
 
+**Рёбра между серверами** (каждое — своя пара env, свой ключ класса `X-Membrana-Token`; инвентарь живых дверей — [`LIVE_SERVICES.md`](./LIVE_SERVICES.md)):
+
+- **cabinet → media** — тарифный контекст и квоты прибора (`PATCH /v1/devices/:id/membrane`), приказы заморозки/разморозки архива понижения; `MEDIA_API_URL` + `MEDIA_API_TOKEN`.
+- **cabinet → office** — гашение кода регистрации (`POST /v1/internal/cabinet/registration-codes/consume`, [ADR-0029](./adr/ADR-0029-cabinet-registration-by-panel-code.md)); `OFFICE_URL` + `OFFICE_API_TOKEN`.
+- **media → office** — мост результатов плагинов (`POST /plugin-results/runs`); `OFFICE_API_URL` + `OFFICE_API_TOKEN`.
+- **office → cabinet** — **новое ребро** ([ADR-0031](./adr/ADR-0031-downgrade-archive.md) р.3, [#2588](https://github.com/officefish/Membrana/issues/2588)): первая входящая служебная дверь кабинета `/v1/internal/office/*` под отдельным ключом `CABINET_OFFICE_TOKEN` (охрана `OfficeTokenGuard`, без ключа — 503); ровно два маршрута — список мембран минимумом полей и `PUT` срока хранения архива на мембрану; office зовёт её из раздела «Пользователи» панели по `CABINET_API_URL` + `CABINET_OFFICE_TOKEN`, наружу — через прокси-переменные среды. Office **не** получает admin-API кабинета; расширение двери — только новым ADR.
+- **office → media (пусковик)** — ежечасный `@Cron` уборки холодного архива: `POST /v1/internal/downgrade-archive/purge-expired {dryRun}` (ADR-0031 р.4, #2588 b6); флаги `COLD_ARCHIVE_SWEEP_ENABLED` (умолчание выкл — media не вызывается) и `COLD_ARCHIVE_SWEEP_DRY_RUN` (умолчание вкл); боевая уборка — только при обоих явно. Истина срока — кабинет (на мембране); media получает его снимком в приказе заморозки и за сроком никуда не ходит.
+
 #### `background-cabinet` — кабинет и node realtime
 
 `@membrana/background-cabinet` (порт dev **3020**, SPA `apps/cabinet`): REST `/v1/*`, WebSocket `/v1/nodes/realtime` (каналы `journal`, `mic-live`, `presence`, `runtime`, `board`). Server-first: явный захват устройства (tariff v2, `NodeDeviceCapture` + gateway whitelist) — канон [`DEVICE_BOARD_SERVER_FIRST.md`](./DEVICE_BOARD_SERVER_FIRST.md) v2.0, §1g ниже. Деплой: [`deploy/BACKGROUND_CABINET_DEPLOY.md`](./deploy/BACKGROUND_CABINET_DEPLOY.md).
