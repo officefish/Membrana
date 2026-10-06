@@ -7,13 +7,18 @@
  */
 import { Module } from '@nestjs/common';
 
+import { BlobModule } from '../../blob/blob.module';
 import { PrismaModule } from '../../prisma/prisma.module';
 
+import { DowngradeArchivePurgeController } from './downgrade-archive-purge.controller';
+import { DowngradeArchivePurgeService } from './downgrade-archive-purge.service';
 import { DowngradeArchiveStore } from './downgrade-archive.store';
 
 @Module({
-  imports: [PrismaModule],
-  providers: [DowngradeArchiveStore],
+  // #2588 b5: уборка по сроку — BlobModule ради удаления файлов, своя дверь purge-expired под ApiTokenGuard.
+  imports: [PrismaModule, BlobModule],
+  controllers: [DowngradeArchivePurgeController],
+  providers: [DowngradeArchiveStore, DowngradeArchivePurgeService],
   exports: [DowngradeArchiveStore],
 })
 export class DowngradeArchiveModule {}
