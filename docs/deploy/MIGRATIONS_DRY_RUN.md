@@ -150,3 +150,13 @@ SELECT days FROM "MembraneArchiveRetention"               → 14
 
 `docker rm -f membrana-mig-dryrun` — контейнер и его том удалены; временная копия миграций и файл с
 паролем в scratchpad удалены. Docker Desktop оставлен работающим (машина владельца).
+
+## Закрытие (ведущая, 06.10)
+
+- **Задача** [#2611](https://github.com/officefish/Membrana/issues/2611) заведена на К1–К3. Правка истории применённых миграций (переименование `tariff_quota_rename`, миграция для `NodeDeviceCapture`, умолчание `datasetCatalogId`) — только словом владельца.
+- **Прод кабинета проверен ведущей чтением 06.10** (значений секретов нет):
+  - `to_regclass('"NodeDeviceCapture"')` → таблица есть (создана не миграцией) — К2 на проде не дыра, а расхождение истории;
+  - `_prisma_migrations`: `20260612120000_tariff_quota_rename` применена 1 раз — К1 на проде не проявляется;
+  - `Tariff.datasetCatalogId` `column_default` — нет: прод ≡ схема, расходится только снимок (К3);
+  - последняя применённая миграция — `20260908172033_tariff_contract_version` → миграции #2587 (media) и #2588 (`20261005160000_membrane_archive_retention`) поедут инкрементально.
+- **Вывод:** К1–К3 не блокируют выкатку холодного архива.
