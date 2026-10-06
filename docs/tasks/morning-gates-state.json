@@ -6,30 +6,12 @@
   ],
   "frozenDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
   "magistral": "tariff-downgrade-freeze",
-  "swallow": {
-    "draftDigest": "8d25de710592d4c4c9a985621d9d48864d55fb0b717cc24ac2e61994125aee48",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-10-05.md",
-    "ownerAck": true,
-    "day": "2026-10-06",
-    "claimsProbe": {
-      "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-10-05.md",
-      "sha": "6564fec3946b",
-      "at": "2026-10-05T22:42:37.741Z",
-      "override": {
-        "by": "owner",
-        "note": "Сверка ведущей 06.10: #2596 — модуль cabinet-users в office это HTTP-клиент к кабинету (серверный код), не клиентская часть; de3b29a1 — sha коммита слияния #2582, в исходниках его быть не должно; #2562 — PR влит 03.10, утверждение о нём историческое. Все три — ошибки формы проверки, не расхождения с деревом.",
-        "sha": "6564fec3946b",
-        "at": "2026-10-06T03:34:07.544Z"
-      }
-    },
-    "gate": "evening:partner-swallow"
-  },
-  "day": "2026-10-05",
-  "magistralChosenAt": "2026-10-05",
+  "swallow": null,
+  "day": "2026-10-06",
+  "magistralChosenAt": "2026-10-06",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-10-05",
+    "at": "2026-10-06",
     "chosen": "tariff-downgrade-freeze",
     "snapshotDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
     "inSnapshot": false
