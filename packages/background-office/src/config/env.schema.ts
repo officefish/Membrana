@@ -27,6 +27,20 @@ export const envSchema = z.object({
    */
   CABINET_API_URL: z.preprocess((v) => (typeof v === 'string' && v.trim() === '' ? undefined : v), z.string().url().optional()),
   CABINET_OFFICE_TOKEN: z.preprocess((v) => (typeof v === 'string' && v.trim() === '' ? undefined : v), z.string().min(1).optional()),
+  /**
+   * Уборка холодного архива понижения (#2588 b6; ADR-0031 п.4): ежечасный cron office →
+   * `POST {MEDIA_API_URL}/v1/internal/downgrade-archive/purge-expired {dryRun}`.
+   * ENABLED выключен (умолчание) = тишина: media не зовём вовсе. DRY_RUN включён (умолчание) =
+   * cron только показывает кандидатов; боевая уборка — ТОЛЬКО при ENABLED=true и DRY_RUN=false явно.
+   */
+  COLD_ARCHIVE_SWEEP_ENABLED: z
+    .string()
+    .optional()
+    .transform((v) => v === 'true' || v === '1'),
+  COLD_ARCHIVE_SWEEP_DRY_RUN: z
+    .string()
+    .optional()
+    .transform((v) => !(v === 'false' || v === '0')),
   GITHUB_TOKEN: z.string().min(1, 'GITHUB_TOKEN is required'),
   GITHUB_OWNER: z.string().min(1, 'GITHUB_OWNER is required'),
   GITHUB_REPO: z.string().min(1, 'GITHUB_REPO is required'),
