@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createNode, deleteNode, fetchMembraneMe, type MembraneView, type NodeView } from '@/api/membrane';
 import type { DeviceCaptureMode } from '@/api/deviceCapture';
+import type { ArchiveNodeView } from '@/api/downgradeArchive';
 import { isNodeLimitReachedView } from '@/lib/nodeListView';
 import { resolveNodeCardStatus, resolveNodeVitality } from '@/lib/nodeCardStatus';
 import { DEVICE_OFFLINE_RUN_HINT } from '@/lib/isDeviceLive';
 import { useCabinetNodeRuntime } from '@/lib/useCabinetNodeRuntime';
 import { useCabinetNodesJournalPreview, type NodeJournalPreviewState } from '@/lib/useCabinetNodesJournalPreview';
+import { NodeDowngradeArchivePanel, useDowngradeArchive } from '@/components/nodes/NodeDowngradeArchivePanel';
 import { NodeLastTrackPreview } from '@/components/nodes/NodeLastTrackPreview';
 import { NodeOverflowHoldLine } from '@/components/nodes/NodeOverflowHoldLine';
 import { NodeScenarioCell } from '@/components/nodes/NodeScenarioCell';
@@ -32,6 +34,8 @@ export function NodesPage({ onOpenJournal, onOpenDeviceBoard, onOpenKeys }: Node
     [data?.nodes],
   );
   const journalPreview = useCabinetNodesJournalPreview(membraneId, deviceIds);
+  // #2619: архив понижения — один запрос на страницу, панель на узле.
+  const archive = useDowngradeArchive();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -130,6 +134,8 @@ export function NodesPage({ onOpenJournal, onOpenDeviceBoard, onOpenKeys }: Node
               node={node}
               runtime={runtime}
               journalPreview={journalPreview.getPreview(node.device?.mediaDeviceId ?? '')}
+              archive={archive.nodes.find((a) => a.nodeId === node.id)}
+              onArchiveRestored={archive.reload}
               busy={busy}
               onOpenJournal={onOpenJournal}
               onOpenDeviceBoard={onOpenDeviceBoard}
@@ -170,6 +176,8 @@ function NodeCard({
   node,
   runtime,
   journalPreview,
+  archive,
+  onArchiveRestored,
   busy,
   onOpenJournal,
   onOpenDeviceBoard,
@@ -179,6 +187,8 @@ function NodeCard({
   node: NodeView;
   runtime: ReturnType<typeof useCabinetNodeRuntime>;
   journalPreview: NodeJournalPreviewState;
+  archive: ArchiveNodeView | undefined;
+  onArchiveRestored: () => Promise<void>;
   busy: boolean;
   onOpenJournal: () => void;
   onOpenDeviceBoard: () => void;
@@ -483,6 +493,8 @@ function NodeCard({
             loading={journalPreview.loading}
           />
         ) : null}
+
+        <NodeDowngradeArchivePanel view={archive} onRestored={onArchiveRestored} />
 
         {isCaptured && deviceId ? (
           <NodeScenarioCell
