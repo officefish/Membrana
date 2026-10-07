@@ -19,6 +19,10 @@ export const DOOR_REFUSAL_REASONS = [
   'preview_required',
   'plan_stale',
   'insufficient_quota',
+  // Отказ ИЗМЕРИТЕЛЯ на предпросмотре (#2587, прод 07.10): буфер не мерится целиком — план не
+  // строится. Раньше отказ глотался, и весь буфер молча становился «неизмеримым».
+  'measure_nothing_decodable',
+  'measure_floor_not_measured',
 ] as const;
 export type DoorRefusalReason = (typeof DOOR_REFUSAL_REASONS)[number];
 

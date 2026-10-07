@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { DowngradePreviewPlan, SelectTariffOutcome, TariffCatalogView } from '@/api/tariff';
@@ -38,8 +38,8 @@ function plan(over: Partial<DowngradePreviewPlan> = {}, freezeCount = 7): Downgr
     expiresAtEstimate: '2026-10-21T10:00:00.000Z',
     requiresConfirmation: true,
     nodes: [
-      { nodeId: 'n1', keepCount: 40, keepBytes: 1, freezeCount, freezeBytes: 3 * 1024 * 1024, planDigest: 'digest-shown-n1', excess: true },
-      { nodeId: 'n2', keepCount: 5, keepBytes: 1, freezeCount: 0, freezeBytes: 0, planDigest: 'digest-n2-no-excess', excess: false },
+      { nodeId: 'n1', keepCount: 40, keepBytes: 1, freezeCount, freezeBytes: 3 * 1024 * 1024, planDigest: 'digest-shown-n1', unmeasured: 0, excess: true },
+      { nodeId: 'n2', keepCount: 5, keepBytes: 1, freezeCount: 0, freezeBytes: 0, planDigest: 'digest-n2-no-excess', unmeasured: 0, excess: false },
     ],
     ...over,
   };
@@ -100,7 +100,20 @@ describe('DowngradeConfirmDialog — понижение с избытком (#25
     expect(dialog.textContent).toContain('Крыша');
     expect(dialog.textContent).toContain('Останется 40 записей · уйдёт в архив 7 · ≈3.0 МБ');
     expect(dialog.textContent).toContain('архив хранится 14 дн.');
+    expect(dialog.textContent).not.toContain('не измерено');
     expect(api.selectTariff).not.toHaveBeenCalled();
+  });
+
+  it('узел с неизмеримыми записями — строка «не измерено: N» (прод 07.10: 8359 из 8360 без ранга)', async () => {
+    const base = plan();
+    api.previewTariffDowngrade.mockResolvedValue({
+      ...base,
+      nodes: [{ ...base.nodes[0]!, keepCount: 4400, freezeCount: 3960, unmeasured: 8359 }, base.nodes[1]!],
+    });
+    await openFlow();
+    const dialog = await screen.findByRole('dialog');
+    const item = within(dialog).getByText('Крыша').closest('li')!;
+    expect(item.textContent).toContain('не измерено: 8359');
   });
 
   it('шапка-итог под aria-describedby: сумма по узлам с избытком (узел без избытка не в счёт), срок и дата', async () => {
@@ -109,7 +122,7 @@ describe('DowngradeConfirmDialog — понижение с избытком (#25
       ...base,
       nodes: [
         ...base.nodes,
-        { nodeId: 'n3', keepCount: 10, keepBytes: 1, freezeCount: 5, freezeBytes: 1024 * 1024, planDigest: 'digest-n3', excess: true },
+        { nodeId: 'n3', keepCount: 10, keepBytes: 1, freezeCount: 5, freezeBytes: 1024 * 1024, planDigest: 'digest-n3', unmeasured: 0, excess: true },
       ],
     });
     await openFlow();

@@ -141,6 +141,11 @@ export function DowngradeConfirmDialog(props: DowngradeConfirmDialogProps) {
               <p>
                 Останется {n.keepCount} записей · уйдёт в архив {n.freezeCount} · ≈{formatBytes(n.freezeBytes)}
               </p>
+              {n.unmeasured > 0 && (
+                <p className="text-xs opacity-70">
+                  не измерено: {n.unmeasured} — тише порога над фоном; из них остаются более новые
+                </p>
+              )}
             </li>
           ))}
         </ul>

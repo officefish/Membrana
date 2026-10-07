@@ -115,6 +115,11 @@ export interface DowngradeNodePreview {
   freezeCount: number;
   freezeBytes: number;
   planDigest: string;
+  /**
+   * Записей, которым режим отбора не дал ранга (тише порога над фоном, не декодируются). Они идут
+   * после измеренных, новее — первыми; человек должен видеть, что отбор решал по новизне, а не по мере.
+   */
+  unmeasured: number;
   /** Есть что морозить — узел требует подтверждения. */
   excess: boolean;
 }

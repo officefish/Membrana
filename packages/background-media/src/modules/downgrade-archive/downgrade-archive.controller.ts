@@ -37,7 +37,7 @@ export class DowngradeArchiveController {
   @Post('preview')
   @HttpCode(200)
   @ApiOperation({ summary: 'What stays live and what goes to the downgrade archive under the new buffer limit (buffer axis only; changes nothing)' })
-  @ApiResponse({ status: 200, type: DowngradePreviewResponseDto, description: 'Plan with planDigest, or { ok:false, reason } for unknown criterion / invalid limit' })
+  @ApiResponse({ status: 200, type: DowngradePreviewResponseDto, description: 'Plan with planDigest, or { ok:false, reason }: unknown_criterion, invalid_limit, measure_nothing_decodable, measure_floor_not_measured' })
   @ApiStandardErrors()
   @ApiBadRequest()
   preview(@Param('deviceId') deviceId: string, @Body() body: DowngradePreviewDto) {
