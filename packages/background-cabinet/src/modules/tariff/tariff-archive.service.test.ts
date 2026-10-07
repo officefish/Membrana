@@ -96,6 +96,14 @@ describe('TariffArchiveService.restore', () => {
     expect(await svc.restore(MINE, 'b-1')).toEqual({ ok: false, reason: 'media_unavailable', detail: 'узел node-a: Media server unreachable: down' });
   });
 
+  it('партия найдена, media.restore бросил (транспорт) — media_unavailable; поиск дальше НЕ идёт, второй restore не вызван', async () => {
+    const { svc, media } = harness({ 'dev-a': [row('b-1')], 'dev-b': [row('b-1')] });
+    media.restore.mockRejectedValueOnce(new ServiceUnavailableException('Media server unreachable: mid'));
+    expect(await svc.restore(MINE, 'b-1')).toEqual({ ok: false, reason: 'media_unavailable', detail: 'узел node-a: Media server unreachable: mid' });
+    expect(media.restore).toHaveBeenCalledTimes(1);
+    expect(media.restore).toHaveBeenCalledWith('dev-a', 'b-1');
+  });
+
   it('п.2 Дынина: молчит прибор первого узла, партия на втором — возврат проходит, не ложный media_unavailable', async () => {
     const { svc, media } = harness({ 'dev-a': new ServiceUnavailableException('Media server unreachable: a'), 'dev-b': [row('b-2')] });
     expect(await svc.restore(MINE, 'b-2')).toMatchObject({ ok: true, nodeId: 'node-b' });
