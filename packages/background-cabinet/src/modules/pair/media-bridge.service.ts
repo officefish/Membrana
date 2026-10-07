@@ -135,6 +135,22 @@ export class MediaBridgeService {
   }
 
   /**
+   * Приказ двери архива понижения media (`POST /v1/devices/:id/downgrade-archive/{preview|freeze}`,
+   * #2587 b4b; ADR-0031). Тот же разговор с media, что у прогона плагина: порт
+   * `MediaDowngradeArchiveClient` разбирает две формы ответа сам, а транспорта не держит — голый
+   * `fetch` второго клиента не видел бы `HTTPS_PROXY` и занял бы слот закрытого бюджета зуба сети.
+   *
+   * @returns сырой ответ media; недоступность сети — `ServiceUnavailableException` из `mediaFetch`.
+   */
+  async requestDowngradeArchive(deviceId: string, door: 'preview' | 'freeze', body: unknown): Promise<Response> {
+    return this.mediaFetch(`/v1/devices/${encodeURIComponent(deviceId)}/downgrade-archive/${door}`, {
+      method: 'POST',
+      headers: this.mediaHeaders(),
+      body: JSON.stringify(body),
+    });
+  }
+
+  /**
    * Единственный выход моста наружу — и потому единственное место, где чинится класс #2287.
    *
    * `mediaHeaders()` ставит `Content-Type` безусловно, и это удобно: звать его с телом и без

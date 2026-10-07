@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 
+import { ArchiveRetentionModule } from '../archive-retention/archive-retention.module';
 import { AuthModule } from '../auth/auth.module';
 import { MembraneModule } from '../membrane/membrane.module';
 import { PairModule } from '../pair/pair.module';
 import { PromoRedemptionRateLimiter } from './promo-redemption-rate-limit';
 import { TariffCatalogService } from './tariff-catalog.service';
 import { TariffController } from './tariff.controller';
+import { TariffDowngradeService } from './tariff-downgrade.service';
 import { TariffTransitionService } from './tariff-transition.service';
 
 /**
@@ -20,9 +22,11 @@ import { TariffTransitionService } from './tariff-transition.service';
  * копия дала бы второй мост со своей конфигурацией адреса media.
  */
 @Module({
-  imports: [AuthModule, MembraneModule, PairModule],
+  // ArchiveRetentionModule (#2588 b1) — порт ARCHIVE_RETENTION_READER: срок хранения в приказ
+  // заморозки едет снимком (#2587 b4, ADR-0031 п.4).
+  imports: [AuthModule, MembraneModule, PairModule, ArchiveRetentionModule],
   controllers: [TariffController],
-  providers: [PromoRedemptionRateLimiter, TariffTransitionService, TariffCatalogService],
+  providers: [PromoRedemptionRateLimiter, TariffTransitionService, TariffCatalogService, TariffDowngradeService],
   exports: [TariffTransitionService],
 })
 export class TariffModule {}

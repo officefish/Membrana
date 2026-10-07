@@ -50,6 +50,13 @@ export const SERVICE_DENY_REASONS = [
   'grid_unavailable',
   'tariff_moved_concurrently',
   'self_gate_closed',
+  // #2587 b4 (ADR-0031, решение 5): понижение с избытком буфера идёт freeze-first.
+  // `preview_required` — избыток есть, подтверждённых planDigest по узлам нет;
+  // `freeze_failed` — media отказала или партия failed: тариф НЕ коммитится;
+  // `media_unavailable` — сервер записей не ответил на предпросмотр/заморозку.
+  'preview_required',
+  'freeze_failed',
+  'media_unavailable',
 ] as const;
 
 /** Полный закрытый список причин, как их видит клиент: домен + сервис, без ручных копий. */

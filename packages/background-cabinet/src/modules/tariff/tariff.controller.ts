@@ -27,16 +27,23 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { SessionGuard, type AuthenticatedRequest } from '../../common/guards/session.guard';
 import { MembraneService } from '../membrane/membrane.service';
-import {
-  MembraneContextFanoutService,
-  type MembraneContextFanoutResult,
-} from '../pair/membrane-context-fanout.service';
+import type { MembraneContextFanoutResult } from '../pair/membrane-context-fanout.service';
 import { PromoRedemptionRateLimiter } from './promo-redemption-rate-limit';
 import { TariffCatalogService, type TariffCatalogView } from './tariff-catalog.service';
+import { TariffDowngradeService, type DowngradePreviewOutcome, type DowngradeSelectOutcome } from './tariff-downgrade.service';
 import { TariffTransitionService, type TransitionOutcome } from './tariff-transition.service';
 
-/** DTO выбора тарифа: РОВНО цель. Мембрана и актор — из сессии, не из тела (см. шапку). */
+/**
+ * DTO выбора тарифа: цель и — при понижении с избытком — подтверждённые хеши предпросмотра по
+ * узлам (`nodeId → planDigest`, #2587 b4). Мембрана и актор — из сессии, не из тела (см. шапку).
+ */
 export interface SelectTariffDto {
+  toTariffId: string;
+  previewDigests?: Record<string, string>;
+}
+
+/** DTO предпросмотра понижения: РОВНО цель. */
+export interface PreviewTariffDto {
   toTariffId: string;
 }
 
@@ -53,7 +60,8 @@ export interface SelectTariffDto {
  */
 export type SelectTariffResponse =
   | (Extract<TransitionOutcome, { ok: true }> & { contextSync: MembraneContextFanoutResult })
-  | Extract<TransitionOutcome, { ok: false }>;
+  | Extract<TransitionOutcome, { ok: false }>
+  | DowngradeSelectOutcome;
 
 /**
  * Форма id тарифа: SKU сетки (`free-v1`, `observatory-v1`). Граница ТРАНСПОРТА — существует ли
@@ -73,6 +81,12 @@ export interface RedeemPromoDto {
  */
 const CODE_RE = /^[A-Za-z0-9][A-Za-z0-9_-]{2,63}$/;
 
+/** Хеши предпросмотра: объект строка→строка; любой мусор читается как «подтверждения нет». */
+function isDigestMap(v: unknown): v is Record<string, string> {
+  return typeof v === 'object' && v !== null && !Array.isArray(v)
+    && Object.values(v as Record<string, unknown>).every((d) => typeof d === 'string');
+}
+
 function clientIpOf(req: AuthenticatedRequest): string | null {
   const forwarded = req.headers?.['x-forwarded-for'];
   const firstForwarded = Array.isArray(forwarded) ? forwarded[0] : forwarded;
@@ -88,8 +102,10 @@ export class TariffController {
     private readonly membraneService: MembraneService,
     private readonly tariffTransition: TariffTransitionService,
     private readonly tariffCatalog: TariffCatalogService,
-    private readonly contextFanout: MembraneContextFanoutService,
     private readonly promoRateLimiter: PromoRedemptionRateLimiter,
+    // #2587 b4: разноска контекста после смены тарифа переехала в оркестратор понижения — он
+    // зовёт её после commit (а при понижении с избытком — после заморозки и commit).
+    private readonly downgrade: TariffDowngradeService,
   ) {}
 
   @Get('tariffs')
@@ -123,15 +139,33 @@ export class TariffController {
     const userId = req.authUser!.id;
     const membrane = await this.membraneService.getOrCreateMembraneForUser(userId);
 
-    const outcome = await this.tariffTransition.selectTariff({
+    // #2587 b4 (ADR-0031 р.5): понижение с избытком идёт freeze-first через оркестратор; без
+    // избытка он сам зовёт тот же переход и ту же разноску, что раньше стояли здесь.
+    return this.downgrade.select({
       membraneId: membrane.id,
       toTariffId,
       actorId: userId,
+      previewDigests: isDigestMap(body?.previewDigests) ? body.previewDigests : undefined,
     });
-    if (!outcome.ok) return outcome;
+  }
 
-    const contextSync = await this.contextFanout.syncAllNodes(membrane.id);
-    return { ...outcome, contextSync };
+  /**
+   * ПРЕДПРОСМОТР ПОНИЖЕНИЯ (#2587 b4): что уйдёт в архив по узлам, байты, хеши планов, оценка срока.
+   * Ничего не меняет ни в кабинете, ни на сервере записей; кабинет показывает человеку и несёт
+   * хеши в `POST membranes/me/tariff` как подтверждение.
+   */
+  @Post('membranes/me/tariff/preview')
+  @ApiOperation({ summary: 'Preview a tariff downgrade: per node what stays / what goes to the downgrade archive, planDigest to confirm, retention estimate' })
+  async previewTariff(
+    @Req() req: AuthenticatedRequest,
+    @Body() body: PreviewTariffDto,
+  ): Promise<DowngradePreviewOutcome> {
+    const toTariffId = typeof body?.toTariffId === 'string' ? body.toTariffId.trim() : '';
+    if (!TARIFF_ID_RE.test(toTariffId)) {
+      throw new BadRequestException('toTariffId must be 2-64 characters of [a-z0-9-]');
+    }
+    const membrane = await this.membraneService.getOrCreateMembraneForUser(req.authUser!.id);
+    return this.downgrade.preview(membrane.id, toTariffId);
   }
 
   @Post('membranes/me/tariff/promo-redemptions')
