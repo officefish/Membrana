@@ -1,9 +1,9 @@
-<!-- Сгенерировано: 2026-10-07T11:37:52.384Z (yarn standup@e725baff) -->
+<!-- Сгенерировано: 2026-10-07T11:44:31.402Z (yarn standup@761cc624) -->
 <!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->
 <!-- Входы: VIRTUAL_TEAM_PROMPT, docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md, STRATEGY_DAY, DAILY_CODE_REVIEW, GitHub Issues (25), packages/temp (0 файлов) -->
 <!-- Issues: gh CLI -->
-<!-- Источник фокуса: нет (магистраль владельцем не выбрана) -->
-<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"76351be0372cd4420233df7db652835a70a92781","digest":"fdd1689d0ec9ea4aa8c07e1ef1de03806439bc579a535bdf4f34ef4af2c6ca4f","versionAt":"2026-10-06T12:57:44+03:00"}}} -->
+<!-- Источник фокуса: owner-choice@chat/magistral-07-10-manual -->
+<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"761cc62436aacf291eecaadd7b4e0a54a572fc2a","digest":"fdd1689d0ec9ea4aa8c07e1ef1de03806439bc579a535bdf4f34ef4af2c6ca4f","versionAt":"2026-10-07T14:43:14+03:00"}}} -->
 
 # Ежедневный стендап Membrana — 2026-10-07
 
@@ -11,55 +11,27 @@
 
 ## Фокус дня
 
-- Магистраль владельцем ещё не выбрана (owner-choice отсутствует на 2026-10-07); стендап фокус не назначает
+**Владелец 07.10: магистраль прежняя — понижение тарифа с заморозкой (ручной выбор вне топ-3).**
 
-> **Магистраль владельцем ещё не выбрана** — `owner-choice` на 2026-10-07 отсутствует.
->
-> Скрипт подставит фокус после получения слова владельца.
->
-> **Топ-3 кандидатов из реестра** (детерминированный ранг, зоны по разметке):
-> `angelina-hostess-impl` (L) · `assets-container` (L) · `chart-list-plugin` (L)
->
-> Все три — размер L, структурообразующие, без взаимных блокеров между собой.
-> Выбор — слово владельца.
+Конвейер `tariff-downgrade-freeze` стоит на последнем переломе: b0–b2 в стволе, b3a (#2604) и b4/b6 (#2599, #2603) ждут раскрытого diff и typecheck — без этого следующий merge невозможен честно. Главный риск сегодня двойной: **ADR-0031 отсутствует в стволе третий день** (любой merge freeze-контура идёт без письменной санкции) и **C1/C9 по #2596 не верифицированы** (PR уже влит, диффа нет — граница office→cabinet «на честном слове»). Критерий успеха к вечеру: b3a и хотя бы один из b4/b6 либо в стволе с раскрытым diff и зелёным typecheck/lint, либо с именованным блокером; `docs/adr/ADR-0031-downgrade-archive.md` лежит в стволе с LGTM Vesnin; post-condition буфера (`sum(active buffer bytes) ≤ bufferLimitBytes`) проверен по `git show c5c01a65`.
 
----
+**Роли на магистрали:**
 
-**Что несёт утро с вечернего ревью (заряжает выбор):**
-
-Из вчерашнего `DAILY_CODE_REVIEW.md` переходят **незакрытые P1/P2**, которые касаются любой из трёх кандидатур магистрали и санитарного слоя сегодняшнего дня:
-
-| Приоритет | Что висит | Кому | Размер |
-|-----------|-----------|------|--------|
-| **P1** | `ADR-0031-downgrade-archive.md` **не в стволе третий день** — расхождение канон/ствол блокирует честный старт b3–b5 и любой merge, касающийся `tariff-downgrade-freeze` | **Vesnin** | S |
-| **P1** | C1/C9 по #2596 (office→cabinet, MERGED) не верифицированы вручную: `git show 6f87dc45 -- packages/background-office` | **Vesnin + Ozhegov** | S |
-| **P1** | Письменный триаж 4 CVE (`@fastify/busboy` ×2, `braces`, `http-cache-semantics`) — вердикт runtime/dev по каждому; runtime-находка блокирует следующий merge в ствол | **Dynin** | S |
-| **P1** | 8 oversized PR из 16 вчера — системный паттерн, не инцидент; зафиксировать правило в процессе (CONTRIBUTING.md) до следующего цикла merge | **Tarasov** | S |
-| **P2** | `root:null` в `procedure-runs` при `fail`-статусе — поле обязательным, слепой ретрай без диагноза убрать | **Ozhegov** | S |
-| **P2** | `.env.example`: флаги `COLD_ARCHIVE_SWEEP_ENABLED`/`DRY_RUN` требуют явного предупреждения о порядке включения | **Kuryokhin** | S |
-
-> Все шесть пунктов — S-задачи, суммарно не больше первой половины дня. Закрытие P1 до обеда **открывает** любую из трёх L-магистралей чистым стартом.
-
----
-
-**Предикаты прохода вехи `secret-parser-built`** (горизонт approaching):
-
-- `night-triage-secret-scan.mjs` — дописать **резак** (не только детектор паттернов); один датированный проход с манифестом ротации засвеченных ключей.
-- Без прохода гейта амнистия на правку архива не снимается → блокирует работу с историческими сессиями.
-- Размер: M (пробы в экспериментальном слое дня уже намечены в `DAY_PLAN.md`).
+- **Vesnin (Архитектор)** — ведёт `trace-freeze-d-probe-truth-tooth` и весь freeze-контур: `git show 6f87dc45 -- packages/background-office` (C1/C9 #2596), `git show c5c01a65 -- packages/background-media` (post-condition b3a), положить ADR-0031 файлом с вердиктами 1–6 консилиума 05.10 + LGTM.
+- **Ozhegov (Структурщик)** — ведёт `trace-freeze-c-library-render`: раскрыть diff #2604 (b3a store/preview/freeze), проверить слабую связанность, C7-тесты рядом с `ec52d2b9` (#2603 sweep-scheduler); `root:null` в `procedure-runs` — сделать поле обязательным.
+- **Dynin (Математик)** — ведёт `trace-freeze-b-live-sendsync`: письменный триаж 4 CVE (`@fastify/busboy` ×2, `braces`, `http-cache-semantics`) — runtime vs dev вердикт; runtime-находка = стоп merge. Параллельно: проба резака `night-triage-secret-scan.mjs` на одном реальном архиве (вклад в гейт `secret-parser-built`).
+- **Kuryokhin (Музыкант)** — ведёт `node-duty-ready-predicate`: sweep-scheduler (#2603) — флаги `COLD_ARCHIVE_SWEEP_ENABLED` / `DRY_RUN` в `.env.example` с явным предупреждением о порядке включения; blob-удаление жёсткое, freeze не трогает blob — верифицировать по diff.
+- **Rodchenko (Верстальщик)** — ведёт `session-digest-library-face` + панель «Пользователи» (#2599, b4): раскрыть oversized diff, a11y новых контролов (список мембран, PUT срока хранения), клавиатурный доступ к пагинации по DESIGN.md.
+- **Tarasov (Teamlead)** — ведёт `mfcc-compare-sprint`: вердикт по 8 oversized PR (системный антипаттерн) — зафиксировать правило split в CONTRIBUTING.md; LGTM на b3a после верификации post-condition; не допускать старта b5 до merge b3a.
 
 ---
 
 ## Что сознательно не делаем
 
-- **DSP-бенчмарк (harmonic / cepstral / flux) на free-v1** — потолок зафиксирован (`FFT_METRICS_POTENTIAL_AND_LIMITS.md` §6: ceiling ~75% recall / 40% FPR без смены датасета или fusion); повтор без новых данных или fusion-схемы запрещён.
-- **Недельная стратегия** — заморожена кристаллом `weekly-strategy-frozen` (owner 2026-07-17); не трогать до закрытия дневной рутины.
-- **`mfcc-compare-sprint` как магистраль дня** — задача в реестре, Teamlead ведёт, но она поддерживающая полоса, не структурообразующая L; не конкурирует с тройкой кандидатов.
-- **Перечеканка `main-day-assertions.json`** — откладывается на первое свободное окно после закрытия P1; сейчас стоит на критическом пути дешевле времени, чем тратить его до слова владельца.
-
----
-
-*Стендап готов. Роутинг персон подставит скрипт из `leadPersona`/`supportPersonas` реестра. Слово владельца — магистраль.*
+- **DSP-бенчмарк harmonic/cepstral/flux на free-v1** — потолок эшелона 0 зафиксирован (`FFT_METRICS_POTENTIAL_AND_LIMITS.md` §6), повтор не даст новых знаний на том же датасете.
+- **Смену магистрали на топ-3 реестра** (`angelina-hostess-impl`, `assets-container`, `chart-list-plugin`) — без нового owner-choice они остаются кандидатами, не исполнением.
+- **Старт b5** — b3a не в стволе, последовательность нарушать нельзя; чеклист выкатки (миграции live, `CABINET_OFFICE_TOKEN`, сверка `LIVE_SERVICES`) составляется, но не запускается.
+- **Полноценный пилот бэкапа исторических сессий** — гейт `secret-parser-built` (approaching) не пройден: резак есть только в детекторе паттернов, датированного прохода с манифестом ротации ещё не было; амнистия на правку архива не снята.
 
 ---
 
