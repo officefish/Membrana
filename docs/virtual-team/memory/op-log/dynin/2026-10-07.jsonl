@@ -1,1 +1,5 @@
 {"ts":"2026-10-07T13:06:54.415Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-10-07T12:23:08.582Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-10-07T12:22:35.100Z","origin":"ask-persona"}
+{"ts":"2026-10-07T12:23:08.584Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-10-07T12:22:35.100Z","origin":"ask-persona"}
+{"ts":"2026-10-07T12:23:08.586Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-09-08-tariff-matrix-scalars-fate","reason":"тут аналогично нужно формализовать множества и инвариант принадлежности, и ровно так же вылезает «SSOT не там, где кажется»: дом истины о партиях — media, а кабинет судит принадлежность по двум источникам (prisma.device.node.membraneId и batch.membraneId), и это разные часы.","origin":"ask-persona"}
+{"ts":"2026-10-07T12:23:08.588Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-01-evening-review-predicate-m4-memoization","reason":"там я уже формализовал конфликт двух предикатов на одном объекте; здесь похожая конструкция: own(b) ⇔ device(b)∈nodes(m) ∧ b.membraneId=m, и важно, что это конъюнкция, а не дизъюнкция.","origin":"ask-persona"}

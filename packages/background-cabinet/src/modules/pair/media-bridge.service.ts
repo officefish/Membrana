@@ -93,6 +93,9 @@ export interface MediaPaginatedSamples {
   totalPages: number;
 }
 
+/** Двери архива понижения media (#2587 b3b, #2619); `batchId` в пути — уже закодирован зовущим. */
+export type DowngradeArchiveDoor = 'preview' | 'freeze' | 'batches' | `batches/${string}/restore`;
+
 @Injectable()
 export class MediaBridgeService {
   private readonly logger = new Logger(MediaBridgeService.name);
@@ -131,6 +134,27 @@ export class MediaBridgeService {
       method: 'POST',
       headers: this.mediaHeaders(),
       body: JSON.stringify(body),
+    });
+  }
+
+  /**
+   * Приказ двери архива понижения media (`POST /v1/devices/:id/downgrade-archive/{preview|freeze}`,
+   * #2587 b4b; ADR-0031). Тот же разговор с media, что у прогона плагина: порт
+   * `MediaDowngradeArchiveClient` разбирает две формы ответа сам, а транспорта не держит — голый
+   * `fetch` второго клиента не видел бы `HTTPS_PROXY` и занял бы слот закрытого бюджета зуба сети.
+   *
+   * #2619: те же двери отдают список партий (`GET batches`, без тела) и возврат партии
+   * (`POST batches/:batchId/restore`, без тела) — вход один, метод следует из двери.
+   *
+   * @returns сырой ответ media; недоступность сети — `ServiceUnavailableException` из `mediaFetch`.
+   */
+  async requestDowngradeArchive(deviceId: string, door: DowngradeArchiveDoor, body?: unknown): Promise<Response> {
+    const path = `/v1/devices/${encodeURIComponent(deviceId)}/downgrade-archive/${door}`;
+    if (door === 'batches') return this.mediaFetch(path, { method: 'GET', headers: this.mediaHeaders() });
+    return this.mediaFetch(path, {
+      method: 'POST',
+      headers: this.mediaHeaders(),
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
   }
 
