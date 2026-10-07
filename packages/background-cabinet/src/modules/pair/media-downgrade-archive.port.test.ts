@@ -69,4 +69,27 @@ describe('MediaDowngradeArchiveClient', () => {
     vi.stubGlobal('fetch', vi.fn(async () => { throw new Error('ECONNREFUSED'); }));
     await expect(client().preview('dev-1', { criterion: 'loudness-over-floor', bufferLimitBytes: 1 })).rejects.toThrow(/unreachable/);
   });
+
+  it('#2619 listBatches: GET .../downgrade-archive/batches без тела и без Content-Type; 200 — список как есть; иное — транспорт', async () => {
+    const calls = captureFetch({ status: 200, body: { batches: [{ batchId: 'b-1', membraneId: 'm-1' }] } });
+    expect(await client().listBatches('dev-1')).toEqual([{ batchId: 'b-1', membraneId: 'm-1' }]);
+    expect(calls[0]?.url).toBe('http://media.test/v1/devices/dev-1/downgrade-archive/batches');
+    expect(calls[0]?.init.method).toBe('GET');
+    expect(calls[0]?.init.body).toBeUndefined();
+    expect(Object.keys(calls[0]?.init.headers as Record<string, string>).map((k) => k.toLowerCase())).not.toContain('content-type');
+    captureFetch({ status: 200, body: { nope: true } });
+    await expect(client().listBatches('dev-1')).rejects.toThrow(/без списка batches/);
+    captureFetch({ status: 404, body: 'x' });
+    await expect(client().listBatches('dev-1')).rejects.toThrow(ServiceUnavailableException);
+  });
+
+  it('#2619 restore: POST .../batches/:id/restore без тела; 201 — ack; 200 ok:false — отказ домена значением', async () => {
+    const calls = captureFetch({ status: 201, body: { ok: true, batch: { batchId: 'b-1' }, restored: ['s-1'] } });
+    expect(await client().restore('dev-1', 'b-1')).toMatchObject({ ok: true, restored: ['s-1'] });
+    expect(calls[0]?.url).toBe('http://media.test/v1/devices/dev-1/downgrade-archive/batches/b-1/restore');
+    expect(calls[0]?.init.method).toBe('POST');
+    expect(calls[0]?.init.body).toBeUndefined();
+    captureFetch({ status: 200, body: { ok: false, reason: 'insufficient_quota', detail: 'не помещается' } });
+    expect(await client().restore('dev-1', 'b-1')).toEqual({ ok: false, reason: 'insufficient_quota', detail: 'не помещается' });
+  });
 });

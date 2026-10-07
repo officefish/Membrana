@@ -5,6 +5,8 @@ import { AuthModule } from '../auth/auth.module';
 import { MembraneModule } from '../membrane/membrane.module';
 import { PairModule } from '../pair/pair.module';
 import { PromoRedemptionRateLimiter } from './promo-redemption-rate-limit';
+import { TariffArchiveController } from './tariff-archive.controller';
+import { TariffArchiveService } from './tariff-archive.service';
 import { TariffCatalogService } from './tariff-catalog.service';
 import { TariffController } from './tariff.controller';
 import { TariffDowngradeService } from './tariff-downgrade.service';
@@ -25,8 +27,9 @@ import { TariffTransitionService } from './tariff-transition.service';
   // ArchiveRetentionModule (#2588 b1) — порт ARCHIVE_RETENTION_READER: срок хранения в приказ
   // заморозки едет снимком (#2587 b4, ADR-0031 п.4).
   imports: [AuthModule, MembraneModule, PairModule, ArchiveRetentionModule],
-  controllers: [TariffController],
-  providers: [PromoRedemptionRateLimiter, TariffTransitionService, TariffCatalogService, TariffDowngradeService],
+  // #2619: двери возврата из архива понижения — тот же порт media, что у оркестратора понижения.
+  controllers: [TariffController, TariffArchiveController],
+  providers: [PromoRedemptionRateLimiter, TariffTransitionService, TariffCatalogService, TariffDowngradeService, TariffArchiveService],
   exports: [TariffTransitionService],
 })
 export class TariffModule {}

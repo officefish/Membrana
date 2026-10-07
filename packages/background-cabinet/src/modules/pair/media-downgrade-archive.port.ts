@@ -14,7 +14,7 @@ import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 
 import type { DowngradeCriterion } from '../../domain/downgrade-policy';
 
-import { MediaBridgeService } from './media-bridge.service';
+import { MediaBridgeService, type DowngradeArchiveDoor } from './media-bridge.service';
 
 export interface MediaDowngradeRefusal {
   readonly ok: false;
@@ -67,6 +67,21 @@ export interface MediaFreezeAck {
   readonly activeBufferBytes: number | null;
 }
 
+/** Партия в списке media (`GET batches`): снимок с владельцем и сроком (#2619). */
+export interface MediaArchiveBatchRow extends MediaDowngradeBatch {
+  readonly membraneId: string;
+  readonly retentionDays: number;
+  readonly fromTariffId: string;
+  readonly toTariffId: string;
+}
+
+/** Ответ `restore`: партия целиком вернулась в живой буфер. */
+export interface MediaRestoreAck {
+  readonly ok: true;
+  readonly batch: MediaDowngradeBatch;
+  readonly restored: readonly string[];
+}
+
 export interface MediaFreezeOrder {
   readonly criterion: DowngradeCriterion;
   readonly bufferLimitBytes: number;
@@ -77,12 +92,12 @@ export interface MediaFreezeOrder {
   readonly toTariffId: string;
 }
 
-/** Порт дверей `preview`/`freeze` архива понижения media; транспорт — мост кабинета. */
+/** Порт дверей архива понижения media (`preview`/`freeze`/`batches`/`restore`); транспорт — мост кабинета. */
 @Injectable()
 export class MediaDowngradeArchiveClient {
   constructor(private readonly bridge: MediaBridgeService) {}
 
-  private async post<T>(deviceId: string, door: 'preview' | 'freeze', body: unknown): Promise<T | MediaDowngradeRefusal> {
+  private async post<T>(deviceId: string, door: DowngradeArchiveDoor, body?: unknown): Promise<T | MediaDowngradeRefusal> {
     // Недоступность сети мост сам переводит в ServiceUnavailableException («Media server unreachable»).
     const res = await this.bridge.requestDowngradeArchive(deviceId, door, body);
     // 200 и 201 — обе законные формы (отказ домена и сделано); прочее — транспорт.
@@ -105,5 +120,24 @@ export class MediaDowngradeArchiveClient {
   /** Приказ заморозки по подтверждённому плану — ДО commit тарифа (решение 5). */
   freeze(deviceId: string, order: MediaFreezeOrder): Promise<MediaFreezeAck | MediaDowngradeRefusal> {
     return this.post<MediaFreezeAck>(deviceId, 'freeze', order);
+  }
+
+  /** Партии прибора (#2619). Отказа домена у списка нет: не-200 или тело без `batches` — транспорт. */
+  async listBatches(deviceId: string): Promise<readonly MediaArchiveBatchRow[]> {
+    const res = await this.bridge.requestDowngradeArchive(deviceId, 'batches');
+    if (res.status !== 200) {
+      const detail = await res.text().catch(() => res.statusText);
+      throw new ServiceUnavailableException(`Media downgrade-archive batches failed (${res.status}): ${detail}`);
+    }
+    const parsed = (await res.json().catch(() => null)) as { batches?: unknown } | null;
+    if (!parsed || !Array.isArray(parsed.batches)) {
+      throw new ServiceUnavailableException('Media downgrade-archive batches: ответ без списка batches');
+    }
+    return parsed.batches as MediaArchiveBatchRow[];
+  }
+
+  /** Возврат партии целиком (#2619): 201 — вернули, 200 — отказ домена media значением. */
+  restore(deviceId: string, batchId: string): Promise<MediaRestoreAck | MediaDowngradeRefusal> {
+    return this.post<MediaRestoreAck>(deviceId, `batches/${encodeURIComponent(batchId)}/restore`);
   }
 }
