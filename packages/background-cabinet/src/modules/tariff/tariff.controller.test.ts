@@ -33,15 +33,28 @@ function makeController(outcome: TransitionOutcome) {
   const catalog = { listForMembrane: vi.fn(async () => ({ currentTariffId: 'free', items: [] })) };
   const fanout = { syncAllNodes: vi.fn(async () => ({ updated: 2, failed: 1 })) };
   const rateLimiter = { assertAllowed: vi.fn() };
+  // Оркестратор понижения (#2587 b4) подменён ПРОВОДОМ к переходу и разноске: без избытка он
+  // делает ровно то, что раньше делал контроллер — зубы порядка «разноска после успеха» остаются.
+  const downgrade = {
+    select: vi.fn(async (input: { membraneId: string; toTariffId: string; actorId: string }) => {
+      const o = await transition.selectTariff({ membraneId: input.membraneId, toTariffId: input.toTariffId, actorId: input.actorId });
+      if (!o.ok) return o;
+      const contextSync = await fanout.syncAllNodes(input.membraneId);
+      return { ...o, contextSync };
+    }),
+    preview: vi.fn(async () => ({ ok: true, downgrade: false, fromTariffId: 'checkpoint-v1', toTariffId: 'free-v1' })),
+  };
+  // Разноска в контроллер больше не инжектится (#2587 b4) — ею владеет оркестратор; здесь она
+  // видна через его провод-подмену выше.
   const controller = new TariffController(
     membraneService as never,
     transition as never,
     catalog as never,
-    fanout as never,
     rateLimiter as never,
+    downgrade as never,
   );
   const req = { authUser: { id: 'user-1' }, headers: {}, ip: '203.0.113.10' } as never;
-  return { controller, membraneService, transition, catalog, fanout, rateLimiter, req };
+  return { controller, membraneService, transition, catalog, fanout, rateLimiter, downgrade, req };
 }
 
 describe('POST membranes/me/tariff/promo-redemptions', () => {
@@ -119,8 +132,8 @@ describe('POST membranes/me/tariff/promo-redemptions', () => {
       membraneService as never,
       transition as never,
       { listForMembrane: vi.fn() } as never,
-      { syncAllNodes: vi.fn() } as never,
       limiter,
+      { select: vi.fn(), preview: vi.fn() } as never,
     );
     const req = { authUser: { id: 'user-1' }, headers: {}, ip: '203.0.113.10' } as never;
 
@@ -238,5 +251,41 @@ describe('GET tariffs', () => {
     await controller.listTariffs(req);
     expect(membraneService.getOrCreateMembraneForUser).toHaveBeenCalledWith('user-1');
     expect(catalog.listForMembrane).toHaveBeenCalledWith('membrane-from-session');
+  });
+});
+
+/** Понижение freeze-first (#2587 b4): контроллер — проводник к оркестратору; форма — граница транспорта. */
+describe('POST membranes/me/tariff — хеши предпросмотра и дверь preview', () => {
+  it('previewDigests уезжают в оркестратор как есть (строка→строка); мусор вместо карты — undefined', async () => {
+    const ok: TransitionOutcome = { ok: true, fromTariffId: 'checkpoint-v1', toTariffId: 'free-v1' };
+    const { controller, downgrade, req } = makeController(ok);
+    await controller.selectTariff(req, { toTariffId: 'free-v1', previewDigests: { 'n-1': 'abc' } });
+    expect(downgrade.select).toHaveBeenLastCalledWith({
+      membraneId: 'membrane-from-session',
+      toTariffId: 'free-v1',
+      actorId: 'user-1',
+      previewDigests: { 'n-1': 'abc' },
+    });
+    await controller.selectTariff(req, { toTariffId: 'free-v1', previewDigests: ['x'] as never });
+    expect(downgrade.select).toHaveBeenLastCalledWith(expect.objectContaining({ previewDigests: undefined }));
+  });
+
+  it('preview_required и freeze_failed доходят от оркестратора как есть, без счёта разноски', async () => {
+    const { controller, downgrade, req } = makeController({ ok: true, fromTariffId: 'a', toTariffId: 'b' });
+    downgrade.select.mockResolvedValueOnce({ ok: false, reason: 'preview_required', preview: { requiresConfirmation: true } } as never);
+    expect(await controller.selectTariff(req, { toTariffId: 'free-v1' })).toMatchObject({ ok: false, reason: 'preview_required' });
+    downgrade.select.mockResolvedValueOnce({ ok: false, reason: 'freeze_failed', failures: [{ nodeId: 'n-1' }], frozen: [] } as never);
+    const failed = await controller.selectTariff(req, { toTariffId: 'free-v1' });
+    expect(failed).toMatchObject({ ok: false, reason: 'freeze_failed' });
+    expect(failed).not.toHaveProperty('contextSync');
+  });
+
+  it('POST membranes/me/tariff/preview — мембрана из сессии, цель проверяется формой, ответ оркестратора как есть', async () => {
+    const { controller, downgrade, membraneService, req } = makeController({ ok: true, fromTariffId: 'a', toTariffId: 'b' });
+    const res = await controller.previewTariff(req, { toTariffId: '  free-v1 ' });
+    expect(res).toEqual({ ok: true, downgrade: false, fromTariffId: 'checkpoint-v1', toTariffId: 'free-v1' });
+    expect(membraneService.getOrCreateMembraneForUser).toHaveBeenCalledWith('user-1');
+    expect(downgrade.preview).toHaveBeenCalledWith('membrane-from-session', 'free-v1');
+    await expect(controller.previewTariff(req, { toTariffId: 'Free V1' })).rejects.toThrow(BadRequestException);
   });
 });
