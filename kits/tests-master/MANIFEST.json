@@ -16,6 +16,6 @@
     "scripts/test-scripts-run.mjs": "949022dbb1cdad885e4d8e332821e25aad240e25",
     "scripts/tests-container.mjs": "b4e0ea5d615c43e8d8384178442589a37177bf72",
     "scripts/tests-nightly-full.mjs": "82064db88749330996bf9179d4fab18a97cbfa83",
-    "tests/test-scripts.catalog.json": "afd488c422c4748bac3d63457dc11629c493671c"
+    "tests/test-scripts.catalog.json": "99fa60ade2255e48d9112d7720bda05c45293010"
   }
 }
