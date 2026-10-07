@@ -28,6 +28,7 @@ import type {
   CollectionSampleReader,
   KeepCandidate,
   MeasuredCandidate,
+  MeasureRefusalReason,
 } from '@membrana/plugin-handlers' with { 'resolution-mode': 'import' };
 import type { MediaSample } from '@membrana/media-library-service' with { 'resolution-mode': 'import' };
 
@@ -108,6 +109,17 @@ export interface RestoreAck {
 }
 
 const isNonNegativeInt = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v) && v >= 0;
+
+/**
+ * Отказ измерителя → причина двери, закрытым словарём `downgrade-archive.vocabulary.ts`. Карта
+ * полная по типу: новая причина измерителя красит `tsc` здесь. `empty-set` сюда не доходит
+ * (пустой буфер — пустой план до измерения), но и он — отказ, а не «всё неизмеримо».
+ */
+const MEASURE_REFUSAL_TO_DOOR: Readonly<Record<MeasureRefusalReason, DowngradeArchiveRefusalReason>> = {
+  'empty-set': 'measure_nothing_decodable',
+  'nothing-decodable': 'measure_nothing_decodable',
+  'floor-not-measured': 'measure_floor_not_measured',
+};
 
 /** Строки для тела хеша плана: адрес, байты, момент — отсортированы по адресу, порядок входа не влияет. */
 const digestRows = (rows: readonly KeepCandidate[]): readonly [string, number, number][] =>
@@ -206,9 +218,16 @@ export class DowngradeArchiveService {
     const activeBufferBytes = rows.reduce((s, r) => s + r.sizeBytes, 0);
 
     const started = Date.now();
-    const measured: readonly MeasuredCandidate[] = rows.length === 0
-      ? []
-      : (await handlers.measureSampleSet({ reader: this.readerOf(handlers) }, deviceId, BUFFER_COLLECTION_ID, rows.map((r) => r.id))).candidates;
+    let measured: readonly MeasuredCandidate[] = [];
+    if (rows.length > 0) {
+      const outcome = await handlers.measureSampleSet({ reader: this.readerOf(handlers) }, deviceId, BUFFER_COLLECTION_ID, rows.map((r) => r.id));
+      // Отказ измерителя — отказ предпросмотра, а не «весь буфер неизмерим»: план по новизне вместо
+      // меры человек не заказывал, и подтверждать его вслепую нельзя (#2587, прод 07.10).
+      if (outcome.refusal) {
+        return refuse(MEASURE_REFUSAL_TO_DOOR[outcome.refusal.reason], `измеритель: ${outcome.refusal.detail}`);
+      }
+      measured = outcome.candidates;
+    }
     const measuredMs = Date.now() - started;
 
     const atOf = new Map(rows.map((r) => [r.id, r.createdAt.getTime()] as const));

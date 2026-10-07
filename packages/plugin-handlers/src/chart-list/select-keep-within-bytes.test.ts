@@ -137,14 +137,22 @@ describe('selectKeepWithinBytes — приоритет keep', () => {
 });
 
 describe('selectKeepWithinBytes — неизмеримые', () => {
-  it('неизмеримая (modeRank null) уходит во freeze даже при свободном бюджете', () => {
+  it('неизмеримая (modeRank null) при свободном бюджете ОСТАЁТСЯ — после измеренных (#2587, 07.10)', () => {
     const out = selectKeepWithinBytes(
-      [cand({ sampleId: 'measured', modeRank: 3 }), cand({ sampleId: 'silent', modeRank: null })],
+      [cand({ sampleId: 'silent', modeRank: null }), cand({ sampleId: 'measured', modeRank: 3 })],
       10_000,
+    );
+    expect(ids(out.keep)).toEqual(['measured', 'silent']);
+    expect(out.freeze).toEqual([]);
+  });
+
+  it('неизмеримая уступает бюджет любой измеренной: при тесном лимите во freeze уходит она', () => {
+    const out = selectKeepWithinBytes(
+      [cand({ sampleId: 'silent', modeRank: null, createdAt: T0 + 1 }), cand({ sampleId: 'measured', modeRank: 3 })],
+      100,
     );
     expect(ids(out.keep)).toEqual(['measured']);
     expect(ids(out.freeze)).toEqual(['silent']);
-    expect(out.freezeBytes).toBe(100);
   });
 
   it('pinned побеждает неизмеримость: байты известны, слово человека «хранить» весомее меры', () => {
@@ -152,16 +160,17 @@ describe('selectKeepWithinBytes — неизмеримые', () => {
     expect(ids(out.keep)).toEqual(['kept-silent']);
   });
 
-  it('неизмеримые во freeze упорядочены новее → sampleId, как и измеренные', () => {
+  it('неизмеримые упорядочены новее → sampleId, как и измеренные: старые уходят во freeze первыми', () => {
     const out = selectKeepWithinBytes(
       [
         cand({ sampleId: 'u-old', modeRank: null, createdAt: T0 - 1 }),
         cand({ sampleId: 'u-b', modeRank: null }),
         cand({ sampleId: 'u-a', modeRank: null }),
       ],
-      10_000,
+      100,
     );
-    expect(ids(out.freeze)).toEqual(['u-a', 'u-b', 'u-old']);
+    expect(ids(out.keep)).toEqual(['u-a']);
+    expect(ids(out.freeze)).toEqual(['u-b', 'u-old']);
   });
 });
 
@@ -308,14 +317,14 @@ describe('modeRanksFromPicks', () => {
     );
   });
 
-  it('undefined из ranks.get(отсутствующий) мимо типов нормализуется в null: запись неизмеримая, во freeze', () => {
+  it('undefined из ranks.get(отсутствующий) мимо типов нормализуется в null: запись неизмеримая, в хвосте порядка', () => {
     const ranks = modeRanksFromPicks([{ sampleId: 'measured', rank: 1 }]);
     const input = [
       cand({ sampleId: 'measured', modeRank: ranks.get('measured') as number }),
       // Намеренно мимо типа: так выглядит забытый `?? null` у вызывающего.
       cand({ sampleId: 'missing', modeRank: ranks.get('missing') as unknown as number | null }),
     ];
-    const out = selectKeepWithinBytes(input, 10_000);
+    const out = selectKeepWithinBytes(input, 100);
     expect(out.refusal).toBeNull();
     expect(ids(out.keep)).toEqual(['measured']);
     expect(ids(out.freeze)).toEqual(['missing']);

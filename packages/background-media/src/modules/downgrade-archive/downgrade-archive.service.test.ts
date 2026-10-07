@@ -219,6 +219,37 @@ describe('preview — ничего не меняет, режим ранжиру�
     expect((await service.preview(DEV, { criterion: 'loudness-over-floor', bufferLimitBytes: 1.5 }) as { reason: string }).reason).toBe('invalid_limit');
   });
 
+  it('неизмеримые при свободном бюджете остаются после измеренных, новее — первыми (#2587, прод 07.10)', async () => {
+    const { service, db, size } = scene();
+    db.sample.rows.get('q-2')!['createdAt'] = new Date('2026-10-02T00:00:00Z');
+    const plan = await service.preview(DEV, { criterion: 'loudness-over-floor', bufferLimitBytes: size * 4 });
+    if (!plan.ok) throw new Error(plan.reason);
+    expect(plan.unmeasured).toBe(2);
+    expect(ids(plan.keep)).toEqual(['l-09', 'l-06', 'l-03', 'q-2']);
+    expect(ids(plan.freeze)).toEqual(['q-1']);
+    expect(plan.keep[3]?.modeRank).toBeNull();
+  });
+
+  it('отказ измерителя — отказ предпросмотра закрытым словарём, а не «весь буфер неизмерим»', async () => {
+    const undecodable = fakeWorld();
+    undecodable.addTrack('a', 0.9, 440);
+    undecodable.addTrack('b', 0.3, 660);
+    // Блобы — не WAV (как запись MediaRecorder): измеритель не раскодирует ни одной пробы.
+    (undecodable.service as unknown as { blobs: { readBuffer: (ref: string) => Promise<Buffer> } }).blobs = {
+      readBuffer: async () => Buffer.from('OggS — не RIFF/WAVE'),
+    };
+    const a = await undecodable.service.preview(DEV, { criterion: 'loudness-over-floor', bufferLimitBytes: 10_000_000 });
+    expect(a.ok).toBe(false);
+    expect(!a.ok && a.reason).toBe('measure_nothing_decodable');
+
+    const tiny = fakeWorld();
+    tiny.addTrack('only', 0.9, 440); // 0.5 с = 5 кадров < 20 — фон набора не измерен
+    const b = await tiny.service.preview(DEV, { criterion: 'loudness-over-floor', bufferLimitBytes: 10_000_000 });
+    expect(b.ok).toBe(false);
+    expect(!b.ok && b.reason).toBe('measure_floor_not_measured');
+    expect(tiny.db.batch.size).toBe(0);
+  });
+
   it('ЗАМЕР: предпросмотр 60 проб по 0.5 с — время названо (развилка плана про кэш признаков)', async () => {
     const w = fakeWorld();
     for (let i = 0; i < 60; i += 1) w.addTrack(`t-${String(i).padStart(2, '0')}`, 0.1 + ((i * 7) % 9) / 10, 200 + i * 37);
