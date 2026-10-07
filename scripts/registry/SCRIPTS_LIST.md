@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-10-06 |
-| Head SHA | bff1b8173830aaedc1d663288b50bd94aacecc82 |
+| Date | 2026-10-07 |
+| Head SHA | d75f76cd9dc7851977442b0498fe1a117be10b5e |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,12 +16,12 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1285 |
+| Code files under `scripts/` | 1287 |
 | Yarn scripts (package.json) | 477 |
 | Yarn → `scripts/` | 423 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 945 |
+| Code files without yarn ref | 947 |
 
 ## Yarn → scripts/ (423)
 
@@ -449,7 +449,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (945)
+## Code files without yarn ref (947)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -768,6 +768,8 @@
 - `scripts/lib/deps-watch-audit-state.test.mjs`
 - `scripts/lib/deps-watch-diff.mjs`
 - `scripts/lib/deps-watch-diff.test.mjs`
+- `scripts/lib/deps-watch-security-triage-coverage.test.mjs`
+- `scripts/lib/deps-watch-triage-coverage.mjs`
 - `scripts/lib/detection-planning-priorities.mjs`
 - `scripts/lib/detector-compare-lib.mjs`
 - `scripts/lib/dist-freshness.mjs`
@@ -1407,7 +1409,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1285)
+## All code files (1287)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1874,6 +1876,8 @@
 - `scripts/lib/deps-watch-audit-state.test.mjs`
 - `scripts/lib/deps-watch-diff.mjs`
 - `scripts/lib/deps-watch-diff.test.mjs`
+- `scripts/lib/deps-watch-security-triage-coverage.test.mjs`
+- `scripts/lib/deps-watch-triage-coverage.mjs`
 - `scripts/lib/detection-planning-priorities.mjs`
 - `scripts/lib/detector-compare-lib.mjs`
 - `scripts/lib/dist-freshness.mjs`
