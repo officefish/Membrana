@@ -103,6 +103,27 @@ describe('DowngradeConfirmDialog — понижение с избытком (#25
     expect(api.selectTariff).not.toHaveBeenCalled();
   });
 
+  it('шапка-итог под aria-describedby: сумма по узлам с избытком (узел без избытка не в счёт), срок и дата', async () => {
+    const base = plan();
+    api.previewTariffDowngrade.mockResolvedValue({
+      ...base,
+      nodes: [
+        ...base.nodes,
+        { nodeId: 'n3', keepCount: 10, keepBytes: 1, freezeCount: 5, freezeBytes: 1024 * 1024, planDigest: 'digest-n3', excess: true },
+      ],
+    });
+    await openFlow();
+    const dialog = await screen.findByRole('dialog');
+    const describedBy = dialog.getAttribute('aria-describedby');
+    expect(describedBy).toBeTruthy();
+    const summary = document.getElementById(describedBy!);
+    expect(summary).not.toBeNull();
+    expect(dialog.contains(summary)).toBe(true);
+    expect(summary!.textContent!.replace(/\s+/g, ' ')).toMatch(
+      /^На 2 узл\. останется 50 · уйдёт в архив 12 записей · ≈4\.0 МБ\. Записи не удаляются сейчас: архив хранится 14 дн\., примерно до 21 октября 2026/,
+    );
+  });
+
   it('подтверждение несёт РОВНО показанный planDigest и только узлов с избытком', async () => {
     api.previewTariffDowngrade.mockResolvedValue(plan());
     api.selectTariff.mockResolvedValue(OK);
