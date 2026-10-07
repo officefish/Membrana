@@ -33,6 +33,12 @@ export const TARIFF_DENY_REASONS = [
   'tariff_moved_concurrently',
   /** #2281: ворота собственного выбора закрыты. Сегодня сервер её не шлёт — ворота открыты. */
   'self_gate_closed',
+  /** #2587 b4b: понижение с избытком без подтверждённого предпросмотра — ответ несёт предпросмотр. */
+  'preview_required',
+  /** #2587 b4b: сервер записей не заморозил избыток — тариф не коммитится. */
+  'freeze_failed',
+  /** #2587 b4b: сервер записей недоступен на предпросмотре. */
+  'media_unavailable',
 ] as const;
 
 export type TariffDenyReason = (typeof TARIFF_DENY_REASONS)[number];
@@ -101,9 +107,57 @@ export interface ContextSyncCount {
   failed: number;
 }
 
+/** Предпросмотр понижения по узлу — follower `DowngradeNodePreview` оркестратора (#2587 b4b). */
+export interface DowngradeNodePreview {
+  nodeId: string;
+  keepCount: number;
+  keepBytes: number;
+  freezeCount: number;
+  freezeBytes: number;
+  planDigest: string;
+  /** Есть что морозить — узел требует подтверждения. */
+  excess: boolean;
+}
+
+/** План понижения по узлам; срок — снимок сервера, кабинет его только читает. */
+export interface DowngradePreviewPlan {
+  ok: true;
+  downgrade: true;
+  fromTariffId: string;
+  toTariffId: string;
+  criterion: string;
+  retentionDays: number;
+  expiresAtEstimate: string;
+  nodes: DowngradeNodePreview[];
+  requiresConfirmation: boolean;
+}
+
+/** Исход предпросмотра: не понижение / план / доменный отказ. */
+export type DowngradePreviewOutcome =
+  | { ok: true; downgrade: false; fromTariffId: string; toTariffId: string }
+  | DowngradePreviewPlan
+  | { ok: false; reason: string; detail?: string };
+
+/** Узел, чей избыток заморожен до commit тарифа; `expiresAt` поставил сервер записей. */
+export interface FrozenNodeView {
+  nodeId: string;
+  batchId: string;
+  frozenBytes: number;
+  expiresAt: string;
+}
+
+/** Сбой заморозки узла: `reason` — словарь сервера записей (`plan_stale`, `media_unavailable`, …). */
+export interface FreezeFailureView {
+  nodeId: string;
+  reason: string;
+  detail: string;
+}
+
 export type SelectTariffOutcome =
-  | { ok: true; fromTariffId: string; toTariffId: string; contextSync: ContextSyncCount }
-  | { ok: false; reason: TariffDenyReason | (string & Record<never, never>) };
+  | { ok: true; fromTariffId: string; toTariffId: string; contextSync: ContextSyncCount; frozen?: FrozenNodeView[] }
+  | { ok: false; reason: 'preview_required'; preview: DowngradePreviewPlan }
+  | { ok: false; reason: 'freeze_failed'; failures: FreezeFailureView[]; frozen: FrozenNodeView[] }
+  | { ok: false; reason: TariffDenyReason | (string & Record<never, never>); detail?: string };
 
 /** Витрина: что можно выбрать. Транспортная ошибка (503 «сетка недоступна») — throw. */
 export async function fetchTariffCatalog(): Promise<TariffCatalogView> {
@@ -112,12 +166,56 @@ export async function fetchTariffCatalog(): Promise<TariffCatalogView> {
   return (await res.json()) as TariffCatalogView;
 }
 
-/** Смена тарифа собственным выбором. Доменный исход (ok|reason) — возврат, не исключение. */
-export async function selectTariff(toTariffId: string): Promise<SelectTariffOutcome> {
+/**
+ * Смена тарифа собственным выбором. Доменный исход (ok|reason) — возврат, не исключение.
+ * `previewDigests` (`nodeId → planDigest`) — ровно те хеши, что человек видел в предпросмотре.
+ */
+export async function selectTariff(
+  toTariffId: string,
+  previewDigests?: Record<string, string>,
+): Promise<SelectTariffOutcome> {
   const res = await authFetch('/v1/membranes/me/tariff', {
+    method: 'POST',
+    body: JSON.stringify(previewDigests ? { toTariffId, previewDigests } : { toTariffId }),
+  });
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as SelectTariffOutcome;
+}
+
+/** Предпросмотр понижения (#2587 b4b): ничего не меняет ни в кабинете, ни на сервере записей. */
+export async function previewTariffDowngrade(toTariffId: string): Promise<DowngradePreviewOutcome> {
+  const res = await authFetch('/v1/membranes/me/tariff/preview', {
     method: 'POST',
     body: JSON.stringify({ toTariffId }),
   });
   if (!res.ok) throw new Error(await parseError(res));
-  return (await res.json()) as SelectTariffOutcome;
+  return (await res.json()) as DowngradePreviewOutcome;
+}
+
+/** Режим отбора при понижении — follower `DowngradePolicyView` (#2587 b4a). */
+export interface DowngradePolicyView {
+  criterion: string;
+  /** Строки нет — действует умолчание сервера. */
+  isDefault: boolean;
+}
+
+export type SetDowngradePolicyOutcome =
+  | { ok: true; policy: DowngradePolicyView }
+  | { ok: false; reason: string; detail?: string };
+
+/** Текущий режим отбора мембраны сессии. */
+export async function fetchDowngradePolicy(): Promise<DowngradePolicyView> {
+  const res = await authFetch('/v1/membranes/me/downgrade-policy');
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as DowngradePolicyView;
+}
+
+/** Запись режима; вне закрытой тройки — доменный отказ `unknown_criterion`, не исключение. */
+export async function setDowngradePolicy(criterion: string): Promise<SetDowngradePolicyOutcome> {
+  const res = await authFetch('/v1/membranes/me/downgrade-policy', {
+    method: 'PUT',
+    body: JSON.stringify({ criterion }),
+  });
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as SetDowngradePolicyOutcome;
 }

@@ -1,1 +1,5 @@
 {"ts":"2026-10-07T13:06:55.848Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-10-07T11:57:54.204Z","persona":"rodchenko","verb":"cloud_query","ref":"rodchenko-2026-10-07T11:57:18.263Z","origin":"ask-persona"}
+{"ts":"2026-10-07T11:57:54.208Z","persona":"rodchenko","verb":"surface_invoke","ref":"rodchenko-2026-10-07T11:57:18.263Z","origin":"ask-persona"}
+{"ts":"2026-10-07T11:57:54.209Z","persona":"rodchenko","verb":"emerge","ref":"rodchenko-2026-10-05-tariff-downgrade-freeze-consilium","reason":"это моя же норма из того консилиума: понижение = явный акт с предпросмотром и подтверждением; media-down mid-flow — alert-warning, не silent. Текущее окно её исполняет, по ней и сверяю.","origin":"ask-persona"}
+{"ts":"2026-10-07T11:57:54.212Z","persona":"rodchenko","verb":"emerge","ref":"rodchenko-2026-07-29-tariff-grid-m6-switch","reason":"оттуда правило «успех только после ответа сервера, промежуточное — декор»: здесь оно держится (успех после ok, отказ рисуется в окне, тариф на странице не перечитывается).","origin":"ask-persona"}
