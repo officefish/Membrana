@@ -9,7 +9,7 @@
   "groups": [
     {
       "name": "security",
-      "pattern": "(secret|gitleaks|leak)"
+      "pattern": "(secret|gitleaks|leak|deps-watch-security)"
     },
     {
       "name": "rituals",
