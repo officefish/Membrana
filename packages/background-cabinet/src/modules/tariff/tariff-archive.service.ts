@@ -88,19 +88,32 @@ export class TariffArchiveService {
     return { nodes };
   }
 
-  /** Вернуть партию в живой буфер: только свою; отказ media — как есть. */
+  /**
+   * Вернуть партию в живой буфер: только свою; отказ media — как есть.
+   *
+   * Молчание одного прибора не решает за остальных (разбор Дынина п.2): партию ищем на всех
+   * приборах узлов; `media_unavailable` — только если её не нашли нигде, а кто-то не ответил.
+   */
   async restore(membraneId: string, batchId: string): Promise<ArchiveRestoreOutcome> {
-    try {
-      for (const device of await this.devices(membraneId)) {
-        const own = await this.ownBatches(membraneId, device);
-        if (!own.some((b) => b.batchId === batchId)) continue;
+    let unavailable: string | null = null;
+    for (const device of await this.devices(membraneId)) {
+      let own: MediaArchiveBatchRow[];
+      try {
+        own = await this.ownBatches(membraneId, device);
+      } catch (err) {
+        unavailable ??= `узел ${device.nodeId}: ${messageOf(err)}`;
+        continue;
+      }
+      if (!own.some((b) => b.batchId === batchId)) continue;
+      try {
         const ack = await this.media.restore(device.mediaDeviceId, batchId);
         if (!ack.ok) return { ok: false, reason: ack.reason, detail: ack.detail };
         return { ok: true, nodeId: device.nodeId, batch: itemOf(ack.batch), restored: ack.restored.length };
+      } catch (err) {
+        return { ok: false, reason: 'media_unavailable', detail: `узел ${device.nodeId}: ${messageOf(err)}` };
       }
-    } catch (err) {
-      return { ok: false, reason: 'media_unavailable', detail: messageOf(err) };
     }
+    if (unavailable) return { ok: false, reason: 'media_unavailable', detail: unavailable };
     return { ok: false, reason: 'batch_not_found', detail: `партии ${batchId} у узлов мембраны нет` };
   }
 }

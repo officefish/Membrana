@@ -76,8 +76,10 @@ describe('TariffArchiveService.restore', () => {
   });
 
   it('ПРИНАДЛЕЖНОСТЬ: партия прежнего владельца на приборе этой мембраны и партия, которой нет, — batch_not_found; restore в media не зовётся', async () => {
-    const { svc, media } = harness({ 'dev-a': [row('b-old', { membraneId: 'm-prev' })] });
+    const { svc, media } = harness({ 'dev-a': [row('b-old', { membraneId: 'm-prev' })], 'dev-z': [row('b-gone')] });
     expect(await svc.restore(MINE, 'b-old')).toMatchObject({ ok: false, reason: 'batch_not_found' });
+    // своя по membraneId, но прибор уже не на узле этой мембраны (dev-z) — тоже не найдена
+    expect(await svc.restore(MINE, 'b-gone')).toMatchObject({ ok: false, reason: 'batch_not_found' });
     expect(await svc.restore(MINE, 'b-none')).toMatchObject({ ok: false, reason: 'batch_not_found' });
     expect(media.restore).not.toHaveBeenCalled();
   });
@@ -91,6 +93,17 @@ describe('TariffArchiveService.restore', () => {
   it('media недоступна — значение media_unavailable, не исключение', async () => {
     const { svc, media } = harness({ 'dev-a': [row('b-1')] });
     media.restore.mockRejectedValueOnce(new ServiceUnavailableException('Media server unreachable: down'));
-    expect(await svc.restore(MINE, 'b-1')).toEqual({ ok: false, reason: 'media_unavailable', detail: 'Media server unreachable: down' });
+    expect(await svc.restore(MINE, 'b-1')).toEqual({ ok: false, reason: 'media_unavailable', detail: 'узел node-a: Media server unreachable: down' });
+  });
+
+  it('п.2 Дынина: молчит прибор первого узла, партия на втором — возврат проходит, не ложный media_unavailable', async () => {
+    const { svc, media } = harness({ 'dev-a': new ServiceUnavailableException('Media server unreachable: a'), 'dev-b': [row('b-2')] });
+    expect(await svc.restore(MINE, 'b-2')).toMatchObject({ ok: true, nodeId: 'node-b' });
+    expect(media.restore).toHaveBeenCalledWith('dev-b', 'b-2');
+  });
+
+  it('партию не нашли нигде, а один прибор молчал — media_unavailable (не batch_not_found: судить не по чему)', async () => {
+    const { svc } = harness({ 'dev-a': new ServiceUnavailableException('Media server unreachable: a'), 'dev-b': [] });
+    expect(await svc.restore(MINE, 'b-x')).toEqual({ ok: false, reason: 'media_unavailable', detail: 'узел node-a: Media server unreachable: a' });
   });
 });

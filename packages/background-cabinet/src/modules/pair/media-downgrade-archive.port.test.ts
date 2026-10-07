@@ -76,6 +76,7 @@ describe('MediaDowngradeArchiveClient', () => {
     expect(calls[0]?.url).toBe('http://media.test/v1/devices/dev-1/downgrade-archive/batches');
     expect(calls[0]?.init.method).toBe('GET');
     expect(calls[0]?.init.body).toBeUndefined();
+    expect(Object.keys(calls[0]?.init.headers as Record<string, string>).map((k) => k.toLowerCase())).not.toContain('content-type');
     captureFetch({ status: 200, body: { nope: true } });
     await expect(client().listBatches('dev-1')).rejects.toThrow(/без списка batches/);
     captureFetch({ status: 404, body: 'x' });
