@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14375/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 408 (причины в op-log) -->
+Записей: 50 · бюджет 14373/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 409 (причины в op-log) -->
+
+### 2026-10-07 · позиция · team-evening-feedback
+
+> Vesnin. Вёл freeze-контур и `trace-freeze-d-probe-truth-tooth`. Образцовый цикл «порча → репро → фикс → ADR» на `selectKeepWithinBytes`: инвариант «неизмеримые в хвост keep, не в freeze» зафиксирован, exhaust-mapped `MEASURE_REFUSAL_TO_DOOR` закрывает словарь отказов типом — […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-07.md#reply-1`
 
 ### 2026-10-06 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > **Оценка артефактов:** `MAIN_DAY_ISSUE` — образцовый канон: явная магистраль с таблицей обоснования, посылки с маркерами проверки, развилки. Регламент evening-feedback корректен — состав ролей приведён к реестру (tarasov тимлид, vesnin — архитектор). **Итоги дня:** Коворк […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
-
-### 2026-09-02 · позиция · team-evening-feedback
-
-> Оценка артефактов: STRATEGY_DAY и MAIN_DAY_ISSUE задают ясную картину: владельческая магистраль (перенос между наборами) против операционного блокера (красные тесты). DAILY_CODE_REVIEW качественно разложил дифф: два fix-PR укрепляют границу `pr:ship` — поведенческий зуб вместо […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
 
 ### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 

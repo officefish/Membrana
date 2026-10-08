@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14292/14400 · статус ok
+Записей: 51 · бюджет 14384/14400 · статус ok
 <!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 385 (причины в op-log) -->
+
+### 2026-10-07 · позиция · team-evening-feedback
+
+> Rodchenko. Вёл `session-digest-library-face` + панель архива узла (#2621, b4) и экран подтверждения понижения (#2618, b5). A11y-скелет `NodeDowngradeArchivePanel.tsx` корректный: `<section aria-labelledby>`, `aria-busy`, `role="status"`/`role="alert"` разведены, фокус […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-07.md#reply-1`
 
 ### 2026-10-06 · позиция · team-evening-feedback
 
@@ -302,8 +308,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
 
-### 2026-09-01 · позиция · library-open-api-m0-order
+### 2026-07-23 · позиция · llm-procedure-channels-m3c-fallback
 
-> С витрины: оператор видит список с ключами. Этот список — форма (2). Пока контракт списка не зафиксирован, непонятно, в каком поле живёт ключ и что считать «одной выдачей» для счёта (4). Граница выемки (4) — это ограничение на то, что попадает в список. Форма самого списка […] _(реплик в сеансе: 4)_
+> На панели цепочка видна как список, не скрытый magic. Бейдж attempt/provider в usage (T1 events). _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/library-open-api-m0-order-2026-09-01.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m3c-fallback-2026-07-23-2026-07-23.md#reply-1`

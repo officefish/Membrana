@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14391/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 394 (причины в op-log) -->
+Записей: 50 · бюджет 14368/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 395 (причины в op-log) -->
+
+### 2026-10-07 · позиция · team-evening-feedback
+
+> Ozhegov. Вёл `trace-freeze-c-library-render`. C1/C4/C7 в раскрытых диффах чистые: `useDowngradeArchive` — тонкий хук, I/O делегировано; тесты рядом с кодом синхронно обновлены (`NodeDowngradeArchivePanel.test.tsx`, `DowngradeConfirmDialog.test.tsx`, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-07.md#reply-1`
 
 ### 2026-10-06 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > **Оценка артефактов:** Стендап и MAIN_DAY_ISSUE согласованы; `DAILY_CODE_REVIEW` корректен — границы пакетов соблюдены, C4 ок, verify-скрипт присутствует. Замечание: `STRATEGIC_PLAN_DAY.md` по-прежнему лежит как вещдок, хотя норма Q1 требует не читать его как источник. **Итоги […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
-
-### 2026-09-02 · позиция · team-evening-feedback
-
-> Оценка артефактов: Документы дня связаны: стендап верно выявил P0-блокер, MAIN_DAY_ISSUE дал чёткие посылки с маркерами для проверки. DAILY_CODE_REVIEW структурно безупречен: C1 (границы пакетов не нарушены), C7 (тесты на поведение, не написание), C4 (изоляция изменений). […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
 
 ### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 

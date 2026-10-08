@@ -1,12 +1,12 @@
-<!-- Сгенерировано: 2026-10-07T17:40:46.981Z (yarn leveling:evening) -->
+<!-- Сгенерировано: 2026-10-07T17:55:33.597Z (yarn leveling:evening) -->
 
 # workspace-level
 
-status: **pass**
-mainFill: **noop**
-reason: (нет)
+status: **stop**
+mainFill: **pending**
+reason: unnamed-trash
 gate: evening-snapshot
-builtAt: 2026-10-07T17:40:46.981Z
+builtAt: 2026-10-07T17:55:33.597Z
 live (L, справочно): docs/procedure-runs/trail/2026-10-07.jsonl
 
 ## Влито в main
@@ -16,7 +16,8 @@ live (L, справочно): docs/procedure-runs/trail/2026-10-07.jsonl
 - (пусто)
 
 ## Мусор найден
-- (пусто)
+- docs/evidence/INDEX.md [T named]
+- docs/evidence/registry.jsonl [T named]
 
 ## План main-fill (ритуал — без ship)
 
