@@ -7,10 +7,10 @@
   "frozenDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
   "magistral": "tariff-downgrade-freeze",
   "swallow": {
-    "draftDigest": "3fec80678dd7f16a647941e61d93e6ac33592393eb5f690ecec4bc39cccf9176",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-10-07.md",
+    "draftDigest": "1b4939d832069077c96adef8314eed5407d2e17422227fcd1ff7afd0d902cb32",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-10-08.md",
     "ownerAck": true,
-    "day": "2026-10-07",
+    "day": "2026-10-08",
     "claimsProbe": {
       "verdict": "hard",
       "protocol": "docs/seanses/team-evening-feedback-2026-10-07.md",
@@ -20,10 +20,10 @@
     "gate": "evening:partner-swallow"
   },
   "day": "2026-10-07",
-  "magistralChosenAt": "2026-10-07",
+  "magistralChosenAt": "2026-10-08",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-10-07",
+    "at": "2026-10-08",
     "chosen": "tariff-downgrade-freeze",
     "snapshotDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
     "inSnapshot": false
