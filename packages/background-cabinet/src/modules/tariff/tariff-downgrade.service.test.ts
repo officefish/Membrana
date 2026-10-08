@@ -126,6 +126,18 @@ describe('preview — по всем узлам мембраны, ничего н
     expect(fanout.syncAllNodes).not.toHaveBeenCalled();
   });
 
+  it('«без места в очереди» (#2629): unranked media доезжает до узла; media до #2629 поля не шлёт — 0', async () => {
+    const { svc, media } = world();
+    media.preview.mockImplementation(async (deviceId: string) =>
+      deviceId === 'md-1' ? { ...planFor(deviceId, 2), unmeasured: 1, unranked: 3 } : planFor(deviceId, 0),
+    );
+    const p = await svc.preview('m-1', 'free-v1', NOW);
+    if (!p.ok || !p.downgrade) throw new Error('нет плана');
+    const byMd = nodesByMd(p);
+    expect(byMd['md-1']).toMatchObject({ unmeasured: 1, unranked: 3 });
+    expect(byMd['md-2']).toMatchObject({ unmeasured: 0, unranked: 0 });
+  });
+
   it('повышение — downgrade:false без обращения к media; тот же тариф — same_tariff; неизвестный — unknown_target_tariff', async () => {
     const { svc, media } = world({ currentTariff: 'free-v1' });
     expect(await svc.preview('m-1', 'checkpoint-v1', NOW)).toEqual({ ok: true, downgrade: false, fromTariffId: 'free-v1', toTariffId: 'checkpoint-v1' });

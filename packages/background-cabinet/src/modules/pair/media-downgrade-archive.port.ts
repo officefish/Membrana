@@ -44,6 +44,8 @@ export interface MediaDowngradePreview {
   readonly freezeBytes: number;
   readonly measured: number;
   readonly unmeasured: number;
+  /** Измерены, но места в очереди режима не получили (#2629). Media до #2629 поля не шлёт. */
+  readonly unranked?: number;
   readonly failedTail: { readonly sampleIds: readonly string[]; readonly bytes: number };
   readonly planDigest: string;
   readonly measuredMs: number;

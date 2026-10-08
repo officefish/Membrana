@@ -99,4 +99,46 @@ describe('понижение тарифа на буфере «почти всё 
       Array.from({ length: 19 }, (_, i) => `s${String(39 - i).padStart(3, '0')}`),
     );
   }, 60_000);
+
+  /**
+   * Уточнение #2629 (приёмка 07.10): на september измерены ВСЕ записи (`unmeasured = 0`), а без
+   * ранга остались почти все. Отбору всё равно, почему ранга нет: запись без ранга — после
+   * ранжированных, пока хватает байт. Здесь измерены все сорок, ранг — только у первых пяти
+   * (как если бы очередь режима отдала лишь часть); старый отбор (v1) морозил бы 35 при любом лимите.
+   */
+  it('измерены все, ранжирована часть: записи без ранга остаются под лимитом, новее — первыми (#2629)', async () => {
+    const tracks = Array.from({ length: 40 }, (_, i) => ({
+      id: `m${String(i).padStart(3, '0')}`,
+      bytes: wav(0.02, 0.5),
+      createdAt: T0 + i * 5_000,
+    }));
+    const measured = await measureSampleSet({ reader: reader(tracks) }, 'dev-sept', 'buffer', tracks.map((t) => t.id));
+    expect(measured.refusal).toBeNull();
+    // Посылка уточнения: измерены все — «неизмеримых» нет.
+    expect(measured.candidates).toHaveLength(40);
+
+    const ranked = new Set(tracks.slice(0, 5).map((t) => t.id));
+    const candidates: KeepCandidate[] = tracks.map((t, i) => ({
+      sampleId: t.id,
+      bytes: t.bytes.length,
+      createdAt: t.createdAt,
+      pinned: false,
+      modeRank: ranked.has(t.id) ? i : null,
+    }));
+    const unranked = candidates.filter((c) => c.modeRank === null).length;
+    expect(unranked).toBe(35);
+
+    const record = tracks[0]!.bytes.length;
+    const limit = record * 20;
+    const out = selectKeepWithinBytes(candidates, limit);
+    expect(out.refusal).toBeNull();
+    expect(out.keepBytes).toBeLessThanOrEqual(limit);
+    expect(out.keep).toHaveLength(20);
+    // Ранжированные — первыми, затем без ранга: новее остаются.
+    expect(out.keep.slice(0, 5).map((c) => c.sampleId)).toEqual([...ranked]);
+    expect(out.keep.slice(5).map((c) => c.sampleId)).toEqual(
+      Array.from({ length: 15 }, (_, i) => `m${String(39 - i).padStart(3, '0')}`),
+    );
+    expect(out.freeze.every((c) => c.modeRank === null)).toBe(true);
+  }, 60_000);
 });

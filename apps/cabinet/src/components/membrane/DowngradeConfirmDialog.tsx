@@ -207,6 +207,12 @@ export function DowngradeConfirmDialog(props: DowngradeConfirmDialogProps) {
               <p>
                 Останется {n.keepCount} записей · уйдёт в архив {n.freezeCount} · ≈{formatBytes(n.freezeBytes)}
               </p>
+              {(n.unranked ?? 0) > 0 && (
+                <p className="text-xs opacity-70">
+                  без места в очереди: {n.unranked} — измерены, но режим отбора их не упорядочил; идут после
+                  упорядоченных, пока хватает места
+                </p>
+              )}
               {n.unmeasured > 0 && (
                 <p className="text-xs opacity-70">
                   не измерено: {n.unmeasured} — тише порога над фоном; из них остаются более новые
