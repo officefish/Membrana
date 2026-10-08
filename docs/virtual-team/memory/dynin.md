@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14367/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 387 (причины в op-log) -->
+Записей: 50 · бюджет 14343/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 388 (причины в op-log) -->
+
+### 2026-10-07 · позиция · team-evening-feedback
+
+> Dynin. Вёл `trace-freeze-b-live-sendsync`. Триаж 4 CVE задокументирован (#2625, `docs/security/cve-triage-2026-10-07.md`) — runtime vs dev вердикт по каждому; `@fastify/busboy` ×2 → runtime-exposed в `background-media`, lockfile-фикс через `resolutions` остаётся на утро (P1 […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-07.md#reply-1`
 
 ### 2026-10-06 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > Оценка артефактов: Артефакты дня не содержат математического контента — фокус на tooling и тестах. STRATEGY_DAY корректно определяет веху `secret-parser-built` как перспективную, не смешивая с primary. MAIN_DAY_ISSUE содержит проверяемые посылки с маркерами — это […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m0-order
-
-> Формализую граф G = ({1,2,3,4}, E). Ребро (A,B) ∈ E тогда и только тогда, когда вердикт A является необходимым входом для постановки задачи B, то есть без A задача B недоопределена. Из аргументов выше: (1)→(2) — чем адресовать, не зная чьё; (2)→(3) — ключ едет в теле списка, […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/library-open-api-m0-order-2026-09-01.md#reply-1`
