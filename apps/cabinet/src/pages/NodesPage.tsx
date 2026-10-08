@@ -151,7 +151,9 @@ export function NodesPage({ onOpenJournal, onOpenDeviceBoard, onOpenKeys }: Node
               runtime={runtime}
               journalPreview={journalPreview.getPreview(node.device?.mediaDeviceId ?? '')}
               archive={archive.nodes.find((a) => a.nodeId === node.id)}
+              archiveLoadError={archive.error}
               onArchiveRestored={archive.reload}
+              onArchiveRetry={archive.reload}
               deleteRefusal={deleteRefusal?.nodeId === node.id ? deleteRefusal : null}
               busy={busy}
               onOpenJournal={onOpenJournal}
@@ -212,7 +214,9 @@ function NodeCard({
   runtime,
   journalPreview,
   archive,
+  archiveLoadError,
   onArchiveRestored,
+  onArchiveRetry,
   deleteRefusal,
   busy,
   onOpenJournal,
@@ -224,7 +228,9 @@ function NodeCard({
   runtime: ReturnType<typeof useCabinetNodeRuntime>;
   journalPreview: NodeJournalPreviewState;
   archive: ArchiveNodeView | undefined;
+  archiveLoadError: string | null;
   onArchiveRestored: () => Promise<void>;
+  onArchiveRetry: () => Promise<void>;
   deleteRefusal: NodeHasFrozenArchiveError | null;
   busy: boolean;
   onOpenJournal: () => void;
@@ -543,7 +549,12 @@ function NodeCard({
         ) : null}
 
         <div id={archiveAnchorId(node.id)}>
-          <NodeDowngradeArchivePanel view={archive} onRestored={onArchiveRestored} />
+          <NodeDowngradeArchivePanel
+            view={archive}
+            loadError={archiveLoadError}
+            onRetryLoad={onArchiveRetry}
+            onRestored={onArchiveRestored}
+          />
         </div>
 
         {isCaptured && deviceId ? (

@@ -121,6 +121,21 @@ describe('NodesPage — отказ удаления узла с замороже
     expect(api.fetchMembraneMe).toHaveBeenCalledTimes(1);
   });
 
+  it('отказ + архив не загрузился (#2637) → оба сообщения; ошибка архива внутри якоря и держит фокус', async () => {
+    stubDeleteResponse(409, { code: 'node_has_frozen_archive', nearestExpiresAt: '2099-11-05T10:00:00.000Z' });
+    api.fetchArchiveBatches.mockResolvedValueOnce([]).mockRejectedValue(new Error('сервер записей не ответил'));
+    render(<NodesPage onOpenJournal={() => {}} onOpenDeviceBoard={() => {}} />);
+    await clickDelete();
+
+    expect(await screen.findByTestId('node-delete-refusal')).toBeTruthy();
+    const loadError = await screen.findByText('Не удалось загрузить архив');
+    const anchor = document.getElementById('node-archive-n1');
+    expect(anchor?.contains(loadError)).toBe(true);
+    // Якорь — простая обёртка: фокус ошибки загрузки (#2637) не перехвачен.
+    expect(anchor?.contains(document.activeElement)).toBe(true);
+    expect(screen.getByRole('button', { name: 'Повторить' })).toBeTruthy();
+  });
+
   it('срок архива уже прошёл → «после очистки», а не дата из прошлого', async () => {
     stubDeleteResponse(409, { code: 'node_has_frozen_archive', nearestExpiresAt: '2020-01-01T00:00:00.000Z' });
     render(<NodesPage onOpenJournal={() => {}} onOpenDeviceBoard={() => {}} />);
