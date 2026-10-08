@@ -96,6 +96,18 @@ export interface MediaPaginatedSamples {
 /** Двери архива понижения media (#2587 b3b, #2619); `batchId` в пути — уже закодирован зовущим. */
 export type DowngradeArchiveDoor = 'preview' | 'freeze' | 'batches' | `batches/${string}/restore`;
 
+/**
+ * Ответ «есть ли у прибора замороженный архив» (#2632 g8a, тезис Т3 шторма 08.10).
+ *
+ * `frozen: false` — блокировки нет: у прибора нет партий в состоянии `frozen` ИЛИ media прибора
+ * не знает (404). `frozen: true` несёт ближайший срок удаления — им кабинет объясняет отказ
+ * («удаление станет возможно после …»). Партия, чей срок уже прошёл, но которую уборка ещё не
+ * снесла, — по-прежнему архив: блокирует, пока не стала `deleted`.
+ */
+export type FrozenArchiveStatus =
+  | { readonly frozen: false }
+  | { readonly frozen: true; readonly batchCount: number; readonly nearestExpiresAt: string };
+
 @Injectable()
 export class MediaBridgeService {
   private readonly logger = new Logger(MediaBridgeService.name);
@@ -156,6 +168,42 @@ export class MediaBridgeService {
       headers: this.mediaHeaders(),
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
+  }
+
+  /**
+   * Есть ли у прибора замороженный архив понижения (#2632 g8a; ADR-0031, Т3).
+   *
+   * Читает существующую дверь `GET /v1/devices/:id/downgrade-archive/batches` — своей двери
+   * «есть ли архив» у media нет и для этого вопроса не нужно.
+   *
+   * ОТКАЗ ЗАКРЫТЫЙ (fail-closed). Ответ «архива нет» разрешает необратимое — удаление прибора,
+   * после которого архив теряет хозяина. Поэтому «нет» говорится ровно в двух случаях: media
+   * ответила списком без `frozen`-партий, или media прибора не знает (404 — архиву негде быть).
+   * Сеть, 5xx, 401/403 и непонятное тело — `ServiceUnavailableException`: «не знаю» ≠ «нет».
+   */
+  async hasFrozenArchive(deviceId: string): Promise<FrozenArchiveStatus> {
+    const res = await this.requestDowngradeArchive(deviceId, 'batches');
+    if (res.status === 404) return { frozen: false };
+    await this.assertOk(res, 'Media downgrade-archive batches');
+    const body = (await res.json().catch(() => null)) as { batches?: unknown } | null;
+    if (!body || !Array.isArray(body.batches)) {
+      throw new ServiceUnavailableException('Media downgrade-archive batches: unreadable response');
+    }
+    let batchCount = 0;
+    let nearest: number | null = null;
+    for (const raw of body.batches as unknown[]) {
+      const batch = raw as { state?: unknown; expiresAt?: unknown } | null;
+      if (!batch || batch.state !== 'frozen') continue;
+      const at = typeof batch.expiresAt === 'string' ? Date.parse(batch.expiresAt) : Number.NaN;
+      // Партия frozen без читаемого срока — всё равно архив; объяснить срок нечем, значит отказ.
+      if (Number.isNaN(at)) {
+        throw new ServiceUnavailableException('Media downgrade-archive batches: frozen batch without expiresAt');
+      }
+      batchCount += 1;
+      nearest = nearest === null ? at : Math.min(nearest, at);
+    }
+    if (nearest === null) return { frozen: false };
+    return { frozen: true, batchCount, nearestExpiresAt: new Date(nearest).toISOString() };
   }
 
   /**
