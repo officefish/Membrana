@@ -135,7 +135,9 @@ export function NodesPage({ onOpenJournal, onOpenDeviceBoard, onOpenKeys }: Node
               runtime={runtime}
               journalPreview={journalPreview.getPreview(node.device?.mediaDeviceId ?? '')}
               archive={archive.nodes.find((a) => a.nodeId === node.id)}
+              archiveLoadError={archive.error}
               onArchiveRestored={archive.reload}
+              onArchiveRetry={archive.reload}
               busy={busy}
               onOpenJournal={onOpenJournal}
               onOpenDeviceBoard={onOpenDeviceBoard}
@@ -177,7 +179,9 @@ function NodeCard({
   runtime,
   journalPreview,
   archive,
+  archiveLoadError,
   onArchiveRestored,
+  onArchiveRetry,
   busy,
   onOpenJournal,
   onOpenDeviceBoard,
@@ -188,7 +192,9 @@ function NodeCard({
   runtime: ReturnType<typeof useCabinetNodeRuntime>;
   journalPreview: NodeJournalPreviewState;
   archive: ArchiveNodeView | undefined;
+  archiveLoadError: string | null;
   onArchiveRestored: () => Promise<void>;
+  onArchiveRetry: () => Promise<void>;
   busy: boolean;
   onOpenJournal: () => void;
   onOpenDeviceBoard: () => void;
@@ -494,7 +500,12 @@ function NodeCard({
           />
         ) : null}
 
-        <NodeDowngradeArchivePanel view={archive} onRestored={onArchiveRestored} />
+        <NodeDowngradeArchivePanel
+          view={archive}
+          loadError={archiveLoadError}
+          onRetryLoad={onArchiveRetry}
+          onRestored={onArchiveRestored}
+        />
 
         {isCaptured && deviceId ? (
           <NodeScenarioCell

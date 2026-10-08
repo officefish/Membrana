@@ -34,20 +34,21 @@ function day(iso: string): string {
 }
 
 /** Партии архива мембраны, загруженные один раз на страницу узлов; `reload` — после возврата. */
-export function useDowngradeArchive(): { nodes: ArchiveNodeView[]; reload: () => Promise<void> } {
+export function useDowngradeArchive(): { nodes: ArchiveNodeView[]; error: string | null; reload: () => Promise<void> } {
   const [nodes, setNodes] = useState<ArchiveNodeView[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const reload = useCallback(async () => {
     try {
       setNodes(await fetchArchiveBatches());
-    } catch {
-      // Архив — дополнение к странице узлов: его недоступность не валит страницу, панель молчит.
-      setNodes([]);
+      setError(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'ошибка запроса');
     }
   }, []);
   useEffect(() => {
     void reload();
   }, [reload]);
-  return { nodes, reload };
+  return { nodes, error, reload };
 }
 
 type Feedback = { kind: 'done' | 'refusal'; text: string };
@@ -55,18 +56,26 @@ type Feedback = { kind: 'done' | 'refusal'; text: string };
 /** Панель архива одного узла; без партий не рисуется. */
 export function NodeDowngradeArchivePanel({
   view,
+  loadError,
+  onRetryLoad,
   onRestored,
 }: {
   view: ArchiveNodeView | undefined;
+  loadError?: string | null;
+  onRetryLoad?: () => Promise<void> | void;
   onRestored: () => Promise<void> | void;
 }) {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const feedbackRef = useRef<HTMLDivElement | null>(null);
+  const loadErrorRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (feedback) feedbackRef.current?.focus();
   }, [feedback]);
+  useEffect(() => {
+    if (loadError) loadErrorRef.current?.focus();
+  }, [loadError]);
 
   const restore = useCallback(
     async (batch: ArchiveBatchItem) => {
@@ -90,8 +99,33 @@ export function NodeDowngradeArchivePanel({
     [busyId, onRestored],
   );
 
+  const headingId = `archive-${view?.nodeId ?? 'load-error'}-title`;
+
+  if (loadError) {
+    return (
+      <section className="rounded-lg bg-base-200 p-3" aria-labelledby={headingId}>
+        <h4 id={headingId} className="text-sm font-medium">
+          Архив после понижения тарифа
+        </h4>
+        <div
+          ref={loadErrorRef}
+          tabIndex={-1}
+          className="alert alert-error mt-2 py-2 text-sm"
+          role="alert"
+        >
+          <div>
+            <p>Не удалось загрузить архив</p>
+            <p className="text-xs opacity-80">{loadError}</p>
+          </div>
+          <button type="button" className="btn btn-xs" onClick={() => void onRetryLoad?.()}>
+            Повторить
+          </button>
+        </div>
+      </section>
+    );
+  }
+
   if (!view) return null;
-  const headingId = `archive-${view.nodeId}-title`;
 
   if ('unavailable' in view) {
     return (
