@@ -8,6 +8,11 @@
  * Клавиатура (разбор Родченко): фокус при открытии — на «Отмена» (опасное действие не под Enter),
  * Escape — отмена, Tab/Shift+Tab ходят по кругу внутри окна, при закрытии фокус возвращается туда,
  * откуда окно открыли.
+ *
+ * Долгий ход (#2628, живой замер 07.10 на 8360 записях: предпросмотр 65 с, заморозка 60 с): пока
+ * сервер считает, окно говорит, что идёт и сколько это может длиться, а кнопки заперты. Успех —
+ * итог в самом окне («тариф изменён, в архив ушло N»), закрывает его человек: окно, молча
+ * исчезнувшее через минуту ожидания, читалось как сбой.
  */
 import { useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 
@@ -24,6 +29,28 @@ export function confirmedDigests(plan: DowngradePreviewPlan): Record<string, str
 /** Дата для людей (`7 октября 2026`). */
 export function formatArchiveDate(iso: string): string {
   return new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+/** Ход загрузки плана (предпросмотр и его пересчёт). */
+export const PLAN_PROGRESS_TEXT = 'Готовим план… это может занять до минуты на больших буферах';
+
+/** Ход подтверждения: заморозка избытка на узлах и смена тарифа. */
+export const CONFIRM_PROGRESS_TEXT =
+  'Переносим лишние записи в архив и меняем тариф… это может занять до минуты на больших буферах';
+
+/** Что ушло в архив при понижении — из ответа смены тарифа. */
+export interface ArchivedSummary {
+  readonly count: number;
+  readonly bytes: number;
+  /** Самый ранний срок хранения среди партий (ISO). */
+  readonly until: string;
+}
+
+/** Итог понижения человеческим языком: «Тариф изменён на «…». В архив ушло N записей (≈X), хранится до …». */
+export function downgradeDoneText(tariffName: string, archived: ArchivedSummary | null): string {
+  const head = `Тариф изменён на «${tariffName}».`;
+  if (!archived) return head;
+  return `${head} В архив ушло ${archived.count} записей (≈${formatBytes(archived.bytes)}), хранится до ${formatArchiveDate(archived.until)}.`;
 }
 
 /** Отказ смены тарифа для окна: `stale` — план протух, нужен новый предпросмотр. */
@@ -49,6 +76,10 @@ export interface DowngradeConfirmDialogProps {
   /** `nodeId → подпись узла`; неизвестный узел показывается id. */
   readonly nodeLabels: Readonly<Record<string, string>>;
   readonly busy: boolean;
+  /** Что идёт, пока `busy` (`PLAN_PROGRESS_TEXT` / `CONFIRM_PROGRESS_TEXT`). */
+  readonly progress?: string | null;
+  /** Итог успешной смены — окно показывает его вместо плана и ждёт «Готово». */
+  readonly done?: string | null;
   /** Отказ последней попытки — показывается в окне, тариф при этом не менялся. */
   readonly refusal: DowngradeRefusal | null;
   readonly onCancel: () => void;
@@ -64,6 +95,8 @@ const FOCUSABLE = 'button:not([disabled]), select:not([disabled]), [href], input
 /** Модальное окно подтверждения понижения с числами по узлам. */
 export function DowngradeConfirmDialog(props: DowngradeConfirmDialogProps) {
   const { plan, toTariffName, nodeLabels, busy, refusal, onCancel, onConfirm, onCriterionChange, onRefresh } = props;
+  const progress = props.progress ?? null;
+  const done = props.done ?? null;
   const cancelRef = useRef<HTMLButtonElement | null>(null);
   const boxRef = useRef<HTMLDivElement | null>(null);
 
@@ -74,6 +107,11 @@ export function DowngradeConfirmDialog(props: DowngradeConfirmDialogProps) {
       if (opener?.isConnected) opener.focus();
     };
   }, []);
+
+  // Итог пришёл — фокус на «Готово» (кнопка та же, что «Отмена»: она остаётся в окне).
+  useEffect(() => {
+    if (done) cancelRef.current?.focus();
+  }, [done]);
 
   const onKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Escape') {
@@ -94,6 +132,34 @@ export function DowngradeConfirmDialog(props: DowngradeConfirmDialogProps) {
       first.focus();
     }
   };
+
+  if (done) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+        <div
+          ref={boxRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="downgrade-confirm-title"
+          aria-describedby="downgrade-confirm-desc"
+          onKeyDown={onKeyDown}
+          className="flex max-h-full w-full max-w-lg flex-col gap-3 overflow-y-auto rounded-lg bg-base-100 p-5 shadow-xl"
+        >
+          <h3 id="downgrade-confirm-title" className="text-lg font-semibold">
+            Тариф изменён
+          </h3>
+          <p id="downgrade-confirm-desc" className="alert alert-success py-2 text-sm" role="status">
+            {done}
+          </p>
+          <div className="flex justify-end gap-2 pt-1">
+            <button ref={cancelRef} type="button" className="btn btn-primary btn-sm" onClick={onCancel}>
+              Готово
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const excess = plan.nodes.filter((n) => n.excess);
   const sum = (pick: (n: (typeof excess)[number]) => number) => excess.reduce((acc, n) => acc + pick(n), 0);
@@ -149,6 +215,12 @@ export function DowngradeConfirmDialog(props: DowngradeConfirmDialogProps) {
             </li>
           ))}
         </ul>
+        {busy && progress && (
+          <p className="flex items-center gap-2 text-sm" aria-live="polite">
+            <span className="loading loading-spinner loading-xs" aria-hidden="true" />
+            <span>{progress}</span>
+          </p>
+        )}
         {refusal && (
           <div className="alert alert-error py-2 text-sm" role="alert">
             <span>{refusal.text}</span>

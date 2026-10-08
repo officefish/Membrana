@@ -77,6 +77,8 @@ export interface FrozenNode {
   readonly nodeId: string;
   readonly mediaDeviceId: string;
   readonly batchId: string;
+  /** Записей в партии — число для итога в окне (#2628): «в архив ушло N записей». */
+  readonly frozenCount: number;
   readonly frozenBytes: number;
   readonly expiresAt: string;
   readonly idempotent: boolean;
@@ -263,6 +265,7 @@ export class TariffDowngradeService {
         nodeId: node.nodeId,
         mediaDeviceId: node.mediaDeviceId,
         batchId: ack.batch.batchId,
+        frozenCount: ack.batch.sampleCount,
         frozenBytes: ack.batch.frozenBytes,
         expiresAt: ack.batch.expiresAt,
         idempotent: ack.idempotent,

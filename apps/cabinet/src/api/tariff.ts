@@ -147,6 +147,8 @@ export type DowngradePreviewOutcome =
 export interface FrozenNodeView {
   nodeId: string;
   batchId: string;
+  /** Записей в партии (#2628); кабинет до #2628 его не шлёт — тогда число берётся из показанного плана. */
+  frozenCount?: number;
   frozenBytes: number;
   expiresAt: string;
 }
