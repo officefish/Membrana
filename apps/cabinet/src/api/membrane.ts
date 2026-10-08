@@ -182,10 +182,38 @@ export async function createNode(label?: string): Promise<{ node: NodeView }> {
   return (await res.json()) as { node: NodeView };
 }
 
+/** Код отказа сервера: у прибора узла есть замороженный архив (#2632 g8b, Т3). */
+export const NODE_HAS_FROZEN_ARCHIVE = 'node_has_frozen_archive';
+
+/**
+ * Отказ удаления узла, пока у его прибора есть замороженный архив (#2632 g8c). Отдельный класс,
+ * а не текст: страница показывает по нему объяснение со сроком и ссылку на архив прибора, а не
+ * строку ошибки.
+ */
+export class NodeHasFrozenArchiveError extends Error {
+  constructor(
+    readonly nodeId: string,
+    /** ISO — ближайший срок удаления архива; null, если сервер его не прислал. */
+    readonly nearestExpiresAt: string | null,
+  ) {
+    super('У прибора есть замороженный архив — узел не удалён');
+    this.name = 'NodeHasFrozenArchiveError';
+  }
+}
+
 export async function deleteNode(
   nodeId: string,
 ): Promise<{ deletedNodeId: string; revokedKeyIds: string[] }> {
   const res = await authFetch(`/v1/nodes/${nodeId}`, { method: 'DELETE' });
+  if (res.status === 409) {
+    const body = (await res.clone().json().catch(() => null)) as { code?: unknown; nearestExpiresAt?: unknown } | null;
+    if (body?.code === NODE_HAS_FROZEN_ARCHIVE) {
+      throw new NodeHasFrozenArchiveError(
+        nodeId,
+        typeof body.nearestExpiresAt === 'string' ? body.nearestExpiresAt : null,
+      );
+    }
+  }
   if (!res.ok) throw new Error(await parseError(res));
   return (await res.json()) as { deletedNodeId: string; revokedKeyIds: string[] };
 }
