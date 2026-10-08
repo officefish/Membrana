@@ -18,7 +18,9 @@
       ],
       "estimate": {
         "changedLines": 40
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "e0068030765ebdd42bed1b9c16f8de1fdb38f010342b45308c809291abf3e1e3"
     },
     {
       "blockId": "g1a-media-journal-schema",
@@ -33,7 +35,9 @@
       ],
       "estimate": {
         "changedLines": 180
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "7291500aa87c17dca5658cfa9b6f4e4b1cfb554c34223d78d30089ec755d86e1"
     },
     {
       "blockId": "g1b-media-journal-store",
@@ -45,7 +49,9 @@
       ],
       "estimate": {
         "changedLines": 270
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "c5b2bdec96c6e7a3f3b83b6145b5fbbed0f142cd663318c99d9cf3791d4a7dad"
     },
     {
       "blockId": "g2-media-blob-removal-proof",
@@ -59,7 +65,9 @@
       ],
       "estimate": {
         "changedLines": 220
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "a4b21d4f3419ca2473d2fb7cc5ca3974c7037c726de4182a7efa787191ce440d"
     },
     {
       "blockId": "g3a-media-retry-policy",
@@ -71,7 +79,9 @@
       ],
       "estimate": {
         "changedLines": 210
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "a736e02bdc7bf2420af2a579b172e27ee4b759174b037e7e0c0ad4044e7f8621"
     },
     {
       "blockId": "g3b-media-gc-runner",
@@ -86,7 +96,9 @@
       ],
       "estimate": {
         "changedLines": 340
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "c250543fa2d74d8a0aecc8cafd3ce28e1f372e250f61b70c4e4580095a2baca4"
     },
     {
       "blockId": "g4-media-journal-schedule-verify-door",
@@ -101,7 +113,9 @@
       ],
       "estimate": {
         "changedLines": 330
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "12e3c88576f201def9d837f6581ec4a4c5cd7321dc95011bb45a824971b8fd00"
     },
     {
       "blockId": "g5a-office-journal-proxy",
@@ -114,7 +128,9 @@
       ],
       "estimate": {
         "changedLines": 260
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "0bff05307739bab6dab5e6edf663eb5ffac2f27857892158864632e7634dad1b"
     },
     {
       "blockId": "g5b-office-pulse-mode",
@@ -131,7 +147,9 @@
       ],
       "estimate": {
         "changedLines": 240
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "b96aeb4b0a7b7587be7d7ca981db125465556ef13343f9a4dc964be5602ca7f0"
     },
     {
       "blockId": "g6a-panel-cold-archive-api",
@@ -143,7 +161,9 @@
       ],
       "estimate": {
         "changedLines": 140
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "92027b32c157ba52231bbcbac8f3afdf159aa7fa0c2fc74c7ad92150a0ec033d"
     },
     {
       "blockId": "g6b-panel-journal-pulse-widgets",
@@ -157,7 +177,9 @@
       ],
       "estimate": {
         "changedLines": 240
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "28fc9ee399771244a3c9e207fafdbdcae08c8dd3577b3125c8432e7901a4c894"
     },
     {
       "blockId": "g6c-panel-schedule-tab",
@@ -173,7 +195,9 @@
       ],
       "estimate": {
         "changedLines": 220
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "e1d79d9fe09ac886ba1fd5dba105ee6e4b73b7d90723950bb9ba45a44f91c7a3"
     },
     {
       "blockId": "g6d-panel-users-archive-mark",
@@ -185,7 +209,9 @@
       ],
       "estimate": {
         "changedLines": 120
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "28092409d7f67663df4fe7f8f69babdb05d46295294ab845aeb5f1a76f6713f3"
     },
     {
       "blockId": "g8a-cabinet-media-frozen-archive-port",
@@ -197,7 +223,9 @@
       ],
       "estimate": {
         "changedLines": 140
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "b52d37347c99b39c87cdcd255b4e4932c65955169bdfc5e68c4c0f502e0f92a6"
     },
     {
       "blockId": "g8b-cabinet-delete-node-guard",
@@ -209,7 +237,9 @@
       ],
       "estimate": {
         "changedLines": 130
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "47cffe201fb5c64b9023ec30069d652d4e6b39cdc3e98c14d481c3bc83dca29e"
     },
     {
       "blockId": "g8c-cabinet-delete-refusal-ui",
@@ -222,7 +252,9 @@
       ],
       "estimate": {
         "changedLines": 170
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "6ec6991cf2a7dcb218b502f349e6f06a9096c53cb4a31ba3ed6849fb9c665dd8"
     },
     {
       "blockId": "g7-live-acceptance-september",
@@ -234,7 +266,9 @@
       ],
       "estimate": {
         "changedLines": 160
-      }
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "6d2e67b8f35b76adf2531915ba9ccaa86165961d9d40de3d726ab87571a496e3"
     }
   ],
   "//why": "#2632 (продолжение #2588, ADR-0031 п.4). Слово владельца 08.10: «убеждаемся в том, что удаление по истечении срока действительно происходит; для этого нужен специальный garbage collector, который умеет работать по своему собственному журналу заданий». Нынешняя уборка (#2588 b5/b6) удаляет, но не доказывает: итог — строка лога.",
@@ -247,5 +281,10 @@
   "//forecast": "g0 ≈40, g1a ≈180, g1b ≈270, g2 ≈220, g3a ≈210, g3b ≈340, g4 ≈330, g5a ≈260, g5b ≈240, g6a ≈140, g6b ≈240, g6c ≈220, g6d ≈120, g8a ≈140, g8b ≈130, g8c ≈170, g7 ≈160. Итого ≈3410 строк в 17 PR, ни один не больше 400; против v1 +≈1020 (Т3 кабинет ≈440, Т4 verify ≈100, Т5 график/пометка ≈300, разрезы ≈180). Кромка — g3b и g4 (≈330–340): при переборе — перерезка, не oversized.",
   "//out-of-scope": "Боевое включение уборки (DRY_RUN=false на проде) — отдельное слово владельца после g7. Замер объёма тома (df) — P2. Отдельный cron у media — отвергнут вердиктом 2 (один метроном). Переключатель live в интерфейсе — отвергнут вердиктом 8. Пересчёт сроков уже замороженных партий — отвергнут ADR-0031 п.4. Партии state=failed — по-прежнему не трогаются (решение владельца 05.10). Глагол удаления прибора в media — его нет; g1a лишь запрещает каскад.",
   "//owner-questions": "ЗАКРЫТЫ словом владельца 08.10 через шторм `docs/storm/storm-archive-gc-questions-2026-10-08/REPORT.md` (закрыт 08.10, развилка названа владельцем «Хорошо, поддерживаю»). 1 (Т1) — пульс: тревога при включённой уборке, если успешного прогона нет > 2 ч → g5b (pulseOf → stale + warn в лог office на тике), значок в вкладке g6b. 2 (Т2) — осиротевший файл: до 5 попыток → dead_letter; в v1 только видимость в панели, без оповещений → g3a, g6b. 3 (Т3) — удаление прибора запрещено, пока у него есть замороженный архив; каскад снят (g1a, media); пользователю в кабинете — объяснение и ссылка на архив → g8a/g8b/g8c. 4 (Т4) — приёмка живым сценарием на аккаунте september (два круга понижения, аудит журнал/база/диск) → g7; включение уборки и боевой режим — слово владельца. 5 (Т5) — график удалений — ОТДЕЛЬНАЯ вкладка панели офиса (g6c); в «Пользователях» — только пометка «архив ждёт удаления» (g6d). 6 (Т6) — выключено = тишина: прогоны при выключенной уборке не пишутся; вкладка показывает режим по флагам (g5b отдаёт режим, g6b/g6c показывают). ОСТАЛОСЬ (из REPORT шторма, не этого плана): судьба партии 160dba7f (срок 08.10 20:28 МСК) до появления уборщика — слово владельца в чате; включение нынешней уборки на проде для сценария Т4 (до уборщика или после) — при ратификации.",
-  "//recut": "Перерезка v1 → v2 08.10 по ответам владельца Т1–Т6 (шторм `docs/storm/storm-archive-gc-questions-2026-10-08/REPORT.md` (закрыт 08.10, развилка названа владельцем «Хорошо, поддерживаю»)). Редакция v1 — digest a1c2e0deb723519f6c87f806c9fa780e2a9a56cba07363e2475ca67172dffed7 (не ратифицирована). Прогон контекста резчика — второй блок в docs/discussions/cut-archive-gc-journal-2588-vesnin.md. Что изменилось: (1) g4 → g4-media-journal-schedule-verify-door: + GET purge-schedule (Т5: frozen-партии по expiresAt — batchId, membraneId, deviceId, expiresAt, frozenBytes, без путей файлов) и GET purge-runs/:id/verify (Т4: аудит — состояние партии, остаток строк, повторный stat каждого пути из снимка задания). (2) g5 разрезан: g5a прокси office (runs, run, schedule, verify — OwnerAdmin), g5b пульс и режим по флагам (Т1, Т6) отдельным контроллером. (3) g6b → два блока по шву «виджеты ↔ вкладка» (правка резчика): g6b виджеты журнала и пульса, g6c отдельная вкладка «График удалений» (Т5) собирает их; новый g6d — пометка «архив ждёт удаления» в «Пользователях кабинета» (Т5). (4) Новые g8a/g8b/g8c — запрет удаления прибора с замороженным архивом в кабинете (Т3): порт в media-bridge, гвард deleteNode → 409 node_has_frozen_archive, объяснение и ссылка на архив в NodesPage. (5) g7 переписан под живую приёмку Т4 на september. Правки резчика ОТКЛОНЕНЫ с причиной: (а) «g8a до g4, иначе осиротеет партия» — посылка неверна: deleteNode кабинета удаляет только кабинетный Node/Device, прибор и архив в media не трогаются ни одним путём (замер); g8a-c исполняются рано по ценности для пользователя, но не как зависимость уборщика. (б) g2b «Restrict на Device.nodeId в кабинете» — отклонён: каскад, о котором Т3, — media-сторона (снят в g1a); кабинетная связь Node→Device — указатель, Restrict на ней запретил бы удаление любого сопряжённого узла, а не только узла с архивом; правило Т3 держит гвард g8b на единственной двери удаления. Принято: разрезы g6b, g8a/g8b, g5; оговорка «прибор неизвестен media (404) = блокировки нет; media недоступна = отказ» в g8a."
+  "//recut": "Перерезка v1 → v2 08.10 по ответам владельца Т1–Т6 (шторм `docs/storm/storm-archive-gc-questions-2026-10-08/REPORT.md` (закрыт 08.10, развилка названа владельцем «Хорошо, поддерживаю»)). Редакция v1 — digest a1c2e0deb723519f6c87f806c9fa780e2a9a56cba07363e2475ca67172dffed7 (не ратифицирована). Прогон контекста резчика — второй блок в docs/discussions/cut-archive-gc-journal-2588-vesnin.md. Что изменилось: (1) g4 → g4-media-journal-schedule-verify-door: + GET purge-schedule (Т5: frozen-партии по expiresAt — batchId, membraneId, deviceId, expiresAt, frozenBytes, без путей файлов) и GET purge-runs/:id/verify (Т4: аудит — состояние партии, остаток строк, повторный stat каждого пути из снимка задания). (2) g5 разрезан: g5a прокси office (runs, run, schedule, verify — OwnerAdmin), g5b пульс и режим по флагам (Т1, Т6) отдельным контроллером. (3) g6b → два блока по шву «виджеты ↔ вкладка» (правка резчика): g6b виджеты журнала и пульса, g6c отдельная вкладка «График удалений» (Т5) собирает их; новый g6d — пометка «архив ждёт удаления» в «Пользователях кабинета» (Т5). (4) Новые g8a/g8b/g8c — запрет удаления прибора с замороженным архивом в кабинете (Т3): порт в media-bridge, гвард deleteNode → 409 node_has_frozen_archive, объяснение и ссылка на архив в NodesPage. (5) g7 переписан под живую приёмку Т4 на september. Правки резчика ОТКЛОНЕНЫ с причиной: (а) «g8a до g4, иначе осиротеет партия» — посылка неверна: deleteNode кабинета удаляет только кабинетный Node/Device, прибор и архив в media не трогаются ни одним путём (замер); g8a-c исполняются рано по ценности для пользователя, но не как зависимость уборщика. (б) g2b «Restrict на Device.nodeId в кабинете» — отклонён: каскад, о котором Т3, — media-сторона (снят в g1a); кабинетная связь Node→Device — указатель, Restrict на ней запретил бы удаление любого сопряжённого узла, а не только узла с архивом; правило Т3 держит гвард g8b на единственной двери удаления. Принято: разрезы g6b, g8a/g8b, g5; оговорка «прибор неизвестен media (404) = блокировки нет; media недоступна = отказ» в g8a.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-10-08T12:49:21Z",
+    "digest": "0f4f56964e757386cf905e0cdd33b383333103ecde009a9f7e2c5108975c5217"
+  }
 }
