@@ -50,7 +50,7 @@ const OK: SelectTariffOutcome = {
   fromTariffId: 'sensor-v1',
   toTariffId: 'free-v1',
   contextSync: { updated: 1, failed: 0 },
-  frozen: [{ nodeId: 'n1', batchId: 'b1', frozenBytes: 3, expiresAt: '2026-10-21T10:00:00.000Z' }],
+  frozen: [{ nodeId: 'n1', batchId: 'b1', frozenCount: 7, frozenBytes: 3 * 1024 * 1024, expiresAt: '2026-10-21T10:00:00.000Z' }],
 };
 
 const onChanged = vi.fn();
@@ -104,16 +104,47 @@ describe('DowngradeConfirmDialog — понижение с избытком (#25
     expect(api.selectTariff).not.toHaveBeenCalled();
   });
 
-  it('узел с неизмеримыми записями — строка «не измерено: N» (прод 07.10: 8359 из 8360 без ранга)', async () => {
+  it('узел с неизмеримыми записями — строка «не измерено: N», без строки «без места в очереди»', async () => {
     const base = plan();
     api.previewTariffDowngrade.mockResolvedValue({
       ...base,
-      nodes: [{ ...base.nodes[0]!, keepCount: 4400, freezeCount: 3960, unmeasured: 8359 }, base.nodes[1]!],
+      nodes: [{ ...base.nodes[0]!, keepCount: 4400, freezeCount: 3960, unmeasured: 12 }, base.nodes[1]!],
     });
     await openFlow();
     const dialog = await screen.findByRole('dialog');
     const item = within(dialog).getByText('Крыша').closest('li')!;
-    expect(item.textContent).toContain('не измерено: 8359');
+    expect(item.textContent).toContain('не измерено: 12');
+    expect(item.textContent).not.toContain('без места в очереди');
+  });
+
+  it('измерены все, без места в очереди часть (#2629) — строка «без места в очереди: N», «не измерено» нет', async () => {
+    const base = plan();
+    api.previewTariffDowngrade.mockResolvedValue({
+      ...base,
+      nodes: [{ ...base.nodes[0]!, keepCount: 4379, freezeCount: 3981, unmeasured: 0, unranked: 8000 }, base.nodes[1]!],
+    });
+    await openFlow();
+    const item = within(await screen.findByRole('dialog')).getByText('Крыша').closest('li')!;
+    expect(item.textContent).toContain('без места в очереди: 8000');
+    expect(item.textContent).not.toContain('не измерено');
+  });
+
+  it('обе цифры больше нуля — обе строки; кабинет без поля unranked — строки нет', async () => {
+    const base = plan();
+    api.previewTariffDowngrade.mockResolvedValueOnce({
+      ...base,
+      nodes: [{ ...base.nodes[0]!, unmeasured: 3, unranked: 5 }, base.nodes[1]!],
+    });
+    await openFlow();
+    const item = within(await screen.findByRole('dialog')).getByText('Крыша').closest('li')!;
+    expect(item.textContent).toContain('без места в очереди: 5');
+    expect(item.textContent).toContain('не измерено: 3');
+    cleanup();
+    const legacy = { ...base.nodes[0]! } as Partial<(typeof base.nodes)[number]>;
+    delete legacy.unranked;
+    api.previewTariffDowngrade.mockResolvedValueOnce({ ...base, nodes: [legacy as (typeof base.nodes)[number], base.nodes[1]!] });
+    await openFlow();
+    expect((await screen.findByRole('dialog')).textContent).not.toContain('без места в очереди');
   });
 
   it('шапка-итог под aria-describedby: сумма по узлам с избытком (узел без избытка не в счёт), срок и дата', async () => {
@@ -146,7 +177,7 @@ describe('DowngradeConfirmDialog — понижение с избытком (#25
     expect(api.selectTariff).toHaveBeenCalledWith('free-v1', { n1: 'digest-shown-n1' });
   });
 
-  it('успех не показан до ответа «тариф сменён»', async () => {
+  it('успех не показан до ответа «тариф сменён»; во время ожидания — ход и запертые кнопки (#2628)', async () => {
     let resolve!: (v: SelectTariffOutcome) => void;
     api.previewTariffDowngrade.mockResolvedValue(plan());
     api.selectTariff.mockReturnValue(new Promise<SelectTariffOutcome>((r) => (resolve = r)));
@@ -155,11 +186,64 @@ describe('DowngradeConfirmDialog — понижение с избытком (#25
     await waitFor(() => expect(api.selectTariff).toHaveBeenCalled());
     expect(screen.queryByRole('status')).toBeNull();
     expect(onChanged).not.toHaveBeenCalled();
-    expect(screen.getByRole('dialog').getAttribute('aria-busy')).toBe('true');
+    const dialog = screen.getByRole('dialog');
+    expect(dialog.getAttribute('aria-busy')).toBe('true');
+    expect(dialog.textContent).toContain('Переносим лишние записи в архив и меняем тариф… это может занять до минуты');
+    expect(within(dialog).getByRole('button', { name: 'Отмена' })).toHaveProperty('disabled', true);
+    expect(within(dialog).getByRole('button', { name: 'Переходим…' })).toHaveProperty('disabled', true);
     await act(async () => resolve(OK));
-    expect((await screen.findByRole('status')).textContent).toMatch(/Тариф изменён: free-v1\. 7 записей в архиве до 21 октября 2026/);
+    // Итог — в самом окне, окно не исчезает молча: закрывает его человек.
+    const status = await within(screen.getByRole('dialog')).findByRole('status');
+    // Дата — toLocaleDateString: движок может дописать «г.», поэтому сверка до года.
+    expect(status.textContent).toMatch(/^Тариф изменён на «Free»\. В архив ушло 7 записей \(≈3\.0 МБ\), хранится до 21 октября 2026/);
+    expect(screen.getByRole('dialog').textContent).not.toContain('Переносим');
     expect(onChanged).toHaveBeenCalledTimes(1);
+    const ok = screen.getByRole('button', { name: 'Готово' });
+    expect(document.activeElement).toBe(ok);
+    fireEvent.click(ok);
     expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.getByRole('status').textContent).toMatch(
+      /Тариф изменён на «Free»\. В архив ушло 7 записей \(≈3\.0 МБ\), хранится до 21 октября 2026.*Приборов обновлено: 1/,
+    );
+  });
+
+  it('итог без frozenCount в ответе (кабинет до #2628) — число из показанного плана', async () => {
+    api.previewTariffDowngrade.mockResolvedValue(plan());
+    api.selectTariff.mockResolvedValue({
+      ...OK,
+      frozen: [{ nodeId: 'n1', batchId: 'b1', frozenBytes: 3 * 1024 * 1024, expiresAt: '2026-10-21T10:00:00.000Z' }],
+    });
+    await openFlow();
+    fireEvent.click(await screen.findByRole('button', { name: 'Понизить тариф' }));
+    expect((await screen.findByRole('status')).textContent).toContain('В архив ушло 7 записей');
+  });
+
+  it('ход при загрузке плана: строка видна, кнопки «Перейти» заперты, пока предпросмотр не пришёл (#2628)', async () => {
+    let resolve!: (v: DowngradePreviewPlan) => void;
+    api.previewTariffDowngrade.mockReturnValue(new Promise<DowngradePreviewPlan>((r) => (resolve = r)));
+    await openFlow();
+    await waitFor(() => expect(api.previewTariffDowngrade).toHaveBeenCalled());
+    expect(screen.getByText('Готовим план… это может занять до минуты на больших буферах')).toBeTruthy();
+    const post = screen.getByText('Пункт').closest('li')!.querySelector('button')!;
+    expect(post.disabled).toBe(true);
+    await act(async () => resolve(plan()));
+    await screen.findByRole('dialog');
+    expect(screen.queryByText('Готовим план… это может занять до минуты на больших буферах')).toBeNull();
+  });
+
+  it('ход при пересчёте плана в окне (смена режима) — строка в окне, кнопки заперты', async () => {
+    let resolve!: (v: DowngradePreviewPlan) => void;
+    api.previewTariffDowngrade
+      .mockResolvedValueOnce(plan())
+      .mockReturnValueOnce(new Promise<DowngradePreviewPlan>((r) => (resolve = r)));
+    api.setDowngradePolicy.mockResolvedValue({ ok: true, policy: { criterion: 'drone-likeness', isDefault: false } });
+    await openFlow();
+    const dialog = await screen.findByRole('dialog');
+    fireEvent.change(dialog.querySelector('select')!, { target: { value: 'drone-likeness' } });
+    await waitFor(() => expect(dialog.textContent).toContain('Готовим план…'));
+    expect(within(dialog).getByRole('button', { name: 'Переходим…' })).toHaveProperty('disabled', true);
+    await act(async () => resolve(plan({ criterion: 'drone-likeness' }, 11)));
+    await waitFor(() => expect(screen.getByRole('dialog').textContent).not.toContain('Готовим план…'));
   });
 
   it.each([

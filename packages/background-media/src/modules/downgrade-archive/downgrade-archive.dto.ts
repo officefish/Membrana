@@ -95,8 +95,11 @@ export class DowngradePreviewResponseDto {
   @ApiProperty({ description: 'Проб, которые режим измерил' })
   measured!: number;
 
-  @ApiProperty({ description: 'Проб, которые режим не измерил (тишина, ниже порога, не декодируются) — все во freeze' })
+  @ApiProperty({ description: 'Проб, которые режим не измерил (тишина, ниже порога, не декодируются) — без ранга, после ранжированных, пока хватает байт (#2627)' })
   unmeasured!: number;
+
+  @ApiProperty({ description: 'Измерены, но раунды режима не дали им места в очереди — стоят в хвосте по адресу, остаются, пока хватает байт (#2629)' })
+  unranked!: number;
 
   @ApiProperty({ type: DowngradeFailedTailDto })
   failedTail!: DowngradeFailedTailDto;

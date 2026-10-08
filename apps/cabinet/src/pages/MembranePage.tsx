@@ -12,9 +12,12 @@ import {
 } from '@/api/tariff';
 import { BufferOverflowPolicyCard } from '@/components/membrane/BufferOverflowPolicyCard';
 import {
+  CONFIRM_PROGRESS_TEXT,
   DowngradeConfirmDialog,
+  downgradeDoneText,
   downgradeRefusal,
-  formatArchiveDate,
+  PLAN_PROGRESS_TEXT,
+  type ArchivedSummary,
   type DowngradeRefusal,
 } from '@/components/membrane/DowngradeConfirmDialog';
 import { DowngradeKeepCard } from '@/components/membrane/DowngradeKeepCard';
@@ -107,22 +110,31 @@ function PromoRedeemForm({ onRedeemed }: { onRedeemed: () => void }) {
 }
 
 interface SelectDone {
-  toTariffId: string;
+  /** Итог для людей: «Тариф изменён на «…». В архив ушло N записей (≈X), хранится до …». */
+  text: string;
   updated: number;
   failed: number;
-  /** Сколько записей ушло в архив и до какого дня (срок поставил сервер записей). */
-  archived: { count: number; until: string } | null;
 }
 
-function selectDone(outcome: Extract<SelectTariffOutcome, { ok: true }>, shown: DowngradePreviewPlan | null): SelectDone {
+/**
+ * Итог смены из ответа сервера. Число записей — из партии (`frozenCount`, #2628); старый кабинет
+ * его не шлёт — тогда число из показанного плана по замороженным узлам. Байты и срок — из партий.
+ */
+function selectDone(outcome: Extract<SelectTariffOutcome, { ok: true }>, name: string, shown: DowngradePreviewPlan | null): SelectDone {
   const frozen = outcome.frozen ?? [];
   const until = frozen.map((f) => f.expiresAt).sort()[0];
-  const count = shown ? shown.nodes.filter((n) => frozen.some((f) => f.nodeId === n.nodeId)).reduce((s, n) => s + n.freezeCount, 0) : 0;
+  const shownCount = (nodeId: string) => shown?.nodes.find((n) => n.nodeId === nodeId)?.freezeCount ?? 0;
+  const archived: ArchivedSummary | null = until
+    ? {
+        count: frozen.reduce((s, f) => s + (f.frozenCount ?? shownCount(f.nodeId)), 0),
+        bytes: frozen.reduce((s, f) => s + f.frozenBytes, 0),
+        until,
+      }
+    : null;
   return {
-    toTariffId: outcome.toTariffId,
+    text: downgradeDoneText(name, archived),
     updated: outcome.contextSync.updated,
     failed: outcome.contextSync.failed,
-    archived: until ? { count, until } : null,
   };
 }
 
@@ -160,11 +172,14 @@ export function TariffSelector({
   const [catalog, setCatalog] = useState<TariffCatalogView | null>(null);
   const [catalogError, setCatalogError] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
+  /** Что ждём вне окна: предпросмотр понижения (долгий) или саму смену. */
+  const [pendingStep, setPendingStep] = useState<'plan' | 'select' | null>(null);
   const [deny, setDeny] = useState<string | null>(null);
   const [transportError, setTransportError] = useState<string | null>(null);
   const [done, setDone] = useState<SelectDone | null>(null);
   const [dialog, setDialog] = useState<{ plan: DowngradePreviewPlan; name: string } | null>(null);
   const [dialogBusy, setDialogBusy] = useState(false);
+  const [dialogProgress, setDialogProgress] = useState<string | null>(null);
   const [refusal, setRefusal] = useState<DowngradeRefusal | null>(null);
 
   const loadCatalog = useCallback(async () => {
@@ -185,8 +200,9 @@ export function TariffSelector({
   const settle = useCallback(
     (outcome: SelectTariffOutcome, name: string, shown: DowngradePreviewPlan | null) => {
       if (outcome.ok) {
-        setDialog(null);
-        setDone(selectDone(outcome, shown));
+        // Из окна — итог остаётся в окне до «Готово» (#2628); без окна — строка под списком.
+        setDone(selectDone(outcome, name, shown));
+        if (!shown) setDialog(null);
         onChanged();
       } else if (outcome.reason === 'preview_required' && 'preview' in outcome) {
         setRefusal(null);
@@ -204,6 +220,7 @@ export function TariffSelector({
     async (toTariffId: string, name: string, isDowngrade: boolean) => {
       if (pendingId) return;
       setPendingId(toTariffId);
+      setPendingStep(isDowngrade ? 'plan' : 'select');
       setDeny(null);
       setTransportError(null);
       setDone(null);
@@ -220,19 +237,22 @@ export function TariffSelector({
             return;
           }
         }
+        setPendingStep('select');
         settle(await selectTariff(toTariffId), name, null);
       } catch (e) {
         setTransportError(e instanceof Error ? e.message : 'Ошибка запроса');
       } finally {
         setPendingId(null);
+        setPendingStep(null);
       }
     },
     [pendingId, settle],
   );
 
   /** Шаг внутри окна (подтверждение, режим, новый предпросмотр). Тариф до ответа «сменён» прежний. */
-  const runInDialog = useCallback(async (step: () => Promise<void>) => {
+  const runInDialog = useCallback(async (progress: string, step: () => Promise<void>) => {
     setDialogBusy(true);
+    setDialogProgress(progress);
     setRefusal(null);
     try {
       await step();
@@ -241,6 +261,7 @@ export function TariffSelector({
       setRefusal({ text: `Нет ответа сервера (${msg}) — обновите страницу, чтобы увидеть текущий тариф`, stale: false });
     } finally {
       setDialogBusy(false);
+      setDialogProgress(null);
     }
   }, []);
 
@@ -316,6 +337,12 @@ export function TariffSelector({
         })}
       </ul>
 
+      {pendingStep === 'plan' && (
+        <p className="mt-3 flex items-center gap-2 text-sm" aria-live="polite">
+          <span className="loading loading-spinner loading-xs" aria-hidden="true" />
+          <span>{PLAN_PROGRESS_TEXT}</span>
+        </p>
+      )}
       {deny && (
         <div className="alert alert-error mt-3 py-2 text-sm" role="alert">
           <span>{deny}</span>
@@ -326,17 +353,13 @@ export function TariffSelector({
           <span>{transportError}</span>
         </div>
       )}
-      {done && (
+      {done && !dialog && (
         <div
           className={`alert mt-3 py-2 text-sm ${done.failed > 0 ? 'alert-warning' : 'alert-success'}`}
           role="status"
         >
           <span>
-            Тариф изменён: {done.toTariffId}.
-            {done.archived
-              ? ` ${done.archived.count} записей в архиве до ${formatArchiveDate(done.archived.until)}.`
-              : ''}{' '}
-            Приборов обновлено: {done.updated}
+            {done.text} Приборов обновлено: {done.updated}
             {done.failed > 0
               ? `, не удалось: ${done.failed} — на них предел обновится при следующем подключении`
               : ''}
@@ -349,13 +372,17 @@ export function TariffSelector({
           toTariffName={dialog.name}
           nodeLabels={nodeLabels}
           busy={dialogBusy}
+          progress={dialogProgress}
+          done={done ? done.text : null}
           refusal={refusal}
           onCancel={() => setDialog(null)}
           onConfirm={(digests) =>
-            void runInDialog(async () => settle(await selectTariff(dialog.plan.toTariffId, digests), dialog.name, dialog.plan))
+            void runInDialog(CONFIRM_PROGRESS_TEXT, async () =>
+              settle(await selectTariff(dialog.plan.toTariffId, digests), dialog.name, dialog.plan),
+            )
           }
           onCriterionChange={(criterion) =>
-            void runInDialog(async () => {
+            void runInDialog(PLAN_PROGRESS_TEXT, async () => {
               const saved = await setDowngradePolicy(criterion);
               if (!saved.ok) {
                 setRefusal({ text: `Режим не сохранён: ${saved.detail ?? saved.reason}`, stale: false });
@@ -365,7 +392,7 @@ export function TariffSelector({
               await repreview(dialog.plan.toTariffId, dialog.name);
             })
           }
-          onRefresh={() => void runInDialog(() => repreview(dialog.plan.toTariffId, dialog.name))}
+          onRefresh={() => void runInDialog(PLAN_PROGRESS_TEXT, () => repreview(dialog.plan.toTariffId, dialog.name))}
         />
       )}
     </div>
@@ -395,7 +422,10 @@ export function MembranePage() {
     void load();
   }, [load]);
 
-  if (loading) {
+  // Спиннер — только на первой загрузке. Перечитка после смены тарифа не снимает страницу:
+  // иначе окно понижения и итог смены размонтировались бы вместе с ней (#2628 — «окно закрылось
+  // без сообщения»).
+  if (loading && !data) {
     return <span className="loading loading-spinner loading-md" aria-label="Загрузка" />;
   }
 

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14367/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 399 (причины в op-log) -->
+Записей: 50 · бюджет 14372/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 400 (причины в op-log) -->
+
+### 2026-10-07 · позиция · team-evening-feedback
+
+> Tarasov. День магистрали `tariff-downgrade-freeze` — закрыл критический контур b4b/b5 и шаг 1–2 панели архива одного дня, плюс поймал и починил прод-порчу «неизмеримые целиком в freeze» в тот же день (#2627). Оценка артефактов: MAIN_DAY_ISSUE честно нёс owner-choice с гейта, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-07.md#reply-1`
 
 ### 2026-10-06 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > **Оценка артефактов:** Стратегический план дня (`STRATEGIC_PLAN_DAY.md`) — устаревший вещдок (генератор 17.07), читать нельзя; фактическим источником плана служили `DAILY_STANDUP` и `MAIN_DAY_ISSUE`. Утренний стендап чётко зафиксировал P0-фокус — магистраль […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
-
-### 2026-09-02 · позиция · team-evening-feedback
-
-> Оценка артефактов: Артефакты дня согласованы между собой: стендап и MAIN_DAY_ISSUE едины в определении P0-блокера (красные тесты media-library и background-cabinet), а магистраль `sample-move-between-collections` корректно выведена из владельческого sources[0] от 31.08. […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`

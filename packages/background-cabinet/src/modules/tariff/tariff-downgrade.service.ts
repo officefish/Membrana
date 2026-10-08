@@ -49,6 +49,8 @@ export interface DowngradeNodePreview {
   readonly freezeCount: number;
   readonly freezeBytes: number;
   readonly unmeasured: number;
+  /** Измерены, но без места в очереди режима (#2629); стоят после упорядоченных. */
+  readonly unranked: number;
   readonly planDigest: string;
   /** Есть что морозить — узел требует подтверждения. */
   readonly excess: boolean;
@@ -77,6 +79,8 @@ export interface FrozenNode {
   readonly nodeId: string;
   readonly mediaDeviceId: string;
   readonly batchId: string;
+  /** Записей в партии — число для итога в окне (#2628): «в архив ушло N записей». */
+  readonly frozenCount: number;
   readonly frozenBytes: number;
   readonly expiresAt: string;
   readonly idempotent: boolean;
@@ -178,6 +182,7 @@ export class TariffDowngradeService {
         freezeCount: plan.freeze.length,
         freezeBytes: plan.freezeBytes,
         unmeasured: plan.unmeasured,
+        unranked: plan.unranked ?? 0,
         planDigest: plan.planDigest,
         excess: plan.freeze.length > 0,
       });
@@ -263,6 +268,7 @@ export class TariffDowngradeService {
         nodeId: node.nodeId,
         mediaDeviceId: node.mediaDeviceId,
         batchId: ack.batch.batchId,
+        frozenCount: ack.batch.sampleCount,
         frozenBytes: ack.batch.frozenBytes,
         expiresAt: ack.batch.expiresAt,
         idempotent: ack.idempotent,

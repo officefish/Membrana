@@ -79,6 +79,12 @@ export interface DowngradePreview {
   readonly freezeBytes: number;
   readonly measured: number;
   readonly unmeasured: number;
+  /**
+   * Измерены, но места в очереди режима не получили (#2629): раунды chart-list их не упорядочили,
+   * `modeOrderOf` поставил их в хвост по адресу. Отбор их не теряет — они остаются после
+   * упорядоченных, пока хватает байт; число нужно человеку, чтобы видеть, что решала не мера.
+   */
+  readonly unranked: number;
   readonly failedTail: { readonly sampleIds: readonly string[]; readonly bytes: number };
   readonly planDigest: string;
   readonly measuredMs: number;
@@ -147,6 +153,15 @@ export function modeOrderOf(
   candidates: readonly ChartListCandidate[],
   criterion: ChartListCriterion,
 ): ReadonlyMap<string, number> {
+  return modeOrder(handlers, candidates, criterion).ranks;
+}
+
+/** Порядок режима и число тех, кого раунды chart-list не упорядочили (хвост по адресу, #2629). */
+export function modeOrder(
+  handlers: Pick<Handlers, 'selectChartList'>,
+  candidates: readonly ChartListCandidate[],
+  criterion: ChartListCriterion,
+): { readonly ranks: ReadonlyMap<string, number>; readonly unranked: number } {
   const ranks = new Map<string, number>();
   let remaining = [...candidates].sort((a, b) => (a.sampleId < b.sampleId ? -1 : a.sampleId > b.sampleId ? 1 : 0));
   while (remaining.length > 0) {
@@ -158,7 +173,7 @@ export function modeOrderOf(
   }
   // Остаток возможен только при отказе ядра; порядок — стабильный, по адресу, в хвосте.
   for (const c of remaining) ranks.set(c.sampleId, ranks.size);
-  return ranks;
+  return { ranks, unranked: remaining.length };
 }
 
 /** Строка базы → проба ядра библиотеки, чтобы «хранить» судил тот же предикат, что у уборки. */
@@ -242,7 +257,7 @@ export class DowngradeArchiveService {
       durationSec: m.durationSec,
       features: m.features,
     }));
-    const ranks = modeOrderOf(handlers, asChartList, criterion);
+    const { ranks, unranked } = modeOrder(handlers, asChartList, criterion);
 
     const keepCandidates: KeepCandidate[] = rows.map((r) => ({
       sampleId: r.id,
@@ -298,6 +313,7 @@ export class DowngradeArchiveService {
       freezeBytes: split.freezeBytes,
       measured: measured.length,
       unmeasured: rows.length - measured.length,
+      unranked,
       failedTail,
       planDigest,
       measuredMs,
