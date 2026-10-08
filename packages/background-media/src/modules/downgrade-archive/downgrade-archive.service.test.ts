@@ -12,6 +12,23 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { DevicesService } from '../devices/devices.service';
 
+/**
+ * Порча #2629: «измерены все, ранжирована часть». Настоящий `selectChartList` на громких тонах
+ * упорядочивает всех, поэтому срез раундов включается рукой только в одном зубе (`cut.firstRound`):
+ * первый раунд отдаёт первые N, следующие — пусто. По умолчанию — настоящий отбор без изменений.
+ */
+const cut = vi.hoisted(() => ({ firstRound: null as number | null, calls: 0 }));
+vi.mock('@membrana/plugin-handlers', async (orig) => {
+  const real = await orig<typeof import('@membrana/plugin-handlers')>();
+  const selectChartList: typeof real.selectChartList = (...args) => {
+    const selection = real.selectChartList(...args);
+    if (cut.firstRound === null) return selection;
+    cut.calls += 1;
+    return { ...selection, picks: cut.calls === 1 ? selection.picks.slice(0, cut.firstRound) : [] };
+  };
+  return { ...real, selectChartList };
+});
+
 import { DowngradeArchiveService, modeOrderOf } from './downgrade-archive.service';
 import { DowngradeArchiveStore } from './downgrade-archive.store';
 
@@ -35,6 +52,21 @@ function wav(seconds: number, amp: number, hz: number, sr = 48_000): Uint8Array 
   ascii(36, 'data'); view.setUint32(40, n * 2, true);
   for (let i = 0; i < n; i++) view.setInt16(44 + i * 2, amp * Math.sin((2 * Math.PI * hz * i) / sr) * 32767, true);
   return new Uint8Array(buf);
+}
+
+/** Запись с событием: 0.6 с тихого фона, затем 0.4 с тона — измеритель находит событие в КАЖДОЙ. */
+function burstWav(amp: number, hz: number, sr = 48_000): Uint8Array {
+  const quiet = wav(0.6, 0.004, 97, sr);
+  const loud = wav(0.4, amp, hz, sr);
+  const n = (quiet.length - 44) / 2 + (loud.length - 44) / 2;
+  const out = new Uint8Array(44 + n * 2);
+  out.set(quiet.subarray(0, 44));
+  const view = new DataView(out.buffer);
+  view.setUint32(4, 36 + n * 2, true);
+  view.setUint32(40, n * 2, true);
+  out.set(quiet.subarray(44), 44);
+  out.set(loud.subarray(44), quiet.length);
+  return out;
 }
 
 class UniqueViolation extends Error {
@@ -136,8 +168,7 @@ function fakeWorld() {
     },
   };
 
-  const addTrack = (id: string, amp: number, hz: number, over: Partial<Row> = {}, deviceId = DEV) => {
-    const bytes = wav(0.5, amp, hz);
+  const addTrack = (id: string, amp: number, hz: number, over: Partial<Row> = {}, deviceId = DEV, bytes = wav(0.5, amp, hz)) => {
     const storageRef = `${deviceId}/${id}.wav`;
     blobs.set(storageRef, bytes);
     sample.set(id, {
@@ -228,6 +259,41 @@ describe('preview — ничего не меняет, режим ранжиру�
     expect(ids(plan.keep)).toEqual(['l-09', 'l-06', 'l-03', 'q-2']);
     expect(ids(plan.freeze)).toEqual(['q-1']);
     expect(plan.keep[3]?.modeRank).toBeNull();
+  });
+
+  it('ПОРЧА #2629: измерены все, ранжирована часть — unmeasured 0, unranked = не упорядоченные; отбор оставляет их под лимитом', async () => {
+    const w = fakeWorld();
+    const tracks: [string, number, number][] = [['a-1', 0.9, 440], ['a-2', 0.8, 520], ['a-3', 0.7, 610], ['a-4', 0.6, 700], ['a-5', 0.5, 790], ['a-6', 0.4, 880]];
+    const sizes = tracks.map(([id, amp, hz]) => w.addTrack(id, amp, hz, {}, DEV, burstWav(amp, hz)));
+    const size = sizes[0]!;
+    cut.firstRound = 2;
+    cut.calls = 0;
+    try {
+      const plan = await w.service.preview(DEV, { criterion: 'loudness-over-floor', bufferLimitBytes: size * 5 });
+      if (!plan.ok) throw new Error(plan.reason);
+      // Посылка: все шесть громкие — измерены все, неизмеримых нет.
+      expect(plan.measured).toBe(6);
+      expect(plan.unmeasured).toBe(0);
+      // Режим упорядочил двоих; четверо — без места в очереди (на стволе до #2629 поля нет — красный).
+      expect(plan.unranked).toBe(4);
+      // Отбор не морозит их целиком (прод 07.10): под лимит на пять остаются пятеро, уходит одна.
+      expect(plan.keep).toHaveLength(5);
+      expect(plan.freeze).toHaveLength(1);
+      expect(plan.keepBytes).toBeLessThanOrEqual(size * 5);
+      expect(ids(plan.keep).slice(0, 2)).toEqual(['a-1', 'a-2']);
+      // Хвост — по адресу, каждому ранг есть: `modeRank: null` у измеренной не остаётся.
+      expect([...plan.keep, ...plan.freeze].every((r) => r.modeRank !== null)).toBe(true);
+    } finally {
+      cut.firstRound = null;
+    }
+  });
+
+  it('настоящий режим на громком буфере упорядочивает всех — unranked 0 (строка в окне не появляется)', async () => {
+    const { service, limitForTwo } = scene();
+    const plan = await service.preview(DEV, { criterion: 'loudness-over-floor', bufferLimitBytes: limitForTwo });
+    if (!plan.ok) throw new Error(plan.reason);
+    expect(plan.unranked).toBe(0);
+    expect(plan.unmeasured).toBe(2);
   });
 
   it('отказ измерителя — отказ предпросмотра закрытым словарём, а не «весь буфер неизмерим»', async () => {

@@ -49,6 +49,8 @@ export interface DowngradeNodePreview {
   readonly freezeCount: number;
   readonly freezeBytes: number;
   readonly unmeasured: number;
+  /** Измерены, но без места в очереди режима (#2629); стоят после упорядоченных. */
+  readonly unranked: number;
   readonly planDigest: string;
   /** Есть что морозить — узел требует подтверждения. */
   readonly excess: boolean;
@@ -180,6 +182,7 @@ export class TariffDowngradeService {
         freezeCount: plan.freeze.length,
         freezeBytes: plan.freezeBytes,
         unmeasured: plan.unmeasured,
+        unranked: plan.unranked ?? 0,
         planDigest: plan.planDigest,
         excess: plan.freeze.length > 0,
       });
