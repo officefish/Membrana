@@ -1,90 +1,76 @@
-<!-- Сгенерировано: 2026-10-07T17:58:59.125Z (yarn code-review; daily, llm-anthropic) -->
+<!-- Сгенерировано: 2026-10-08T21:15:40.285Z (yarn code-review; daily, llm-anthropic) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: 0632587269744d28767dc33154853309dc73210b^..c5d2afe19cd60f226f1c9961c605e21f067b3245 (10 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 06325872 #2616 (989), 9740547e #2620 (421), 758ca82a #2618 (804), d75f76cd #2617 (498), c024a216 (659)
+> Период: 8d70e11763a59ec56ef6be7ceb96525f61808167^..8d70e11763a59ec56ef6be7ceb96525f61808167 (1 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 8d70e117 (676)
 
 ---
 
-Tier: T2
+Tier: T1
+
+> **Режим:** daily · вечер 2026-10-08
+> **Ведущий:** Vesnin (Архитектор) — назначен по скоупу (9/9 путей в docs/)
+> **Коммитов:** 1 · oversized (676 строк) · дифф не развёрнут
 
 ---
 
-**[Vesnin (Архитектор — ведущий ревью)]:**
+**Бестиарий (T5 — проход Vesnin перед блоками):**
 
-Пропуск/блок по бестиарию: **пропуск** (антипаттернов B1–B10 в раскрытых диффах не обнаружено). День значимый: прод-порча 07.10 поймана, воспроизведена тестом и закрыта в тот же день (#2627) — это образцовый цикл «порча → минимальный репро → фикс → ADR-обновление». Контракт `selectKeepWithinBytes` сменил инвариант (неизмеримые в хвост keep, не в freeze); ADR-0031 §6 обновлён словом владельца, исходная посылка консилиума 05.10 отозвана явно — хорошая гигиена. Новые коды отказа (`measure_nothing_decodable`, `measure_floor_not_measured`) замкнуты типом `MeasureRefusalReason` через exhaust-mapped record `MEASURE_REFUSAL_TO_DOOR` — новая причина измерителя покраснит tsc, не замолчит. Граница `background-media` / `apps/cabinet` соблюдена: клиентский `downgradeArchive.ts` ходит только через HTTP, не через package-импорт. Oversized: 4 из 10 коммитов не развёрнуты (#2616 989, #2618 804, #2617 498, #2620 421) — ревьюить отдельными PR; оставшийся раскрытый материал достаточен для вердикта по дню.
+Дифф недоступен (oversized, не развёрнут) — полная сверка с B1–B10 невозможна. Фиксирую доступные сигналы:
+
+- **B3 (DoD-на-механику)** — под подозрением: «счётчик чистых прогонов» как метрика успеха без явного acceptance-критерия владельца. Требует уточнения при развёртке.
+- **B6 (Молчаливый зелёный)** — «помеха №1» в заголовке коммита указывает на известную помеху, не на закрытый факт. Статус устранения неизвестен без диффа.
+- **B8 (Немой носитель)** — `docs/procedure-runs/trail/2026-10-08.jsonl` изменён; носитель счётчика прогонов нигде не объявлен в видимом контексте.
+
+Блокировать merge автоматически не могу — дифф не развёрнут. Фиксирую как P1: **обязательно развернуть дифф утром до любых выводов.**
 
 ---
 
-**[Tarasov (Teamlead)]:**
+**[Vesnin (Архитектор)]:** Скоуп коммита — исключительно `docs/` (артефакты ритуала, trail, evidence). Границы пакетов не затронуты, `ARCHITECTURE.md` не под угрозой. Однако oversized (676 строк в одном коммите с пометкой «помеха №1») — это сигнал: либо автозабор тянет слишком широкий контекст, либо коммит содержит несвязанные артефакты. До развёртки диффа вердикт по архитектурным инвариантам дать невозможно — прошу не считать молчание LGTM. Риск B8: `procedure-runs/trail` как носитель счётчика не декларирован ни в одном видимом манифесте; если счётчик используется агентами, это немой носитель.
 
-PR size дня: 5 oversized из 10 коммитов — системный паттерн P1 «recommend split», не разовый; фиксировать в follow-up, не блокировать закрытые PR. C8: в раскрытых диффах `console.log` не найден. C9: секреты и deploy-логи в коммите не обнаружены; `cve-triage-2026-10-07.md` содержит только ссылки и анализ, не токены. C10: каталог и docs-sync не затронуты в видимых диффах, `LIVE_SERVICES.md` не обновлялся в сегодняшнем диффе — при merge #2616 (оркестратор + порт дверей архива media) стоит проверить, отражён ли новый edge в инвентаре служб. Риски на завтра: (1) два `@fastify/busboy` advisory — `runtime-exposed` в `background-media`, lockfile-фикс через `resolutions` не выполнен (P1, требует `yarn install` + тест media); (2) #2616/#2618/#2620 — oversized, диффы не раскрыты, C1/C3/C4 не верифицированы. Команды утром:
+**[Tarasov (Teamlead)]:** PR size: **oversized** (+676 строк, T1 → рекомендация split). Один коммит за день, CI зелёный (lint 42/42, test 71/71 + client). Untracked-файлы (`docs/archive/daily-day/2026-10-08/`, `docs/memos/`, `docs/seanses/`) — артефакты ритуала вечера, норма. C8: `console.log` проверить невозможно без диффа — выполнить утром. C9: секреты в коммите — аналогично. Ключевой риск завтра: **нельзя читать этот ревью как LGTM** — дифф oversized и не проверен ни по бестиарию, ни по чеклисту C1–C10.
+
+**[Ozhegov (Структурщик)]:** Изменены `docs/evidence/INDEX.md`, `docs/evidence/registry.jsonl`, `docs/procedure-runs/trail/2026-10-08.jsonl`, `docs/DAILY_AUDIT.md` — все в зоне docs-артефактов, не runtime. Хуки и сервисы не затронуты, C4 не применим. C7: тестов рядом с docs-артефактами нет по природе — «—». Слабая связанность не нарушена в видимой части. Насторожило: `registry.jsonl` (append-only evidence) изменён — нужно убедиться, что автозабор только дописывает, а не перезаписывает строки.
+
+**[Dynin (Математик)]:** —
+
+**[Kuryokhin (Музыкант)]:** —
+
+**[Rodchenko (Верстальщик)]:** —
+
+---
+
+**Итоговый артефакт:** `docs/DAILY_CODE_REVIEW.md` (этот документ — читать утром перед standup)
+
+**Definition of Done (утро — строго по порядку):**
 
 ```bash
-# Верификация фикса неизмеримых
-yarn turbo run test --filter=@membrana/plugin-handlers
-yarn turbo run test --filter=@membrana/background-media
+# 1. Развернуть дифф вручную — без этого ревью не завершено
+git show 8d70e117 --stat
+git show 8d70e117 -- docs/evidence/registry.jsonl | head -60
 
-# typecheck затронутых пакетов
-yarn turbo run typecheck --filter=@membrana/plugin-handlers
-yarn turbo run typecheck --filter=@membrana/background-media
-yarn turbo run typecheck --filter=@membrana/cabinet
+# 2. Убедиться что registry.jsonl только дописан (append), не перезаписан
+git show 8d70e117 -- docs/evidence/registry.jsonl | grep "^-" | wc -l
+# → должно быть 0 (нет удалённых строк)
 
-# CVE P1: busboy — добавить root resolutions @fastify/busboy -> 3.2.1, затем:
-yarn install
-yarn workspace @membrana/background-media test
+# 3. Проверить C8 (нет console.log в диффе)
+git show 8d70e117 | grep "+.*console\." | grep -v "//.*console\."
 
-# Проверка покрытия triage (новый скрипт #2625)
-node scripts/lib/deps-watch-security-triage-coverage.test.mjs
-```
+# 4. Проверить C9 (нет секретов)
+git show 8d70e117 | grep -iE "\+(password|secret|token|api_key)" | head -10
 
----
+# 5. Линт и тесты (CI зелёный, но подтвердить локально если есть сомнения)
+yarn turbo run lint typecheck --filter=@membrana/client --filter=@membrana/background-media
 
-**[Ozhegov (Структурщик)]:**
-
-C1: в раскрытом диффе #2621 `apps/cabinet/src/api/downgradeArchive.ts` — только HTTP-клиент через `authFetch`, прямых package-импортов из `background-media` нет; граница соблюдена. C4: `useDowngradeArchive` — хук тонкий (только `useState` + `useCallback` + `useEffect`, I/O делегировано `fetchArchiveBatches`), бизнес-логика в хук не затекла. C3: MembranaRegistry в диффе не фигурирует — применимо. C7: тесты рядом с кодом — `NodeDowngradeArchivePanel.test.tsx` и `DowngradeConfirmDialog.test.tsx` обновлены синхронно с компонентами, `select-keep-unmeasured-buffer.test.ts` — новый интеграционный файл, воспроизводящий прод-порчу; `select-keep-within-bytes.test.ts` обновлён под новый контракт. Одно наблюдение (P2, opportunity): в `useDowngradeArchive` ошибка `fetchArchiveBatches` глотается в `catch` с `setNodes([])` без какого-либо лога — при отладке нет следа; добавить хотя бы `console.error` в dev-режиме или выставить состояние `error` наружу — отдельным билетом.
-
----
-
-**[Dynin (Математик)]:**
-
-C6: `selectKeepWithinBytes` после правки — корректный priority-greedy обход: неизмеримые уже стоят в хвосте через компаратор, `eligible`-гард удалён, инвариант `sum(keep.bytes) ≤ limitBytes` сохранён (проверка `keepBytes + c.bytes <= limitBytes` универсальна). Граничный случай: pinned-неизмеримая по-прежнему идёт первой — контракт явно оговорён комментарием и тестом `:150`. Тест `select-keep-unmeasured-buffer.test.ts` воспроизводит прод-форму (PCM16 WAV 48 кГц 5 с, детерминированный «шум» без `Math.random`) — фикстура честная, не случайная. Проверка закрытости словаря отказов через mapped record `MEASURE_REFUSAL_TO_DOOR: Readonly<Record<MeasureRefusalReason, ...>>` — правильный паттерн: добавление новой ветви в `MeasureRefusalReason` без правки map красит tsc. C6-риск `spectral-variety < K` при малом буфере (из вчерашнего ревью) — не закрыт в видимом диффе, переходящий P2.
-
----
-
-**[Kuryokhin (Музыкант)]:**
-
-C2: Web Audio в диффе не фигурирует. Аудио-путь (`audio-engine`, `packages/services`) сегодня не затронут — применимо. Косвенное наблюдение по `select-keep-unmeasured-buffer.test.ts`: синтетический WAV строится без `Math.random` (детерминированный LCG-шум через `(i * 2654435761) >>> 0`), что корректно для воспроизводимого теста; 48 кГц моно — соответствует формату прибора `scenarioMicJournalBridge`. Флаг `COLD_ARCHIVE_SWEEP_ENABLED` + `dryRun:true` по умолчанию (#2603, из вчерашнего) — P2-долг по документированию в `.env.example` не закрыт в сегодняшнем диффе; переходящий.
-
----
-
-**[Rodchenko (Верстальщик)]:**
-
-C5: `NodeDowngradeArchivePanel.tsx` — a11y-скелет корректный: `<section aria-labelledby>`, `aria-busy` на нажатой кнопке, `disabled` на всех пока `busyId !== null`, `aria-label` с датой партии, `role="status"` / `role="alert"` разведены, фокус переводится на `feedbackRef` с `tabIndex={-1}` после исчезновения кнопки. Обсуждение Rodchenko 07.10 (docs/discussions/2619) зафиксировало и закрыло P1 — `text-warning` заменён на `alert alert-warning` до merge. `ChartListSettings.tsx` (#2624): маркер «Настройки изменены, выборка не пересчитана» — `role="status"`, подпись выборки включает критерий и объём — честное состояние для пользователя. Молчание панели при провале загрузки всего архива принято как осознанный трейд-офф (долг в обсуждении), не баг верстки.
-
----
-
-**Итоговый артефакт:** `docs/DAILY_CODE_REVIEW.md`
-
-**Definition of Done (утро):**
-```bash
-yarn turbo run test --filter=@membrana/plugin-handlers
-yarn turbo run test --filter=@membrana/background-media
-yarn turbo run typecheck --filter=@membrana/plugin-handlers
-yarn turbo run typecheck --filter=@membrana/background-media
-yarn turbo run typecheck --filter=@membrana/cabinet
-# После добавления resolutions в root package.json:
-yarn install
-yarn workspace @membrana/background-media test
-# Покрытие triage
-node scripts/lib/deps-watch-security-triage-coverage.test.mjs
+# 6. После развёртки — повторный проход по бестиарию B3/B6/B8
 ```
 
 **Риски:**
-- **P1** — `@fastify/busboy` (GHSA-xjh9-v7x6-24jw, GHSA-x8mw-p69m-v3mx): runtime-exposed в `background-media`; lockfile не обновлён; добавить `resolutions` + `yarn install` до следующего деплоя media.
-- **P1** — #2616/#2618/#2620 oversized (989/804/421 строк): C1/C3/C4 не верифицированы; ревьюить как отдельные PR утром перед merge в следующий спринт-шаг.
-- **P2** — `useDowngradeArchive`: ошибка загрузки глотается без следа; opportunity для `console.error` в dev или внешнего `error`-состояния.
-- **P2** — `COLD_ARCHIVE_SWEEP_ENABLED` + `dryRun:true` по умолчанию: риск «включил флаг, забыл выключить dryRun»; документировать в `.env.example` отдельным билетом.
-- **P2** (переходящий) — `spectral-variety < K` при малом буфере: edge-case не закрыт тестом.
+
+- **P1** — коммит oversized (676 строк), дифф не проверен по чеклисту и бестиарию; ревью не может быть закрыто без развёртки утром
+- **P1** — `docs/procedure-runs/trail/*.jsonl` как носитель счётчика прогонов не объявлен в манифесте (B8-риск); проверить при развёртке
+- **P2** — «помеха №1» в заголовке коммита не объясняет, что именно помеха и устранена ли; рекомендую добавить issue-ссылку или запись в `docs/memos/`
+
+**Вердикт:** ⏸ **НА ПАУЗЕ** — дифф не развёрнут, LGTM/BLOCK не выносится. Утром: развернуть → пройти по бестиарию → закрыть ревью явным LGTM или BLOCK.
