@@ -1,0 +1,2 @@
+{"traceId":"archive-gc-journal-2588-g1a-context","blockId":"g1a-media-journal-schema","kind":"context_run","subject":"vesnin","at":"2026-10-08T14:32:00Z","ref":"docs/discussions/g1a-media-journal-schema-2588-vesnin.md"}
+{"traceId":"archive-gc-journal-2588-g1a-review","blockId":"g1a-media-journal-schema","kind":"review_pass","subject":"vesnin","at":"2026-10-08T14:32:00Z","ref":"packages/background-media/src/modules/downgrade-archive/purge-journal.schema.test.ts"}
