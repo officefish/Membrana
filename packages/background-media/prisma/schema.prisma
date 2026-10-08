@@ -78,7 +78,8 @@ model Device {
   deviceWorkspaces        DeviceWorkspace[]
   /** Ключи полевого узла (ADR-0027 Р3): отзываемый секрет только на ручки узла своего устройства. */
   nodeKeys                NodeKey[]
-  /// Архив понижения (ADR-0031, #2587 b2): партии и перенесённые строки проб. Каскад от прибора.
+  /// Архив понижения (ADR-0031, #2587 b2): партии и перенесённые строки проб. Каскада от прибора
+  /// НЕТ (#2632 g1a, Т3): обе связи — `Restrict`, прибор с архивом не удаляется молча.
   downgradeArchiveBatches  DowngradeArchiveBatch[]
   downgradeArchivedSamples DowngradeArchivedSample[]
   /** Active user workspace id for device-board multi-slot persist (U10 W5). */
@@ -246,10 +247,15 @@ enum DowngradeArchiveState {
 /// на мембране старые партии не пересчитывает. Идемпотентность freeze держит `@@unique([deviceId,
 /// planDigest])`, а не порядок вызовов. Не путать с тарифной ячейкой `storage.cold`:
 /// downgrade-archive ≠ tariff-cold.
+///
+/// Связь с прибором — `Restrict` (#2632 g1a; Т3 «удаление прибора запрещено, пока есть архив»):
+/// удаление `Device` с партией получает отказ БД, а не немой каскад архива вместе с файлами-сиротами.
+/// Партия после уборки остаётся следом (`state = deleted`), поэтому отказ держит и такие приборы:
+/// глагола удаления прибора в media нет, будущий глагол обязан разобраться с архивом явно.
 model DowngradeArchiveBatch {
   id            String                    @id @default(uuid()) @db.Uuid
   deviceId      String                    @db.Uuid
-  device        Device                    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  device        Device                    @relation(fields: [deviceId], references: [id], onDelete: Restrict)
   membraneId    String                    @db.Uuid
   /// Закрытый словарь оснований; v1 — только `tariff_downgrade`.
   reason        String                    @default("tariff_downgrade")
@@ -270,6 +276,8 @@ model DowngradeArchiveBatch {
   keptBytes     BigInt
   frozenBytes   BigInt
   samples       DowngradeArchivedSample[]
+  /// Задания уборщика по этой партии (#2632) — журнал доказательства удаления.
+  purgeJobs     ColdArchivePurgeJob[]
 
   @@unique([deviceId, planDigest])
   @@index([expiresAt])
@@ -277,15 +285,16 @@ model DowngradeArchiveBatch {
 }
 
 /// Строка пробы, перенесённая из `Sample` ЦЕЛИКОМ под ТЕМ ЖЕ `id` (возврат восстанавливает прежний
-/// адрес). Файл блоба остаётся на месте (`storageRef`). Связь с партией — `NoAction`, не
-/// `Restrict`: RESTRICT проверяется немедленно и ломает каскад от `Device`; NO ACTION проверяется
-/// в конце оператора — каскад прибора проходит, явное удаление живой партии получает отказ.
+/// адрес). Файл блоба остаётся на месте (`storageRef`). Связь с партией — `NoAction`: явное
+/// удаление живой партии получает отказ (выбрано в #2587 b2, когда от `Device` шёл каскад; после
+/// #2632 g1a каскада нет, `NoAction` оставлен как есть — смысл «партия остаётся следом» тот же).
+/// Связь с прибором — `Restrict` (#2632 g1a, Т3), как у партии.
 model DowngradeArchivedSample {
   id           String                @id @db.Uuid
   batchId      String                @db.Uuid
   batch        DowngradeArchiveBatch @relation(fields: [batchId], references: [id], onDelete: NoAction)
   deviceId     String                @db.Uuid
-  device       Device                @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  device       Device                @relation(fields: [deviceId], references: [id], onDelete: Restrict)
   collectionId String
   title        String
   class        String
@@ -306,4 +315,101 @@ model DowngradeArchivedSample {
 
   @@index([batchId])
   @@index([deviceId])
+}
+
+// ─── Журнал уборщика холодного архива (#2632 g1a; консилиум archive-gc-journal-2026-10-08, вердикт 1) ───
+// purge-journal ≠ downgrade-archive: архив — ЧТО заморожено, журнал — ЧТО и КАК уборщик удалил.
+// Литералы enum'ов чеканит `src/modules/downgrade-archive/purge-journal.vocabulary.ts`; зуб
+// `purge-journal.schema.test.ts` держит равенство словаря, схемы и миграции.
+
+/// Кто разбудил прогон: ежечасный cron office, панель, ручной вызов.
+enum ColdArchivePurgeTrigger {
+  cron
+  panel
+  manual
+}
+
+/// Режим прогона: `dry_run` пишет прогон и задания со снимком и исходом «было бы», без rm.
+enum ColdArchivePurgeMode {
+  dry_run
+  live
+}
+
+/// Исход прогона. `abandoned` — оборван рестартом; помечается на старте следующего прогона.
+enum ColdArchivePurgeRunStatus {
+  running
+  succeeded
+  failed
+  abandoned
+}
+
+/// Предмет задания: партия целиком или осиротевший файл (долг между прогонами).
+enum ColdArchivePurgeTarget {
+  batch
+  orphan_blob
+}
+
+/// Состояние задания. `dead_letter` — попытки исчерпаны, долг виден в панели (Т2).
+enum ColdArchivePurgeJobStatus {
+  pending
+  claimed
+  succeeded
+  retry
+  dead_letter
+}
+
+/// Прогон уборщика — пишется ВСЕГДА, когда уборка включена, в том числе пустой (вердикт 5):
+/// пустой прогон = строка `succeeded` с нулями. Снимки флагов — что было в office на момент пуска.
+model ColdArchivePurgeRun {
+  id              String                    @id @default(uuid()) @db.Uuid
+  trigger         ColdArchivePurgeTrigger
+  mode            ColdArchivePurgeMode
+  status          ColdArchivePurgeRunStatus @default(running)
+  startedAt       DateTime                  @default(now())
+  finishedAt      DateTime?
+  enabledSnapshot Boolean
+  dryRunSnapshot  Boolean
+  jobsTotal       Int                       @default(0)
+  jobsSucceeded   Int                       @default(0)
+  jobsFailed      Int                       @default(0)
+  jobsDeadLetter  Int                       @default(0)
+  bytesFreed      BigInt                    @default(0)
+  errorSummary    String?
+  jobs            ColdArchivePurgeJob[]
+
+  /// Пульс (g4/g5b): последний завершённый и последний успешный прогон.
+  @@index([status, finishedAt])
+  @@index([startedAt])
+}
+
+/// Задание прогона: партия (`batch`) или осиротевший файл (`orphan_blob`). `storageRefs` — СНИМОК путей
+/// ДО `markPurged` (после него строк архива уже нет). `outcomes` — по каждому пути
+/// `{ beforeExists, afterExists, action: removed | already_absent | failed }`. Захват — по лизу
+/// (`leaseUntil`), повтор — по `nextAttemptAt`. Партия — ссылка `NoAction`: партии не удаляются,
+/// уборка лишь переводит их в `deleted`.
+model ColdArchivePurgeJob {
+  id            String                    @id @default(uuid()) @db.Uuid
+  runId         String                    @db.Uuid
+  run           ColdArchivePurgeRun       @relation(fields: [runId], references: [id], onDelete: Restrict)
+  targetType    ColdArchivePurgeTarget
+  batchId       String?                   @db.Uuid
+  batch         DowngradeArchiveBatch?    @relation(fields: [batchId], references: [id], onDelete: NoAction)
+  /// Снимок прибора партии; не внешний ключ — журнал не держит прибор.
+  deviceId      String?                   @db.Uuid
+  storageRefs   String[]
+  status        ColdArchivePurgeJobStatus @default(pending)
+  attempt       Int                       @default(0)
+  nextAttemptAt DateTime?
+  leaseUntil    DateTime?
+  outcomes      Json                      @default("{}")
+  bytesFreed    BigInt                    @default(0)
+  lastError     String?
+
+  /// Одна партия — одно задание в прогоне; повтор той же партии в прогоне получает отказ БД.
+  /// `orphan_blob` идёт с `batchId = NULL` (Postgres считает NULL различными) и различается по
+  /// `storageRefs`, не по партии; дедупликация долга сирот — зуб исполнителя (g3b), не схемы.
+  @@unique([runId, batchId])
+  /// Выборка долга: `status in (pending, retry)` и `nextAttemptAt <= now`.
+  @@index([status, nextAttemptAt])
+  @@index([batchId])
 }
