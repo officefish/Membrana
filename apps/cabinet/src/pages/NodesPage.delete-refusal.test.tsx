@@ -121,6 +121,41 @@ describe('NodesPage — отказ удаления узла с замороже
     expect(api.fetchMembraneMe).toHaveBeenCalledTimes(1);
   });
 
+  it('якорь ведёт к партии: после 409 перечитка архива приносит партию, и её строка видна ВНУТРИ якоря', async () => {
+    stubDeleteResponse(409, { code: 'node_has_frozen_archive', nearestExpiresAt: '2099-11-05T10:00:00.000Z' });
+    // Первая загрузка страницы — архив пуст; перечитка после отказа — партия узла n1.
+    api.fetchArchiveBatches.mockResolvedValueOnce([]).mockResolvedValue([
+      {
+        nodeId: 'n1',
+        batches: [
+          {
+            batchId: 'b1',
+            state: 'frozen',
+            frozenAt: '2099-10-22T10:00:00.000Z',
+            expiresAt: '2099-11-05T10:00:00.000Z',
+            frozenBytes: 2048,
+            sampleCount: 37,
+          },
+        ],
+      },
+    ]);
+    render(<NodesPage onOpenJournal={() => {}} onOpenDeviceBoard={() => {}} />);
+    const anchor = () => document.getElementById('node-archive-n1');
+    // До отказа партии на странице нет — зуб не проходит на первой загрузке.
+    await screen.findByRole('button', { name: 'Удалить' });
+    expect(anchor()?.textContent ?? '').not.toContain('37 записей');
+
+    await clickDelete();
+
+    await screen.findByTestId('node-delete-refusal');
+    const row = await screen.findByText(/37 записей/);
+    // Порча «без перечитки» или «якорь не на панели» → красный.
+    expect(anchor()?.contains(row)).toBe(true);
+    expect(row.textContent).toContain('удалится');
+    expect(row.textContent).toContain('2099');
+    expect(api.fetchArchiveBatches).toHaveBeenCalledTimes(2);
+  });
+
   it('отказ + архив не загрузился (#2637) → оба сообщения; ошибка архива внутри якоря и держит фокус', async () => {
     stubDeleteResponse(409, { code: 'node_has_frozen_archive', nearestExpiresAt: '2099-11-05T10:00:00.000Z' });
     api.fetchArchiveBatches.mockResolvedValueOnce([]).mockRejectedValue(new Error('сервер записей не ответил'));
