@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ArchiveBatchItem, ArchiveRestoreOutcome } from '@/api/downgradeArchive';
 
-import { NodeDowngradeArchivePanel } from './NodeDowngradeArchivePanel';
+import { NodeDowngradeArchivePanel, useDowngradeArchive } from './NodeDowngradeArchivePanel';
 
 /**
  * Зубы панели архива узла (#2619). На стволе файла панели нет — импорт красный.
@@ -28,8 +28,21 @@ function renderPanel(batches: ArchiveBatchItem[] = [FROZEN]) {
   return render(<NodeDowngradeArchivePanel view={{ nodeId: 'n1', batches }} onRestored={onRestored} />);
 }
 
+function ArchiveHost() {
+  const archive = useDowngradeArchive();
+  return (
+    <NodeDowngradeArchivePanel
+      view={archive.nodes.find((node) => node.nodeId === 'n1')}
+      loadError={archive.error}
+      onRetryLoad={archive.reload}
+      onRestored={onRestored}
+    />
+  );
+}
+
 beforeEach(() => {
   api.restoreArchiveBatch.mockReset();
+  api.fetchArchiveBatches.mockReset();
   onRestored.mockReset();
 });
 
@@ -83,5 +96,24 @@ describe('NodeDowngradeArchivePanel (#2619)', () => {
     render(<NodeDowngradeArchivePanel view={{ nodeId: 'n1', unavailable: 'down' }} onRestored={onRestored} />);
     expect(screen.getByRole('status').textContent).toContain('Архив узла сейчас недоступен');
     expect(screen.queryByRole('button')).toBeNull();
+  });
+
+  it('сбой загрузки архива виден; повтор после успеха показывает партии', async () => {
+    api.fetchArchiveBatches
+      .mockRejectedValueOnce(new Error('media down'))
+      .mockResolvedValueOnce([{ nodeId: 'n1', batches: [FROZEN] }]);
+
+    render(<ArchiveHost />);
+
+    const alert = await screen.findByRole('alert');
+    expect(alert.textContent).toContain('Не удалось загрузить архив');
+    expect(alert.textContent).toContain('media down');
+    expect(document.activeElement).toBe(alert);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Повторить' }));
+
+    expect(await screen.findByText(/7 записей · ≈3.0 МБ/u)).toBeTruthy();
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(api.fetchArchiveBatches).toHaveBeenCalledTimes(2);
   });
 });
