@@ -1,6 +1,30 @@
 {
   "tasks": [
     {
+      "id": "archive-gc-journal-2588",
+      "title": "Уборщик холодного архива с журналом заданий: доказать удаление по сроку (#2588)",
+      "promptPath": "docs/local-sprint/archive-gc-journal-2588/OPEN.md",
+      "githubIssue": 2632,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-10-08",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "kuryokhin",
+        "tarasov",
+        "rodchenko",
+        "angelina"
+      ],
+      "notes": "Продолжение #2588 (ADR-0031 п.4). План v2 docs/sprint/cut/archive-gc-journal-2588.json ратифицирован владельцем 08.10 12:49:21Z: 17 блоков ≈3410 строк (media g1a–g4, office g5a–g5b, панель g6a–g6d, кабинет g8a–g8c, приёмка g7 на september). Консилиум docs/seanses/archive-gc-journal-2026-10-08.md, шторм Т1–Т6 docs/storm/storm-archive-gc-questions-2026-10-08/REPORT.md. Боевое включение уборки — отдельное слово владельца после g7.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "ritual-reads-decisions-b5",
       "title": "b5: Живая приёмка на сегодняшних файлах, гейт, опыт, закрытие",
       "promptPath": "docs/prompts/RITUAL_READS_DECISIONS_PROMPT.md",

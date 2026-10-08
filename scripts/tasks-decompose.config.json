@@ -22,7 +22,8 @@
         "^(firebat-node)",
         "^(studio-firebat)",
         "^(dedup-pairs-|session-digest-library|studio-package-|node-duty-|promo-redemptions-|capture-measured-)",
-        "^(playback-|plugin-placement-)"
+        "^(playback-|plugin-placement-)",
+        "^(archive-gc-)"
       ]
     },
     {
