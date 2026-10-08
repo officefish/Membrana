@@ -7,6 +7,7 @@
  *
  * `fetch` подменён, чтобы поймать ровно то, что уехало бы в media, — заголовки и тело.
  */
+import { ServiceUnavailableException } from '@nestjs/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MediaBridgeService, MediaContextRefusedError } from './media-bridge.service';
@@ -190,5 +191,82 @@ describe('правило значением', () => {
     const headers = { 'Content-Type': 'application/json' };
     headersForBody(headers, undefined);
     expect(headers).toEqual({ 'Content-Type': 'application/json' });
+  });
+});
+
+describe('мост в media: есть ли у прибора замороженный архив (#2632 g8a, Т3)', () => {
+  let bridge: MediaBridgeService;
+
+  beforeEach(() => {
+    bridge = new MediaBridgeService(CONFIG);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  const batch = (state: string, expiresAt: string | null) => ({ batchId: `b-${state}-${expiresAt}`, state, expiresAt });
+
+  it('спрашивает существующую дверь batches методом GET без тела', async () => {
+    const calls = captureFetch({ body: { batches: [] } });
+    await bridge.hasFrozenArchive('dev 1');
+    expect(calls).toHaveLength(1);
+    expect(calls[0]!.url).toBe('http://media.test/v1/devices/dev%201/downgrade-archive/batches');
+    expect(calls[0]!.init.method).toBe('GET');
+    expect(calls[0]!.init.body).toBeUndefined();
+  });
+
+  it('frozen-партии есть → frozen:true с БЛИЖАЙШИМ сроком и числом партий (порча: max вместо min → красный)', async () => {
+    captureFetch({
+      body: {
+        batches: [
+          batch('frozen', '2026-11-20T10:00:00.000Z'),
+          batch('frozen', '2026-11-05T10:00:00.000Z'),
+          batch('deleted', '2026-10-01T10:00:00.000Z'),
+        ],
+      },
+    });
+    await expect(bridge.hasFrozenArchive('dev-1')).resolves.toEqual({
+      frozen: true,
+      batchCount: 2,
+      nearestExpiresAt: '2026-11-05T10:00:00.000Z',
+    });
+  });
+
+  it('только restored/deleted/failed → блокировки нет (порча: любая партия = архив → красный)', async () => {
+    captureFetch({
+      body: { batches: [batch('restored', '2026-11-05T10:00:00.000Z'), batch('deleted', '2026-10-01T10:00:00.000Z'), batch('failed', '2026-10-02T10:00:00.000Z')] },
+    });
+    await expect(bridge.hasFrozenArchive('dev-1')).resolves.toEqual({ frozen: false });
+  });
+
+  it('просроченная, но не снесённая frozen-партия — всё ещё архив', async () => {
+    captureFetch({ body: { batches: [batch('frozen', '2020-01-01T00:00:00.000Z')] } });
+    await expect(bridge.hasFrozenArchive('dev-1')).resolves.toMatchObject({ frozen: true, batchCount: 1 });
+  });
+
+  it('прибор неизвестен media (404) → блокировки нет', async () => {
+    captureFetch({ ok: false, status: 404, body: { message: 'Device dev-1 not found' } });
+    await expect(bridge.hasFrozenArchive('dev-1')).resolves.toEqual({ frozen: false });
+  });
+
+  it('media недоступна по сети → отказ, а не «архива нет» (fail-closed)', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => { throw new Error('ECONNREFUSED'); }));
+    await expect(bridge.hasFrozenArchive('dev-1')).rejects.toBeInstanceOf(ServiceUnavailableException);
+  });
+
+  it.each([500, 502, 503, 401, 403])('media ответила %i → отказ (fail-closed)', async (status) => {
+    captureFetch({ ok: false, status, body: { message: 'boom' } });
+    await expect(bridge.hasFrozenArchive('dev-1')).rejects.toBeInstanceOf(ServiceUnavailableException);
+  });
+
+  it('непонятное тело (нет массива batches) → отказ, а не «архива нет»', async () => {
+    captureFetch({ body: { items: [] } });
+    await expect(bridge.hasFrozenArchive('dev-1')).rejects.toBeInstanceOf(ServiceUnavailableException);
+  });
+
+  it('frozen-партия без читаемого срока → отказ', async () => {
+    captureFetch({ body: { batches: [batch('frozen', null)] } });
+    await expect(bridge.hasFrozenArchive('dev-1')).rejects.toBeInstanceOf(ServiceUnavailableException);
   });
 });
