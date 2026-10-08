@@ -156,7 +156,7 @@ describe('select — порядок freeze-first', () => {
     expect(out.ok).toBe(true);
     if (!out.ok) return;
     expect(out).toMatchObject({ fromTariffId: 'checkpoint-v1', toTariffId: 'free-v1', contextSync: { updated: 2, failed: 0 } });
-    expect(out.frozen).toEqual([{ nodeId: 'n-1', mediaDeviceId: 'md-1', batchId: 'batch-md-1', frozenBytes: 100, expiresAt: new Date(NOW.getTime() + 14 * DAY).toISOString(), idempotent: false }]);
+    expect(out.frozen).toEqual([{ nodeId: 'n-1', mediaDeviceId: 'md-1', batchId: 'batch-md-1', frozenCount: 1, frozenBytes: 100, expiresAt: new Date(NOW.getTime() + 14 * DAY).toISOString(), idempotent: false }]);
     expect(media.freeze).toHaveBeenCalledWith('md-1', { criterion: 'loudness-over-floor', bufferLimitBytes: 512, planDigest: 'digest-md-1', retentionDays: 14, membraneId: 'm-1', fromTariffId: 'checkpoint-v1', toTariffId: 'free-v1' });
     expect(transition.selectTariff).toHaveBeenCalledWith({ membraneId: 'm-1', toTariffId: 'free-v1', actorId: 'u-1', now: NOW });
   });
