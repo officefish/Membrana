@@ -1,0 +1,290 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "archive-gc-journal-2588",
+  "taskId": "archive-gc-journal-2588",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-10-08T12:00:00Z",
+    "to": "2026-10-24T20:00:00Z"
+  },
+  "blocks": [
+    {
+      "blockId": "g0-office-env-sweep-flags",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/background-office/.env.example"
+      ],
+      "estimate": {
+        "changedLines": 40
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "e0068030765ebdd42bed1b9c16f8de1fdb38f010342b45308c809291abf3e1e3"
+    },
+    {
+      "blockId": "g1a-media-journal-schema",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/background-media/prisma/schema.prisma",
+        "packages/background-media/prisma/migrations/<ts>_cold_archive_purge_journal/migration.sql",
+        "packages/background-media/prisma/migrations/<ts>_downgrade_archive_device_restrict/migration.sql",
+        "packages/background-media/src/modules/downgrade-archive/purge-journal.vocabulary.ts",
+        "packages/background-media/src/modules/downgrade-archive/purge-journal.schema.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "7291500aa87c17dca5658cfa9b6f4e4b1cfb554c34223d78d30089ec755d86e1"
+    },
+    {
+      "blockId": "g1b-media-journal-store",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-media/src/modules/downgrade-archive/purge-journal.store.ts",
+        "packages/background-media/src/modules/downgrade-archive/purge-journal.store.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 270
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "c5b2bdec96c6e7a3f3b83b6145b5fbbed0f142cd663318c99d9cf3791d4a7dad"
+    },
+    {
+      "blockId": "g2-media-blob-removal-proof",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "packages/background-media/src/blob/blob-storage.service.ts",
+        "packages/background-media/src/blob/blob-storage.service.test.ts",
+        "packages/background-media/src/blob/blob-removal-proof.ts",
+        "packages/background-media/src/blob/blob-removal-proof.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "a4b21d4f3419ca2473d2fb7cc5ca3974c7037c726de4182a7efa787191ce440d"
+    },
+    {
+      "blockId": "g3a-media-retry-policy",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-media/src/modules/downgrade-archive/purge-retry-policy.ts",
+        "packages/background-media/src/modules/downgrade-archive/purge-retry-policy.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 210
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "a736e02bdc7bf2420af2a579b172e27ee4b759174b037e7e0c0ad4044e7f8621"
+    },
+    {
+      "blockId": "g3b-media-gc-runner",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "packages/background-media/src/modules/downgrade-archive/purge-gc.runner.ts",
+        "packages/background-media/src/modules/downgrade-archive/purge-gc.runner.test.ts",
+        "packages/background-media/src/modules/downgrade-archive/downgrade-archive-purge.service.ts",
+        "packages/background-media/src/modules/downgrade-archive/downgrade-archive-purge.service.test.ts",
+        "packages/background-media/src/modules/downgrade-archive/downgrade-archive.module.ts"
+      ],
+      "estimate": {
+        "changedLines": 340
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "c250543fa2d74d8a0aecc8cafd3ce28e1f372e250f61b70c4e4580095a2baca4"
+    },
+    {
+      "blockId": "g4-media-journal-schedule-verify-door",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/background-media/src/modules/downgrade-archive/downgrade-archive-purge.controller.ts",
+        "packages/background-media/src/modules/downgrade-archive/downgrade-archive-purge.controller.test.ts",
+        "packages/background-media/src/modules/downgrade-archive/purge-journal.dto.ts",
+        "packages/background-media/src/modules/downgrade-archive/purge-journal-verify.ts",
+        "packages/background-media/src/modules/downgrade-archive/purge-journal-verify.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 330
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "12e3c88576f201def9d837f6581ec4a4c5cd7321dc95011bb45a824971b8fd00"
+    },
+    {
+      "blockId": "g5a-office-journal-proxy",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-sweep.client.ts",
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-sweep.controller.ts",
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-sweep.controller.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "0bff05307739bab6dab5e6edf663eb5ffac2f27857892158864632e7634dad1b"
+    },
+    {
+      "blockId": "g5b-office-pulse-mode",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-pulse.ts",
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-pulse.test.ts",
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-pulse.controller.ts",
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-pulse.controller.test.ts",
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-sweep.scheduler.ts",
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-sweep.scheduler.test.ts",
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-sweep.module.ts"
+      ],
+      "estimate": {
+        "changedLines": 240
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "b96aeb4b0a7b7587be7d7ca981db125465556ef13343f9a4dc964be5602ca7f0"
+    },
+    {
+      "blockId": "g6a-panel-cold-archive-api",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/panel/src/lib/coldArchiveApi.ts",
+        "apps/panel/src/lib/coldArchiveApi.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 140
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "92027b32c157ba52231bbcbac8f3afdf159aa7fa0c2fc74c7ad92150a0ec033d"
+    },
+    {
+      "blockId": "g6b-panel-journal-pulse-widgets",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/panel/src/components/cold-archive/ColdArchivePulseBadge.tsx",
+        "apps/panel/src/components/cold-archive/ColdArchiveRunsJournal.tsx",
+        "apps/panel/src/components/cold-archive/ColdArchiveRunDetails.tsx",
+        "apps/panel/src/components/cold-archive/ColdArchiveJournal.test.tsx"
+      ],
+      "estimate": {
+        "changedLines": 240
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "28fc9ee399771244a3c9e207fafdbdcae08c8dd3577b3125c8432e7901a4c894"
+    },
+    {
+      "blockId": "g6c-panel-schedule-tab",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/panel/src/components/cold-archive/ColdArchiveScheduleTab.tsx",
+        "apps/panel/src/components/cold-archive/ColdArchiveScheduleTable.tsx",
+        "apps/panel/src/components/cold-archive/ColdArchiveScheduleTab.test.tsx",
+        "apps/panel/src/components/SectionShell.tsx",
+        "apps/panel/src/lib/sections.ts",
+        "apps/panel/src/lib/roles.ts"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "e1d79d9fe09ac886ba1fd5dba105ee6e4b73b7d90723950bb9ba45a44f91c7a3"
+    },
+    {
+      "blockId": "g6d-panel-users-archive-mark",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/panel/src/components/panel-users/CabinetUsersRetention.tsx",
+        "apps/panel/src/components/panel-users/CabinetUsersRetention.test.tsx"
+      ],
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "28092409d7f67663df4fe7f8f69babdb05d46295294ab845aeb5f1a76f6713f3"
+    },
+    {
+      "blockId": "g8a-cabinet-media-frozen-archive-port",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "packages/background-cabinet/src/modules/pair/media-bridge.service.ts",
+        "packages/background-cabinet/src/modules/pair/media-bridge.service.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 140
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "b52d37347c99b39c87cdcd255b4e4932c65955169bdfc5e68c4c0f502e0f92a6"
+    },
+    {
+      "blockId": "g8b-cabinet-delete-node-guard",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-cabinet/src/modules/membrane/membrane.service.ts",
+        "packages/background-cabinet/src/modules/membrane/membrane.service.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 130
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "47cffe201fb5c64b9023ec30069d652d4e6b39cdc3e98c14d481c3bc83dca29e"
+    },
+    {
+      "blockId": "g8c-cabinet-delete-refusal-ui",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/cabinet/src/pages/NodesPage.tsx",
+        "apps/cabinet/src/api/membrane.ts",
+        "apps/cabinet/src/pages/NodesPage.delete-refusal.test.tsx"
+      ],
+      "estimate": {
+        "changedLines": 170
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "6ec6991cf2a7dcb218b502f349e6f06a9096c53cb4a31ba3ed6849fb9c665dd8"
+    },
+    {
+      "blockId": "g7-live-acceptance-september",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/adr/ADR-0031-downgrade-archive.md",
+        "docs/local-sprint/archive-gc-journal-2588/CLOSURE.md"
+      ],
+      "estimate": {
+        "changedLines": 160
+      },
+      "revisionAt": "2026-10-08T12:49:21Z",
+      "revisionOf": "6d2e67b8f35b76adf2531915ba9ccaa86165961d9d40de3d726ab87571a496e3"
+    }
+  ],
+  "//why": "#2632 (продолжение #2588, ADR-0031 п.4). Слово владельца 08.10: «убеждаемся в том, что удаление по истечении срока действительно происходит; для этого нужен специальный garbage collector, который умеет работать по своему собственному журналу заданий». Нынешняя уборка (#2588 b5/b6) удаляет, но не доказывает: итог — строка лога.",
+  "//measure": "Ствол origin/main 08.10, дерево Membrana-installstate. (1) media `downgrade-archive-purge.service.ts` (110 стр.): кандидаты через `store.purgeExpired(now,{dryRun:true})`; по партии — findMany storageRef → `store.markPurged` (строки + метка `deleted` одной транзакцией) → `blobs.delete`; неудача файла — только счётчик `blobs.failed` и warn. (2) `blob-storage.service.ts:42-45` `delete` = `rm(full,{force:true})` — отсутствие файла не отличимо от удаления (Д5). (3) `schema.prisma:252` `DowngradeArchiveBatch.device onDelete: Cascade`, `:288` `DowngradeArchivedSample.device onDelete: Cascade`, `:286` `batch onDelete: NoAction`; пути удаления прибора в коде media нет — дыра схемная, латентная (Д6). (4) office `cold-archive-sweep.scheduler.ts` (92 стр.) — `@Cron('0 * * * *')` UTC, исход — только лог; `.controller.ts` (51) — `GET v1/panel/admin/cold-archive/sweep-preview` OwnerAdmin, всегда dryRun. (5) В `apps/panel/src` раздела холодного архива нет; разделы — `lib/sections.ts` + карта в `components/SectionShell.tsx`. (6) `packages/background-office/.env.example` флагов уборки НЕ несёт; `.env.docker.example:50-54` несёт (ENABLED=false, DRY_RUN=true). (7) К Т3 (перерезка v2): кабинет `membrane.service.ts:219-239` deleteNode отзывает ключи и делает `prisma.node.delete`; кабинетный Device (nodeId @unique, mediaDeviceId) уходит каскадом от Node, media при этом не вызывается. Кабинет уже ходит в media за архивом: `pair/media-bridge.service.ts:151` requestDowngradeArchive → media `GET v1/devices/:deviceId/downgrade-archive/batches`; UI архива прибора — `apps/cabinet/src/components/nodes/NodeDowngradeArchivePanel.tsx`, удаление узла — `apps/cabinet/src/pages/NodesPage.tsx:80`. (8) К Т5: «Пользователи кабинета» в панели — `apps/panel/src/components/panel-users/CabinetUsersRetention.tsx` (254 стр.), строки несут membraneId; партии архива несут membraneId.",
+  "//consilium-verdicts": "Протокол `docs/seanses/archive-gc-journal-2026-10-08.md` (36 реплик, 6 советчиков; вердикт по каждому из 8 пунктов). 1 — журнал в media рядом с архивом: `ColdArchivePurgeRun` (прогон, пишется всегда) + `ColdArchivePurgeJob` (задание = партия или осиротевший файл). 2 — office-пусковик будит media-исполнителя, своего cron у media в v1 нет; лиз на задание, один активный live-прогон, повтор идемпотентен. 3 — доказательство v1 = stat до и после на каждый файл, исходы removed/already_absent/failed в задании; объём тома — P2, не DoD. 4 — осиротевший файл = задание-долг до успеха или dead_letter (maxAttempts=5), dead_letter виден в панели; Д6 — немой Cascade убрать (BLOCK иначе). 5 — пустой прогон тоже строка; пульс = последний успешный прогон при ENABLED, порог ~2 ч. 6 — оборачивает `purgeExpired`; порядок снимок путей → строки → файлы; флаги office сохраняются (ENABLED выкл, DRY_RUN вкл по умолчанию). 7 — панель office OwnerAdmin только чтение: прогоны, задания, пульс и режим; кнопок удаления нет; отдельной человеческой двери у media нет. 8 — выкл → dry-run → live только словом владельца после успешных dry-run и зелёного пульса; переключателя live в интерфейсе нет; откат мгновенный.",
+  "//cutter": "Резчик vesnin. Прогон контекста 08.10 — `yarn ask vesnin --ticket-file <черновик нарезки + замер>`, конспект `docs/discussions/cut-archive-gc-journal-2588-vesnin.md`. Правки резчика приняты: (а) g1 разрезан на схему (g1a) и хранилище (g1b) — класс спринтов 2533/2538/2558 перебирает оценку на 30–50%; (б) исполнитель разрезан по шву «что делает» ↔ «как переживает отказ»: политика повторов (g3a, чистая) отдельно от исполнителя (g3b); (в) FK Restrict (Д6) обязан влиться ДО исполнителя — внесён в g1a той же миграционной волной, отдельной миграцией; (г) пульс назван явно: media отдаёт `lastFinishedRunAt`/`lastSucceededRunAt`, office считает ok/stale/disabled чистой функцией (g5) — контракт в core НЕ заводится; (д) панель разрезана на API (g6a) и раздел (g6b) — раздела холодного архива в панели нет вовсе; (е) тест рестарта посреди партии (лиз истёк) — обязательный сценарий g3b; (ж) в ADR — разведение `purge-journal` ≠ `downgrade-archive` (g7). Перерезка v2 08.10 — второй прогон контекста резчика (тот же файл конспекта): см. //recut — что принято и что отклонено с причиной.",
+  "//order": "g0 — сразу (документация флагов). Ветка media: g1a → g1b → g2 → g3a → g3b → g4 (g2 и g3a могут идти параллельно g1b). Ветка office/панели — после g4: g5a → g5b → g6a → g6b → g6c → g6d. Ветка кабинета (Т3) независима от уборщика и может идти сразу после ратификации: g8a → g8b → g8c (g8a опирается на существующую дверь media GET v1/devices/:deviceId/downgrade-archive/batches). g7 (живая приёмка Т4) — последним, после выкатки всех веток; включение уборки и боевой режим — отдельным словом владельца.",
+  "//design": "Run: id, trigger (cron|panel|manual), mode (dry_run|live), status (running|succeeded|failed|abandoned), startedAt, finishedAt?, enabledSnapshot, dryRunSnapshot, jobsTotal, jobsSucceeded, jobsFailed, jobsDeadLetter, bytesFreed, errorSummary?. Job: id, runId, targetType (batch|orphan_blob), batchId?, deviceId?, storageRefs (снимок ДО markPurged), status (pending|claimed|succeeded|retry|dead_letter), attempt, nextAttemptAt?, leaseUntil?, outcomes (jsonb: ref → beforeExists/afterExists/action removed|already_absent|failed), bytesFreed, lastError?. Уникальность (runId, batchId); индекс (status, nextAttemptAt). Порядок live по партии: снимок путей в Job → markPurged (транзакция) → removeWithProof по каждому пути → итог задания; провалившиеся пути → задание orphan_blob с переносом долга между прогонами. Прогон, оборванный рестартом, на старте следующего помечается abandoned, его невзятые задания переходят по лизу. Dry-run пишет Run и Job со снимком и исходом «было бы», без markPurged и rm.",
+  "//dod": "g0: в `.env.example` office оба флага с умолчаниями (ENABLED=false, DRY_RUN=true), порядок включения (1 выкл → 2 ENABLED=true при DRY_RUN=true → 3 DRY_RUN=false только словом владельца), предупреждение о необратимости; текст совпадает с `.env.docker.example` по смыслу. g1a: модели и две миграции; зуб схемы — `onDelete: Restrict` у обеих связей архива с прибором, Run/Job присутствуют. g1b: зубы store (fake prisma): создание прогона, пустой прогон = строка succeeded с нулями, захват по лизу не берёт чужое невыпущенное, повторный захват после истечения лиза. g2: removeWithProof различает removed/already_absent/failed по stat до/после; `afterExists=true` после rm = failed; старый `delete` не меняет поведение для живых вызовов. g3a: чистая политика — attempt≥5 → dead_letter; backoff монотонен; сворачивание исходов в счётчики прогона. g3b: dry-run персистит прогон; повтор той же партии — 0 rm; рестарт посреди партии не теряет долг; два параллельных live-пуска → один прогон; ответ purge-expired несёт runId (обратная совместимость полей b6); партий за прогон не больше константы K (поток удаления не держит цикл событий media — реплика Музыканта). g4: `GET /v1/internal/downgrade-archive/purge-runs?limit`, `GET .../purge-runs/:id`, `GET .../purge-pulse` (lastFinishedRunAt, lastSucceededRunAt), `GET .../purge-schedule` (frozen-партии по expiresAt, без путей), `GET .../purge-runs/:id/verify` (по каждому заданию: состояние партии, остаток строк архива, существование каждого пути сейчас) — всё под ApiTokenGuard; наружу только счётчики, id и булевы признаки, без адресов файлов. g5a: прокси OwnerAdmin для runs/run/schedule/verify; исходы клиента → свой код (503/502), не 500. g5b (Т1, Т6): pulseOf(mode, lastSucceededRunAt, now) → disabled|ok|stale, порог 2 ч; при stale тик пишет warn; ответ пульса несёт режим по флагам; выключено ⇒ media не вызывается и прогон не пишется (зуб «disabled → 0 вызовов» сохраняется). g6a: клиент панели. g6b: значок пульса (иконка + текст, тревога при stale), журнал прогонов, детали заданий с dead_letter; пустое состояние «прогонов ещё не было» ≠ «всё чисто». g6c (Т5): отдельная вкладка «График удалений» OwnerAdmin — таблица ближайших удалений, журнал, пульс, режим; ни одной кнопки удаления. g6d (Т5): в «Пользователях кабинета» строка с frozen-партией помечена «архив ждёт удаления» (с датой ближайшего удаления), без иных действий. g8a: `hasFrozenArchive(deviceId)` через существующую дверь batches; 404 прибора = нет блокировки; сеть/5xx = отказ (fail-closed). g8b (Т3): deleteNode при frozen-архиве → 409 `node_has_frozen_archive` с ближайшим expiresAt, ключи не отзываются, узел цел; media недоступна → 503, узел цел. g8c: NodesPage на 409 показывает объяснение («у прибора есть архив, удаление станет возможно после …») и ссылку на архив прибора (NodeDowngradeArchivePanel). g7 (Т4): дополнение ADR-0031 (доказательство = журнал; purge-journal ≠ downgrade-archive; запрет удаления прибора с архивом) и CLOSURE.md с протоколом живой приёмки на аккаунте september: старший тариф → буфер записью с прибора → понижение на средний → удаление по графику при включённой уборке без ручного запуска → аудит по журналу (вкладка + verify), базе (партия deleted, строк 0) и диску (verify: путей нет) → тот же круг средний → младший. Включение уборки (ENABLED, затем DRY_RUN=false) — словом владельца; выкатка и прод — не исполнителем блока.",
+  "//forecast": "g0 ≈40, g1a ≈180, g1b ≈270, g2 ≈220, g3a ≈210, g3b ≈340, g4 ≈330, g5a ≈260, g5b ≈240, g6a ≈140, g6b ≈240, g6c ≈220, g6d ≈120, g8a ≈140, g8b ≈130, g8c ≈170, g7 ≈160. Итого ≈3410 строк в 17 PR, ни один не больше 400; против v1 +≈1020 (Т3 кабинет ≈440, Т4 verify ≈100, Т5 график/пометка ≈300, разрезы ≈180). Кромка — g3b и g4 (≈330–340): при переборе — перерезка, не oversized.",
+  "//out-of-scope": "Боевое включение уборки (DRY_RUN=false на проде) — отдельное слово владельца после g7. Замер объёма тома (df) — P2. Отдельный cron у media — отвергнут вердиктом 2 (один метроном). Переключатель live в интерфейсе — отвергнут вердиктом 8. Пересчёт сроков уже замороженных партий — отвергнут ADR-0031 п.4. Партии state=failed — по-прежнему не трогаются (решение владельца 05.10). Глагол удаления прибора в media — его нет; g1a лишь запрещает каскад.",
+  "//owner-questions": "ЗАКРЫТЫ словом владельца 08.10 через шторм `docs/storm/storm-archive-gc-questions-2026-10-08/REPORT.md` (закрыт 08.10, развилка названа владельцем «Хорошо, поддерживаю»). 1 (Т1) — пульс: тревога при включённой уборке, если успешного прогона нет > 2 ч → g5b (pulseOf → stale + warn в лог office на тике), значок в вкладке g6b. 2 (Т2) — осиротевший файл: до 5 попыток → dead_letter; в v1 только видимость в панели, без оповещений → g3a, g6b. 3 (Т3) — удаление прибора запрещено, пока у него есть замороженный архив; каскад снят (g1a, media); пользователю в кабинете — объяснение и ссылка на архив → g8a/g8b/g8c. 4 (Т4) — приёмка живым сценарием на аккаунте september (два круга понижения, аудит журнал/база/диск) → g7; включение уборки и боевой режим — слово владельца. 5 (Т5) — график удалений — ОТДЕЛЬНАЯ вкладка панели офиса (g6c); в «Пользователях» — только пометка «архив ждёт удаления» (g6d). 6 (Т6) — выключено = тишина: прогоны при выключенной уборке не пишутся; вкладка показывает режим по флагам (g5b отдаёт режим, g6b/g6c показывают). ОСТАЛОСЬ (из REPORT шторма, не этого плана): судьба партии 160dba7f (срок 08.10 20:28 МСК) до появления уборщика — слово владельца в чате; включение нынешней уборки на проде для сценария Т4 (до уборщика или после) — при ратификации.",
+  "//recut": "Перерезка v1 → v2 08.10 по ответам владельца Т1–Т6 (шторм `docs/storm/storm-archive-gc-questions-2026-10-08/REPORT.md` (закрыт 08.10, развилка названа владельцем «Хорошо, поддерживаю»)). Редакция v1 — digest a1c2e0deb723519f6c87f806c9fa780e2a9a56cba07363e2475ca67172dffed7 (не ратифицирована). Прогон контекста резчика — второй блок в docs/discussions/cut-archive-gc-journal-2588-vesnin.md. Что изменилось: (1) g4 → g4-media-journal-schedule-verify-door: + GET purge-schedule (Т5: frozen-партии по expiresAt — batchId, membraneId, deviceId, expiresAt, frozenBytes, без путей файлов) и GET purge-runs/:id/verify (Т4: аудит — состояние партии, остаток строк, повторный stat каждого пути из снимка задания). (2) g5 разрезан: g5a прокси office (runs, run, schedule, verify — OwnerAdmin), g5b пульс и режим по флагам (Т1, Т6) отдельным контроллером. (3) g6b → два блока по шву «виджеты ↔ вкладка» (правка резчика): g6b виджеты журнала и пульса, g6c отдельная вкладка «График удалений» (Т5) собирает их; новый g6d — пометка «архив ждёт удаления» в «Пользователях кабинета» (Т5). (4) Новые g8a/g8b/g8c — запрет удаления прибора с замороженным архивом в кабинете (Т3): порт в media-bridge, гвард deleteNode → 409 node_has_frozen_archive, объяснение и ссылка на архив в NodesPage. (5) g7 переписан под живую приёмку Т4 на september. Правки резчика ОТКЛОНЕНЫ с причиной: (а) «g8a до g4, иначе осиротеет партия» — посылка неверна: deleteNode кабинета удаляет только кабинетный Node/Device, прибор и архив в media не трогаются ни одним путём (замер); g8a-c исполняются рано по ценности для пользователя, но не как зависимость уборщика. (б) g2b «Restrict на Device.nodeId в кабинете» — отклонён: каскад, о котором Т3, — media-сторона (снят в g1a); кабинетная связь Node→Device — указатель, Restrict на ней запретил бы удаление любого сопряжённого узла, а не только узла с архивом; правило Т3 держит гвард g8b на единственной двери удаления. Принято: разрезы g6b, g8a/g8b, g5; оговорка «прибор неизвестен media (404) = блокировки нет; media недоступна = отказ» в g8a.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-10-08T12:49:21Z",
+    "digest": "0f4f56964e757386cf905e0cdd33b383333103ecde009a9f7e2c5108975c5217"
+  }
+}
