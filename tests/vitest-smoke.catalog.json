@@ -41,15 +41,15 @@
       "fanIn": 5
     },
     {
-      "name": "@membrana/device-board",
-      "fanIn": 4
-    },
-    {
       "name": "@membrana/mfcc-analyzer-service",
       "fanIn": 4
     },
     {
       "name": "@membrana/cepstral-detector-service",
+      "fanIn": 3
+    },
+    {
+      "name": "@membrana/device-board",
       "fanIn": 3
     },
     {
