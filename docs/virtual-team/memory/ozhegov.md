@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14368/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 395 (причины в op-log) -->
+Записей: 50 · бюджет 14385/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 396 (причины в op-log) -->
+
+### 2026-10-08 · позиция · archive-gc-journal
+
+> Словарь: не смешивать `DowngradeArchiveBatch`, `PurgeRun`, `PurgeJob`. Журнал — таблицы в media schema рядом с `downgrade-archive.store`, публичный API — internal HTTP + узкая panel-дверь через office. Office остаётся **пусковиком** (как сейчас), media — **исполнителем и […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/archive-gc-journal-2026-10-08.md#reply-1`
 
 ### 2026-10-07 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > Оценка артефактов: Документы согласованы; расхождение ритуал-фокуса и магистрали — норма, вердикт владельца приоритетен. Структура кода не размазана: tariff-ручки в `tariff.controller` → `tariff-transition.service` (существующий), новые `tariff-catalog.service`, […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-04.md#reply-1`
-
-### 2026-09-03 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** Стендап и MAIN_DAY_ISSUE согласованы; `DAILY_CODE_REVIEW` корректен — границы пакетов соблюдены, C4 ок, verify-скрипт присутствует. Замечание: `STRATEGIC_PLAN_DAY.md` по-прежнему лежит как вещдок, хотя норма Q1 требует не читать его как источник. **Итоги […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
 
 ### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 

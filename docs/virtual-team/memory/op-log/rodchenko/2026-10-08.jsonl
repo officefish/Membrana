@@ -1,1 +1,5 @@
 {"ts":"2026-10-08T11:06:32.821Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:51","origin":"persona-extract"}
+{"ts":"2026-10-08T21:26:34.650Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-10-08-archive-gc-journal","origin":"persona-extract"}
+{"ts":"2026-10-08T21:26:34.650Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-09-02-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-08T21:26:34.650Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-07-23-llm-procedure-channels-m3c-fallback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-08T21:26:34.650Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

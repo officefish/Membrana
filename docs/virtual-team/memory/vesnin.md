@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14373/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 409 (причины в op-log) -->
+Записей: 50 · бюджет 14364/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 410 (причины в op-log) -->
+
+### 2026-10-08 · позиция · archive-gc-journal
+
+> Конструкция ясна из слова владельца 08.10 и дыр Д1–Д6: нынешний office-cron + `purgeExpired` даёт **строку лога**, не **вещдок**. Журнал заданий — отдельная лемма рядом с архивом в **media** (владелец байт и строк). Два уровня: **Run** (прогон тика) и **Job** (единица работы = […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/archive-gc-journal-2026-10-08.md#reply-1`
 
 ### 2026-10-07 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-04.md#reply-1`
 
-### 2026-09-03 · позиция · team-evening-feedback
+### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 
-> **Оценка артефактов:** `MAIN_DAY_ISSUE` — образцовый канон: явная магистраль с таблицей обоснования, посылки с маркерами проверки, развилки. Регламент evening-feedback корректен — состав ролей приведён к реестру (tarasov тимлид, vesnin — архитектор). **Итоги дня:** Коворк […]
+> Единственный источник решений доступа — Panel. `registry.jsonl` остаётся источником тождества и истории материала по M2, но не становится авторизатором. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
-
-> До object gate `recordId` разрешается в `canonicalRef`, current tip, policy version и object-version vector. Неизвестный record, binding, action или version даёт fail-closed, а не fallback. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`

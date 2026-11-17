@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14343/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 388 (причины в op-log) -->
+Записей: 50 · бюджет 14381/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 389 (причины в op-log) -->
+
+### 2026-10-08 · позиция · archive-gc-journal
+
+> Инвариант уборки из консилиума 05.10 и ADR-0031: `expiresAt = frozenAt + retentionDays`, предикат `now >= expiresAt` — не трогаем. Доказательство удаления — не «метка `deleted`», а тройка чисел на job: `bytesBefore`, `rmResult ∈ {removed, already_absent, failed}`, `existsAfter: […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/archive-gc-journal-2026-10-08.md#reply-1`
 
 ### 2026-10-07 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > **Оценка артефактов:** Числового/FFT ядра в дне нет — оцениваю процесс: контракт двери формализован строго (коды 404/403, отсутствие `hasMore` — чистые предикаты), verify-скрипт с Proxy-stub корректен для mount-проверки. **Итоги дня:** Мой профиль в diff отсутствует — день чисто […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
-
-### 2026-09-02 · позиция · team-evening-feedback
-
-> Оценка артефактов: Артефакты дня не содержат математического контента — фокус на tooling и тестах. STRATEGY_DAY корректно определяет веху `secret-parser-built` как перспективную, не смешивая с primary. MAIN_DAY_ISSUE содержит проверяемые посылки с маркерами — это […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`

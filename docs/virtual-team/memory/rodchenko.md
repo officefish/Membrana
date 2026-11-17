@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 51 · бюджет 14384/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 385 (причины в op-log) -->
+Записей: 50 · бюджет 14296/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 387 (причины в op-log) -->
+
+### 2026-10-08 · позиция · archive-gc-journal
+
+> Человеку нужен **читаемый след**, не дашборд ради дашборда. v1 — одна панель OwnerAdmin: список последних N run (время, dryRun/live, counts, статус), раскрытие run → jobs с итогами. Конструктивизм: `tabular-nums`, badge статуса (`success` / `warning` / `error` / `dry-run`), без […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/archive-gc-journal-2026-10-08.md#reply-1`
 
 ### 2026-10-07 · позиция · team-evening-feedback
 
@@ -301,15 +307,3 @@
 > **Оценка артефактов:** UI-контракт `DESIGN.md` в дне не затрагивался — чисто API/серверная работа. `DAILY_CODE_REVIEW` корректен. **Итоги дня:** Мой вклад — UI-блок срока TTL в кабинете: `apps/cabinet/src/components/keys/TrackKeyTtlCard.tsx` + `KeysPage.tsx` + api […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
-
-### 2026-09-02 · позиция · team-evening-feedback
-
-> Оценка артефактов: В документах дня UI-изменения представлены только как цель (магистраль `sample-move-between-collections`), но не как факт. MAIN_DAY_ISSUE чётко описывает UI-дефект: дверь move нарисована только при `selectedId === BUFFER_COLLECTION_ID` (~689 и ~757 в […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m3c-fallback
-
-> На панели цепочка видна как список, не скрытый magic. Бейдж attempt/provider в usage (T1 events). _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m3c-fallback-2026-07-23-2026-07-23.md#reply-1`
