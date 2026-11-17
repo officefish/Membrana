@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -32,6 +33,8 @@ import { parseSamplesPageQuery } from '../../lib/pagination';
 import {
   BufferOverflowRefusalDto,
   MoveSampleDto,
+  MoveSamplesBatchDto,
+  MoveSamplesBatchResponseDto,
   PaginatedSamplesResponseDto,
   PatchSampleLabelDto,
   SampleResponseDto,
@@ -159,6 +162,36 @@ export class SamplesController {
   ) {
     await this.samples.delete(deviceId, sampleId);
     return { ok: true };
+  }
+
+  /**
+   * Массовый вывоз из буфера в набор. Путь `samples/move-batch` — рядом с одиночным
+   * `samples/:sampleId/move`, но НЕ под `:sampleId`: у пачки нет одной пробы, к которой её
+   * можно было бы привязать.
+   *
+   * Статус 200 и на полный, и на частичный перенос: «влезло 740 из 1057» — штатный исход,
+   * а не поломка. Отказ 4xx только по причинам, не связанным с местом.
+   */
+  @Post('samples/move-batch')
+  @HttpCode(200)
+  @ApiOperation({
+    summary: 'Carry a batch of samples out of the device buffer into a collection',
+    description:
+      'Partial success is the carrying property: 200 with a non-empty `stayed` means the target axis took what fits and named the rest. Transfer order is oldest first (createdAt, then sampleId); `dryRun: true` computes the same set and moves nothing. Whole refusal (4xx) only for reasons unrelated to space: unknown device or collection, empty list, target is the buffer itself, list longer than `maxBatch`.',
+  })
+  @ApiResponse({ status: 200, type: MoveSamplesBatchResponseDto })
+  @ApiStandardErrors()
+  @ApiBadRequest()
+  moveBatch(
+    @Param('deviceId') deviceId: string,
+    @Body() body: MoveSamplesBatchDto,
+  ) {
+    if (!body?.toCollectionId) {
+      throw new BadRequestException('toCollectionId required');
+    }
+    return this.samples.moveBatch(deviceId, body.sampleIds ?? [], body.toCollectionId, {
+      dryRun: body.dryRun === true,
+    });
   }
 
   @Post('samples/:sampleId/move')

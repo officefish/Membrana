@@ -10,6 +10,7 @@ import { join } from 'node:path';
 import {
   parseSkillFrontMatter, freshSkill, skillGraphProblems,
   partitionPredicates, morningLeakProblems, MORNING_MARKERS,
+  skillTransitionRecord,
 } from './lib/skill-status.mjs';
 
 test('parseSkillFrontMatter: name/status/supersededBy', () => {
@@ -95,4 +96,17 @@ test('ЖИВОЙ ГЕЙТ: реальные скиллы утра/дня/веч�
     Object.fromEntries(Object.entries(skills).map(([k, v]) => [k, v.fm])),
   ), []);
   assert.deepEqual(morningLeakProblems(skills), [], 'live-скиллы вне morning-ritual не несут утренних команд');
+});
+
+test('transition provenance is complete and superseded cannot lose its target', () => {
+  assert.deepEqual(skillTransitionRecord({
+    skill: 'old', from: 'live', to: 'superseded', supersededBy: 'new',
+    at: '2026-10-01T10:00:00Z', reason: 'owner verdict',
+  }), {
+    skill: 'old', from: 'live', to: 'superseded', supersededBy: 'new',
+    at: '2026-10-01T10:00:00Z', reason: 'owner verdict',
+  });
+  assert.throws(() => skillTransitionRecord({
+    skill: 'old', from: 'live', to: 'superseded', at: '2026-10-01', reason: 'x',
+  }), /supersededBy/u);
 });

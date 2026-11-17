@@ -7,6 +7,7 @@ import {
   assertPrMergeableForShip,
   autoMergeDecision,
   headSyncProblem,
+  readHeadRefs,
   ciWaitDisposition,
   extractIssueMentions,
   isBaseHeldElsewhere,
@@ -52,7 +53,7 @@ test('planPrShip: title + trailer + Closes + порядок шагов', () => {
   assert.match(commitBody, /Co-Authored-By: Claude Opus 4\.8/);
   assert.deepEqual(
     steps.map((s) => s.label),
-    ['branch', 'commit', 'push', 'pr-create', 'ci-wait', 'review-gate', 'merge', 'verify', 'branch-cleanup', 'sync-fetch', 'land-guard', 'land-rebase', 'land-upstream'],
+    ['branch', 'commit', 'push', 'pr-create', 'ci-wait', 'review-gate', 'merge', 'verify', 'branch-cleanup', 'sync-fetch', 'land-guard', 'land-rebase'],
   );
   assert.deepEqual(steps[0].args, ['checkout', '-b', 'feat/x']);
 });
@@ -100,7 +101,7 @@ test('#700: --merge-only даёт ТОЛЬКО merge-хвост, без branch/c
   const { steps, title, commitBody } = planPrShip({ mergeOnly: true, currentBranch: 'fix/x' });
   assert.deepEqual(
     steps.map((s) => s.label),
-    ['ci-wait', 'review-gate', 'merge', 'verify', 'branch-cleanup', 'sync-fetch', 'land-guard', 'land-rebase', 'land-upstream'],
+    ['ci-wait', 'review-gate', 'merge', 'verify', 'branch-cleanup', 'sync-fetch', 'land-guard', 'land-rebase'],
   );
   assert.equal(title, '', 'merge-only не строит заголовок (PR уже открыт)');
   assert.equal(commitBody, '', 'merge-only ничего не коммитит');
@@ -266,7 +267,7 @@ test('base свободен → дерево садится на СВОЮ вет
   });
   assert.deepEqual(
     steps.map((s) => s.label),
-    ['commit', 'push', 'pr-create', 'ci-wait', 'review-gate', 'merge', 'verify', 'sync-fetch', 'land-guard', 'land-rebase', 'land-upstream'],
+    ['commit', 'push', 'pr-create', 'ci-wait', 'review-gate', 'merge', 'verify', 'sync-fetch', 'land-guard', 'land-rebase'],
   );
   assert.match(skippedSync ?? '', /вровень с origin\/main/u, 'хвост объясняет конечное состояние дерева, а не молчит');
 });
@@ -521,6 +522,24 @@ test('--merge-only при расхождении с origin отказывает�
   assert.equal(headSyncProblem({}), null);
 });
 
+test('#2460: два merge-only preflight подряд сверяют origin/текущая-ветка, а не испорченный upstream', () => {
+  const sha = 'a'.repeat(40);
+  const calls = [];
+  const run = (_cmd, args) => {
+    calls.push(args);
+    if (args[0] !== 'rev-parse') throw new Error('unexpected git call');
+    if (args[1] === 'HEAD') return `${sha}\n`;
+    if (args[1] === 'refs/remotes/origin/fix/x') return `${sha}\n`;
+    if (args[1] === '@{u}') return `${'b'.repeat(40)}\n`;
+    throw new Error(`unexpected ref: ${args[1]}`);
+  };
+
+  assert.equal(headSyncProblem(readHeadRefs('fix/x', run)), null, 'первый вызов проходит');
+  assert.equal(headSyncProblem(readHeadRefs('fix/x', run)), null, 'второй вызов по той же ветке проходит');
+  assert.ok(calls.some((args) => args[1] === 'refs/remotes/origin/fix/x'));
+  assert.ok(!calls.some((args) => args[1] === '@{u}'), 'чужой или переназначенный upstream не предмет сравнения');
+});
+
 test('#700 сохранён: merge-only по-прежнему без push/commit/pr-create', () => {
   const { steps } = planPrShip({ mergeOnly: true, currentBranch: 'feat/x', type: 'feat', message: 'm' });
   const labels = steps.map((s) => s.label);
@@ -598,7 +617,7 @@ test('#1759 (а): после мерджа дерево на СВОЕЙ ветк�
   const labels = steps.map((s) => s.label);
   assert.ok(!labels.includes('sync-checkout'), 'checkout в base — вот что делало дерево держателем');
   const rebase = steps.find((s) => s.label === 'land-rebase');
-  assert.deepEqual(rebase.args, ['checkout', '-B', 'sprint/x', 'origin/main']);
+  assert.deepEqual(rebase.args, ['checkout', '--no-track', '-B', 'sprint/x', 'origin/main']);
   assert.match(skippedSync ?? '', /никто не держит/u, 'конечное состояние названо вслух');
 });
 
@@ -619,22 +638,13 @@ test('#1759: гвард ЗОВЁТ единственный носитель п�
   assert.ok(guard.args.includes('--branch') && guard.args.includes('sprint/x'), 'ветка названа явно, а не берётся из HEAD после мерджа');
 });
 
-test('#1759 (в): upstream перецеленной ветки утверждается ЯВНЫМ шагом, последним в хвосте', () => {
-  // `checkout -B` печатает «upstream is gone» по СТАРОМУ upstream — по ветке, удалённой
-  // этим же мерджем, — и настраивает новый уже после. Предупреждение о прошлом стоит
-  // последним и читается как текущее состояние (попались на этом 08.08). Итог должен
-  // утверждаться своей строкой, а не выводиться из побочного эффекта чужой команды.
+test('#2460: посадка выравнивает ветку без переназначения upstream на origin/main', () => {
   const { steps, skippedSync } = planMergeTail({ branch: 'sprint/x', worktreeBranches: [] });
   const labels = steps.map((s) => s.label);
-  const up = steps.find((s) => s.label === 'land-upstream');
-  assert.ok(up, 'шаг есть');
-  assert.deepEqual(up.args, ['branch', '--set-upstream-to=origin/main', 'sprint/x']);
-  assert.ok(
-    labels.indexOf('land-upstream') > labels.indexOf('land-rebase'),
-    'после перецеливания: раньше — настроил бы upstream ветке, которую checkout тут же переписал',
-  );
-  assert.equal(labels.indexOf('land-upstream'), labels.length - 1, 'последним — читатель видит верное состояние последней строкой');
-  assert.match(skippedSync ?? '', /upstream ветки → origin\/main/u, 'итог назван и в сводке');
+  const land = steps.find((s) => s.label === 'land-rebase');
+  assert.deepEqual(land.args, ['checkout', '--no-track', '-B', 'sprint/x', 'origin/main']);
+  assert.ok(!labels.includes('land-upstream'), 'upstream рабочей ветки не переписываем');
+  assert.match(skippedSync ?? '', /upstream не переназначался/u, 'итог назван и в сводке');
 });
 
 test('#1759: «сесть на base» осталось возможным — но флагом, не умолчанием', () => {

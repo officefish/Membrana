@@ -80,10 +80,14 @@ export function renderVerdictMarker({ sha, base, verdict, lead, at }) {
  * Ядро её не добывает: ни git, ни сети здесь нет. Без неё поведение прежнее для legacy-
  * вердиктов и честный `unknown` для вердиктов, которые базу назвали.
  *
- * @param {{headSha: string|null, currentBase?: string|null, verdict: ReturnType<typeof parseVerdict>, override?: {enabled: boolean, reason?: string}, artifact?: {exists: boolean, path?: string}}} input
+ * `leadConvention` — признак «у диффа нет хозяина ревью» из артефакта (#2491), приносит
+ * вызывающий через `leadConventionFromBody`. Ядро назначения не считает: судья один, и он
+ * в `review-lead.mjs`. Без признака поведение прежнее.
+ *
+ * @param {{headSha: string|null, currentBase?: string|null, verdict: ReturnType<typeof parseVerdict>, override?: {enabled: boolean, reason?: string}, artifact?: {exists: boolean, path?: string}, leadConvention?: {outOfConvention: boolean}}} input
  * @returns {{state: 'pass'|'block'|'unknown', reason: string}}
  */
-export function reviewGateDecision({ headSha, currentBase, verdict, override, scope, artifact } = {}) {
+export function reviewGateDecision({ headSha, currentBase, verdict, override, scope, artifact, leadConvention } = {}) {
   if (override?.enabled) {
     const reason = String(override.reason ?? '').trim();
     if (!reason) {
@@ -190,10 +194,20 @@ export function reviewGateDecision({ headSha, currentBase, verdict, override, sc
         'остальное он не видел — это не суждение о коде. Резать PR на части, влезающие в порог (#1550)',
     };
   }
+  // #2491: «у диффа нет хозяина ревью» доезжает до ПРИЧИНЫ, а значит до description
+  // commit-статуса `review/teamlead` — туда, где её читают на PR. Состояние гейта признак
+  // НЕ меняет: сделать его красным значит закрыть мердж всему, что ещё не покрыто картой
+  // скоупов, а это решение владельца, не исполнителя. Молчание он покидает здесь.
+  const offConvention = leadConvention?.outOfConvention
+    ? ' · ВНЕ КОНВЕНЦИИ: ведущий назначен умолчанием — карта скоупов не покрывает пути этого диффа (#2491)'
+    : '';
   if (verdict.verdict === 'BLOCK') {
-    return { state: 'block', reason: `тимлид дал BLOCK по ${headSha.slice(0, 8)} — устранить замечания и перепрогнать ревью (жёсткий стоп, слово владельца 29.07)` };
+    return {
+      state: 'block',
+      reason: `тимлид дал BLOCK по ${headSha.slice(0, 8)} — устранить замечания и перепрогнать ревью (жёсткий стоп, слово владельца 29.07)${offConvention}`,
+    };
   }
-  return { state: 'pass', reason: `LGTM тимлида (${verdict.lead ?? 'lead'}) по ${headSha.slice(0, 8)}` };
+  return { state: 'pass', reason: `LGTM тимлида (${verdict.lead ?? 'lead'}) по ${headSha.slice(0, 8)}${offConvention}` };
 }
 
 /**
@@ -225,6 +239,29 @@ const SCOPE_MARKER_RE = /<!--\s*review-scope:\s*truncated\s+sent=(\d+)\s*-->/u;
  */
 export function renderScopeMarker({ sentChars }) {
   return `<!-- review-scope: truncated sent=${sentChars ?? 0} -->`;
+}
+
+/**
+ * Метка «у диффа нет хозяина ревью» (#2491) — пара к `renderLeadConventionMarker`, по образцу
+ * `scopeFromBody` ↔ `renderScopeMarker` выше: формат один, копий строки в двух файлах нет.
+ *
+ * СУДЬЯ ПО-ПРЕЖНЕМУ ОДИН. Назначение ведущего выносит только `resolveReviewLead`
+ * (`review-lead.mjs`); гейт карты скоупов не знает и ничего не пересчитывает — он ЧИТАЕТ
+ * уже вынесенный признак из артефакта и доносит его до commit-статуса. До 28.09 признак не
+ * покидал stderr `code-review.mjs`, то есть измеримая величина выбрасывалась.
+ *
+ * @param {string} md тело артефакта ревью
+ * @returns {{ outOfConvention: boolean }}
+ */
+export function leadConventionFromBody(md) {
+  return { outOfConvention: LEAD_CONVENTION_MARKER_RE.test(String(md ?? '')) };
+}
+
+const LEAD_CONVENTION_MARKER_RE = /<!--\s*review-lead:\s*out-of-convention\s*-->/u;
+
+/** @returns {string} */
+export function renderLeadConventionMarker() {
+  return '<!-- review-lead: out-of-convention -->';
 }
 
 /** Сравнение SHA с учётом коротких форм (7+ hex). */

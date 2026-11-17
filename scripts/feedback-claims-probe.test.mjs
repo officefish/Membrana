@@ -103,6 +103,24 @@ test('отсутствующая карточка предъявляется ф�
   assert.equal(e.cardFound, false);
 });
 
+// b4 ritual-reads-decisions: ведомость решённого в контексте обвязки.
+test('b4: с ведомостью вещдок несёт decidedIn для любого класса; без ведомости — null, а не «не решено»', () => {
+  const ledger = {
+    decisions: [{ sprintId: 'sample-library-paging-a11y', key: '//decisions', path: 'docs/sprint/cut/sample-library-paging-a11y.json', ratifiedAt: '2026-09-29T15:13:04+03:00', text: '(1) aria-current с индикатора СНЯТЬ' }],
+    closedSprints: [{ sprintId: 'batch-collection-run-contour', status: 'pass', closedDay: '2026-09-29', card: 'active', stale: true }],
+  };
+  const base = { cwd: process.cwd(), hasGit: false, registry: [{ id: 'batch-collection-run-contour', status: 'active' }], scripts: {} };
+  const decided = collectEvidence({ token: 'aria-current', classes: [ATOM_CLASSES.CARD, ATOM_CLASSES.DOC] }, { ...base, ledger });
+  assert.deepEqual(decided.decidedIn, ['решение docs/sprint/cut/sample-library-paging-a11y.json#//decisions (ратифицировано 2026-09-29T15:13:04+03:00)']);
+  const card = collectEvidence({ token: 'batch-collection-run-contour', classes: [ATOM_CLASSES.CARD] }, { ...base, ledger });
+  assert.equal(card.cardFound, true);
+  assert.deepEqual(card.decidedIn, ['спринт закрыт 2026-09-29 (pass), карточка active — долг закрытия']);
+  const none = collectEvidence({ token: 'aria-current', classes: [ATOM_CLASSES.CARD] }, base);
+  assert.equal(none.decidedIn, null, 'ведомость не подана — не узнали');
+  const unrelated = collectEvidence({ token: 'PromoDeclineReason', classes: [ATOM_CLASSES.SYMBOL] }, { ...base, ledger });
+  assert.deepEqual(unrelated.decidedIn, [], 'ведомость подана, токена в ней нет');
+});
+
 test('секция дописывается формой ручной поправки: не стирает, называет протокол и дерево', () => {
   const s = claimsSection('| Вердикт |\n| --- |', {
     protocolRel: 'docs/seanses/team-evening-feedback-2026-08-07.md',

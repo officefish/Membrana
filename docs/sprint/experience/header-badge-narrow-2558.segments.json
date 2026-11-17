@@ -1,0 +1,9 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "header-badge-narrow-2558",
+  "measuredAt": "2026-10-03T11:24:00Z",
+  "segments": [
+    { "cutBlockId": "b1-hold-badge-yields-last", "changedLines": 147, "evidence": "git diff --numstat c7e4a8e6..abb03c11 по файлам зоны b1 — board-canvas-breadcrumb.test.tsx 47/0 (новый) + board-canvas-breadcrumb.tsx 5/1 + board-header-layout.test.ts 41/1 + board-overflow-hold-badge.tsx 6/2 + board-overflow-hold.test.tsx 22/3 + device-board-shell.tsx 3/1 + types/board-ui.ts 15/0 = 139+/8− (код 4 файла ~30, зубы ~117; коммит abb03c11, PR #2562 влит d8105f64)" },
+    { "cutBlockId": "b2-live-check-closure-1065", "changedLines": 270, "evidence": "ветка chore/close-header-badge-narrow-2558 от 2e59a5c3 — CLOSURE.md 137 (+ раздел гейта/опыта и второй круг angelina ~30) + reviews/rodchenko.md 26 + reviews/angelina.md 28 (+ второй круг ~15) + execution-traces.jsonl 4 + segments ~12 + LOCAL_SPRINT_ACTIVE/LOG ~20 (wc -l на момент замера 11:24Z + прогноз дельты до сдачи)" }
+  ]
+}

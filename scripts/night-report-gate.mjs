@@ -113,6 +113,8 @@ export function pullNightReport(cwd, deps = {}) {
       expectedRevision,
       branch: deps.branch ?? NIGHTLY_BRANCH,
       exec,
+      trunkRevisionAt: deps.trunkRevisionAt,
+      historyHas: deps.historyHas,
     });
     writeNightSummary(cwd, summary);
     console.error(
@@ -146,7 +148,7 @@ export function runNightReportCli(argv, deps = {}) {
   Гейт ночи для утра (#1293): красный/несвежий/отсутствующий носитель = STOP (exit 2).
   --pull — сперва собрать ${NIGHT_SUMMARY_REPORT_REL}; tests-report ${NIGHTLY_ARTIFACT}/${NIGHTLY_WORKFLOW} подтягивается как детализация.
   --expected-revision SHA — тестовый/ручной target вместо origin/main (минимум 12 hex).
-  Дисциплина: дом носителя tests/reports/nightly-summary/ локален (gitignore), свежесть — по git revision, не по календарной дате.`);
+  Дисциплина: дом носителя tests/reports/nightly-summary/ локален (gitignore); свежесть — по вершине ствола НА МОМЕНТ запуска и по открытому циклу ночи, не по календарной дате и не по окну в часах.`);
     return 0;
   }
   if (args.pull) pullNightReport(cwd, deps);

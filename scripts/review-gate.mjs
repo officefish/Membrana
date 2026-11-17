@@ -25,6 +25,7 @@ import { EXTERNAL_CALL_TIMEOUT_MS } from './lib/merge-fact.mjs';
 import { verdictFromBody } from './lib/code-review-ritual.mjs';
 import {
   REVIEW_STATUS_CONTEXT,
+  leadConventionFromBody,
   parseVerdict,
   publishReviewStatus,
   renderVerdictMarker,
@@ -199,7 +200,9 @@ function main() {
     path: foundPath ?? reviewRel,
     searched: searched.length > 1 ? searched : undefined,
   });
-  let decision = reviewGateDecision({ headSha, currentBase, verdict: parseVerdict(md), override, scope: scopeFromBody(md), artifact: artifactOf() });
+  // #2491: `leadConvention` — третий адрес сигнала «у диффа нет хозяина ревью»: из артефакта
+  // в причину решения, а оттуда в description commit-статуса `review/teamlead`, то есть на PR.
+  let decision = reviewGateDecision({ headSha, currentBase, verdict: parseVerdict(md), override, scope: scopeFromBody(md), artifact: artifactOf(), leadConvention: leadConventionFromBody(md) });
 
   // --ensure (#1465 Ф2): «ревью не прогонялось» — не повод останавливать шип и звать
   // человека переставить две команды руками. Последовательность gate → code-review:pr →
@@ -220,7 +223,7 @@ function main() {
       console.error(`  ⚠ ревью не отработало (${String(e.message ?? e).split('\n')[0]}) — вердикта нет, гейт остаётся закрытым`);
     }
     md = existsSync(reviewPath) ? readFileSync(reviewPath, 'utf8') : '';
-    decision = reviewGateDecision({ headSha, currentBase, verdict: parseVerdict(md), override, scope: scopeFromBody(md), artifact: artifactOf() });
+    decision = reviewGateDecision({ headSha, currentBase, verdict: parseVerdict(md), override, scope: scopeFromBody(md), artifact: artifactOf(), leadConvention: leadConventionFromBody(md) });
   }
 
   const mark = decision.state === 'pass' ? '✓' : decision.state === 'block' ? '✗' : '?';

@@ -112,7 +112,10 @@ export function CabinetSampleDuplicatesPanel({
       await onRemove(ref.sampleId);
       setRemoved((prev) => new Set([...prev, ref.sampleId]));
     },
-    [onRemove, titleOf],
+    // `titleOf` здесь НЕ нужен: имя пробы называет окно удаления страницы, а не этот глагол.
+    // Лишняя зависимость пересобирала обработчик на каждой смене страницы проб (карта имён
+    // живёт страницей) — освежение чаще нужного, а не залежавшееся значение.
+    [onRemove],
   );
 
   const report = outcome?.report ?? null;

@@ -4,6 +4,7 @@ import { isBufferOverflowRefusal } from '@membrana/plugin-contracts';
 import { subscribeMediaLibraryBufferCleared } from '@/lib/mediaLibraryHub';
 
 import { getDeviceOverflowHold } from './deviceOverflowHold';
+import { startOverflowHoldOwnerBridge } from './ownerBridge';
 import type { DeviceOverflowHold, OverflowRefusalSnapshot } from './types';
 
 let installedFor: DeviceOverflowHold | null = null;
@@ -33,6 +34,8 @@ export function toOverflowRefusalSnapshot(refusal: SampleRefusal): OverflowRefus
  *  - доменный отказ сервера на POST пробы → `activateFromServer` (через словарь A);
  *  - шлюз отправки: при удержании `putSample` не делает fetch — 0 POST, 0 ретраев;
  *  - очистка буфера (`mediaLibrary.bufferCleared`) → `release('cleanup')`.
+ *  - привязка прибора (мембрана + прибор) → `reconcileOwner` через мост владельца (#2463):
+ *    эпизод чужой мембраны не показывается и запись не держит.
  * Идемпотентна: плагин, доска и мост состояния зовут её каждый — ставится один раз.
  */
 export function installDeviceOverflowHoldWiring(
@@ -52,11 +55,13 @@ export function installDeviceOverflowHoldWiring(
   const offCleared = subscribeMediaLibraryBufferCleared(() => {
     hold.release('cleanup');
   });
+  const offOwner = startOverflowHoldOwnerBridge(hold);
 
   installedFor = hold;
   uninstall = () => {
     offRefusal();
     offCleared();
+    offOwner();
     ServerStorageBackend.setSampleUploadGate(null);
     installedFor = null;
     uninstall = null;

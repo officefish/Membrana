@@ -1,0 +1,159 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "cold-archive-retention-2588",
+  "taskId": "cold-archive-retention-2588",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-10-05T12:48:00Z",
+    "to": "2026-10-20T20:00:00Z"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-cabinet-retention-field",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "packages/background-cabinet/prisma/schema.prisma",
+        "packages/background-cabinet/prisma/migrations/<ts>_membrane_archive_retention/migration.sql",
+        "packages/background-cabinet/src/domain/archive-retention.ts",
+        "packages/background-cabinet/src/domain/archive-retention.test.ts",
+        "packages/background-cabinet/src/modules/archive-retention/archive-retention.store.ts",
+        "packages/background-cabinet/src/modules/archive-retention/archive-retention.store.test.ts",
+        "packages/background-cabinet/src/modules/archive-retention/archive-retention.module.ts"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionAt": "2026-10-05T15:45:29Z",
+      "revisionOf": "aee8b847958dffb9f12951fca25c871d92613ff5044671b7b62d62c019618d44"
+    },
+    {
+      "blockId": "b2-cabinet-office-door",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-cabinet/src/config/env.schema.ts",
+        "packages/background-cabinet/src/common/guards/office-token.guard.ts",
+        "packages/background-cabinet/src/common/guards/office-token.guard.test.ts",
+        "packages/background-cabinet/src/modules/office-users/office-users.module.ts",
+        "packages/background-cabinet/src/modules/office-users/office-users.controller.ts",
+        "packages/background-cabinet/src/modules/office-users/office-users.service.ts",
+        "packages/background-cabinet/src/modules/office-users/office-users.dto.ts",
+        "packages/background-cabinet/src/modules/office-users/office-users.controller.test.ts",
+        "packages/background-cabinet/src/app.module.ts"
+      ],
+      "estimate": {
+        "changedLines": 320
+      },
+      "revisionAt": "2026-10-05T15:45:29Z",
+      "revisionOf": "4fe75e08e29acf2b4357a6619b4d3a42ce3891a90805615891d1b4f72f20f3da"
+    },
+    {
+      "blockId": "b3-office-cabinet-users-proxy",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "packages/background-office/src/config/env.schema.ts",
+        "packages/background-office/src/modules/cabinet-users/cabinet-users.client.ts",
+        "packages/background-office/src/modules/cabinet-users/cabinet-users.controller.ts",
+        "packages/background-office/src/modules/cabinet-users/cabinet-users.module.ts",
+        "packages/background-office/src/modules/cabinet-users/cabinet-users.controller.test.ts",
+        "packages/background-office/src/modules/panel-users/panel-users.module.ts",
+        "packages/background-office/.env.docker.example"
+      ],
+      "estimate": {
+        "changedLines": 280
+      },
+      "revisionAt": "2026-10-05T15:45:29Z",
+      "revisionOf": "12b3863abecebd681001c2aee2469f188ef9b86430d8bdf15fc7acf69d803b1a"
+    },
+    {
+      "blockId": "b4-panel-retention-select",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/panel/src/lib/cabinetUsersApi.ts",
+        "apps/panel/src/lib/cabinetUsersApi.test.ts",
+        "apps/panel/src/components/panel-users/CabinetUsersRetention.tsx",
+        "apps/panel/src/components/panel-users/PanelUsersBoard.tsx"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "revisionAt": "2026-10-05T15:45:29Z",
+      "revisionOf": "ab0dfc474afdcd41095fc6526907a27c2a30fbb91293a820d3e15f062b91a8ef"
+    },
+    {
+      "blockId": "b5-media-downgrade-archive-purge",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-media/src/modules/downgrade-archive/downgrade-archive-purge.ts",
+        "packages/background-media/src/modules/downgrade-archive/downgrade-archive-purge.test.ts",
+        "packages/background-media/src/modules/downgrade-archive/downgrade-archive-purge.service.ts",
+        "packages/background-media/src/modules/downgrade-archive/downgrade-archive-purge.service.test.ts",
+        "packages/background-media/src/modules/downgrade-archive/downgrade-archive-purge.controller.ts",
+        "packages/background-media/src/modules/downgrade-archive/downgrade-archive-purge.controller.test.ts",
+        "packages/background-media/src/modules/downgrade-archive/downgrade-archive.module.ts"
+      ],
+      "estimate": {
+        "changedLines": 360
+      },
+      "revisionAt": "2026-10-05T15:45:29Z",
+      "revisionOf": "72d13c520eb23f0e6408cdcca5f8e010070805393ff935a55c5a28d4b4b6ac72"
+    },
+    {
+      "blockId": "b6-office-sweep-trigger",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-sweep.scheduler.ts",
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-sweep.client.ts",
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-sweep.controller.ts",
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-sweep.module.ts",
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-sweep.scheduler.test.ts",
+        "packages/background-office/src/modules/cold-archive-sweep/cold-archive-sweep.controller.test.ts",
+        "packages/background-office/src/app.module.ts"
+      ],
+      "estimate": {
+        "changedLines": 240
+      },
+      "revisionAt": "2026-10-05T15:45:29Z",
+      "revisionOf": "887220dba49d2effdb434625ecf2cc45b36cace8f8f8f2c5abc1d0c7f27edcc1"
+    },
+    {
+      "blockId": "b7-live-acceptance-closure",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/local-sprint/cold-archive-retention-2588/",
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/sprint/experience/cold-archive-retention-2588.segments.json"
+      ],
+      "estimate": {
+        "changedLines": 100
+      },
+      "revisionAt": "2026-10-05T15:45:29Z",
+      "revisionOf": "34d3532793b87045cce5df0cbba8dc5b075ede1567e20fa603eaefbcce681fb9"
+    }
+  ],
+  "//why": "#2588 (блок 2 из двух, соседний #2587 — заморозка, режим отбора, разморозка). Слово владельца 05.10: данные, замороженные при понижении тарифа, хранятся в холодном архиве ограниченный срок и затем удаляются; умолчание 14 дней каждому пользователю, для тестов 1 день; срок задаётся в office, в разделе пользователей, выпадающим списком, отдельно для каждого пользователя.",
+  "//measure": "Ствол origin/main 796dfd87, дерево Membrana-installstate, замер 05.10 ~12:00–12:30Z. (1) РАЗДЕЛ ПОЛЬЗОВАТЕЛЕЙ OFFICE — это пользователи ПАНЕЛИ, не кабинета. `packages/background-office/src/modules/panel-users/panel-users-core.ts:10-22` PanelUser = {id, name, codeId, grants, permVersion, revoked, createdAt} — партнёр панели по промокоду; хранилище — JSON-файл `/var/lib/membrana-office/panel-users.json` (`panel-users.store.ts:9`, единственный персистентный стейт office по ADR 0005, `:11-17`). Ручки владельца: `panel-users.controller.ts:53` `@Controller('v1/panel')` + PanelAuthGuard, `:112` `GET admin/users` под `@OwnerAdmin` (не-owner'у 404). UI: `apps/panel/src/components/panel-users/PanelUsersBoard.tsx` (510 строк) — матрица пользователь×раздел, чеканка кодов, аудит. (2) ПОЛЬЗОВАТЕЛЬ, ЧЬИ ДАННЫЕ ЗАМОРАЖИВАЮТСЯ, — пользователь КАБИНЕТА: `packages/background-cabinet/prisma/schema.prisma:24-32` User{id,login,role}; `:70-85` Membrane{userId @unique, tariffId} — мембрана 1:1 с пользователем и несёт тариф. Данные лежат в MEDIA: `packages/background-media/prisma/schema.prisma:59-91` Device{membraneId}, `:133-146` Collection, `:148-171` Sample{sizeBytes, storageRef, createdAt} — по deviceId, с мембраной через Device.membraneId. (3) СВЯЗИ МЕЖДУ ПОЛЬЗОВАТЕЛЯМИ НЕТ: регистрация в кабинете гасит код панели через `POST /v1/internal/cabinet/registration-codes/consume` (`panel-users-internal.controller.ts:36-67`, ApiTokenGuard), но дверь «пользователя панели не создаёт» (`:32-34`), а кабинет создаёт User без ссылки на код (`packages/background-cabinet/src/modules/auth/auth.service.ts:205`, data = {login, passwordHash, role}). Office НЕ знает ни одного пользователя кабинета: grep `cabinet` в `packages/background-office/src` — только регистрационная дверь и plugin-results dto. (4) НАПРАВЛЕНИЯ ОБМЕНА СЕГОДНЯ: кабинет→office (регистрация, `office-registration-bridge.service.ts:49-70`, env OFFICE_URL/OFFICE_API_TOKEN); кабинет→media (`pair/media-bridge.service.ts:145-300`, тарифный контекст `PATCH /v1/devices/:id/membrane` `:200`); office→media (`packages/background-office/src/config/env.schema.ts:19-21` MEDIA_API_URL/MEDIA_API_TOKEN, `linear-snapshot/media-snapshot.client.ts:41-46`). office→кабинет — НЕТ ни одной двери; у кабинета нет входящей служебной охраны вовсе: `packages/background-cabinet/src/common/guards/` = admin.guard, session.guard; API_INTERNAL_TOKEN (`config/env.schema.ts:24,44`) используется только как исходящий токен к media. (5) ИСПОЛНИТЕЛИ ПО РАСПИСАНИЮ: `@nestjs/schedule` есть только у office (`packages/background-office/package.json:28`, `app.module.ts:56` ScheduleModule вне test), пример `night-hunt/night-hunt.scheduler.ts:11-21` @Cron UTC. У media и кабинета планировщика нет (grep @Cron/@Interval/setInterval: кабинет — только heartbeat `device-capture.service.ts:86`, node-realtime). (6) ПРЕЦЕДЕНТЫ ДЛЯ ПОВТОРНОГО ИСПОЛЬЗОВАНИЯ: настройка мембраны отдельной таблицей с ключом membraneId — `MembraneBufferPolicy` (кабинет, `schema.prisma:87-111`, «новая скалярная колонка на Membrane рушит перегрузку requireOwnedMembrane» — подтверждено 05.10: `sample-library.service.ts:195-210` объявляет ровную форму строки `{id,userId,tariffId,createdAt}` в двух перегрузках) и `TrackKeyTtlSetting` (media, `schema.prisma:207-229`, срок с fail-closed на умолчание); безопасное удаление «план → исполнение по поимённому списку» — `background-media/src/modules/buffer-cleanup/buffer-cleanup.service.ts:1-18` (execute удаляет только перечисленных, защита проверяется дважды); внутренняя охрана media принимает API_INTERNAL_TOKEN (`common/guards/api-token.guard.ts:22`, `media-device-access.guard.ts:31`). Журнала удалений в media нет — buffer-cleanup возвращает refused[], но не пишет следа. (7) ТАРИФ: понижение сегодня — только `selectTariff` (self) или admin; промокод вниз запрещён доменом (`domain/tariff-transition.ts:159` promo_downgrade_forbidden); журнал смен — `TariffChangeLog` (`schema.prisma:285-301`). (8) БЛОК 1 на 05.10: ветка `origin/feat/tariff-downgrade-freeze-2587` — d8cbb117 протокол консилиума; 8f72b868 ADR-0031 (`docs/adr/ADR-0031-downgrade-archive.md`) и план v2 `docs/sprint/cut/tariff-downgrade-freeze-2587.json`; носитель архива — `packages/background-media/src/modules/downgrade-archive/` (их b2: schema + downgrade-archive.store + downgrade-archive.module; их b3: downgrade-archive.controller/service/dto + media app.module). Кода архива в стволе ещё нет.",
+  "//consilium-verdicts": "Консилиум по обоим блокам ПРОВЕДЁН 05.10 12:39Z, вердикты 1–6 приняты владельцем — протокол `docs/seanses/tariff-downgrade-freeze-consilium-2026-10-05-2026-10-05.md` (в ветке блока 1, d8cbb117). Для этого плана обязательны: (3) служебная дверь кабинета для office ДОПУСТИМА по образцу #2393 под отдельным `CABINET_OFFICE_TOKEN`; scope v1 — GET пользователей мембраны с минимумом полей (id, tariff/plan, retentionDays, опц. displayLabel, createdAt; БЕЗ PII/credentials/проб), PUT retentionDays на мембрану; office не получает произвольный admin API кабинета; расширение двери — только новым ADR. (4) ТОЛЬКО СНИМОК: при заморозке кабинет передаёт срок, media пишет `expiresAt = frozenAt + retentionDays` в партию; смена срока позже старые партии НЕ пересчитывает; уборка — предикат `now >= expiresAt`. (2) носитель — отдельные таблицы DowngradeArchiveBatch + DowngradeArchivedSample в media (их создаёт блок 1). Итог — ADR-0031, его пишет блок 1 (их b0). Решения владельца по развилкам этого плана (через ведущую, 05.10): срок живёт в кабинете на мембране — да; снимок — да; список 1 · 7 · 14 (умолчание) · 30 · 90; office @Cron ежечасно; dry-run «только показать» + выключатель `COLD_ARCHIVE_SWEEP_ENABLED`, по умолчанию выключен; отдельный `CABINET_OFFICE_TOKEN`. Консилиум внутри блоков этого плана больше НЕ нужен.",
+  "//design": "ИСТИНА СРОКА — кабинет, на мембране. Реализация «поля мембраны» — отдельная таблица `MembraneArchiveRetention {id, membraneId @unique, days Int, updatedAt, updatedBy String}` по образцу MembraneBufferPolicy (`schema.prisma:87-111`): скалярная колонка на `Membrane` ломает перегрузки `requireOwnedMembrane` (TS2394, `sample-library.service.ts:195-210`) — чинить чужой модуль ради одного поля нельзя. Отсутствие строки = 14; значение вне закрытого списка на чтении = 14 (fail-safe в сторону ХРАНЕНИЯ, не удаления). Чистый домен `domain/archive-retention.ts`: `RETENTION_DAYS = [1, 7, 14, 30, 90]`, `DEFAULT_RETENTION_DAYS = 14`, `TEST_RETENTION_DAYS = 1`, `resolveRetentionDays(row | null)`, `isValidRetentionDays(x)`. Именованный вход для блока 1: `ArchiveRetentionStore.daysFor(membraneId): Promise<number>` (`modules/archive-retention/archive-retention.store.ts`) — его читает поток понижения блока 1 и кладёт `retentionDays` в приказ заморозки media. Контракт для блока 1 — порт, не класс: интерфейс `ArchiveRetentionReader { daysFor(membraneId: string): Promise<number> }` и DI-токен `ARCHIVE_RETENTION_READER` экспортируются из b1; блок 1 инжектит по токену и до влития b1 держит свою реализацию-умолчание (всегда 14), после влития провайдер токена — `ArchiveRetentionStore`. ДВЕРЬ кабинета для office (`modules/office-users`, охрана `OfficeTokenGuard` по заголовку X-Membrana-Token и ключу `CABINET_OFFICE_TOKEN`; ключ отдельный от API_INTERNAL_TOKEN — тот исходящий к media; env без ключа = дверь закрыта, не открыта): `GET /v1/internal/office/membranes?cursor&limit` → `{items: [{membraneId, userId, displayLabel, tariffId, retentionDays, isDefault, createdAt}], nextCursor}` — displayLabel = login пользователя кабинета (не email/телефон/секрет; иначе владельцу в списке нечем отличить мембраны — см. //owner-questions 1); НИКАКИХ passwordHash, sessions, проб, media-URL; поиска по PII нет. `PUT /v1/internal/office/membranes/:membraneId/archive-retention {days, actor}` → 200 `{membraneId, retentionDays, isDefault:false, updatedAt}`; идемпотентна (то же значение дважды → 200, одна строка); 400 на день вне списка; 404 на несуществующую мембрану. Больше ручек у двери нет (вердикт 3). OFFICE (`modules/cabinet-users`, регистрируется в PanelUsersModule): env `CABINET_API_URL`/`CABINET_API_TOKEN` (пара опциональна; без неё раздел отвечает 503 «кабинет не подключён», не пустой 200); `GET /v1/panel/admin/cabinet-users`, `PUT /v1/panel/admin/cabinet-users/:membraneId/archive-retention` под PanelAuthGuard + @OwnerAdmin (не-owner → 404); actor = panelIdentity.sub уходит в кабинет в `updatedBy`. ПАНЕЛЬ: в разделе «Пользователи» второй блок «Пользователи кабинета» — таблица displayLabel · тариф · срок архива (select из RETENTION_DAYS с подписями «1 (тест)», «14 (по умолчанию)»), оптимистичная смена с откатом как у галочек грантов; подпись «срок холодного архива, дней; действует на следующие заморозки» (вердикт 4). ИСПОЛНИТЕЛЬ УДАЛЕНИЯ — media, в модуле архива блока 1 (`modules/downgrade-archive/`, отдельные файлы `downgrade-archive-purge.*`): чистое ядро `downgrade-archive-purge.ts` — `selectExpired(batches, now)` = `state === 'frozen' && expiresAt <= now`; `restored`, `deleted`, `failed` не трогаются; `DowngradeArchivePurgeService.purgeExpired(now, {dryRun})` (глагол ADR-0031 и //junction-2588 блока 1): dryRun → отчёт `{candidates:[{batchId, membraneId, deviceId, frozenAt, expiresAt, samples, bytes}], totalBytes}` без побочных эффектов; боевой → по каждой партии условное обновление `updateMany where {id, state:'frozen', expiresAt ≤ now} set {state:'deleted', deletedAt}` с проверкой `count === 1` (count 0 → refused «разморожена или уже удалена», партия пропускается), затем удаление блобов DowngradeArchivedSample и строк; партия остаётся надгробием (идемпотентность: повтор отвечает deleted:0); дверь `POST /v1/internal/downgrade-archive/purge-expired {dryRun}` под ApiTokenGuard media (API_INTERNAL_TOKEN = MEDIA_API_TOKEN office). ПУСКОВИК — office `@Cron('0 * * * *', UTC)` через существующую пару MEDIA_API_URL/MEDIA_API_TOKEN. Два флага (слово владельца 05.10): `COLD_ARCHIVE_SWEEP_ENABLED` (умолчание выключен) — выключен значит ТИШИНА: cron не зовёт media вовсе, в лог одна строка «уборка выключена» на старте процесса, не каждый час; включён → cron зовёт media. `COLD_ARCHIVE_SWEEP_DRY_RUN` (умолчание ВКЛЮЧЁН, действует только при включённом cron) — cron зовёт media с dryRun:true и пишет в лог число кандидатов и байты; боевая уборка — только при ENABLED=true и DRY_RUN=false, оба явно. Ручная кнопка `GET /v1/panel/admin/cold-archive/sweep-preview` под @OwnerAdmin — dryRun по требованию владельца, работает независимо от обоих флагов (таблица «только показать» без кнопки удаления в том же жесте — вердикт консилиума); в логах — только числа и id партий.",
+  "//seam-2587": "СТЫК СВЕДЁН ВЕДУЩЕЙ 05.10 (не предложение). (А) Поле срока на мембране кабинета + миграция — ЭТОТ план, b1; блок 1 его только читает через ПОРТ: интерфейс `ArchiveRetentionReader { daysFor(membraneId: string): Promise<number> }` + DI-токен `ARCHIVE_RETENTION_READER` (экспорт b1, `modules/archive-retention/`). Блок 1 инжектит по токену и до влития b1 ставит провайдер-умолчание «всегда 14»; b1 заменяет провайдер на `ArchiveRetentionStore`, сигнатура не меняется — зуб P5e (store удовлетворяет интерфейсу) держит стык типом. (Б) `retentionDays` в приказ заморозки media кладёт БЛОК 1: кабинет при понижении читает поле мембраны и передаёт число; media штампует `expiresAt = frozenAt + retentionDays` (вердикт 4, снимок). Media НИКОГДА не ходит за сроком ни в кабинет, ни в office. (В) Имена по ADR-0031 (`docs/adr/ADR-0031-downgrade-archive.md`): таблицы `DowngradeArchiveBatch` / `DowngradeArchivedSample`, модуль media `modules/downgrade-archive/`, глагол уборки `purgeExpired(now, {dryRun})`. Колонки DowngradeArchiveBatch создаёт блок 1 в своём b2: `frozenAt`, `expiresAt`, `state` ∈ frozen | restored | deleted | failed (+ restoredAt/deletedAt), индекс по `expiresAt` (и `(state, expiresAt)` — просьба этого плана, чтобы уборка не сканировала архив). Этому плану от записи нужны ещё membraneId и deviceId владельца, список DowngradeArchivedSample с storageRef и sizeBytes. (Г) Удаляет media (b5 этого плана) условным обновлением `state='frozen' AND expiresAt<=now` с проверкой count — разморозка блока 1 обязана брать партию тем же условием `state='frozen'` со своей стороны, тогда гонки «разморозил, а уборка удалила» нет. Разморозка после надгробия (state=deleted) — отказ archive_expired (зона блока 1). Партии state=failed (частичная заморозка) уборка НЕ трогает ни в dryRun, ни в боевом режиме; их чистит блок 1 при повторе понижения той же мембраны (слово владельца 05.10); отдельного глагола в v1 нет. (Д) Кабинет показывает дату удаления из expiresAt партии (зона блока 1) — та же дата, по которой режет media. (Е) ПОРЯДОК: b1 этого плана — после ADR-0031 блока 1 (код только после записи ADR, вердикт Teamlead) и ДО кабинетной стороны блока 1 (их b3/b4 читают daysFor); b2–b4 — независимо от блока 1; b5 — только после влитых b2+b3 блока 1 (схема DowngradeArchiveBatch и словарь state; зона b5 правит их `downgrade-archive.module.ts` — после слияния это ствол, не параллель); b6 — после b5.",
+  "//cutter": "Резчик vesnin. Прогон контекста 05.10 ~12:40Z — yarn ask vesnin --ticket-file <замер по стволу 796dfd87>, конспект docs/discussions/cut-cold-archive-retention-2588-vesnin.md. Согласен с 1а (истина — мембрана кабинета; срок цепляется на ось Membrane, общую точку User→Membrane→Device), 2а (штамп при заморозке), 4а (office @Cron пусковик, media исполнитель) — все три подтверждены консилиумом и владельцем. Порядок резчика: b1→b2→b3→b4 сразу после ратификации; b5, b6 BLOCKED BY #2587 («резьба по воздуху» без формы записи архива) — сохранён. Главная находка резчика — строка «кто кладёт retentionDays в приказ заморозки» ничья — ЗАКРЫТА ведущей: блок 1. Расхождение с резчиком об объёме консилиума снято: консилиум прошёл по обоим блокам целиком.",
+  "//order": "[ADR-0031 блока 1 влит] → b1 → b2 → b3 → b4 (сквозной экран: срок пишется и читается, без удаления; поставка ценна сама — владелец проставляет 1 день тестовым мембранам до понижения) → [влиты b2+b3 блока 1: схема DowngradeArchiveBatch, state, двери] → b5 → b6 → b7. b4 можно вести параллельно b3 по форме ответа из //design (типы в самом b4). Точки перерезки: (а) форма DowngradeArchiveBatch блока 1 при влитии не несёт membraneId/deviceId/expiresAt/state — стоп, в стык, не обход в b5; (б) кабинет за прокси не пропускает `/v1/internal` снаружи (не проверено) — стоп, замер инфраструктуры словом владельца; (в) блок 1 кладёт срок в партию в секундах (их старый junction предлагал archiveRetentionSeconds) — договор: дверь и домен этого плана работают в ДНЯХ, перевод в секунды — на стороне приказа заморозки блока 1, одно место.",
+  "//dod": "b1: зуб `archive-retention.test.ts`: P1 resolveRetentionDays(null)=14; P2 значение вне списка (0, 2, 15, -1, NaN) → 14 (fail-safe хранения); P3 RETENTION_DAYS ровно [1,7,14,30,90], DEFAULT=14 ∈ списка, TEST=1 ∈ списка; P4 isValidRetentionDays отвергает 0, -1, 2, '14', 14.5, принимает 1 и 90. Зуб store (fake prisma): P5 daysFor(мембрана без строки) = 14; P5b set(membraneId, 1, actor) → upsert одной строки с updatedBy, повтор того же значения не плодит строк. Миграция: таблица с @@unique(membraneId), без backfill (отсутствие строки = умолчание — закон домена P1), обратима. Красные на стволе: P1–P5b (модулей нет). b2: P6 без заголовка / с чужим токеном → 401; с API_INTERNAL_TOKEN (ключ к media) → 401 — ключи не взаимозаменяемы; P7 env без CABINET_OFFICE_TOKEN → любая попытка 401/503, дверь не открыта «без ключа»; P8 GET отдаёт мембране без строки retentionDays=14, isDefault=true; тело ответа НЕ содержит ключей passwordHash, token, sessions, samples, storageRef (зуб проверяет сериализованный JSON) — вердикт 3; P9 GET с limit=2 на трёх мембранах → 2 + nextCursor, второй вызов → 1 без курсора; P10 PUT 1 → 200, повторный GET → 1, isDefault=false, updatedBy=actor; PUT 1 второй раз → 200, строк одна; P11 PUT 2 → 400, строка не создана; P12 PUT на несуществующую мембрану → 404; P13 в контроллере нет других маршрутов (зуб по Reflect-метаданным: ровно GET и PUT). Красные на стволе: все. b3: P14 без CABINET_API_URL → 503 с явной причиной «кабинет не подключён», не пустой 200; P15 не-owner → 404 (как admin-семейство); P16 actor из panelIdentity.sub доезжает в тело PUT; P17 токен кабинета не попадает ни в ответ, ни в лог (зуб на сериализацию). Красные: все. b4: P18 api-обёртка: смена → PUT, отказ → откат значения на прежнее; P19 список опций ровно RETENTION_DAYS, подпись умолчания «(по умолчанию)», 1 — «(тест)»; P20 при 503 от office блок показывает «кабинет не подключён», а не пустую таблицу. b5: ядро P21 selectExpired: frozen ∧ expiresAt ≤ now → в план; frozen ∧ expiresAt > now → нет; restored / deleted / failed → нет; граница expiresAt === now → в план; P22 dryRun: ни одного вызова update/delete/blob rm (fake prisma и fake blob считают вызовы), отчёт несёт batchId и bytes; P23 боевой: блобы удалены, строки DowngradeArchivedSample удалены, партия state=deleted с deletedAt; повтор → deleted:0, refused:0; P24 гонка: партия, у которой между планом и исполнением state стал restored, — count 0 → refused с причиной, блобы целы; P25 дверь без токена → 401, тело без dryRun → 400 (явность режима обязательна, умолчания «боевой» нет). Красные на стволе: все (модуля downgrade-archive нет — после влития блока 1 красные остаются: файлов purge нет). b6: P26 ENABLED выключен → ни одного вызова media за тик (fake client считает вызовы = 0), в логе нет ежечасной строки; ENABLED включён, DRY_RUN не задан → вызов с dryRun:true (умолчание — показать), лог несёт число кандидатов и байты; ENABLED включён и DRY_RUN=false → dryRun:false, ровно один боевой вызов; P26b sweep-preview отвечает и при выключенном ENABLED (кнопка независима от cron); P27 отказ media (5xx/сеть) → лог с кодом, исключение наружу не летит, следующий час пробует снова; P28 расписание ровно `0 * * * *` UTC; P29 sweep-preview под @OwnerAdmin: не-owner 404, owner — отчёт dryRun как есть, без секретов. Красные: все. b7: живая приёмка рукой владельца: тестовой мембране в панели 1 день → понижение тарифа (путь блока 1) → в кабинете дата удаления = завтра → назавтра sweep-preview показывает партию → включение `COLD_ARCHIVE_SWEEP_ENABLED` → в следующий час партия удалена, надгробие видно (state=deleted), повторный прогон 0, квота прибора не выросла; снимок чисел (без секретов) в CLOSURE.md; sprint:gate pass; sprint:experience записан.",
+  "//forecast": "b1 ≈220 (домен ≈45, зуб домена ≈70, store+module ≈45, зуб store ≈40, схема+миграция ≈20). b2 ≈320 (охрана ≈40 + зуб ≈50, контроллер+сервис+dto ≈120, зуб двери ≈100, env/app.module ≈10). b3 ≈280 (клиент ≈70, контроллер ≈60, зуб ≈120, env/модуль ≈30). b4 ≈260 (компонент ≈150, api ≈50, зуб ≈60). b5 ≈360 (ядро ≈50 + зуб ≈60, сервис ≈100 + зуб ≈90, контроллер ≈30 + зуб ≈30) — условно до влития схемы блока 1. b6 ≈240 (scheduler ≈50, client ≈50, controller ≈30, зубы ≈100, модуль ≈10). b7 ≈100 доков. Код ≈1680 строк в 6 PR, ни один не oversized (>400); против первой редакции +180 строк (пагинация и фильтр полей двери, sweep-preview, store для блока 1). Опровержения: (а) b5 за 400, если блок 1 положит DowngradeArchivedSample без storageRef/sizeBytes (уборке придётся ходить за байтами) — перерезка b5 на ядро и исполнение; (б) b2 за 400, если кабинету нужен e2e на живом Postgres (сейчас зубы на fake prisma, как tariff-transition.service.test.ts).",
+  "//out-of-scope": "Заморозка, режим отбора, разморозка, экран архива в кабинете, DowngradeArchiveBatch/DowngradeArchivedSample, ADR-0031, передача retentionDays в приказ заморозки — блок 1 (#2587). Пересчёт сроков уже замороженного — отвергнут вердиктом 4 (снимок священен). Уборка партий state=failed (неполная заморозка) — не удаляется этим планом: партия failed не несёт согласия пользователя на срок; их чистит блок 1 при повторе понижения (решение владельца 05.10), отдельный глагол не в v1. Напоминание пользователю о скором удалении — нет канала, отдельный вопрос. Связь пользователя панели с пользователем кабинета — не нужна для срока, не делается. Смена срока самим пользователем в кабинете — слово владельца «в office», кабинет показывает срок read-only (зона блока 1). Расширение двери кабинета сверх GET/PUT — только новым ADR (вердикт 3).",
+  "//owner-questions": "ЗАКРЫТЫ словом владельца 05.10 (через ведущую). 1. displayLabel в GET двери = login пользователя кабинета — ДА, годится (login — имя входа, не email/телефон/секрет). 2. Партии state=failed чистит БЛОК 1 при повторе понижения; уборка этого плана их не трогает; отдельный глагол не в v1. 3. При выключенном COLD_ARCHIVE_SWEEP_ENABLED media НЕ звать вовсе — выключено значит тишина; «только показать» — отдельный флаг COLD_ARCHIVE_SWEEP_DRY_RUN при включённом cron (умолчание включён) плюс ручная кнопка sweep-preview в панели, которая остаётся и от флагов не зависит. РЕШЕНИЕ ВЛАДЕЛЬЦА 05.10 (после перерезки, через ведущую): развилка P7a — ДА, CHECK (\"days\" IN (1,7,14,30,90)) в миграции кабинета; домен остаётся вторым поясом (P5a); смена списка = миграция.",
+  "//recut": "Перерезка 05.10 ~12:48Z по вердиктам консилиума 1–6 и решениям владельца (через ведущую). Что изменилось против редакции 52c72ad0: (1) ключ `//consilium` (нужен консилиум) → `//consilium-verdicts` (проведён, вердикты и решения зафиксированы); `//forks` снят — развилки 1–6 решены, решения внесены в `//design`; `//not-one-shot` снят как исчерпанный. (2) `//seam-2587` — из предложения стал сведённым стыком: retentionDays кладёт блок 1; поле и миграция — наш b1; колонки DowngradeArchiveBatch (frozenAt, expiresAt, state frozen|restored|deleted|failed, индекс по expiresAt) — блок 1 b2; срок в днях, перевод — на стороне блока 1. (3) b1: добавлен `ArchiveRetentionStore` с именованным входом `daysFor(membraneId)` для блока 1 (+70 строк); обоснована таблица вместо колонки (TS2394 на `requireOwnedMembrane`). (4) b2: дверь сужена по вердикту 3 — минимум полей, запрет PII/credentials/проб зубом P8, пагинация P9, идемпотентный PUT P10, «ровно два маршрута» P13, dto отдельным файлом. (5) b5: переименован в `b5-media-downgrade-archive-purge`, переехал в модуль архива блока 1 (`modules/downgrade-archive/downgrade-archive-purge.*`, регистрация в их `downgrade-archive.module.ts` после слияния); словарь state по стыку; dryRun обязателен в теле (P25). (6) b6: добавлен `GET /v1/panel/admin/cold-archive/sweep-preview` под @OwnerAdmin (таблица «только показать» по слову Верстальщика); выключенный выключатель = dryRun ежечасно с цифрами в логе (вопрос 3 владельцу). (7) `//order`: b1 после ADR-0031 блока 1 и до их кабинетной стороны; b5 после их b2+b3. (8) `//owner-questions` — три новых вопроса (displayLabel, failed-партии, dryRun при выключенном). Окно сдвинуто на 20.10 (как у блока 1). Прогноз ≈1500 → ≈1680 строк. ДОПОЛНЕНИЕ 05.10 (ответы владельца на три вопроса): //owner-questions закрыты; //design и b6 (P26/P26b): выключатель = тишина, второй флаг COLD_ARCHIVE_SWEEP_DRY_RUN (умолчание включён) при включённом cron, sweep-preview независим от флагов; //seam-2587 и //out-of-scope: failed-партии чистит блок 1 при повторе понижения. Прогноз b6 не меняется (второй флаг ≈ +10 строк внутри 240). ВЫРАВНИВАНИЕ ПОД ADR-0031 05.10 (план v2 блока 1, 8f72b868): имена таблиц DowngradeArchiveBatch / DowngradeArchivedSample; модуль media блока 1 — modules/downgrade-archive/ (b5 → b5-media-downgrade-archive-purge, файлы downgrade-archive-purge.*, регистрация в их downgrade-archive.module.ts); глагол уборки purgeExpired(now, {dryRun}), дверь POST /v1/internal/downgrade-archive/purge-expired; в //design и //seam-2587 вписан порт ArchiveRetentionReader { daysFor } + DI-токен ARCHIVE_RETENTION_READER (блок 1 ждёт его как порт с умолчанием 14 до b1). Объёмы блоков не меняются.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-10-05T15:45:29Z",
+    "digest": "bed64417baa527b538d3339b5aedb40c64f61fc458d6395178a0f557a9800ab6"
+  }
+}

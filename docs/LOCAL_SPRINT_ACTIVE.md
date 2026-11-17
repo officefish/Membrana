@@ -4,6 +4,102 @@
 
 ## Focus
 
+- **archive-gc-journal-2588** ([#2632](https://github.com/officefish/Membrana/issues/2632)) · уборщик холодного
+  архива с журналом заданий · план v2 ратифицирован владельцем 08.10 12:49:21Z (17 блоков ≈3410 строк) · исполнение
+  начато с g0 (флаги office) и g1a (схема журнала media) · [`OPEN.md`](./local-sprint/archive-gc-journal-2588/OPEN.md).
+- **chart-list-plugin-20261003** · b1 влит PR #2567 (`ee405f48`) и выкачен в cabinet; владелец 04.10 принял три
+  критерия, объёмы 20/200, playback/waveform и вытеснения. Контрольная пара на одном корпусе 1838: loudness-over-floor
+  и spectral-variety совпали на 7/20 позициях, пересечение 18/20, первое различие 8; **gate pass 2/2 `honest_pair`**,
+  experience **hit 2/2** (331/230 и 299/220, порог 400 не пробит). [`CLOSURE.md`](./local-sprint/chart-list-plugin-20261003/CLOSURE.md).
+  Prod RunRecord в office не проверен из-за внешнего блока #2580; карточка ждёт отдельного решения владельца об архиве.
+- **library-loading-state-2570** ([#2570](https://github.com/officefish/Membrana/issues/2570)) ·
+  ратифицирован 03.10 12:35:56Z с умолчаниями; окно перерезано по слову владельца «Перерезать окно» (`window.from` →
+  12:35:56Z, повторная ратификация 15:51:41Z) · b1 `f16f5db0` (dynin) — PR #2574 влит (`f4e74219`) · живая приёмка b2 на
+  приборе `9e86ec85` (Studio `f4e74219`): холодный старт — синий «Хранилище сэмплов · Загрузка коллекций… · 486.7 MB /
+  4096.0 MB», жёлтого «Media-server недоступен» и «100.0 MB» нет; затем Buffer 8360, Базовый набор 120, d2609 1057;
+  регресс отказа — n/a · **gate pass 2/2 `honest_pair`** · experience **hit** (2/2, overflow 0/2; b1 345 против оценки
+  260 — порог не пробит) · [`CLOSURE.md`](./local-sprint/library-loading-state-2570/CLOSURE.md) — состояние загрузки
+  вместо ложного предупреждения; микрофон — #2573, загрузка буфера — #2571. Карточки в реестре нет.
+- **library-reconcile-on-open-2569** ([#2569](https://github.com/officefish/Membrana/issues/2569)) ·
+  ратифицирован 03.10 12:05:39Z («лёгкая сверка всегда», #2570 — отдельным спринтом) · b1 `b736e739` (dynin) — PR #2572
+  влит (`0d39cbad`) · живая приёмка b2 (Studio `f4e74219`, прибор `9e86ec85`): библиотека без перезапуска — «Базовый
+  набор», 120; сеть в devtools и смена каталога — n/a · **gate pass 2/2 `honest_pair`** · experience **hit** (2/2,
+  overflow 0/2; b1 321 против оценки 220 — порог не пробит) ·
+  [`CLOSURE.md`](./local-sprint/library-reconcile-on-open-2569/CLOSURE.md) — сверка коллекций при открытии библиотеки;
+  #2563 сужен до бейджа. Карточки в реестре нет.
+- **header-badge-narrow-2558** ([#2558](https://github.com/officefish/Membrana/issues/2558)) ·
+  ратифицирован 03.10 10:25:10Z инструментом с умолчаниями · b1 `abb03c11` (rodchenko) — PR #2562 **влит владельцем**
+  03.10 (`d8105f64`) · живая приёмка b2 на приборе `9e86ec85` (Studio `d8105f64`, удержание, сайдбар открыт): ≈1290 px —
+  бейдж «Буфер полон · Буфер …» первым, ничего не налезает; ≈1045 px — «Буфер пол…» держится, «Сохранить» уступил
+  целиком, INFO и правая группа целиком (02.10 здесь бейдж исчезал); ≈970 px — левая группа исчезает целиком: предел из
+  прогноза (отступ сайдбара + правая группа), вынесен в **#2565**; свёрнутый сайдбар / ≥1600 px / Tab — n/a ·
+  **gate pass 2/2 `honest_pair`** · experience **hit** по правилу инструмента (2/2, overflow 0/2; b1 147 строк против оценки
+  80 — порог 400 не пробит) · [`CLOSURE.md`](./local-sprint/header-badge-narrow-2558/CLOSURE.md) ·
+  [`OPEN.md`](./local-sprint/header-badge-narrow-2558/OPEN.md) — бейдж удержания уступает последним: первый ребёнок левой
+  группы шапки (клип режет правый хвост), пол `min-w-[5.5rem]` (минимум «Буфер пол…»), крошка `shrink-[4]`; константы в
+  `types/board-ui.ts`, зубы по положению/весу/полу. Карточки в реестре нет; Issue закрывает ведущая.
+- **evening-reads-done-work-20261002** (магистраль 02.10; PR #2551) ·
+  ратифицирован 02.10 10:26:49+03 инструментом · b1 (vesnin) + b2 (tarasov) + b3 (angelina) —
+  **gate pass 3/3 `honest_pair`; experience hit (3/3, overflow 0/3)** · [`OPEN.md`](./local-sprint/evening-reads-done-work-20261002/OPEN.md) ·
+  [`CLOSURE.md`](./local-sprint/evening-reads-done-work-20261002/CLOSURE.md) — вечер и code-review больше не получают
+  пустой oversized по #2543/#2544: #2544 несёт report+plan, #2543 — AUDIT+plan+experience; `code-review:pr` печатает
+  provenance документов дня (`cwd`, `git-root`, SHA файлов). Сдача `pr:ship --no-merge`; мердж — слово владельца.
+- **device-quota-after-tariff-2538** ([#2538](https://github.com/officefish/Membrana/issues/2538)) ·
+  ратифицирован 01.10 08:35:59Z инструментом с умолчаниями · b1 `2b09b9f3` (dynin) + b2 `4133dfcc` (vesnin) — PR #2541
+  **влит владельцем** 01.10 (`00257180`) · живая приёмка b3 на приборе `9e86ec85` (Studio `00257180`): лимит 2.00 GB по
+  обеим осям, строка «предел сервера прочитан 20:05:41», сервер 17:14Z 1945.6/2048 МБ совпадает; «Место освобождено» при
+  2 ГБ и бейдж после «Возобновить» — n/a (не наблюдались) · **gate pass 3/3 `honest_pair`** · experience **miss** по
+  правилу инструмента (точность 2/3: b1 425 строк > порога 400; по предмету 3/3) ·
+  [`CLOSURE.md`](./local-sprint/device-quota-after-tariff-2538/CLOSURE.md) · [`OPEN.md`](./local-sprint/device-quota-after-tariff-2538/OPEN.md) —
+  предел прибора читается лёгким `refreshQuota()` с моментом чтения (строка возраста в окне, отказ чтения не стирает
+  предел и помечается «снимок от …»); тики связанного режима (30 с / 60 с) и смена `tariff.id` в опросе кабинета
+  перечитывают предел — смена тарифа доезжает до прибора без действий оператора. Карточки в реестре нет; Issue закрывает
+  вечерний хвост. Выделено: #2540 «cabinet unreachable». Попутная находка со снимка (в работу не взята): бейдж в шапке
+  доски перекрыт галкой «INFO».
+
+- **board-hold-modal-2533** ([#2533](https://github.com/officefish/Membrana/issues/2533)) ·
+  ратифицирован 30.09 14:51Z инструментом с умолчаниями · b1 `0f4b03bf` + b2 `c20b9a96` — PR #2534 **влит владельцем**
+  30.09 15:23Z · живая приёмка b3 — три состояния словами владельца 30.09/01.10 · **gate pass 3/3 `honest_pair`** ·
+  experience **hit** по правилу инструмента (порог 400 не пробит), объём над оценкой у b1 (+17 %) и b2 (+50 %) назван в
+  [`CLOSURE.md`](./local-sprint/board-hold-modal-2533/CLOSURE.md) · [`OPEN.md`](./local-sprint/board-hold-modal-2533/OPEN.md) —
+  окно «Буфер полон», бейдж доски и плашка панели читают место по живой оси причины: при освобождённом месте и
+  неснятом удержании — «Место освобождено — снимите удержание» (жёлтое), фаза локального эпизода — «удержание · по
+  стражу прибора (до отказа сервера не дошло)». Карточки в реестре нет; Issue закрывает вечерний хвост. Соседняя
+  находка #2538 (старый предел после смены тарифа) — вне спринта.
+
+- **ritual-reads-decisions** (продолжение ritual-reads-done-work #2514; Issue с первым PR) ·
+  ратифицирован 30.09 15:14+03 инструментом · **gate pass 5/5 honest_pair** · прогноз↔исход **miss** по объёму b1
+  (495/400), по предмету 5/5 · [`OPEN.md`](./local-sprint/ritual-reads-decisions/OPEN.md) ·
+  [`CLOSURE.md`](./local-sprint/ritual-reads-decisions/CLOSURE.md) — решённое доходит до читателей ритуала по
+  машинным носителям: ведомость решённого (ядро + один порт) даёт вечеру блок «Решённое» после книги сделанного,
+  каркасу дня — исключение карточек закрытых спринтов с посылкой «долг закрытия», зубу утверждений — голову
+  выражения как символ и «решено: …» в причине. Живьём 30.09 при активных карточках: batch и trace-freeze вне top-3,
+  `aria-current` несёт якорь решения, `NIGHT_RUN_MAX_AGE_MS = 36 ч` → не подтверждено. Четыре карточки закрытых
+  спринтов — архивировать ведущей. Сдача `pr:ship --no-merge`; мердж — слово владельца.
+
+- **ritual-reads-done-work** (И8 недельного плана 28.09; Issue с первым PR) ·
+  ратифицирован 29.09 15:19+03 · **gate pass 4/4 honest_pair** · прогноз↔исход **hit** (4/4) ·
+  [`OPEN.md`](./local-sprint/ritual-reads-done-work/OPEN.md) · [`CLOSURE.md`](./local-sprint/ritual-reads-done-work/CLOSURE.md) —
+  два читателя ритуала судят по документу, а не по предмету: каркас дня получает проекцию ассерций
+  со строкой свежести предикатом probe (вместо сырого файла, обрезанного 22k из 115k); вечер получает
+  блок «сделанное, заведённое билетами» (архитектурные слоты 27.09 по #2488/#2489 → #2492–#2498).
+  Порядок ритуалов, формат ассерций, промпты персон и основание снятия с очереди oversized — вне спринта.
+
+- **sample-library-paging-a11y** (Issue — с PR) ·
+  ратифицирован 29.09 15:13+03 · gate pass 3/3 `honest_pair` · experience `hit` (3/3) ·
+  [`OPEN.md`](./local-sprint/sample-library-paging-a11y/OPEN.md) · [`CLOSURE.md`](./local-sprint/sample-library-paging-a11y/CLOSURE.md) —
+  доступность органов листания библиотеки проб в обоих домах: индикатор → живой статус вместо
+  пустого `aria-current`, фокус не падает на `body` (край → соседняя кнопка; `loading` кабинета без
+  `disabled`), клавиатура без глобальных слушателей; 12 порч красные. Gap: живой замер 320px без
+  браузера. Сдача `pr:ship --no-merge`; мердж — слово владельца.
+- **batch-collection-run-contour** ([#494](https://github.com/officefish/Membrana/issues/494)) ·
+  gate pass 4/4 `honest_pair` · experience `miss` (3/4, runner overflow) ·
+  [`OPEN.md`](./local-sprint/batch-collection-run-contour/OPEN.md) ·
+  [`CLOSURE.md`](./local-sprint/batch-collection-run-contour/CLOSURE.md) — read-only прогон
+  детекторов по коллекции на существующих `CollectionSampleReader` и plugin request; перенос и
+  пагинация признаны уже закрытыми стволом. Стек #2517 → #2518 → #2519 → #2520 → evidence;
+  все PR без merge.
+
 - **tariff-matrix-2333** ([#2333](https://github.com/officefish/Membrana/issues/2333)) ·
   implementation checks pass, awaiting review/PR · [`OPEN.md`](./local-sprint/tariff-matrix-2333/OPEN.md) —
   серверная адаптация к матрице тарифов по принятому M1: версия контракта на `Tariff`/`Device`,

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useSyncExternalStore } from 'react';
 
 import {
   getDefaultMediaLibraryService,
+  subscribeDefaultMediaLibraryService,
   type MediaLibraryService,
 } from './media-library-service.js';
 import type { MediaLibrarySnapshot } from './types.js';
@@ -13,9 +14,18 @@ export interface UseMediaLibraryResult {
   ready: boolean;
 }
 
-export function useMediaLibrary(
-  service: MediaLibraryService = getDefaultMediaLibraryService(),
-): UseMediaLibraryResult {
+/**
+ * Без аргумента хук следит за default-сервисом и его ПОДМЕНОЙ (#2570): мост ставит серверный сервис
+ * после пинга media, и до этого подписчик оставался на временном ленивом сервисе до случайного
+ * ререндера. С явным сервисом (кабинет) поведение прежнее.
+ */
+export function useMediaLibrary(explicitService?: MediaLibraryService): UseMediaLibraryResult {
+  const defaultService = useSyncExternalStore(
+    subscribeDefaultMediaLibraryService,
+    getDefaultMediaLibraryService,
+    getDefaultMediaLibraryService,
+  );
+  const service = explicitService ?? defaultService;
   const subscribe = useCallback(
     (onStoreChange: () => void) => service.subscribe(onStoreChange),
     [service],

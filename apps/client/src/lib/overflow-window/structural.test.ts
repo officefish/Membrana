@@ -51,9 +51,10 @@ describe('один носитель модалки «Буфер полон»', (
   });
 
   it('литерал заголовка «Буфер полон» как строка диалога не дублируется вне таблицы текстов', () => {
-    const outside = [...CLIENT_FILES, ...BOARD_FILES].filter(
-      (p) => !p.endsWith('reasonTexts.ts') && read(p).includes("'Буфер полон'"),
-    );
+    // Строка, шаблон и текст JSX — все три формы литерала; в комментариях слово законно (#2533:
+    // на стволе dba53da0 шаблон жил в бейдже доски, JSX-текст — в плашке панели).
+    const literal = /(['`]Буфер полон|>Буфер полон)/u;
+    const outside = [...CLIENT_FILES, ...BOARD_FILES].filter((p) => !p.endsWith('reasonTexts.ts') && literal.test(read(p)));
     expect(outside).toEqual([]);
   });
 });
@@ -78,14 +79,27 @@ describe('одна таблица код→текст', () => {
   });
 });
 
-describe('окно без второго запроса квоты и без обхода ворот', () => {
-  it.each(MODULE_FILES.map((p) => [relative(HERE, p).replace(/\\/gu, '/'), p]))(
+describe('живое чтение квоты только в host и без обхода ворот', () => {
+  const hostPath = join(HERE, 'OverflowWindowHost.tsx');
+  const networklessFiles = MODULE_FILES.filter((p) => p !== hostPath);
+
+  it.each(networklessFiles.map((p) => [relative(HERE, p).replace(/\\/gu, '/'), p]))(
     '%s: нет getQuota / refresh( / fetch( / useMediaLibrary / init(',
     (_name, p) => {
       const s = read(p);
       expect(s).not.toMatch(/getQuota|\.refresh\(|fetch\(|useMediaLibrary\b|\.init\(/u);
     },
   );
+
+  it('#2444/#2538: только host перечитывает предел — лёгким refreshQuota() ровно один раз, без полного refresh()', () => {
+    const host = read(hostPath);
+    expect(host).not.toMatch(/getQuota|fetch\(|useMediaLibrary\b|\.init\(/u);
+    expect(host.match(/service\.refreshQuota\(\)/gu)).toHaveLength(1);
+    // #2538: полный refresh() читает квоту ПОСЛЕДНИМ шагом после списка всех проб и при сбое
+    // раньше оставлял старый предел без следа — в хосте ему не место.
+    expect(host).not.toMatch(/service\.refresh\(\)/u);
+    expect(host).toContain('state.opensForKey');
+  });
 
   it('чистка — только через общие ворота удаления (#2218): DeletionConfirmDialog, не window.confirm', () => {
     const host = read(join(HERE, 'OverflowWindowHost.tsx'));

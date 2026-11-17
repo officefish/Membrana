@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   DeviceOverflowHoldImpl,
   createMemoryOverflowHoldStore,
+  describeOverflowHold,
   overflowHoldToRuntimePayload,
 } from './deviceOverflowHold';
 import { applyLocalGuardFromQuota } from './localGuard';
@@ -229,5 +230,21 @@ describe('overflowHoldToRuntimePayload — значение состояния �
       overflowAt: SERVER_REFUSAL.overflowAt,
       policy: 'stop',
     });
+  });
+});
+
+describe('describeOverflowHold — слово человеку о локальном эпизоде (#2533)', () => {
+  it('порча: локальный эпизод не «ещё не подтверждён сервером» — подтверждения при stop не бывает', () => {
+    const { hold } = makeHold();
+    applyLocalGuardFromQuota(hold, { usedBytes: 1000 * MB, limitBytes: 1024 * MB }, 'stop');
+    const episode = hold.getEpisode();
+    expect(episode).not.toBeNull();
+    const word = describeOverflowHold(episode!);
+    expect(word).not.toMatch(/ещё не подтвержд/u);
+    expect(word).toContain('по стражу прибора');
+    expect(word).toContain('само не возобновится');
+
+    hold.activateFromServer(SERVER_REFUSAL);
+    expect(describeOverflowHold(hold.getEpisode()!)).toContain('эпизод ovf-1');
   });
 });

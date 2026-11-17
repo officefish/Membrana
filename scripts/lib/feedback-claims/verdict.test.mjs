@@ -10,6 +10,7 @@ import { test } from 'node:test';
 
 import { ATOM_CLASSES } from './atoms.mjs';
 import {
+  decidedInOf,
   formatClaimsReport,
   hasHardViolation,
   OUTCOMES,
@@ -19,6 +20,47 @@ import {
 } from './verdict.mjs';
 
 const symbolAtom = (token) => ({ token, classes: [ATOM_CLASSES.SYMBOL] });
+
+// b4 ritual-reads-decisions: решённость — причина в строке, не пятый исход.
+const LEDGER_29_09 = {
+  decisions: [{
+    sprintId: 'sample-library-paging-a11y', key: '//decisions', path: 'docs/sprint/cut/sample-library-paging-a11y.json',
+    ratifiedAt: '2026-09-29T15:13:04+03:00',
+    text: 'Три решения: (1) aria-current с индикатора СНЯТЬ, индикатор становится role=status; (2) правило фокуса; (3) стрелок не заводить.',
+  }],
+  closedSprints: [{ sprintId: 'batch-collection-run-contour', status: 'pass', closedDay: '2026-09-29', card: 'active', stale: true }],
+};
+
+test('b4: decidedInOf находит токен в тексте решения и id закрытого спринта; печатает полный якорь носителя', () => {
+  assert.deepEqual(decidedInOf('aria-current', LEDGER_29_09), [
+    'решение docs/sprint/cut/sample-library-paging-a11y.json#//decisions (ратифицировано 2026-09-29T15:13:04+03:00)',
+  ]);
+  assert.deepEqual(decidedInOf('batch-collection-run-contour', LEDGER_29_09), [
+    'спринт закрыт 2026-09-29 (pass), карточка active — долг закрытия',
+  ]);
+  assert.deepEqual(decidedInOf('NIGHT_RUN_MAX_AGE_MS', LEDGER_29_09), [], 'решение вне спринтов ведомость не несёт — предел носителя');
+  assert.deepEqual(decidedInOf('(1)', LEDGER_29_09), [], 'короткий токен не ищется, хоть и есть в тексте');
+  assert.deepEqual(decidedInOf('aria-current', null), []);
+});
+
+test('b4: вердикт по aria-current (card|doc, обоих нет) остаётся soft, а причина несёт «решено: …»', () => {
+  const atom = { token: 'aria-current', classes: [ATOM_CLASSES.CARD, ATOM_CLASSES.DOC] };
+  const withDecision = verdictFor(atom, { cardFound: false, docExists: false, decidedIn: decidedInOf('aria-current', LEDGER_29_09), sha: 'abc' });
+  assert.equal(withDecision.outcome, OUTCOMES.SOFT, 'список исходов не расширен');
+  assert.match(withDecision.reason, /карточки в реестре нет; документа нет @abc · решено: решение docs\/sprint\/cut\/sample-library-paging-a11y\.json#\/\/decisions/u);
+  // ПОРЧА: без decidedIn строки нет — прежняя причина слово в слово.
+  const without = verdictFor(atom, { cardFound: false, docExists: false, sha: 'abc' });
+  assert.equal(without.outcome, OUTCOMES.SOFT);
+  assert.doesNotMatch(without.reason, /решено/u);
+  assert.equal(withDecision.reason.startsWith(without.reason), true);
+  // `null` — «не узнали», не «не решено»: хвоста тоже нет.
+  assert.doesNotMatch(verdictFor(atom, { cardFound: false, docExists: false, decidedIn: null }).reason, /решено/u);
+  // Хвост есть и у holds: карточка закрытого спринта в реестре active — читатель видит долг.
+  const card = verdictFor({ token: 'batch-collection-run-contour', classes: [ATOM_CLASSES.CARD] }, { cardFound: true, cardStatus: 'active', decidedIn: decidedInOf('batch-collection-run-contour', LEDGER_29_09) });
+  assert.equal(card.outcome, OUTCOMES.HOLDS);
+  assert.match(card.reason, /· решено: спринт закрыт 2026-09-29 \(pass\), карточка active — долг закрытия/u);
+  assert.deepEqual(Object.keys(OUTCOMES), ['HOLDS', 'HARD', 'SOFT', 'UNKNOWN'], 'закрытый список исходов не тронут');
+});
 
 test('вещдок 07.08: PromoDeclineReason — ноль вхождений при однозначном классе → hard', () => {
   const v = verdictFor(symbolAtom('PromoDeclineReason'), { symbolDecls: 0, sha: 'abcdef1234567890' });

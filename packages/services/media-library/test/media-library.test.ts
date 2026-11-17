@@ -431,3 +431,110 @@ describe('requestLibraryDuplicates (#2109)', () => {
     expect(JSON.stringify(got)).not.toMatch(/delete|remove|удал/iu);
   });
 });
+
+/**
+ * #2538 — лёгкое перечитывание предела с моментом чтения. Живой опыт 01.10: предел лежал в
+ * снимке без момента чтения; полный refresh() читал квоту ПОСЛЕДНИМ шагом после списка всех проб
+ * и при любом сбое раньше оставлял старый предел без следа.
+ *
+ * Порчи → красный: refreshQuota листает коллекции/пробы — красный; успешное чтение без readAt —
+ * красный; отказ чтения стирает числа или двигает readAt — красный.
+ */
+describe('refreshQuota (#2538)', () => {
+  const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u;
+  const UNREACHABLE = {
+    usedBytes: 0,
+    limitBytes: 0,
+    backend: 'server' as const,
+    serverReachable: false,
+    bufferUsedBytes: 0,
+    bufferLimitBytes: 0,
+  };
+
+  async function serverService(limitBytes = 1000) {
+    const backend = new MemoryStorageBackend({ limitBytes, backend: 'server', serverReachable: true });
+    const svc = createMediaLibraryService(backend);
+    await svc.refresh();
+    return { backend, svc };
+  }
+
+  it('читает только квоту: списки не трогаются, снимок проб тот же объект, readAt — ISO', async () => {
+    const { backend, svc } = await serverService();
+    const listCollections = vi.spyOn(backend, 'listCollections');
+    const listSamples = vi.spyOn(backend, 'listSamples');
+    const getQuota = vi.spyOn(backend, 'getQuota');
+    const listener = vi.fn();
+    svc.subscribe(listener);
+    const before = svc.getSnapshot();
+
+    await svc.refreshQuota();
+
+    expect(getQuota).toHaveBeenCalledTimes(1);
+    expect(listCollections).not.toHaveBeenCalled();
+    expect(listSamples).not.toHaveBeenCalled();
+    expect(listener).toHaveBeenCalledTimes(1);
+    const after = svc.getSnapshot();
+    expect(after.samplesByCollection).toBe(before.samplesByCollection);
+    expect(after.collections).toBe(before.collections);
+    expect(after.quota.limitBytes).toBe(1000);
+    expect(after.quota.readAt).toMatch(ISO);
+  });
+
+  it('новый предел сервера доезжает в снимок одним чтением', async () => {
+    const { backend, svc } = await serverService(512);
+    vi.spyOn(backend, 'getQuota').mockResolvedValue({
+      usedBytes: 486,
+      limitBytes: 2048,
+      backend: 'server',
+      serverReachable: true,
+      bufferUsedBytes: 486,
+      bufferLimitBytes: 2048,
+    });
+    await svc.refreshQuota();
+    expect(svc.getSnapshot().quota.bufferLimitBytes).toBe(2048);
+    expect(svc.getSnapshot().quota.limitBytes).toBe(2048);
+  });
+
+  it('отказ чтения прежний предел не стирает: числа и readAt прежние, serverReachable=false; следующий успех — новый readAt', async () => {
+    const { backend, svc } = await serverService(1000);
+    const firstReadAt = svc.getSnapshot().quota.readAt;
+    expect(firstReadAt).toMatch(ISO);
+    const getQuota = vi.spyOn(backend, 'getQuota');
+
+    getQuota.mockResolvedValueOnce(UNREACHABLE);
+    await svc.refreshQuota();
+    const stale = svc.getSnapshot().quota;
+    expect(stale.limitBytes).toBe(1000);
+    expect(stale.bufferLimitBytes).toBe(1000);
+    expect(stale.serverReachable).toBe(false);
+    expect(stale.readAt).toBe(firstReadAt);
+
+    await new Promise((r) => setTimeout(r, 5));
+    await svc.refreshQuota();
+    const fresh = svc.getSnapshot().quota;
+    expect(fresh.serverReachable).toBe(true);
+    expect(fresh.readAt).toMatch(ISO);
+    expect(fresh.readAt).not.toBe(firstReadAt);
+  });
+
+  it('полный refresh() тоже штампует readAt и тоже не стирает предел отказом', async () => {
+    const { backend, svc } = await serverService(1000);
+    expect(svc.getSnapshot().quota.readAt).toMatch(ISO);
+    vi.spyOn(backend, 'getQuota').mockResolvedValueOnce(UNREACHABLE);
+    await svc.refresh();
+    expect(svc.getSnapshot().quota.limitBytes).toBe(1000);
+    expect(svc.getSnapshot().quota.serverReachable).toBe(false);
+  });
+
+  it('успешного серверного чтения ещё не было (снимок локальный): отказ ложится как есть, без readAt', async () => {
+    const backend = new MemoryStorageBackend({ limitBytes: 1000, backend: 'server', serverReachable: true });
+    const svc = createMediaLibraryService(backend);
+    vi.spyOn(backend, 'getQuota').mockResolvedValueOnce(UNREACHABLE);
+    await svc.refreshQuota();
+    const q = svc.getSnapshot().quota;
+    expect(q.backend).toBe('server');
+    expect(q.limitBytes).toBe(0);
+    expect(q.serverReachable).toBe(false);
+    expect(q.readAt).toBeUndefined();
+  });
+});

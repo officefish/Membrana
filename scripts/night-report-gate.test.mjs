@@ -18,8 +18,11 @@ import { clearNightReportDownloadTargets, parseNightReportArgs, pullNightReport 
 
 const CARRIER = { path: NIGHT_SUMMARY_REPORT_REL, blocksMorningWhen: SUPPORTED_BLOCK_EXPR };
 const TODAY = '2026-08-11';
+/** Время суждения гейта: утро 11.08. Цикл ночи (0 22 * * *) открыт 10.08 в 22:00. */
+const NOW = `${TODAY}T05:00:00.000Z`;
 const HEAD_A = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 const HEAD_B = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+const HEAD_C = 'cccccccccccccccccccccccccccccccccccccccc';
 
 function reportFixture(overrides = {}) {
   return {
@@ -33,15 +36,30 @@ function reportFixture(overrides = {}) {
         title: 'Tests nightly full',
         workflow: 'tests-nightly-full.yml',
         required: true,
+        cron: '0 22 * * *',
         status: 'pass',
         reason: 'success',
-        run: { databaseId: 42, headSha: HEAD_A, status: 'completed', conclusion: 'success' },
+        run: {
+          databaseId: 42,
+          headSha: HEAD_A,
+          trunkRevisionAtStart: HEAD_A,
+          createdAt: `${TODAY}T00:14:00.000Z`,
+          status: 'completed',
+          conclusion: 'success',
+        },
       },
     ],
     execution: { status: 'pass', exitCode: 0 },
     problems: [],
     ...overrides,
   };
+}
+
+/** Порча одного поля прогона — точечная, без переписи фикстуры. */
+function reportWithRun(runOverrides, overrides = {}) {
+  const report = reportFixture(overrides);
+  report.workflows[0].run = { ...report.workflows[0].run, ...runOverrides };
+  return report;
 }
 
 test('evaluateNightReport: три различимых блокера — missing / stale / red', () => {
@@ -51,18 +69,20 @@ test('evaluateNightReport: три различимых блокера — missin
 
   const stale = evaluateNightReport({
     carrier: CARRIER,
-    report: reportFixture({ git: { revision: HEAD_B } }),
+    report: reportWithRun({ headSha: HEAD_B }),
     today: TODAY,
+    now: NOW,
     expectedRevision: HEAD_A,
   });
   assert.equal(stale.status, 'stale');
-  assert.match(stale.blockers[0], /не на текущем стволе/u);
+  assert.match(stale.blockers[0], /в тот момент был на/u);
   assert.notEqual(stale.blockers[0], missing.blockers[0]);
 
   const red = evaluateNightReport({
     carrier: CARRIER,
     report: reportFixture({ execution: { status: 'fail', exitCode: 1 }, problems: ['x'] }),
     today: TODAY,
+    now: NOW,
     expectedRevision: HEAD_A,
   });
   assert.equal(red.status, 'red');
@@ -71,7 +91,7 @@ test('evaluateNightReport: три различимых блокера — missin
 });
 
 test('evaluateNightReport: зелёная сводка ночи проходит и читает workflow-строки', () => {
-  const ok = evaluateNightReport({ carrier: CARRIER, report: reportFixture(), today: '2026-08-12', expectedRevision: HEAD_A });
+  const ok = evaluateNightReport({ carrier: CARRIER, report: reportFixture(), today: '2026-08-12', now: NOW, expectedRevision: HEAD_A });
   assert.equal(ok.status, 'pass');
   assert.equal(ok.blockers.length, 0);
   assert.ok(ok.summary.some((s) => s.includes('ночь/Tests nightly full: pass')));
@@ -87,7 +107,7 @@ test('evaluateNightReport: старый detailed tests-report остаётся �
     problems: [],
   };
 
-  const verdict = evaluateNightReport({ carrier: CARRIER, report: legacyReport, today: TODAY, expectedRevision: HEAD_A });
+  const verdict = evaluateNightReport({ carrier: CARRIER, report: legacyReport, today: TODAY, now: NOW, expectedRevision: HEAD_A });
   assert.equal(verdict.status, 'pass');
   assert.equal(verdict.blockers.length, 0);
   assert.ok(verdict.summary.some((s) => s.includes('гонялось файлов: 1')));
@@ -107,7 +127,7 @@ test('evaluateNightReport: сводка без обязательного чте
     ],
     execution: { status: 'pass', exitCode: 0 },
   });
-  const verdict = evaluateNightReport({ carrier: CARRIER, report, today: TODAY, expectedRevision: HEAD_A });
+  const verdict = evaluateNightReport({ carrier: CARRIER, report, today: TODAY, now: NOW, expectedRevision: HEAD_A });
   assert.equal(verdict.status, 'red');
   assert.match(verdict.blockers[0], /Vitest nightly/u);
   assert.match(verdict.blockers[0], /conclusion=failure/u);
@@ -128,29 +148,128 @@ test('evaluateNightReport: pending workflow остаётся pending в агре
     execution: { status: 'pass', exitCode: 0 },
   });
 
-  const verdict = evaluateNightReport({ carrier: CARRIER, report, today: TODAY, expectedRevision: HEAD_A });
+  const verdict = evaluateNightReport({ carrier: CARRIER, report, today: TODAY, now: NOW, expectedRevision: HEAD_A });
   assert.equal(verdict.status, 'pending');
   assert.match(verdict.blockers[0], /Vitest nightly/u);
   assert.match(verdict.blockers[0], /in_progress/u);
 });
 
-test('evaluateNightReport: свежесть не завязана на календарь, но чужая вершина красная', () => {
+test('evaluateNightReport: свежесть не завязана на календарь, но устаревшая при старте вершина красная', () => {
   const delayed = evaluateNightReport({
     carrier: CARRIER,
     report: reportFixture({ generatedAt: '2026-08-10T13:55:00.000Z' }),
     today: TODAY,
+    now: NOW,
     expectedRevision: HEAD_A,
   });
   assert.equal(delayed.status, 'pass');
 
   const wrongHead = evaluateNightReport({
     carrier: CARRIER,
-    report: reportFixture({ git: { revision: HEAD_B } }),
+    report: reportWithRun({ headSha: HEAD_B }),
     today: TODAY,
+    now: NOW,
     expectedRevision: HEAD_A,
   });
   assert.equal(wrongHead.status, 'stale');
-  assert.match(wrongHead.blockers[0], /отчёт bbbbbbbbbbbb, ожидается aaaaaaaaaaaa/u);
+  assert.match(wrongHead.blockers[0], /запуск на bbbbbbbbbbbb/u);
+});
+
+// ─── #2501/#2504: гейт судит свежесть сам, по фактам сводки ────────────────────
+
+test('ПОРЧА 1 (гейт): утренний мердж не красит ночь — ствол ушёл вперёд, ночь зелёная', () => {
+  // Живой случай 28.09: ночь на b44d05f3, ствол к утру дошёл до b538b10a.
+  const nightHead = 'b44d05f37589aa98c5faf1432264423219b3c2d1';
+  const trunkNow = 'b538b10af12fb112cb8b6d299fd29439bf25cf11';
+  const report = reportFixture({ git: { revision: trunkNow } });
+  report.workflows[0].cron = '0 20 * * *';
+  report.workflows[0].run = {
+    databaseId: 36356982602,
+    headSha: nightHead,
+    trunkRevisionAtStart: nightHead,
+    createdAt: '2026-09-27T22:56:18Z',
+    status: 'completed',
+    conclusion: 'success',
+    schedule: { cron: '0 20 * * *', latenessMs: (2 * 60 + 56) * 60_000 },
+  };
+
+  const verdict = evaluateNightReport({
+    carrier: CARRIER,
+    report,
+    today: '2026-09-28',
+    now: '2026-09-28T07:30:00.000Z',
+    expectedRevision: trunkNow,
+  });
+  assert.equal(verdict.status, 'pass');
+  // Строка опоздания — замер #2502, он остаётся.
+  assert.ok(verdict.summary.some((line) => line.includes('пришло +2 ч 56 мин')));
+});
+
+test('ПОРЧА 2 (гейт): pass в сводке не прикрывает запуск на уже устаревшей ссылке', () => {
+  const report = reportWithRun(
+    { headSha: HEAD_B, trunkRevisionAtStart: HEAD_A },
+    { git: { revision: HEAD_C } },
+  );
+
+  const verdict = evaluateNightReport({
+    carrier: CARRIER,
+    report,
+    today: TODAY,
+    now: NOW,
+    expectedRevision: HEAD_C,
+  });
+  assert.equal(verdict.status, 'stale');
+  assert.match(verdict.blockers[0], /в тот момент был на aaaaaaaaaaaa/u);
+});
+
+test('ПОРЧА 3 (гейт): вчерашняя сводка, прочитанная сегодня, не зеленеет своим же pass', () => {
+  // Утро читает носитель БЕЗ --pull (morning-care), поэтому вчерашний артефакт
+  // внутренне непротиворечив: headSha = вершина своего времени, статус pass.
+  // Судит гейт по своим часам: прогон не принадлежит открытому циклу ночи.
+  const report = reportWithRun(
+    {
+      headSha: HEAD_B,
+      trunkRevisionAtStart: HEAD_B,
+      createdAt: '2026-08-09T00:14:00.000Z',
+    },
+    { generatedAt: '2026-08-09T03:10:00.000Z', git: { revision: HEAD_B } },
+  );
+
+  const verdict = evaluateNightReport({
+    carrier: CARRIER,
+    report,
+    today: TODAY,
+    now: NOW,
+    expectedRevision: HEAD_A,
+  });
+  assert.equal(verdict.status, 'stale');
+  assert.match(verdict.blockers[0], /старше текущего цикла ночи/u);
+});
+
+test('сводка старого прибора (без вершины на момент старта) — invalid, а не молчаливый pass', () => {
+  const report = reportFixture();
+  delete report.workflows[0].run.trunkRevisionAtStart;
+
+  const verdict = evaluateNightReport({
+    carrier: CARRIER,
+    report,
+    today: TODAY,
+    now: NOW,
+    expectedRevision: HEAD_A,
+  });
+  assert.equal(verdict.status, 'invalid');
+  assert.match(verdict.blockers[0], /вершина ствола на момент запуска не установлена/u);
+});
+
+test('гейт без времени суждения не зеленеет: цикл ночи не установлен', () => {
+  const verdict = evaluateNightReport({
+    carrier: CARRIER,
+    report: reportFixture(),
+    today: TODAY,
+    expectedRevision: HEAD_A,
+  });
+  assert.equal(verdict.status, 'invalid');
+  assert.match(verdict.blockers[0], /цикл ночи не установлен/u);
 });
 
 test('evaluateNightReport: неподдержанное выражение кадра — fail closed', () => {
@@ -158,6 +277,7 @@ test('evaluateNightReport: неподдержанное выражение ка�
     carrier: { ...CARRIER, blocksMorningWhen: 'always-green' },
     report: reportFixture(),
     today: TODAY,
+    now: NOW,
     expectedRevision: HEAD_A,
   });
   assert.equal(v.status, 'invalid');
@@ -186,7 +306,7 @@ test('runNightReportGate: подсаженный красный отчёт ос�
   const lines = [];
   const code = runNightReportGate(
     tempRoot({ report: reportFixture({ execution: { status: 'fail', exitCode: 1 } }) }),
-    { log: (s) => lines.push(s), today: TODAY, expectedRevision: HEAD_A },
+    { log: (s) => lines.push(s), today: TODAY, now: NOW, expectedRevision: HEAD_A },
   );
   assert.equal(code, 2);
   assert.ok(lines.some((l) => l.includes('ночной красный')));
@@ -194,11 +314,11 @@ test('runNightReportGate: подсаженный красный отчёт ос�
 
 test('runNightReportGate: свежий зелёный — 0; отсутствие носителя — 2 своим текстом', () => {
   assert.equal(
-    runNightReportGate(tempRoot({ report: reportFixture() }), { log: () => {}, today: TODAY, expectedRevision: HEAD_A }),
+    runNightReportGate(tempRoot({ report: reportFixture() }), { log: () => {}, today: TODAY, now: NOW, expectedRevision: HEAD_A }),
     0,
   );
   const lines = [];
-  assert.equal(runNightReportGate(tempRoot(), { log: (s) => lines.push(s), today: TODAY, expectedRevision: HEAD_A }), 2);
+  assert.equal(runNightReportGate(tempRoot(), { log: (s) => lines.push(s), today: TODAY, now: NOW, expectedRevision: HEAD_A }), 2);
   assert.ok(lines.some((l) => l.includes('ночь не отработала')));
 });
 
@@ -241,6 +361,8 @@ test('parseNightReportArgs + pullNightReport с подставным gh', () => 
   const root = tempRoot();
   const okPull = pullNightReport(root, {
     expectedRevision: HEAD_A,
+    trunkRevisionAt: () => HEAD_A,
+    historyHas: () => true,
     exec: (cmd, args) => {
       calls.push([cmd, args[0], args[1]]);
       if (args[0] === 'run' && args[1] === 'list') {
@@ -264,6 +386,8 @@ test('parseNightReportArgs + pullNightReport с подставным gh', () => 
 
   const redSummaryPull = pullNightReport(root, {
     expectedRevision: HEAD_A,
+    trunkRevisionAt: () => HEAD_A,
+    historyHas: () => true,
     exec: (_cmd, args) => {
       if (args[0] === 'run' && args[1] === 'list') {
         return JSON.stringify([
@@ -302,6 +426,8 @@ test('pullNightReport: перед gh download удаляет существую�
 
   const okPull = pullNightReport(root, {
     expectedRevision: HEAD_A,
+    trunkRevisionAt: () => HEAD_A,
+    historyHas: () => true,
     exec: (_cmd, args) => {
       if (args[0] === 'run' && args[1] === 'list') {
         return JSON.stringify([

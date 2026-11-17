@@ -144,3 +144,14 @@ export function morningLeakProblems(skills) {
   }
   return problems;
 }
+
+export function skillTransitionRecord({ skill, from, to, supersededBy = null, at, reason }) {
+  if (!skill || !SKILL_STATUSES.includes(from) || !SKILL_STATUSES.includes(to)) {
+    throw new Error('skill transition: skill/from/to are required and statuses must be known');
+  }
+  if (!at || !reason) throw new Error('skill transition: at and reason are required');
+  if (to === 'superseded' && !supersededBy) {
+    throw new Error('skill transition: superseded requires supersededBy');
+  }
+  return { skill, from, to, supersededBy, at, reason };
+}

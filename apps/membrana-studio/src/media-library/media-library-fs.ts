@@ -27,6 +27,15 @@ function newId(): string {
   return `${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 }
 
+/**
+ * Человеческое имя системного набора — без идентификатора тарифа (#2561). Зеркало
+ * `TARIFF_DATASET_COLLECTION_NAME` из @membrana/media-library-service (shell не импортирует
+ * сервис в main). Назначенный каталог — дело квоты сервера, не имени коллекции.
+ */
+const TARIFF_DATASET_COLLECTION_NAME = 'Базовый набор';
+/** Заводское имя до #2561 — единственное, которое ensureReservedCollections переименует. */
+const LEGACY_TARIFF_DATASET_COLLECTION_NAME = 'Базовый набор (free-v1)';
+
 function isReservedCollection(id: string): boolean {
   return id === BUFFER_COLLECTION_ID || id === TARIFF_DATASET_COLLECTION_ID;
 }
@@ -135,15 +144,22 @@ export class MediaLibraryFsStore {
       };
       changed = true;
     }
-    if (!this.manifest.collections[TARIFF_DATASET_COLLECTION_ID]) {
+    const tariffDataset = this.manifest.collections[TARIFF_DATASET_COLLECTION_ID];
+    if (!tariffDataset) {
       this.manifest.collections[TARIFF_DATASET_COLLECTION_ID] = {
         id: TARIFF_DATASET_COLLECTION_ID,
-        name: 'Базовый набор (free-v1)',
+        name: TARIFF_DATASET_COLLECTION_NAME,
         kind: 'system',
         systemKey: TARIFF_DATASET_SYSTEM_KEY,
         createdAt: t,
         updatedAt: t,
       };
+      changed = true;
+    } else if (tariffDataset.name === LEGACY_TARIFF_DATASET_COLLECTION_NAME) {
+      // Манифест, записанный до #2561: переименовать заводскую строку один раз; повторный
+      // вызов заводского имени не найдёт и диск не тронет.
+      tariffDataset.name = TARIFF_DATASET_COLLECTION_NAME;
+      tariffDataset.updatedAt = t;
       changed = true;
     }
     if (changed) await this.persist();

@@ -21,12 +21,16 @@ import { isNodeLimitReached, nextNodeLabel } from '../../domain/node-limit';
 import { resolvePairedKeyStatus } from '../../domain/paired-key-status';
 import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
 import { DeviceCaptureService } from '../device-capture/device-capture.service';
-import { MediaBridgeService } from '../pair/media-bridge.service';
+import { CabinetUnreachableException } from '../../common/incident/failure-genus';
+import { MediaBridgeService, type FrozenArchiveStatus } from '../pair/media-bridge.service';
 import { explainBufferPolicy, explainDevicePolicy, membranePolicyScope } from './buffer-policy';
 import { warnIfSmartCleanupGated } from './buffer-policy-gate-warn';
 import { MembraneBufferPolicyService } from './membrane-buffer-policy.service';
 
 const FREE_TARIFF_ID = 'free-v1';
+
+/** Код отказа удаления узла при замороженном архиве прибора (#2632 g8b); его читает витрина (g8c). */
+export const NODE_HAS_FROZEN_ARCHIVE = 'node_has_frozen_archive';
 
 function serializeTariff(tariff: Tariff) {
   return {
@@ -219,10 +223,14 @@ export class MembraneService {
   async deleteNode(userId: string, nodeId: string) {
     const node = await this.prisma.node.findUnique({
       where: { id: nodeId },
-      include: { membrane: true, accessKeys: true },
+      include: { membrane: true, accessKeys: true, device: true },
     });
     if (!node) throw new NotFoundException('Node not found');
     if (node.membrane.userId !== userId) throw new ForbiddenException('Node access denied');
+
+    // #2632 g8b (Т3): узел с замороженным архивом не удаляется — архив потерял бы хозяина.
+    // Проверка ДО отзыва ключей: отказ обязан оставить узел и ключи ровно такими, какими были.
+    await this.assertNoFrozenArchive(node.id, node.device?.mediaDeviceId ?? null);
 
     const now = new Date();
     const revokedKeyIds: string[] = [];
@@ -236,6 +244,40 @@ export class MembraneService {
     await this.prisma.node.delete({ where: { id: nodeId } });
 
     return { deletedNodeId: nodeId, revokedKeyIds };
+  }
+
+  /**
+   * Запрет удаления узла, пока у его прибора есть замороженный архив понижения (#2632 g8b;
+   * ADR-0031; тезис Т3 шторма 08.10).
+   *
+   * - узел без прибора — архиву негде быть, media не спрашивается;
+   * - архив есть → 409 `node_has_frozen_archive` с ближайшим сроком удаления и id прибора
+   *   (кабинет объясняет отказ и даёт ссылку на архив — g8c);
+   * - media не ответила внятно → 503 рода `unreachable`: «не знаю» не разрешает необратимое.
+   */
+  private async assertNoFrozenArchive(nodeId: string, mediaDeviceId: string | null): Promise<void> {
+    if (!mediaDeviceId) return;
+    let status: FrozenArchiveStatus;
+    try {
+      status = await this.mediaBridge.hasFrozenArchive(mediaDeviceId);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.warn(`frozen-archive check failed for device ${mediaDeviceId}; node ${nodeId} kept: ${message}`);
+      throw new CabinetUnreachableException(
+        'media',
+        'Не удалось проверить архив прибора — узел не удалён, повторите позже',
+        { code: 'frozen_archive_check_unavailable' },
+      );
+    }
+    if (!status.frozen) return;
+    throw new ConflictException({
+      code: NODE_HAS_FROZEN_ARCHIVE,
+      message: 'У прибора есть замороженный архив — удаление узла станет возможно после его удаления по сроку',
+      nodeId,
+      mediaDeviceId,
+      batchCount: status.batchCount,
+      nearestExpiresAt: status.nearestExpiresAt,
+    });
   }
 
   async createAccessKey(userId: string, nodeId: string, durationRaw: string) {

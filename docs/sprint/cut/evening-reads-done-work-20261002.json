@@ -1,0 +1,81 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "evening-reads-done-work-20261002",
+  "taskId": "evening-reads-done-work",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-10-02T09:00:00+03:00",
+    "to": "2026-10-02T23:30:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-evening-done-sprint-results",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/review-done-ledger-port.mjs",
+        "scripts/lib/review-done-ledger.mjs",
+        "scripts/lib/decisions-ledger-port.mjs",
+        "scripts/lib/decisions-ledger.mjs",
+        "scripts/team-evening-feedback.mjs",
+        "scripts/lib/team-evening-feedback-ritual.mjs",
+        "scripts/lib/review-done-ledger.test.mjs",
+        "scripts/team-evening-feedback-ritual.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "revisionAt": "2026-10-02T10:26:49+03:00",
+      "revisionOf": "474ab8911490d59cc99175184d9842035ba1dd5e295e7fd4703b814cf397f915"
+    },
+    {
+      "blockId": "b2-review-oversized-premise-replacement",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "scripts/lib/day-work-diff.mjs",
+        "scripts/lib/code-review-ritual.mjs",
+        "scripts/code-review.mjs",
+        "scripts/lib/review-referenced-states.mjs",
+        "scripts/lib/feedback-claims-core.mjs",
+        "scripts/lib/day-work-diff.test.mjs",
+        "scripts/lib/code-review-ritual.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 320
+      },
+      "revisionAt": "2026-10-02T10:26:49+03:00",
+      "revisionOf": "877ea77b35ced71763692c2c78cf08fa3a4465e1d2aa25208a7e67630a315db6"
+    },
+    {
+      "blockId": "b3-live-evening-20261002-check",
+      "persona": "angelina",
+      "context": "angelina",
+      "zone": [
+        "docs/local-sprint/evening-reads-done-work-20261002/",
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/sprint/experience/evening-reads-done-work-20261002.segments.json"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "revisionAt": "2026-10-02T10:26:49+03:00",
+      "revisionOf": "f0cc7bafa9d5c7438c748fd315665a3da3dd9bcb67244645da10017ae7082ee1"
+    }
+  ],
+  "//why": "Вечер 01.10 и daily/code-review объявили сделанное несделанным: PR #2543/#2544 были в стволе и oversized, но daily review дал только строку «дифф не развёрнут», а team-evening-feedback оценил день по MAIN_DAY_ISSUE/DAILY_CODE_REVIEW и написал «магистраль не продвинута», «#2503 шестой день». Замер 02.10 показал: review-done-ledger видит #2543/#2544 в окне 2026-09-24..2026-10-01, но #2543 доходит только как заголовок + билет #2545, #2544 только как заголовок; CLOSURE/AUDIT/итоги локального спринта в книгу не входят. code-review:pr читает MAIN_DAY_ISSUE из текущего рабочего дерева через process.cwd(), не из origin/main.",
+  "//measure": "Доказательства в docs/discussions/evening-reads-done-work-diagnosis.md. Ключевые команды: collectDoneLedgerBlock({today:'2026-10-01'}) → #2544 title-only, #2543 title + #2545; rg по review-done-ledger-port/team-evening-feedback → источники книги git log origin/main + gh issue list, CLOSURE не читается; Select-String по docs/seanses/team-evening-feedback-2026-10-01.md → итог «магистраль не продвинута» и несуществующий docs/procedures/angelina-hostess-contract.md как DoD; Select-String по docs/DAILY_CODE_REVIEW.md → #2543/#2544 только в Oversized; appendTaskContext('pr') → MAIN_DAY_ISSUE читается из cwd.",
+  "//cutter": "Резчик vesnin. Контекст прогона: Фаза 1 задания owner/Angelina 02.10, полный промпт docs/prompts/CODEX_EVENING_READS_DONE_WORK_2026-10-02.md прочитан из origin/main; codebase-memory-mcp индекс свежего worktree выполнен; узкие инструменты: tooling:overview, collectDoneLedgerBlock, collectDecisionsLedger, Select-String по протоколам. BLOCK-условия: не чинить подписанные документы дня; не ратифицировать план; не расширять основание снятия oversized с очереди; не force/merge/deploy.",
+  "//order": "b1 → b2 → b3. b1 исправляет вход вечера и даёт носитель «что сделано» до документов дня. b2 исправляет daily/PR review: oversized не может быть пустой строкой без replacement, а task context обязан назвать cwd provenance и live-state/claims до вердикта. b3 — только живая проверка вечером 02.10 и закрывающие артефакты. Зоны b1/b2 не пересекаются; b3 только docs закрытия.",
+  "//dod": "b1: team-evening-feedback получает блок закрытых/влитых результатов дня: для oversized PR #2543/#2544 — заголовок, changedLines, ticket status, sprintId/closed run, CLOSURE/AUDIT/OPEN summary если есть; блок стоит до документов дня. Porcha на стволе: synthetic input с #2543/#2544 + docs/local-sprint/angelina-hostess-impl/AUDIT.md и personas-source plan сейчас даёт title-only; после блока даёт summary и запрещающую строку «судить не сделано только после сверки результата». b2: daily review для oversized сегмента даёт replacement: PR metadata/title/body/file list + linked sprint summary/CLOSURE pointers; code-review:pr task context печатает provenance `MAIN_DAY_ISSUE from cwd=<path>, version=<sha>` и live states/claims до задания. Porcha на стволе: collectDayWorkDiff 01.10 содержит #2543/#2544 только as oversized no diff; appendTaskContext не называет cwd/source. b3: живой вечер 02.10: `team-evening-feedback` и `code-review`/`code-review:pr` не выносят BLOCK/«не сделано» на посылках, которые live states/claims или ствол опровергают; CLOSURE несёт команды, выводы, head SHA, номер PR; sprint:gate и sprint:experience проходят после ратификации.",
+  "//out-of-scope": "Не править docs/MAIN_DAY_ISSUE.md, docs/DAY_PLAN.md, docs/DAILY_STANDUP.md. Не менять owner-choice и утренний каскад. Не менять порог OVERSIZED_CHANGED_LINES=400. Не снимать PR с review:oversized по CLOSURE: replacement даёт контекст, но очередь ревью остаётся отдельной. Не переписывать prompts персон. Не лечить #2503, #2529, cabinet-тесты как предмет этой задачи. Не добавлять сетевые обязательные гейты, которые блокируют вечер при недоступном gh; отказ должен печататься словами.",
+  "//forecast": "b1: вечерний prompt на 01.10 несёт #2543/#2544 не только как заголовки, а с результатом спринта/закрытия; если LLM всё равно пишет «магистраль не продвинута» по контракту из MAIN_DAY_ISSUE, значит нужен ещё более жёсткий premise-gate до задания, не только контекст. b2: daily review больше не имеет права писать только Oversized без replacement; code-review:pr становится воспроизводимым по cwd. Если GitHub недоступен, блок должен честно сказать «states unknown» и запретить судить по ним, а не молчать. b3: вечер 02.10 служит живой проверкой; если протокол снова ставит отказ по опровергнутой посылке, план miss и нужна перерезка в сторону предиката, который меняет вердикт до LLM.",
+  "//forks": "1. Где хранить summary локального спринта: в review-done-ledger-port (один блок книги) или отдельным sprint-results-ledger-port рядом с decisions ledger. Умолчание: отдельная лемма, чтобы не смешивать PR↔issue ledger и sprint closure facts. 2. Для #2544 нет CLOSURE, но есть sprint cut/recut and plan; показывать как «ратифицированный plan/result, closure absent» или только PR title. Умолчание: явно печатать closure absent, не выдумывать закрытие. 3. code-review:pr: при cwd не на PR head только warning (текущее поведение) или hard refusal. Умолчание: warning + provenance, hard refusal только если review marker cannot bind head. 4. feedback:claims: подавать claims-probe output в prompt до LLM или делать post-generation veto that downgrades verdict. Умолчание для b1/b2: до LLM; veto — отдельная большая правка.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-10-02T10:26:49+03:00",
+    "digest": "39de4c589a6311ae59d5512eee83b3a62d28e78944b8ebf1b3d38bf218bd16a5"
+  }
+}

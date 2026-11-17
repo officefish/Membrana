@@ -4,7 +4,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { frame, rank, buildTop3, buildPlanDraft, fillInput, candidatesFromRegistry, ZONE_ORDER } from './lib/day-plan-frame.mjs';
+import { frame, rank, buildTop3, buildPlanDraft, fillInput, candidatesFromRegistry, excludedCandidates, ZONE_ORDER } from './lib/day-plan-frame.mjs';
 
 const c = (id, zone, size) => ({ id, zone, size });
 
@@ -105,4 +105,51 @@ test('candidatesFromRegistry → buildTop3: незонированные кан�
   const top = buildTop3({ candidates: candidatesFromRegistry(tasks) });
   assert.equal(top[0].id, 'p', 'зонированный продукт впереди хвоста');
   assert.equal(top.length, 3);
+});
+
+// b3 ritual-reads-decisions: карточка закрытого прогона спринта — не кандидат (живой случай 30.09).
+const LIVE_30_09 = [
+  { id: 'angelina-hostess-impl', status: 'active', size: 'L' },
+  { id: 'assets-container', status: 'active', size: 'L' },
+  { id: 'batch-collection-run-contour', status: 'active', size: 'L' },
+  { id: 'trace-freeze-dual-candidate-sprint', status: 'active', size: 'L' },
+  { id: 'capture-sidecar-protocol', status: 'active', size: 'L' },
+];
+const CLOSED_29_09 = [
+  { sprintId: 'batch-collection-run-contour', status: 'pass', closedDay: '2026-09-29', card: 'active', phasesActive: 4 },
+  { sprintId: 'trace-freeze-dual-candidate-sprint', status: 'pass', closedDay: '2026-09-29', card: 'active', phasesActive: 5 },
+];
+
+test('b3: карточка active L + close-запись её спринта → НЕ в top-3 и названа в исключённых с причиной', () => {
+  const cands = candidatesFromRegistry(LIVE_30_09, { closedSprints: CLOSED_29_09 });
+  const top = buildTop3({ candidates: cands });
+  assert.deepEqual(top.map((x) => x.id), ['angelina-hostess-impl', 'assets-container', 'capture-sidecar-protocol']);
+  const excluded = excludedCandidates(LIVE_30_09, { closedSprints: CLOSED_29_09 });
+  assert.deepEqual(excluded.map((e) => e.id), ['batch-collection-run-contour', 'trace-freeze-dual-candidate-sprint']);
+  assert.match(excluded[0].reason, /прогон спринта закрыт 2026-09-29 \(гейт pass\); карточка не архивирована — долг закрытия/u);
+});
+
+test('b3 ПОРЧА: без close-записи та же карточка остаётся в top-3; порядок остальных не меняется', () => {
+  const top = buildTop3({ candidates: candidatesFromRegistry(LIVE_30_09, { closedSprints: [] }) });
+  assert.deepEqual(top.map((x) => x.id), ['angelina-hostess-impl', 'assets-container', 'batch-collection-run-contour']);
+  assert.deepEqual(excludedCandidates(LIVE_30_09, { closedSprints: [] }), []);
+  // Без ведомости вовсе — отбор прежний и исключённых нет (о чём посылка плана скажет отдельно).
+  assert.deepEqual(candidatesFromRegistry(LIVE_30_09).map((x) => x.id), LIVE_30_09.map((t) => t.id));
+  assert.deepEqual(excludedCandidates(LIVE_30_09), []);
+});
+
+test('b3: исключение действует и на размер M (фолбэк при пустых L); архивная карточка кандидатом и не была', () => {
+  const tasks = [
+    { id: 'm-open', status: 'active', size: 'M' },
+    { id: 'm-closed', status: 'active', size: 'M' },
+    { id: 'm-archived', status: 'archived', size: 'M' },
+  ];
+  const closed = [
+    { sprintId: 'm-closed', status: 'fail', closedDay: '2026-09-28', card: 'active', phasesActive: 0 },
+    { sprintId: 'm-archived', status: 'pass', closedDay: '2026-09-28', card: 'archived', phasesActive: 0 },
+  ];
+  assert.deepEqual(candidatesFromRegistry(tasks, { size: 'M', closedSprints: closed }).map((x) => x.id), ['m-open']);
+  const ex = excludedCandidates(tasks, { size: 'M', closedSprints: closed });
+  assert.deepEqual(ex.map((e) => e.id), ['m-closed']);
+  assert.match(ex[0].reason, /закрыт fail/u);
 });

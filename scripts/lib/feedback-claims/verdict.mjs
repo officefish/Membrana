@@ -19,7 +19,7 @@
  * функции-пробники; так I/O протёк бы в чистый слой, и тотальность держалась бы на обещании
  * обвязки не бросать исключение. Здесь она держится на форме данных.
  */
-import { ATOM_CLASSES, CLIENT_PATH_PREFIXES } from './atoms.mjs';
+import { ATOM_CLASSES, CLIENT_PATH_PREFIXES, symbolHeadOf } from './atoms.mjs';
 
 /**
  * Исходы. Список закрыт: пятый исход означал бы правило, о котором не знает ни отчёт,
@@ -50,9 +50,53 @@ export const OUTCOMES = Object.freeze({
  *   verbExists?: boolean | null,
  *   prMerged?: boolean | null,
  *   prFiles?: readonly string[] | null,
+ *   decidedIn?: readonly string[] | null,
  *   sha?: string,
  * }} ClaimEvidence
  */
+
+/**
+ * Где токен уже РЕШЁН — по ведомости решённого (b4 `ritual-reads-decisions`).
+ *
+ * Вещдок 29.09: протокол просил живьём проверить `aria-current`, снятый решением (1) плана
+ * `sample-library-paging-a11y` с ратификацией владельца; зуб ответил «сомнение: карточки нет» —
+ * адрес не тот, о решении он не знал. Здесь токен ищется в текстах ратифицированных решений и
+ * среди закрытых прогонов спринтов; найденное печатается ПОЛНЫМ ЯКОРЕМ носителя, чтобы строку
+ * можно было перепроверить руками. Список исходов при этом НЕ растёт (слово владельца 30.09):
+ * решённость — причина в строке, а не пятый цвет, о котором не знает предикат ласточки.
+ *
+ * Токены короче четырёх знаков не ищутся: `at`, `id` найдутся в любом тексте.
+ *
+ * @param {string} token
+ * @param {{
+ *   decisions?: ReadonlyArray<{sprintId: string, key: string, path?: string|null, ratifiedAt: string, text: string}>,
+ *   closedSprints?: ReadonlyArray<{sprintId: string, status: string, closedDay: string, card?: string, stale?: boolean}>,
+ * } | null | undefined} ledger
+ * @returns {string[]}
+ */
+export function decidedInOf(token, ledger) {
+  const t = typeof token === 'string' ? token.trim() : '';
+  if (t.length < 4 || !ledger || typeof ledger !== 'object') return [];
+  const out = [];
+  for (const d of ledger.decisions ?? []) {
+    if (typeof d?.text === 'string' && d.text.includes(t)) {
+      out.push(`решение ${d.path ?? `docs/sprint/cut/${d.sprintId}.json`}#${d.key} (ратифицировано ${d.ratifiedAt})`);
+    }
+  }
+  for (const c of ledger.closedSprints ?? []) {
+    if (c?.sprintId === t) {
+      const card = c.card ? `, карточка ${c.card}${c.stale ? ' — долг закрытия' : ''}` : '';
+      out.push(`спринт закрыт ${c.closedDay} (${c.status})${card}`);
+    }
+  }
+  return out;
+}
+
+/** Причина с хвостом «· решено: …», если вещдок несёт `decidedIn`; иначе — как была. */
+function withDecided(reason, evidence) {
+  const list = Array.isArray(evidence?.decidedIn) ? evidence.decidedIn.filter((s) => typeof s === 'string' && s) : [];
+  return list.length === 0 ? reason : `${reason} · решено: ${list.join('; ')}`;
+}
 
 /**
  * @typedef {{
@@ -72,7 +116,8 @@ export function addressOf(klass, token) {
   const t = typeof token === 'string' ? token : '—';
   switch (klass) {
     case ATOM_CLASSES.SYMBOL:
-      return `git grep «${t}» в packages/**/src/**, apps/**/src/**`;
+      // Выражение `NAME = 36 ч` искалось по голове — адрес обязан сказать, что именно искали.
+      return `git grep «${symbolHeadOf(t) ?? t}» в packages/**/src/**, apps/**/src/**`;
     case ATOM_CLASSES.PATH:
       return `файл ${t}`;
     case ATOM_CLASSES.DOC:
@@ -207,7 +252,7 @@ export function verdictFor(atom, evidence) {
       outcome: OUTCOMES.HOLDS,
       klass: held.klass,
       addr: addressOf(held.klass, token),
-      reason: `${held.reason}${at}`,
+      reason: withDecided(`${held.reason}${at}`, evidence),
     };
   }
 
@@ -218,7 +263,7 @@ export function verdictFor(atom, evidence) {
       outcome: OUTCOMES.UNKNOWN,
       klass: probes.length === 1 ? probes[0].klass : null,
       addr: addressOf(probes[0]?.klass, token),
-      reason: `${why}${at}`,
+      reason: withDecided(`${why}${at}`, evidence),
     };
   }
 
@@ -230,7 +275,7 @@ export function verdictFor(atom, evidence) {
     outcome: soft ? OUTCOMES.SOFT : OUTCOMES.HARD,
     klass: first.klass,
     addr: addressOf(first.klass, token),
-    reason: `${denied.map((p) => p.reason).join('; ')}${at}`,
+    reason: withDecided(`${denied.map((p) => p.reason).join('; ')}${at}`, evidence),
   };
 }
 

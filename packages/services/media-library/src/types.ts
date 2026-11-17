@@ -1,3 +1,10 @@
+import type {
+  BatchCollectionDetectorVerdict,
+  BatchCollectionRunOutcome,
+  BatchCollectionRunRequest,
+  BatchCollectionSampleResult,
+} from '@membrana/plugin-contracts';
+
 export type CollectionKind = 'buffer' | 'user' | 'system';
 
 export type SampleLabel = 'drone' | 'not-drone' | 'unlabeled';
@@ -48,6 +55,18 @@ export interface StorageQuota {
   /** Buffer collection quota — set when backend tracks buffer separately (server). */
   bufferUsedBytes?: number;
   bufferLimitBytes?: number;
+  /**
+   * Момент последнего УСПЕШНОГО чтения квоты (ISO) — штампует сервис библиотеки, не бэкенд
+   * (#2538). Отказ чтения прежние числа не стирает и `readAt` не двигает: величина без момента
+   * чтения не живая, а старый предел без пометки показывался как живой.
+   */
+  readAt?: string;
+  /**
+   * Назначенный тарифом каталог базового набора (#2569; поле — первая половина #2563). Несёт
+   * только серверный бэкенд (`GET /quota` → `dataset`); у автономных бэкендов назначенного
+   * каталога нет, поле отсутствует. По нему сверка открытия решает, перечитывать ли базовый набор.
+   */
+  dataset?: { catalogId: string; sampleCount: number };
 }
 
 export interface NewSampleMeta {
@@ -81,7 +100,15 @@ export interface MediaLibrarySnapshot {
   samplesByCollection: Record<string, MediaSample[]>;
   quota: StorageQuota;
   version: number;
+  /**
+   * Фаза загрузки (#2570): `loading` — ни одного успешного `refresh()` целиком ещё не было, и снимок
+   * не говорит ничего о хранилище (начальные 100 МБ browser-limited — заглушка, не запасной режим);
+   * `ready` — был. Сервис ставит поле всегда; отсутствие (снимки, собранные вне сервиса) — не загрузка.
+   */
+  loadState?: MediaLibraryLoadState;
 }
+
+export type MediaLibraryLoadState = 'loading' | 'ready';
 
 export interface MediaPluginManifest {
   id: string;
@@ -97,6 +124,14 @@ export interface MediaPluginState {
   manifest: MediaPluginManifest;
   enabled: boolean;
 }
+
+export type CollectionDetectorBatchRequest = BatchCollectionRunRequest;
+export type CollectionDetectorBatchVerdict = BatchCollectionDetectorVerdict;
+export type CollectionDetectorBatchSampleResult = BatchCollectionSampleResult;
+
+type WithRunId<T> = T extends unknown ? T & { readonly runId: string } : never;
+
+export type CollectionDetectorBatchRunOutcome = WithRunId<BatchCollectionRunOutcome>;
 
 export interface PaginatedSamples<T = MediaSample> {
   items: T[];
@@ -157,6 +192,50 @@ export interface DeleteByIdsOutcome {
   deleted: number;
   freedBytes: number;
   refused: readonly { id: string; why: string }[];
+}
+
+/**
+ * Причина, по которой проба осталась в буфере при массовом вывозе. Закрытый набор — окно
+ * разбирает исход по нему, а не по тексту.
+ *
+ * `no-space` — ось набора не вмещает; `not-found` — такой пробы у прибора нет;
+ * `not-in-buffer` — проба уже не в буфере (в том числе после удачного прошлого вызова).
+ */
+export type MoveBatchStayReason = 'no-space' | 'not-found' | 'not-in-buffer';
+
+export interface MoveBatchStay {
+  sampleId: string;
+  reason: MoveBatchStayReason;
+}
+
+/** Числа пачки: сколько поместится/останется и сколько это байт. */
+export interface MoveBatchPlan {
+  willMove: number;
+  willStay: number;
+  moveBytes: number;
+  stayBytes: number;
+}
+
+/**
+ * Итог массового вывоза проб из буфера в набор.
+ *
+ * ЧАСТИЧНЫЙ ПЕРЕНОС — НЕСУЩЕЕ СВОЙСТВО, а не крайний случай: набор младшего тарифа держит
+ * столько же, сколько буфер, и полный буфер в непустой набор целиком не влезает по устройству
+ * тарифа. Непустой `stayed` — это штатный исход, и каждая оставшаяся названа ПОИМЁННО.
+ *
+ * При `dryRun` `moved` пуст, а `plan` — то, что вышло БЫ: это и есть то, что окно показывает
+ * человеку до подтверждения («перенесётся 740 из 1057»). Оси — состояние на конец вызова.
+ *
+ * `maxBatch` — объявленный сервером потолок списка за вызов; листать по нему, а не угадывать
+ * предел по первому отказу.
+ */
+export interface MoveBatchOutcome {
+  plan: MoveBatchPlan;
+  moved: readonly string[];
+  stayed: readonly MoveBatchStay[];
+  userStorage: { usedBytes: number; limitBytes: number };
+  buffer: { usedBytes: number; limitBytes: number };
+  maxBatch: number;
 }
 
 /** Заказ свода сеанса (#2039): ночь — промежутком дат в поясе человека, ISO включительно. */

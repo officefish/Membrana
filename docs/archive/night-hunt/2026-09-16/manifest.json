@@ -1,0 +1,66 @@
+{
+  "day": "2026-09-16",
+  "files": [
+    "design-drift-2026-38.md"
+  ],
+  "archivedAt": "2026-09-25T13:26:08.359Z",
+  "evidenceClass": "exhibit",
+  "entries": [
+    {
+      "name": "design-drift-2026-38.md",
+      "bornAt": "2026-09-16T07:00:44.945Z",
+      "contentHash": "83f7458864ab1f285d9586500b7837b5a572a07370c4c6b94054c58d5c223b97",
+      "evidenceClass": "exhibit",
+      "verdict": "fresh"
+    }
+  ],
+  "archivedBy": {
+    "runDay": "2026-09-25",
+    "sinceDay": "2026-08-26",
+    "windowHours": null,
+    "runRefused": [
+      {
+        "name": "design-drift-2026-28.md",
+        "bornAt": "2026-07-12T12:47:56.410Z",
+        "verdict": "refused_stale",
+        "ageHours": 1801
+      },
+      {
+        "name": "graph-drift-2026-28.md",
+        "bornAt": "2026-07-12T12:54:20.673Z",
+        "verdict": "refused_stale",
+        "ageHours": 1801
+      },
+      {
+        "name": "graph-drift-2026-33.md",
+        "bornAt": "2026-08-11T08:30:37.316Z",
+        "verdict": "refused_stale",
+        "ageHours": 1085
+      },
+      {
+        "name": "services-api-drift-2026-28.md",
+        "bornAt": "2026-07-12T12:53:41.897Z",
+        "verdict": "refused_stale",
+        "ageHours": 1801
+      },
+      {
+        "name": "services-api-drift-2026-30.md",
+        "bornAt": "2026-07-20T11:00:32.726Z",
+        "verdict": "refused_stale",
+        "ageHours": 1610
+      },
+      {
+        "name": "services-api-drift-2026-32.md",
+        "bornAt": "2026-08-03T11:00:33.058Z",
+        "verdict": "refused_stale",
+        "ageHours": 1274
+      },
+      {
+        "name": "services-api-drift-2026-33.md",
+        "bornAt": "2026-08-10T11:00:35.915Z",
+        "verdict": "refused_stale",
+        "ageHours": 1106
+      }
+    ]
+  }
+}

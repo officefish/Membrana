@@ -39,6 +39,30 @@ export const BOARD_LEFT_SIDEBAR_WIDTH_CLASS = 'w-[clamp(14rem,18vw,20rem)]' as c
 /** Отступ шапки от левого края до зоны контента (после сайдбара). */
 export const BOARD_HEADER_CONTENT_OFFSET_CLASS = 'pl-[clamp(14rem,18vw,20rem)]' as const;
 
+/**
+ * Левая (ведущая) группа шапки доски: кнопка сохранения, бейджи состояния, крошка контекста.
+ * `flex-1 min-w-0` — отдаёт правой группе инструментов её ширину; `overflow-x-clip` — её
+ * содержимое НЕ вытекает под правую группу, когда детей `shrink-0` больше, чем места (#2552:
+ * бейдж удержания ложился под галку INFO при ≈1270 px). Клип только по горизонтали: `overflow-hidden`
+ * срезал бы кольцо фокуса кнопок по вертикали и сделал бы группу прокручиваемой.
+ */
+export const BOARD_HEADER_LEAD_GROUP_CLASS = 'flex min-w-0 flex-1 items-center gap-3 overflow-x-clip' as const;
+
+/**
+ * Пол ширины бейджа удержания в шапке (#2558): бейдж сжимается (`flex-shrink: 1`), но не ниже
+ * «Буфер пол…» в `badge-sm` (≈88 px). Пол и есть min-width — `min-w-0` рядом не держать (гонка
+ * порядка CSS). Бейдж стоит ПЕРВЫМ ребёнком левой группы: клип `overflow-x-clip` режет правый
+ * хвост, значит уступает последним — после крошки сценария и «Сохранить».
+ */
+export const BOARD_HOLD_BADGE_MIN_WIDTH_CLASS = 'min-w-[5.5rem]' as const;
+
+/**
+ * Вес сжатия крошки контекста (#2558): на единицу базы худеет в 4 раза быстрее бейджа удержания
+ * (`flex-shrink: 1`) и уходит в ноль первой. Строгого «сначала крошка, потом бейдж» flex не даёт —
+ * только вес и пол.
+ */
+export const BOARD_BREADCRUMB_SHRINK_CLASS = 'shrink-[4]' as const;
+
 /** Класс отступа шапки с учётом свёрнутого левого сайдбара. */
 export function boardHeaderContentOffsetClass(leftSidebarCollapsed: boolean): string {
   return leftSidebarCollapsed ? '' : BOARD_HEADER_CONTENT_OFFSET_CLASS;

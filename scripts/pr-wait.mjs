@@ -21,7 +21,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { isMergeBlocked, reconcileMergeability, resolveRepoSlug, fetchRestPullMergeFields } from './lib/pr-mergeability.mjs';
+import { reconcileMergeability, resolveRepoSlug, fetchRestPullMergeFields } from './lib/pr-mergeability.mjs';
 import { REVIEW_STATUS_CONTEXT } from './lib/review-gate.mjs';
 
 const RED_CONCLUSIONS = new Set([
@@ -218,20 +218,34 @@ export function classifyPrWait({ rollup, reviewDecision, expected = null } = {})
  * @returns {string}
  */
 export function explainNoChecks(pr) {
+  const blocked = explainMergeBlock(pr);
+  if (blocked) return `проверок нет, потому что ${blocked}`;
+
   const mergeable = (pr.mergeable || '').toUpperCase();
   const mergeState = (pr.mergeStateStatus || '').toUpperCase();
-  if (mergeable === 'CONFLICTING' || mergeState === 'DIRTY') {
-    return (
-      'проверок нет, потому что PR конфликтует с базой ' +
-      `(mergeable=${mergeable || '?'}, mergeStateStatus=${mergeState || '?'}) — ` +
-      'GitHub не строит merge-ref и CI не запускается. Сначала разрешить конфликт, ' +
-      'потом ждать проверок. Смотреть воркфлоу/paths-ignore бессмысленно.'
-    );
-  }
   return (
     'проверок нет (это НЕ зелено). Возможные причины: прогоны ещё не созданы ' +
     'после пуша, воркфлоу не триггерится на эту ветку/пути, или CI выключен. ' +
     `mergeable=${mergeable || '?'}, mergeStateStatus=${mergeState || '?'}.`
+  );
+}
+
+/**
+ * Конфликтующий PR не получит новый merge-ref, поэтому ждать его CI бессмысленно
+ * независимо от того, остались ли в rollup старые проверки.
+ *
+ * @param {{mergeable?: string, mergeStateStatus?: string}} pr
+ * @returns {string|null}
+ */
+export function explainMergeBlock(pr) {
+  const mergeable = (pr.mergeable || '').toUpperCase();
+  const mergeState = (pr.mergeStateStatus || '').toUpperCase();
+  if (mergeable !== 'CONFLICTING' && mergeState !== 'DIRTY') return null;
+  return (
+    'PR конфликтует с базой ' +
+    `(mergeable=${mergeable || '?'}, mergeStateStatus=${mergeState || '?'}) — ` +
+    'GitHub не строит merge-ref: CI не запускается, новые проверки не запустятся. Сначала разрешить конфликт, ' +
+    'затем повторить yarn pr:wait. Смотреть воркфлоу/paths-ignore бессмысленно.'
   );
 }
 
@@ -499,6 +513,14 @@ async function main() {
         continue;
       }
 
+      const mergeBlock = explainMergeBlock(pr);
+      if (mergeBlock) {
+        console.error(`[pr:wait] ОТКАЗ: ${mergeBlock}`);
+        clearCheckpoint(String(pr.number));
+        process.exitCode = 2;
+        return;
+      }
+
       const checks = classifyPrWait({
         rollup: pr.statusCheckRollup,
         reviewDecision: pr.reviewDecision,
@@ -513,14 +535,6 @@ async function main() {
         }
         clearCheckpoint(String(pr.number));
         process.exitCode = EXIT_BY_STATE[checks.state];
-        return;
-      }
-
-      const conflict = isMergeBlocked(pr);
-      if (checks.state === 'none' && conflict) {
-        console.error(`[pr:wait] ${explainNoChecks(pr)}`);
-        clearCheckpoint(String(pr.number));
-        process.exitCode = 2;
         return;
       }
 

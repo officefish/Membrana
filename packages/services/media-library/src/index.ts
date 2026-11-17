@@ -15,6 +15,14 @@ export {
   type MediaLibraryConfig,
 } from './constants.js';
 
+/** Правило страницы стоит рядом с размером страницы — одно место на кабинет и Studio (#2505).
+ *  Дверь и оболочка Electron держат свои объявления того же числа — см. шапку `samples-page.ts`. */
+export {
+  clampSamplesPage,
+  resolveSamplesPageWindow,
+  type SamplesPageWindow,
+} from './samples-page.js';
+
 export type {
   DeleteByIdsOutcome,
   BufferCleanupPlanOutcome,
@@ -32,11 +40,20 @@ export type {
   LibraryDuplicateGroup,
   LibraryDuplicatesRunOutcome,
   Collection,
+  CollectionDetectorBatchRequest,
+  CollectionDetectorBatchRunOutcome,
+  CollectionDetectorBatchSampleResult,
+  CollectionDetectorBatchVerdict,
   CollectionKind,
   MediaLibrarySnapshot,
+  MediaLibraryLoadState,
   MediaSample,
   MediaPluginManifest,
   MediaPluginState,
+  MoveBatchOutcome,
+  MoveBatchPlan,
+  MoveBatchStay,
+  MoveBatchStayReason,
   NewSampleMeta,
   SampleLabel,
   SampleSource,
@@ -170,6 +187,7 @@ export {
   getDefaultMediaLibraryService,
   resetDefaultMediaLibraryServiceForTests,
   setDefaultMediaLibraryServiceForTests,
+  subscribeDefaultMediaLibraryService,
 } from './media-library-service.js';
 
 export { useMediaLibrary, type UseMediaLibraryResult } from './hooks.js';

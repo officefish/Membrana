@@ -1,0 +1,10 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "sample-library-paging-a11y",
+  "measuredAt": "2026-09-29T15:45:00+03:00",
+  "segments": [
+    { "cutBlockId": "a1-studio-nav-a11y", "changedLines": 256, "evidence": "git diff --numstat 216aa6b1..15438752 — SampleLibraryPagination.tsx 80/8 + sample-library-pagination.test.tsx 161/7" },
+    { "cutBlockId": "a2-cabinet-nav-a11y", "changedLines": 306, "evidence": "git diff --numstat 216aa6b1..15438752 — CabinetSampleTablePagination.tsx 84/9 + CabinetSampleTablePagination.test.tsx 213/0" },
+    { "cutBlockId": "a3-twins-tooth", "changedLines": 78, "evidence": "git diff --numstat 216aa6b1..15438752 — sample-library-paging-twins.test.ts 77/1 (с поправкой по ревью Дынина)" }
+  ]
+}

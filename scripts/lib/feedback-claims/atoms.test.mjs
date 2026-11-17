@@ -15,7 +15,27 @@ import {
   extractAtoms,
   isHedged,
   mentionsClientSide,
+  symbolHeadOf,
 } from './atoms.mjs';
+
+// b4 ritual-reads-decisions: выражение «имя = значение» судится по голове как символ.
+test('b4: `NIGHT_RUN_MAX_AGE_MS = 36 ч` → symbol по голове; голова извлекается; snake_case-голова остаётся opaque', () => {
+  assert.equal(symbolHeadOf('NIGHT_RUN_MAX_AGE_MS = 36 ч'), 'NIGHT_RUN_MAX_AGE_MS');
+  assert.equal(symbolHeadOf('state.day === "2026-09-29"'), 'state.day');
+  assert.deepEqual(classifyToken('NIGHT_RUN_MAX_AGE_MS = 36 ч'), [ATOM_CLASSES.SYMBOL]);
+  assert.deepEqual(classifyToken('maxRunAgeMs = 0'), [ATOM_CLASSES.SYMBOL]);
+  assert.deepEqual(classifyToken('promo_revoked = true'), [ATOM_CLASSES.OPAQUE], 'литерал протокола символом не становится');
+});
+
+test('b4 ПОРЧА: без значения, с двоеточием или с пробелом в имени — не выражение', () => {
+  assert.equal(symbolHeadOf('NIGHT_RUN_MAX_AGE_MS ='), null, 'значения нет');
+  assert.equal(symbolHeadOf('kind: close'), null, 'двоеточие — проза о поле, не оператор');
+  assert.equal(symbolHeadOf('two words = 1'), null);
+  assert.equal(symbolHeadOf(undefined), null);
+  // Прежние классы не сдвинуты: ALLCAPS без значения — по-прежнему документ ИЛИ константа.
+  assert.deepEqual(classifyToken('NIGHT_RUN_MAX_AGE_MS'), [ATOM_CLASSES.DOC, ATOM_CLASSES.SYMBOL]);
+  assert.deepEqual(classifyToken('kind: close'), [ATOM_CLASSES.OPAQUE]);
+});
 
 test('fenced-код не даёт атомов: токен внутри уже является кодом, а не утверждением о нём', () => {
   const md = [

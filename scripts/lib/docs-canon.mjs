@@ -19,7 +19,7 @@
 export const YARN_BUILTINS = new Set([
   'install', 'add', 'remove', 'dlx', 'workspace', 'workspaces', 'run', 'why', 'up',
   'init', 'node', 'set', 'config', 'link', 'bin', 'cache', 'info', 'pack', 'exec',
-  'plugin', 'turbo', 'version', 'patch', 'unlink', 'rebuild',
+  'plugin', 'turbo', 'version', 'patch', 'unlink', 'rebuild', 'npm',
 ]);
 
 /**

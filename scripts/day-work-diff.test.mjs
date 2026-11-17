@@ -18,6 +18,7 @@ import {
   formatDayReviewHeader,
   formatDayWorkContext,
   isSegmentOversized,
+  resultFactsFromPaths,
   parseDayCommits,
   OVERSIZED_CHANGED_LINES,
 } from './lib/day-work-diff.mjs';
@@ -80,6 +81,19 @@ test('isSegmentOversized по порогу', () => {
   assert.equal(isSegmentOversized(OVERSIZED_CHANGED_LINES), false);
   assert.equal(isSegmentOversized(OVERSIZED_CHANGED_LINES + 1), true);
 });
+test('resultFactsFromPaths: sprint/report carriers без догадки о closure', () => {
+  const facts = resultFactsFromPaths([
+    'docs/local-sprint/angelina-hostess-impl/AUDIT.md',
+    'docs/sprint/cut/angelina-hostess-impl-20261001.json',
+    'docs/discussions/personas-source-phase1-report.md',
+    'apps/client/src/ignored.tsx',
+  ]);
+  assert.deepEqual(facts.map((f) => [f.kind, f.path]), [
+    ['audit', 'docs/local-sprint/angelina-hostess-impl/AUDIT.md'],
+    ['sprint-plan', 'docs/sprint/cut/angelina-hostess-impl-20261001.json'],
+    ['report', 'docs/discussions/personas-source-phase1-report.md'],
+  ]);
+});
 
 // ─── ЗОЛОТОЙ РЕГРЕСС 15.07 ────────────────────────────────────────────────────────
 
@@ -121,6 +135,7 @@ test('Q2: oversized-сегмент помечен, дифф НЕ развёрн�
   const run = fakeGit([
     ['log --since', 'big feat: огромный PR (#999)'],
     ['diff --shortstat big', ' 80 files changed, 4000 insertions(+), 535 deletions(-)'],
+    ['diff --name-only big', 'docs/local-sprint/angelina-hostess-impl/AUDIT.md\ndocs/sprint/cut/angelina-hostess-impl-20261001.json'],
     ['diff big^..big', 'ОГРОМНЫЙ ДИФФ КОТОРЫЙ НЕ ДОЛЖЕН ПОПАСТЬ В КОНТЕКСТ'],
   ]);
   const result = collectDayWorkDiff({ run });
@@ -130,6 +145,8 @@ test('Q2: oversized-сегмент помечен, дифф НЕ развёрн�
   const ctx = formatDayWorkContext(result);
   assert.doesNotMatch(ctx, /ОГРОМНЫЙ ДИФФ/u, 'тело oversized не в контексте');
   assert.match(ctx, /oversized/u, 'но пометка есть');
+  assert.match(ctx, /AUDIT/u, 'носитель результата виден вместо пустого oversized');
+  assert.match(ctx, /CLOSURE в диффе не найден/u, 'закрытие не выдумывается, если его нет');
   assert.match(formatDayReviewHeader(result), /Oversized.*#999/su, 'и в шапке назван');
 });
 

@@ -21,6 +21,7 @@ import { LlmChannelsModule } from './modules/llm-channels/llm-channels.module';
 import { ArchivariusModule } from './modules/archivarius/archivarius.module';
 import { PluginResultsModule } from './modules/plugin-results/plugin-results.module';
 import { TaskArchiveModule } from './modules/task-archive/task-archive.module';
+import { ColdArchiveSweepModule } from './modules/cold-archive-sweep/cold-archive-sweep.module';
 import { HealthController } from './health.controller';
 import type { AppConfig } from './config/env.schema';
 import { APP_CONFIG } from './config/config.tokens';
@@ -71,6 +72,8 @@ const testImports =
     ArchivariusModule,
     PluginResultsModule,
     TaskArchiveModule,
+    // #2588 b6: ежечасный пусковик уборки холодного архива (media) + sweep-preview для панели.
+    ColdArchiveSweepModule,
   ],
   controllers: [HealthController],
 })

@@ -18,6 +18,7 @@ import { NodeLivenessModule } from './modules/node-liveness/node-liveness.module
 import { TariffModule } from './modules/tariff/tariff.module';
 import { HealthDeepModule } from './modules/health-deep/health-deep.module';
 import { OfficeRegistrationModule } from './modules/office-registration';
+import { OfficeUsersModule } from './modules/office-users/office-users.module';
 
 const testImports =
   process.env.NODE_ENV === 'test'
@@ -60,6 +61,8 @@ const testImports =
     NodeLivenessModule,
     TariffModule,
     OfficeRegistrationModule,
+    // #2588 b2: служебная дверь для office (/v1/internal/office/*) + провод ArchiveRetentionModule (b1).
+    OfficeUsersModule,
     HealthDeepModule,
   ],
   controllers: [HealthController],

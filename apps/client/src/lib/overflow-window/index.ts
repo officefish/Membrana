@@ -19,7 +19,6 @@ export type {
   OverflowAxisView,
   OverflowWindowViewModel,
   OverflowWindowViewModelInput,
-  RecordedBeforeStop,
   TariffTransitionOption,
   TariffTransitionsKnowledge,
 } from './viewModel';

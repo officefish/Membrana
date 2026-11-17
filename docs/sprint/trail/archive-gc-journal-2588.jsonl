@@ -1,0 +1,2 @@
+{"traceId":"archive-gc-journal-2588-g0-context","blockId":"g0-office-env-sweep-flags","kind":"context_run","subject":"ozhegov","at":"2026-10-08T13:50:00Z","ref":"docs/discussions/g0-office-env-sweep-flags-2588-ozhegov.md"}
+{"traceId":"archive-gc-journal-2588-g0-review","blockId":"g0-office-env-sweep-flags","kind":"review_pass","subject":"ozhegov","at":"2026-10-08T13:50:00Z","ref":"packages/background-office/.env.example"}

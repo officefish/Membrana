@@ -161,7 +161,11 @@ async function main(argv) {
     return EXIT_REFUSED;
   }
   const day = new Date().toISOString().slice(0, 10);
-  const logPath = resolve(REPO, opts.log ?? `docs/field/buffer-watch-${day}.jsonl`);
+  // Суффикс -trail обязателен: журнал живёт вне trail/ и op-log/, и соглашение о союзном
+  // слиянии опознаёт такие по ИМЕНИ (.gitattributes, JOURNAL_SUFFIXES в scripts/lib/journal-merge.mjs).
+  // Без суффикса союза не будет — значит конфликты при слиянии. Зуб journals:verify поймал это
+  // 26.09, когда в docs/field набралось два таких журнала и каталог стал классом.
+  const logPath = resolve(REPO, opts.log ?? `docs/field/buffer-watch-${day}-trail.jsonl`);
   console.error(`buffer:watch — прибор ${opts.device.slice(0, 8)}, каждые ${opts.intervalMin} мин, журнал ${logPath}`);
   console.error(`  опорная скорость до первого замера: ${REFERENCE_RATE_BPS} байт/с (${REFERENCE_RATE_SOURCE})`);
 

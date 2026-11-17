@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 
 import { pairResponseToCredentials } from '../../api/pairingCredentials';
 import { pairWithAccessKey } from '../../api/pairing';
+import { classifyConnectionFailure } from '../../lib/connection-fallback/classify';
 import { reconfigureMediaLibraryFromConnection } from '../../lib/mediaLibraryHubBridge';
 import { useNodeConnectionStore } from '../../stores/nodeConnectionStore';
+import { NodeRebindStepsNote } from './NodeRebindStepsNote';
 
 export const MembranePairingPanel: React.FC = () => {
   const showPairingPanel = useNodeConnectionStore((s) => s.showPairingPanel);
@@ -32,7 +34,8 @@ export const MembranePairingPanel: React.FC = () => {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Pairing failed';
       if (message.toLowerCase().includes('fetch') || message.toLowerCase().includes('network')) {
-        reportConnectionError(message);
+        // #2540: тот же классификатор и та же воронка стора, что у опроса кабинета.
+        reportConnectionError(classifyConnectionFailure(err, 'pairing'));
       }
       setError(message);
     } finally {
@@ -49,6 +52,9 @@ export const MembranePairingPanel: React.FC = () => {
         <p className="mt-2 text-sm text-base-content/70">
           Вставьте ключ доступа из кабинета (cabinet.membrana.space → Узлы → создать ключ).
         </p>
+        {/* #2461: ключ доступа перевязывает ТОЛЬКО Студию. Второе действие названо здесь же,
+            иначе человек уходит с уверенностью, что прибор перевязан, а пробы не уезжают никуда. */}
+        <NodeRebindStepsNote />
         <form className="mt-4 flex flex-col gap-3" onSubmit={(e) => void onSubmit(e)}>
           <label className="form-control w-full">
             <span className="label-text text-xs">Ключ доступа</span>

@@ -6,7 +6,7 @@ import { dirname, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 import { parseRagCliFlags } from './rag-ritual.mjs';
-import { renderScopeMarker, renderVerdictMarker } from './review-gate.mjs';
+import { renderLeadConventionMarker, renderScopeMarker, renderVerdictMarker } from './review-gate.mjs';
 import { renderSourceProvenance, resolveReviewDiff } from './review-diff-source.mjs';
 
 export const REGULATION_PATH = 'docs/prompts/CODE_REVIEW_REGULATION.md';
@@ -420,7 +420,7 @@ export function buildCodeReviewUserMessage(p) {
 }
 
 /**
- * @param {{ path: string, body: string, meta: { mode: string, full?: boolean, pr?: string, llmProvider?: string, llmModel?: string, llmSource?: string } }} opts
+ * @param {{ path: string, body: string, meta: { mode: string, full?: boolean, pr?: string, llmProvider?: string, llmModel?: string, llmSource?: string, leadOutOfConvention?: boolean } }} opts
  */
 export function writeReviewMarkdown(opts) {
   const stamp = new Date().toISOString();
@@ -442,6 +442,13 @@ export function writeReviewMarkdown(opts) {
   const scopeLine = opts.meta.diffScope?.truncated
     ? `${renderScopeMarker(opts.meta.diffScope)}\n> ⚠ **СУДИЛ ПО СРЕЗУ:** дифф обрезан до ${opts.meta.diffScope.sentChars} символов — часть файлов ревьюеру не показана. Вердикт не является суждением о непоказанном.\n\n`
     : '';
+  // #2491: второй адрес сигнала «у диффа нет хозяина ревью» — САМ артефакт, машинной меткой
+  // (её читает гейт через `leadConventionFromBody`) и громкой строкой человеку. Форма взята у
+  // соседа выше: срез диффа лечили ровно так же, и по той же причине — измеримый признак,
+  // живущий одной строкой в stderr, теряется полностью.
+  const leadConventionLine = opts.meta.leadOutOfConvention
+    ? `${renderLeadConventionMarker()}\n> ⚠ **ВНЕ КОНВЕНЦИИ:** карта скоупов не покрывает пути этого диффа — ведущий (${opts.meta.lead ?? 'умолчание'}) назначен умолчанием, а не по предмету. Это заявка на правило в \`SCOPE_TO_PERSONA\` (#2491).\n\n`
+    : '';
   let verdictLine = '';
   // Провенанс источника (#1771): чем именно был осмотренный код. До 08.08 вердикт нёс
   // только head — и по артефакту нельзя было проверить, от какой базы считался дифф.
@@ -462,7 +469,7 @@ export function writeReviewMarkdown(opts) {
     }
   }
   mkdirSync(dirname(opts.path), { recursive: true });
-  writeFileSync(opts.path, header + scopeLine + verdictLine + sourceLine + opts.body, 'utf8');
+  writeFileSync(opts.path, header + scopeLine + leadConventionLine + verdictLine + sourceLine + opts.body, 'utf8');
 }
 
 /**
@@ -519,6 +526,29 @@ export function readOptionalFile(relPath, maxChars = MAX_TASK_DOC_CHARS) {
   return text;
 }
 
+function runGitQuiet(args, cwd = process.cwd()) {
+  const res = spawnSync('git', args, { cwd, encoding: 'utf8', maxBuffer: 1024 * 1024 });
+  if (res.status !== 0) return null;
+  return (res.stdout || '').trim();
+}
+
+/**
+ * @param {readonly string[]} [paths]
+ * @param {{cwd?: string, runGit?: (args:string[], cwd:string) => string|null}} [opts]
+ */
+export function taskDocsProvenance(paths = [MAIN_DAY_ISSUE_PATH, CURRENT_TASK_PATH], opts = {}) {
+  const cwd = opts.cwd ?? process.cwd();
+  const git = opts.runGit ?? runGitQuiet;
+  const root = git(['rev-parse', '--show-toplevel'], cwd) || cwd;
+  const docs = paths.map((relPath) => {
+    const abs = resolve(cwd, relPath);
+    if (!existsSync(abs)) return `${relPath}: absent`;
+    const sha = git(['log', '-1', '--format=%H', '--', relPath], cwd);
+    return `${relPath}: ${sha ? sha.slice(0, 12) : 'untracked-or-unknown'}`;
+  });
+  return `Источник документов дня: cwd=\`${cwd}\`; git-root=\`${root}\`; ${docs.join('; ')}`;
+}
+
 /**
  * @param {string} diffStatText
  */
@@ -539,7 +569,7 @@ export function appendTaskContext(kind) {
   const main = readOptionalFile(MAIN_DAY_ISSUE_PATH);
   const buffer = readOptionalFile(CURRENT_TASK_PATH);
   if (!main && !buffer) return '';
-  const parts = [`## Task context (${kind})`];
+  const parts = [`## Task context (${kind})`, `> ${taskDocsProvenance()}`];
   if (main) parts.push(`### MAIN_DAY_ISSUE.md\n\n${main}`);
   if (buffer) parts.push(`### CURRENT_TASK.md\n\n${buffer}`);
   return parts.join('\n\n') + '\n\n';
