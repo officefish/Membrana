@@ -1,5 +1,22 @@
 # Еженедельный запуск `yarn plan:week`: читает docs/WHITE_PAPER.md и git log за 7 дней,
-# через Anthropic генерирует план следующей недели и коммитит docs/STRATEGIC_PLAN_WEEK.md в main.
+# через Anthropic генерирует план следующей недели и приносит docs/STRATEGIC_PLAN_WEEK.md
+# в main ЗАЯВКОЙ (отдельная ветка bot/weekly-plan-<run_id> + PR), а не пушем.
+#
+# Почему не пушем (шаг 0.3 docs/strategy/RETURN_STRATEGY_2026-11.md): main защищена —
+# 3 обязательные проверки (scan, «Lint, typecheck, test, build», review/teamlead). Прежний
+# шаг делал `git push origin HEAD:main` и с 28.09 каждую неделю падал на GH006: план
+# генерировался и выбрасывался. Права на прямой пуш боту НЕ даются — защита остаётся целой.
+#
+# Обязательные проверки у заявки бота: PR, открытый под GITHUB_TOKEN, НЕ запускает
+# pull_request-прогоны (правило GitHub против рекурсии). Чтобы заявка получила scan и
+# «Lint, typecheck, test, build», человек закрывает и переоткрывает её (или пушит в ветку
+# свой коммит) — события идут уже от человека, и CI стартует; review/teamlead — как у
+# любой заявки: `yarn review:gate --pr <N> --ensure --publish`. Отдельного токена/приложения
+# для Actions в репозитории нет (ночные PR охоты создаёт офис под токеном владельца).
+#
+# Предусловие: Settings → Actions → General → «Allow GitHub Actions to create and approve
+# pull requests» включено, иначе `gh pr create` откажет (шаг падает громко; ветка с планом
+# к этому моменту уже лежит в origin, план не теряется).
 #
 # Расписание: понедельник 07:00 UTC — после того, как `Scheduled CI` проверил здоровье main (06:00 UTC).
 # Ручной запуск: вкладка Actions → Weekly strategic plan → Run workflow.
@@ -32,7 +49,8 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write
+  contents: write # push ветки bot/weekly-plan-* (не main: main защищена)
+  pull-requests: write # gh pr create
 
 jobs:
   plan-week:
@@ -96,20 +114,41 @@ jobs:
           fi
           node scripts/strategic-plan-week.mjs "${ARGS[@]}"
 
-      - name: Commit and push if changed
+      - name: Open PR with the plan if changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          if [ -z "$(git status --porcelain docs/STRATEGIC_PLAN_WEEK.md)" ]; then
+            echo "Файл docs/STRATEGIC_PLAN_WEEK.md не изменился — заявлять нечего."
+            exit 0
+          fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain docs/STRATEGIC_PLAN_WEEK.md)" ]; then
-            git add docs/STRATEGIC_PLAN_WEEK.md
-            git commit -m "docs(plan): обновлён еженедельный стратегический план [skip ci]"
-            git push origin HEAD:${GITHUB_REF_NAME}
-            echo "PLAN_COMMITTED=true" >> "$GITHUB_ENV"
-          else
-            echo "Файл docs/STRATEGIC_PLAN_WEEK.md не изменился — коммитить нечего."
-            echo "PLAN_COMMITTED=false" >> "$GITHUB_ENV"
+          day="$(date -u +%Y-%m-%d)"
+          branch="bot/weekly-plan-${GITHUB_RUN_ID}"
+          git switch -c "$branch"
+          git add docs/STRATEGIC_PLAN_WEEK.md
+          # Без [skip ci]: заявке нужны обязательные проверки, а не их подавление.
+          git commit -m "docs(plan): еженедельный стратегический план ${day}"
+          # Пуш ТОЛЬКО в собственную новую ветку; защищённая main этим шагом не трогается.
+          git push origin "HEAD:refs/heads/${branch}"
+          body="$(mktemp)"
+          {
+            echo "Еженедельный стратегический план (\`yarn plan:week\`), прогон ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}."
+            echo ""
+            echo "Заявка открыта ботом под GITHUB_TOKEN — CI сам НЕ стартует."
+            echo "Обязательные проверки: закрыть и переоткрыть заявку (scan, «Lint, typecheck, test, build»),"
+            echo "затем \`yarn review:gate --pr <N> --ensure --publish\` (review/teamlead)."
+          } > "$body"
+          if ! url="$(gh pr create --base main --head "$branch" \
+            --title "docs(plan): еженедельный стратегический план ${day}" \
+            --body-file "$body")"; then
+            echo "::error::Ветка ${branch} запушена, но PR не создан. Проверьте Settings → Actions → General → «Allow GitHub Actions to create and approve pull requests»."
+            exit 1
           fi
+          echo "PR: ${url}"
+          echo "PLAN_PR=${url}" >> "$GITHUB_ENV"
 
       - name: Job summary
         if: always()
@@ -121,9 +160,9 @@ jobs:
             echo "- Источник цели: \`docs/WHITE_PAPER.md\`."
             echo "- Период: последние 7 дней (если не переопределён через \`since\`)."
             echo "- Выход: \`docs/STRATEGIC_PLAN_WEEK.md\`."
-            if [ "${PLAN_COMMITTED:-false}" = "true" ]; then
-              echo "- Результат: коммит запушен в \`${GITHUB_REF_NAME}\`."
+            if [ -n "${PLAN_PR:-}" ]; then
+              echo "- Результат: заявка ${PLAN_PR} (CI — переоткрытием, см. тело PR)."
             else
-              echo "- Результат: изменений не было или генерация не дошла до коммита."
+              echo "- Результат: изменений не было или генерация не дошла до заявки."
             fi
           } >> "$GITHUB_STEP_SUMMARY"
