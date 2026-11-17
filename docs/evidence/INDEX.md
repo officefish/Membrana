@@ -54,6 +54,19 @@
 | day-memo-2026-09-23 | изъятие | DAY_MEMO 2026-09-23: факты={"commits":11,"evidence":0,"crystals":0,"d… | `local:docs/memos/2026-09-23.md` | `214eb38c9dd7…` | 3654 |
 | day-memo-2026-09-24 | изъятие | DAY_MEMO 2026-09-24: факты={"commits":7,"evidence":0,"crystals":0,"de… | `local:docs/memos/2026-09-24.md` | `7ad9edf963a8…` | 2854 |
 | day-memo-2026-09-25 | изъятие | DAY_MEMO 2026-09-25: факты={"commits":14,"evidence":0,"crystals":0,"d… | `local:docs/memos/2026-09-25.md` | `ba4b6976bf89…` | 3644 |
+| day-memo-2026-09-26 | изъятие | DAY_MEMO 2026-09-26: факты={"commits":7,"evidence":0,"crystals":0,"de… | `local:docs/memos/2026-09-26.md` | `03ed00ad3a10…` | 2477 |
+| day-memo-2026-09-27 | изъятие | DAY_MEMO 2026-09-27: факты={"commits":12,"evidence":0,"crystals":0,"d… | `local:docs/memos/2026-09-27.md` | `d08f937d9c18…` | 3549 |
+| day-memo-2026-09-28 | изъятие | DAY_MEMO 2026-09-28: факты={"commits":9,"evidence":0,"crystals":0,"de… | `local:docs/memos/2026-09-28.md` | `ab8df45f7417…` | 3092 |
+| day-memo-2026-09-29 | изъятие | DAY_MEMO 2026-09-29: факты={"commits":11,"evidence":0,"crystals":0,"d… | `local:docs/memos/2026-09-29.md` | `55701b8ce186…` | 3613 |
+| day-memo-2026-09-30 | изъятие | DAY_MEMO 2026-09-30: факты={"commits":10,"evidence":0,"crystals":0,"d… | `local:docs/memos/2026-09-30.md` | `9f75f483a610…` | 3385 |
+| day-memo-2026-10-01 | изъятие | DAY_MEMO 2026-10-01: факты={"commits":10,"evidence":0,"crystals":0,"d… | `local:docs/memos/2026-10-01.md` | `688ae823e0c7…` | 3111 |
+| day-memo-2026-10-02 | изъятие | DAY_MEMO 2026-10-02: факты={"commits":11,"evidence":0,"crystals":0,"d… | `local:docs/memos/2026-10-02.md` | `997028b22562…` | 3520 |
+| day-memo-2026-10-03 | изъятие | DAY_MEMO 2026-10-03: факты={"commits":16,"evidence":0,"crystals":0,"d… | `local:docs/memos/2026-10-03.md` | `8cc241541284…` | 4119 |
+| day-memo-2026-10-04 | изъятие | DAY_MEMO 2026-10-04: факты={"commits":6,"evidence":0,"crystals":0,"de… | `local:docs/memos/2026-10-04.md` | `61ca5954beaf…` | 2396 |
+| day-memo-2026-10-05 | изъятие | DAY_MEMO 2026-10-05: факты={"commits":6,"evidence":0,"crystals":0,"de… | `local:docs/memos/2026-10-05.md` | `4011ec18daa3…` | 2505 |
+| day-memo-2026-10-06 | изъятие | DAY_MEMO 2026-10-06: факты={"commits":16,"evidence":0,"crystals":0,"d… | `local:docs/memos/2026-10-06.md` | `ba9fb13e472f…` | 4540 |
+| day-memo-2026-10-07 | изъятие | DAY_MEMO 2026-10-07: факты={"commits":9,"evidence":0,"crystals":0,"de… | `local:docs/memos/2026-10-07.md` | `2c675a8bd1f2…` | 2898 |
+| day-memo-2026-10-08 | изъятие | DAY_MEMO 2026-10-08: факты={"commits":13,"evidence":0,"crystals":0,"d… | `local:docs/memos/2026-10-08.md` | `7bfa7089f934…` | 3353 |
 | env-symlink-probe-2026-08-11 | поступление | Решение владельца 11.08: DoD-пункт typecheck карточки fix-node-module… | `local:docs/evidence/env-symlink-probe-2026-08-11.json` | `33ee29b44e38…` | 710 |
 | ozon-receipt-3765-field-kit-r2 | поступление | Поправка P2 (ревью 27.07): суперсидит ozon-receipt-3765-field-kit — т… | `local:docs/evidence/store/ozon-receipt-3765.pdf` | `73942c47fa6e…` | 46551 |
 

@@ -1,0 +1,11 @@
+{
+  "name": "membrana-scenario-trace-ipc-probe",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Electron-приложение-прибор: мерит простой отрисовщика на sendSync сброса scenario trace (#2476/#2485). НЕ воркспейс монорепо.",
+  "main": "main.js",
+  "membrana": {
+    "workspace": false,
+    "reason": "Каталог приложения для Electron: package.json нужен самому Electron (поле main), а не yarn. В граф монорепо пакет не входит намеренно — корневые workspaces это packages/*, packages/libs/*, packages/services/*, packages/services/detectors/*, apps/*, apps/demos/Research-Tree; scripts/* ни одному глобу не соответствует. Своих зависимостей нет: бинарь Electron берётся из монорепо (или из MEMBRANA_ELECTRON_BIN). Запускается только руками через scripts/measure-scenario-trace-ipc.mjs, в CI не участвует."
+  }
+}

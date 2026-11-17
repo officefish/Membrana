@@ -139,6 +139,41 @@ describe('OverflowWindowController — одно окно на overflowId', () =>
     expect(controller.getSnapshot()).toMatchObject({ open: true, windowKey: 'ovf-3', held: false });
   });
 
+  /**
+   * #2463: чужой эпизод — не «ушедшее удержание», а чужие числа. Порча «считать `discarded`
+   * тем же, что `released`» оставляет открытое окно со сводкой другой мембраны → красный.
+   */
+  it('чужой эпизод закрывает окно ЦЕЛИКОМ, даже открытое: сводки у чужого факта нет', () => {
+    hold.reconcileOwner({ kind: 'membrane', membraneId: 'm-admin', deviceId: 'dev-admin' });
+    hold.activateFromServer(REFUSAL);
+    expect(controller.getSnapshot()).toMatchObject({ open: true, windowKey: 'ovf-1' });
+
+    // Прибор перевязан на другую мембрану — эпизод оказался не наш.
+    expect(hold.reconcileOwner({ kind: 'membrane', membraneId: 'm-september', deviceId: 'dev-september' })).toBe(
+      'discarded',
+    );
+
+    expect(controller.getSnapshot()).toEqual({
+      open: false,
+      windowKey: null,
+      episode: null,
+      held: false,
+      cause: null,
+      refusedAttempt: null,
+      outcome: null,
+      opensForKey: 0,
+    });
+  });
+
+  it('свой эпизод сверка владельца не закрывает: окно и удержание на месте', () => {
+    const owner = { kind: 'membrane', membraneId: 'm-1', deviceId: 'dev-1' } as const;
+    hold.reconcileOwner(owner);
+    hold.activateFromServer(REFUSAL);
+    hold.reconcileOwner(owner);
+    expect(controller.getSnapshot()).toMatchObject({ open: true, windowKey: 'ovf-1', held: true });
+    expect(hold.isHeld()).toBe(true);
+  });
+
   it('контроллер не знает сети и библиотеки: в нём нет getQuota/refresh/fetch', async () => {
     const { readFileSync } = await import('node:fs');
     const src = readFileSync(new URL('./controller.ts', import.meta.url), 'utf8');

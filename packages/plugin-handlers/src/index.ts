@@ -94,6 +94,15 @@ export {
   type ChartListTuning,
   type ChartListVolume,
 } from './chart-list/selection.js';
+export {
+  selectKeepWithinBytes,
+  compareKeepPriority,
+  modeRanksFromPicks,
+  type KeepCandidate,
+  type KeepRefusal,
+  type KeepRefusalReason,
+  type KeepWithinBytesResult,
+} from './chart-list/select-keep-within-bytes.js';
 export { CHART_LIST_MANIFEST, CHART_LIST_ID } from './chart-list/manifest.js';
 export {
   findDuplicatePairs,
@@ -135,3 +144,14 @@ export {
   type MeasureTuning,
   type MeasuredCandidate,
 } from './chart-list-measure/executor.js';
+export { DETECTOR_BATCH_ID, DETECTOR_BATCH_MANIFEST } from './detector-batch/manifest.js';
+export {
+  DETECTOR_BATCH_MAX_SAMPLES,
+  createDetectorBatchExecutor,
+  detectorBatchFingerprintsOf,
+  type DetectorBatchAnalysis,
+  type DetectorBatchAnalyzer,
+  type DetectorBatchDeps,
+  type DetectorBatchExecutor,
+  type DetectorBatchRunResult,
+} from './detector-batch/executor.js';

@@ -26,12 +26,23 @@ const EPISODE: OverflowHoldEpisode = {
   buffer: { usedBytes: 1000, limitBytes: 1000 },
   userStorage: { usedBytes: 10, limitBytes: 1000 },
   enteredAtMs: 1,
+  owner: { kind: 'membrane', membraneId: 'm-1', deviceId: 'dev-1' },
 };
+
+const LIVE_AXES = { buffer: EPISODE.buffer, userStorage: EPISODE.userStorage } as const;
+/** #2538: свежее чтение предела с моментом — умолчание зубов, где возраст не предмет. */
+const QUOTA_READ = { fresh: true, readAt: '2026-10-01T08:00:00.000Z' } as const;
 
 function props(overrides: Partial<OverflowWindowProps> = {}, tariff: TariffTransitionsKnowledge = 'unknown') {
   return {
     open: true,
-    vm: buildOverflowWindowViewModel({ episode: EPISODE, held: true, recordedBeforeStop: null, tariffTransitions: tariff }),
+    vm: buildOverflowWindowViewModel({
+      episode: EPISODE,
+      liveAxes: LIVE_AXES,
+      quotaRead: QUOTA_READ,
+      held: true,
+      tariffTransitions: tariff,
+    }),
     refusedAttempt: null,
     bufferAtStop: { bufferSamples: 3, bufferBytes: 300, outsideSamples: 0 },
     sinceStop: { gone: 0, exported: 0, deleted: 0 },
@@ -50,7 +61,7 @@ function props(overrides: Partial<OverflowWindowProps> = {}, tariff: TariffTrans
 afterEach(() => cleanup());
 
 describe('OverflowWindow — содержание (а)', () => {
-  it('показывает причину словами, две шкалы, время факта, режим/фазу, «н/д» и счёт буфера', () => {
+  it('показывает причину словами, две шкалы, время факта, режим/фазу и счёт буфера — без строки «н/д» (#2552)', () => {
     render(<OverflowWindow {...props()} />);
     expect(screen.getByRole('dialog').getAttribute('aria-modal')).toBe('true');
     expect(screen.getByTestId('overflow-reason').textContent).toContain('Буфер прибора полон');
@@ -60,16 +71,49 @@ describe('OverflowWindow — содержание (а)', () => {
     expect(screen.getByTestId('overflow-at').textContent?.length).toBeGreaterThan(5);
     expect(screen.getByTestId('overflow-mode').textContent).toContain('остановка');
     expect(screen.getByTestId('overflow-mode').textContent).toContain('подтверждено сервером');
-    expect(screen.getByTestId('overflow-recorded').textContent).toBe('н/д');
+    // #2552: строки «Записано до остановки» нет — у прибора нет её источника, «н/д» не показывается.
+    expect(screen.queryByTestId('overflow-recorded')).toBeNull();
+    expect(screen.queryByText('Записано до остановки')).toBeNull();
     expect(screen.getByTestId('overflow-buffer-at-stop').textContent).toBe('3 проб · 300 B');
     expect(screen.getByTestId('overflow-held').textContent).toContain('жив, не пишет');
+  });
+
+  it('#2533: место освобождено при неснятом удержании — заголовок о месте, плашка жёлтая, слово о слове человека', () => {
+    const vm = buildOverflowWindowViewModel({
+      episode: EPISODE,
+      liveAxes: { buffer: { usedBytes: 0, limitBytes: 1000 }, userStorage: EPISODE.userStorage },
+      quotaRead: QUOTA_READ,
+      held: true,
+      tariffTransitions: 'unknown',
+    });
+    render(<OverflowWindow {...props({ vm })} />);
+    expect(screen.getByRole('heading').textContent).toBe('Место освобождено — снимите удержание');
+    const held = screen.getByTestId('overflow-held');
+    expect(held.className).toContain('alert-warning');
+    expect(held.className).not.toContain('alert-error');
+    expect(held.textContent).toContain('место освобождено');
+    expect(held.textContent).toContain('до вашего слова');
+    // Удержание не снято: кнопка «Возобновить запись» на месте, «снято» не показано.
+    expect(screen.getByTestId('overflow-resume')).toBeTruthy();
+    expect(screen.queryByTestId('overflow-released')).toBeNull();
+    // Снимок остановки остаётся рядом как вещдок.
+    expect(screen.getByTestId('overflow-axis-buffer-at-stop').textContent).toContain('лимит 1000 B');
+  });
+
+  it('#2533: место занято — заголовок «Буфер полон», плашка красная', () => {
+    render(<OverflowWindow {...props()} />);
+    expect(screen.getByRole('heading').textContent).toBe('Буфер полон');
+    const held = screen.getByTestId('overflow-held');
+    expect(held.className).toContain('alert-error');
+    expect(held.textContent).toContain('Само не возобновится');
   });
 
   it('неизвестный код: заголовок «Буфер полон», сырой код приглушённой строкой', () => {
     const vm = buildOverflowWindowViewModel({
       episode: { ...EPISODE, reason: 'weird_code' },
+      liveAxes: LIVE_AXES,
+      quotaRead: QUOTA_READ,
       held: true,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     render(<OverflowWindow {...props({ vm })} />);
@@ -162,8 +206,9 @@ describe('OverflowWindow — закрытие и a11y (DoD 7)', () => {
     expect(p.onResumeByHuman).toHaveBeenCalledTimes(1);
     const released = buildOverflowWindowViewModel({
       episode: EPISODE,
+      liveAxes: LIVE_AXES,
+      quotaRead: QUOTA_READ,
       held: false,
-      recordedBeforeStop: null,
       tariffTransitions: 'unknown',
     });
     rerender(<OverflowWindow {...p} vm={released} />);
@@ -194,5 +239,31 @@ describe('OverflowWindow — закрытие и a11y (DoD 7)', () => {
   it('отбитый старт назван в окне (T5)', () => {
     render(<OverflowWindow {...props({ refusedAttempt: { source: 'mic', what: 'запись в буфер' } })} />);
     expect(screen.getByTestId('overflow-refused-attempt').textContent).toContain('запись в буфер');
+  });
+});
+
+describe('#2538 — строка момента чтения предела под живыми шкалами', () => {
+  it('свежее чтение — приглушённая строка с временем; отказ — предупреждение «снимок от», числа остаются', () => {
+    render(<OverflowWindow {...props()} />);
+    const fresh = screen.getByTestId('overflow-quota-read');
+    expect(fresh.getAttribute('data-quota-fresh')).toBe('true');
+    expect(fresh.textContent).toContain('предел сервера прочитан');
+    expect(fresh.textContent).toMatch(/\d{1,2}:\d{2}/u);
+    cleanup();
+
+    const stale = buildOverflowWindowViewModel({
+      episode: EPISODE,
+      liveAxes: LIVE_AXES,
+      quotaRead: { fresh: false, readAt: '2026-10-01T05:00:00.000Z' },
+      held: true,
+      tariffTransitions: 'unknown',
+    });
+    render(<OverflowWindow {...props({ vm: stale })} />);
+    const line = screen.getByTestId('overflow-quota-read');
+    expect(line.getAttribute('data-quota-fresh')).toBe('false');
+    expect(line.textContent).toContain('предел не прочитан — показан снимок от');
+    expect(line.className).toContain('text-warning');
+    // Числа не спрятаны (развилка 4).
+    expect(screen.getByTestId('overflow-axis-buffer').textContent).toMatch(/лимит 1000 B/u);
   });
 });

@@ -1,0 +1,6 @@
+{"ts":"2026-09-30T16:20:23.763Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-09-29-batch-collection-run-contour-architecture-gate","origin":"persona-extract"}
+{"ts":"2026-09-30T16:20:23.763Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-09-30-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-30T16:20:23.763Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-08-30-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-30T16:20:23.763Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-08-29-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-30T16:20:23.763Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-08-12-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-30T16:20:23.763Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

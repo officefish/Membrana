@@ -27,6 +27,7 @@ import {
   type MintMode,
 } from '@/lib/mintModes';
 import { PANEL_SECTIONS } from '@/lib/sections';
+import { CabinetUsersRetention } from './CabinetUsersRetention';
 
 /**
  * Owner-раздел «Пользователи» (PU3, #463): матрица «пользователь × раздел»
@@ -435,6 +436,9 @@ export function PanelUsersBoard() {
           </div>
         )}
       </section>
+
+      {/* #2588 b4: вторая таблица раздела — пользователи кабинета и срок холодного архива (через дверь кабинета). */}
+      <CabinetUsersRetention />
 
       <MintCodeForm onMinted={(code) => setMinted(code)} />
 

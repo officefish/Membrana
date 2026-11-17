@@ -5,8 +5,98 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14289/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 380 (причины в op-log) -->
+Записей: 50 · бюджет 14385/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 396 (причины в op-log) -->
+
+### 2026-10-08 · позиция · archive-gc-journal
+
+> Словарь: не смешивать `DowngradeArchiveBatch`, `PurgeRun`, `PurgeJob`. Журнал — таблицы в media schema рядом с `downgrade-archive.store`, публичный API — internal HTTP + узкая panel-дверь через office. Office остаётся **пусковиком** (как сейчас), media — **исполнителем и […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/archive-gc-journal-2026-10-08.md#reply-1`
+
+### 2026-10-07 · позиция · team-evening-feedback
+
+> Ozhegov. Вёл `trace-freeze-c-library-render`. C1/C4/C7 в раскрытых диффах чистые: `useDowngradeArchive` — тонкий хук, I/O делегировано; тесты рядом с кодом синхронно обновлены (`NodeDowngradeArchivePanel.test.tsx`, `DowngradeConfirmDialog.test.tsx`, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-07.md#reply-1`
+
+### 2026-10-06 · позиция · team-evening-feedback
+
+> Ozhegov Оценка артефактов: LIVE_SERVICES.md декларирует маршруты новых рёбер с env-ключами — хороший уровень точности термина; sprint-cut перерезок v3/v4 с named findings — образец. Code-review корректно отметил системный паттерн root:null в procedure-runs — это слабая […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-06.md#reply-1`
+
+### 2026-10-05 · позиция · tariff-downgrade-freeze-consilium
+
+> Пункт (2). Пометка статуса на `Sample` смешивает словари «живая проба» и «архивная партия», ломает существующие запросы и индексы квоты. `ArchiveBatch` + `ArchivedSample` (файлы на месте, sampleId-ссылка, batch несёт `frozenAt`/`expiresAt`/mode) — отдельная лемма, слабая […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/tariff-downgrade-freeze-consilium-2026-10-05-2026-10-05.md#reply-1`
+
+### 2026-10-05 · позиция · team-evening-feedback
+
+> Ozhegov Оценка артефактов: `MAIN_DAY_ISSUE` корректно развёл слои — media (архив) отдельно, office (дверь) отдельно, кабинет (срок на мембране) отдельно; это соответствует вердикту консилиума 2 (отдельные таблицы архива в media). Стендап честно отметил, что я должен проверить […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-05.md#reply-1`
+
+### 2026-10-04 · позиция · team-evening-feedback
+
+> Ожегов. Оценка артефактов: `DAILY_AUDIT` даёт чистую выжимку по областям — 51% тулинг, 24% бизнес-процессы, видно, что день про инфраструктуру ритуала, а не про прикладной код. CLOSURE и `execution-traces.jsonl` структурно консистентны со схемой `procedure-run-journal@1/2`. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-04.md#reply-1`
+
+### 2026-10-03 · позиция · team-evening-feedback
+
+> Ожегов. Оценка артефактов: Канон дня честно назвал `#2503` как блокер роутинга персон — артефакт сработал, задача видна. `DAILY_STANDUP` корректно развёл роли по магистрали и хвостам. Итоги дня: `#2572` и `#2574` (сверка коллекций при открытии + состояние загрузки) — закрыли два […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-03.md#reply-1`
+
+### 2026-10-02 · позиция · team-evening-feedback
+
+> Ozhegov Оценка артефактов: Код-ревью точно указало на `procedure-runs/trail/2026-10-02.jsonl` в `runPhase: open` — это тот же паттерн, что ломал нас в r2 за 01.10. STANDUP и MAIN_DAY_ISSUE согласованно требуют закрыть `#2503`, но за день он так и не сдвинулся. Итоги дня: по моей […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-02.md#reply-1`
+
+### 2026-10-01 · позиция · team-evening-feedback
+
+> Ожегов. Оценка артефактов: Code-review корректно поймал незакрытый `ritual-day-2026-10-01-r2` (`runPhase: open`) — это структурный дефект трейла. MAIN_DAY_ISSUE явно называет меня ведущим на автономный цикл Ангелины. Итоги дня: В диффе — чистый проход по board-hold-modal-2533 […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-01.md#reply-1`
+
+### 2026-09-30 · позиция · team-evening-feedback
+
+> Ожегов. Мой долг #2503 (PERSONAS → `scripts/lib/personas.mjs`) — не закрыт, четвёртый день XS без движения. Три скрипта продолжают дублировать константу. Это моя ответственность, факт признаю. Оценка артефактов: `DAILY_STANDUP` называет мой долг явно в разделе ролей — правильная […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-30.md#reply-1`
+
+### 2026-09-29 · позиция · team-evening-feedback
+
+> Ozhegov. Мой день странный: два раза заведён в задачах (`ritual-reads-done-work` B1, разбор), но `PERSONAS → scripts/lib/personas.mjs` четвёртый день в санитарных. Оценка артефактов: DAILY_STANDUP правильно вычисляет роутинг из реестра, не моделью — это снимает субъективность […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-29.md#reply-1`
+
+### 2026-09-29 · позиция · batch-collection-run-contour-architecture-gate
+
+> Начинаю со словаря. В стволе уже есть read-only чтение коллекции (`CollectionSampleReader`) и request-контур collections plugin. Новый `SampleCollectionRef` в `@membrana/core` — это **второй словарь** на ту же сущность «набор проб». По SERVICES.md и ARCHITECTURE.md §1: core не […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/batch-collection-run-contour-architecture-gate-2026-09-29.md#reply-1`
+
+### 2026-09-28 · позиция · team-evening-feedback
+
+> Ожегов. Оценка артефактов: `DAILY_CODE_REVIEW` по раскрытым PR (#2503, #2502) корректно показал, что `DEFAULT_LEAD` вынесен константой, `SCOPE_TO_PERSONA` расширен серверным контуром с комментариями порядка правил, `isGitAncestor` — чистая функция с инжектируемым `exec`. Это […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-28.md#reply-1`
+
+### 2026-09-27 · позиция · team-evening-feedback
+
+> Ozhegov **Оценка артефактов:** Стендап корректно вынес два XS в «разблокирующие гейт независимо от owner-choice» — это правильный уровень декомпозиции: не «доделать rollout», а «снять лишний технический блок». `DAILY_CODE_REVIEW` по `CabinetSampleDuplicatesPanel.tsx` (#2481) — […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-27.md#reply-1`
+
+### 2026-09-26 · позиция · team-evening-feedback
+
+> Ozhegov **Оценка артефактов:** `DAILY_CODE_REVIEW` по моей зоне (C4, C7) — чисто: `night-hunt-graph.ts` без React, чистые функции (`entryKey`, `workspaceDescriptor`, `countWorkspaceEntries`), тесты рядом, критические ветки покрыты (CONFLICTING/DIRTY, MERGEABLE/CLEAN, составной […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-26.md#reply-1`
 
 ### 2026-09-25 · позиция · team-evening-feedback
 
@@ -212,92 +302,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-04.md#reply-1`
 
-### 2026-09-03 · позиция · team-evening-feedback
+### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 
-> **Оценка артефактов:** Стендап и MAIN_DAY_ISSUE согласованы; `DAILY_CODE_REVIEW` корректен — границы пакетов соблюдены, C4 ок, verify-скрипт присутствует. Замечание: `STRATEGIC_PLAN_DAY.md` по-прежнему лежит как вещдок, хотя норма Q1 требует не читать его как источник. **Итоги […]
+> Operation surface является одной закрытой таблицей. Вне неё нет скрытых CLI-команд, server endpoints или операций из примечаний; у каждой строки ровно один M3 action и ровно один authority object. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
-
-### 2026-09-02 · позиция · team-evening-feedback
-
-> Оценка артефактов: Документы дня связаны: стендап верно выявил P0-блокер, MAIN_DAY_ISSUE дал чёткие посылки с маркерами для проверки. DAILY_CODE_REVIEW структурно безупречен: C1 (границы пакетов не нарушены), C7 (тесты на поведение, не написание), C4 (изоляция изменений). […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m0-order
-
-> Формулирую лемму зависимости решения так, как мы её применяли на logging-observability-cut-m0 и hunt-and-canon-m0: «вердикт A раньше B», если без зафиксированного вердикта A обсуждение B либо бессмысленно, либо требует высокой цены переделки контракта. Применяю к (1) и (2): ключ […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/library-open-api-m0-order-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m1-ownership
-
-> Начну со словарного различения, которое здесь решающее. «Единица владения» — не «единица хранения» и не «единица адресации». Адресация в media идёт прибором (`deviceId`), это факт кода. Но адресация ≠ владение. Владение — это «кому принадлежит трек» в смысле, кто вправе открыть […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/library-open-api-m1-ownership-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m2-contract
-
-> Уточню лемму по ключу пробы. `id` — неизменяем, `title` — изменяем. Снаружи проба называется своим `id`. `title` — человекочитаемая метка, но не ключ ссылки: ссылка строится по `sampleId`, а не по `title`. Это важно зафиксировать явно: партнёр не должен строить ссылки по […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/library-open-api-m2-contract-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m3-key-ttl
-
-> Уточняю словарную статью. «Носитель умолчания» — это конкретная константа или ветка кода в генераторе ключа: либо `DEFAULT_TRACK_KEY_TTL` как именованная константа, либо `expiresAt = null` как явный выбор «бессрочно по умолчанию». Одно из двух. Третьего нет. Фактура говорит: […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/library-open-api-m3-key-ttl-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m4-extraction
-
-> Леммы. **Список с ключами** ≠ **метаданные каталога**. **Ручка списка** ≠ **ручка выдачи медиа**. **Потолок страницы** ≠ **предел выемки**. Словарь: носитель границы — артефакт рантайма, который отказывает; исполнитель — модуль, который этот отказ чеканит. Пожелание в README без […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/library-open-api-m4-extraction-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · team-evening-feedback
-
-> Ozhegov. Оценка артефактов: `MAIN_DAY_ISSUE` корректно опирается на факты кода (`samples.service.ts` блокирует только тарифный набор и self-move; `moveTargets` уже корректен) — постановка не требует правки сервисного слоя, только UI-условия в двух местах. Итоги дня: […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
-
-### 2026-08-31 · позиция · team-evening-feedback
-
-> Оценка артефактов: Стендап дал чёткий фокус и «что сознательно не делаем» — это помогло не размазать день по трём L-якорям. MAIN_DAY_ISSUE структурно сильный: предикаты, DoD, риски, развилка A/B — всё на месте. Code-review выделил C1/C7 по развёрнутому диффу — этого достаточно […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
-
-### 2026-08-30 · позиция · team-evening-feedback
-
-> Оценка артефактов: Документы дня согласованы, границы работ в MAIN_DAY_ISSUE определены чётко: `docs/procedures/*`, `scripts/lib/validate-procedure.mjs`, тест, hash в `kits/containerization-master/MANIFEST.json`. Связность соблюдена, цикл пакетов не задет. C7: зуб на равенство […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
-
-### 2026-08-29 · позиция · team-evening-feedback
-
-> Оценка артефактов: Код-ревью дня корректно классифицировало слои: C1 (границы пакетов) усилены зубом `declared-imports`, C4/C7 (чистые ядра, тесты рядом) соблюдены. `MAIN_DAY_ISSUE` ясно разграничил primary/secondary/sanitary — это помогает структурировать работу. Итоги дня: […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
-
-### 2026-08-28 · позиция · team-evening-feedback
-
-> Оценка артефактов: Документы дня связны: стендап → MAIN_DAY_ISSUE → DoD → code-review — единая линия #2204. Единственное слабое место — отсутствие карточек `media-library-service` / `background-media` в registry (отмечено в MAIN_DAY_ISSUE), что мешает трассировке. Итоги дня: […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m0-order
-
-> Лемма зависимости решения та же, что на logging-observability-cut-m0: «A раньше B», если без A комната B либо пуста, либо ломает уже принятый контракт. Словарь кандидатов закрыт — не сливать (2) и (3): оба про проглоченный отказ, но один не замечает тишину, другой активно […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/hunt-and-canon-m0-order-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m1-silence-guard
-
-> Леммы. `SilenceWatchdog` ≠ `NightHuntTrigger` ≠ `OfficeClient`. Сторож — отдельная словарная статья: «ожидал факт → не нашёл в окне → красный». Публичный контракт — проверка наличия/честности исхода, без импорта office-кода и без «optional echo». Глушение в YAML […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m1-silence-guard-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m2-false-evidence
-
-> Леммы. **Вещдок** ≠ **копия**. Вещдок — артефакт, привязанный к ожидаемому событию ночи (исход e в смысле M1). Копия — байты, перенесённые без доказательства свежести источника. `manifest.archivedAt` — лемма «когда скопировали»; имя папки `YYYY-MM-DD` сейчас врёт, что это исход […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m2-false-evidence-2026-08-27.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`

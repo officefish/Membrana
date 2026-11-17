@@ -1,0 +1,4 @@
+{"ts":"2026-10-08T11:06:32.694Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-10-08T21:26:34.491Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-10-08-archive-gc-journal","origin":"persona-extract"}
+{"ts":"2026-10-08T21:26:34.491Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-09-03-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-08T21:26:34.491Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

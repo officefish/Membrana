@@ -40,6 +40,7 @@ import {
   personaMemoryPath,
   readPersonaMemory,
 } from './lib/persona-memory.mjs';
+import { CONSILIUM_PERSONA_FILES } from './lib/personas.mjs';
 import {
   extractAgendaIds,
   findUncoveredAgendaItems,
@@ -75,14 +76,7 @@ const MAX_ASSEMBLED_CHARS = 95_000;
 const MIN_REPLIES_DEFAULT = 30;
 const MAX_MEMORY_CHARS_PER_ROLE = 6_000; // 6 советчиков в одном промпте — держим компактно
 
-const PERSONA_FILES = {
-  teamlead: 'docs/virtual-team/PROMPT_TEAMLEAD.md',
-  architect: 'docs/virtual-team/PROMPT_ARCHITECT.md',
-  structurer: 'docs/virtual-team/PROMPT_STRUCTURER.md',
-  mathematician: 'docs/virtual-team/PROMPT_MATHEMATICIAN.md',
-  musician: 'docs/virtual-team/PROMPT_MUSICIAN.md',
-  layout: 'docs/virtual-team/PROMPT_LAYOUT_DEVELOPER.md',
-};
+const PERSONA_FILES = CONSILIUM_PERSONA_FILES;
 
 const CONTEXT_FILES = [
   { path: 'docs/ARCHITECTURE.md', title: 'Архитектура' },

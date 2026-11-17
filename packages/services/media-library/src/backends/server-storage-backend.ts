@@ -5,9 +5,12 @@ import { resolveMediaLibraryTraceId } from '../media-library-trace.js';
 import type { IStorageBackend } from '../ports/storage-backend.js';
 import type {
   DeleteByIdsOutcome,
+  MoveBatchOutcome,
   BufferCleanupPlanOutcome,
   BufferCleanupPlanRequest,
   Collection,
+  CollectionDetectorBatchRequest,
+  CollectionDetectorBatchRunOutcome,
   LibraryChartListRequest,
   LibraryChartListRunOutcome,
   SessionDigestRequest,
@@ -24,6 +27,8 @@ import type {
   UpdateSampleLabelNotes,
   PaginatedSamples,
 } from '../types.js';
+
+type WithoutRunId<T> = T extends unknown ? Omit<T, 'runId'> : never;
 
 export interface ServerStorageBackendConfig {
   baseUrl: string;
@@ -370,6 +375,9 @@ export class ServerStorageBackend implements IStorageBackend {
         serverReachable: this.serverReachable,
         bufferUsedBytes: data.buffer.usedBytes,
         bufferLimitBytes: data.buffer.limitBytes,
+        ...(data.dataset
+          ? { dataset: { catalogId: data.dataset.catalogId, sampleCount: data.dataset.sampleCount } }
+          : {}),
       };
     } catch {
       return {
@@ -447,6 +455,27 @@ export class ServerStorageBackend implements IStorageBackend {
       // Прогон был, а результата нет — это поломка канала, не пустая выборка: молча показать
       // ноль строк значило бы выдать сбой за «в наборе ничего не нашлось».
       throw new Error('Витрина отбора не вернула результат прогона (канал result пуст)');
+    }
+    return { runId: row.runId, ...row.result };
+  }
+
+  async requestCollectionDetectorBatch(
+    collectionId: string,
+    req: CollectionDetectorBatchRequest = {},
+  ): Promise<CollectionDetectorBatchRunOutcome> {
+    const row = await this.requestJson<{
+      runId: string;
+      result?: WithoutRunId<CollectionDetectorBatchRunOutcome>;
+    }>(
+      `/collections/${encodeURIComponent(collectionId)}/plugins/membrana.report.detector-batch/request`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...(req.sampleIds ? { sampleIds: req.sampleIds } : {}) }),
+      },
+    );
+    if (!row.result) {
+      throw new Error('media не вернул результат batch-прогона детекторов');
     }
     return { runId: row.runId, ...row.result };
   }
@@ -623,6 +652,37 @@ export class ServerStorageBackend implements IStorageBackend {
     if (!res.ok) {
       throwForStatus(res, await parseApiError(res, this.baseUrl));
     }
+  }
+
+  /**
+   * Массовый вывоз из буфера в набор. ОДНА дверь на тысячу проб, а не тысяча вызовов
+   * `moveSample`: буфер прибора `9e86ec85` держит 1057 проб, и отказ на пятисотой оставил бы
+   * человека с половиной вывоза и без числа, сколько уехало.
+   *
+   * Пустой список сюда не отправляется: переносить без показанного человеку списка нечего —
+   * это же правило, что у удаления по списку.
+   *
+   * Ответ 200 с непустым `stayed` — ШТАТНЫЙ ИСХОД (частичный перенос), поэтому исключения
+   * здесь нет: `requestJson` бросает только на настоящих ошибках транспорта и на отказах
+   * целиком (нет прибора, нет набора, цель — сам буфер, список длиннее `maxBatch`).
+   */
+  async moveSamplesBatch(
+    sampleIds: readonly string[],
+    toCollectionId: string,
+    options: { readonly dryRun?: boolean } = {},
+  ): Promise<MoveBatchOutcome> {
+    if (sampleIds.length === 0) {
+      throw new Error('Перенос без списка невозможен: сперва план, потом слово человека');
+    }
+    return this.requestJson<MoveBatchOutcome>('/samples/move-batch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sampleIds: [...sampleIds],
+        toCollectionId,
+        ...(options.dryRun === true ? { dryRun: true } : {}),
+      }),
+    });
   }
 
   async moveSample(sampleId: string, toCollectionId: string): Promise<MediaSample> {

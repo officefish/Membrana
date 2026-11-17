@@ -18,11 +18,10 @@
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { loadKnownPersonaIds } from './personas.mjs';
 
-/** Канонический состав команды (рефакторинг #1331): восемь голосов с носителями. */
-export const PERSONAS = Object.freeze([
-  'angelina', 'dynin', 'farrell', 'kuryokhin', 'ozhegov', 'rodchenko', 'tarasov', 'vesnin',
-]);
+/** Канонический состав команды: все голоса из docs/virtual-team/voices.registry.json. */
+export const PERSONAS = loadKnownPersonaIds();
 
 /**
  * Записи журнала персоны за дату: строки `- YYYY-MM-DD · текст` — дословно.

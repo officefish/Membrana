@@ -1,11 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { createNode, deleteNode, fetchMembraneMe, type MembraneView, type NodeView } from '@/api/membrane';
+import {
+  createNode,
+  deleteNode,
+  fetchMembraneMe,
+  NodeHasFrozenArchiveError,
+  type MembraneView,
+  type NodeView,
+} from '@/api/membrane';
 import type { DeviceCaptureMode } from '@/api/deviceCapture';
+import type { ArchiveNodeView } from '@/api/downgradeArchive';
 import { isNodeLimitReachedView } from '@/lib/nodeListView';
 import { resolveNodeCardStatus, resolveNodeVitality } from '@/lib/nodeCardStatus';
 import { DEVICE_OFFLINE_RUN_HINT } from '@/lib/isDeviceLive';
 import { useCabinetNodeRuntime } from '@/lib/useCabinetNodeRuntime';
 import { useCabinetNodesJournalPreview, type NodeJournalPreviewState } from '@/lib/useCabinetNodesJournalPreview';
+import { NodeDowngradeArchivePanel, useDowngradeArchive } from '@/components/nodes/NodeDowngradeArchivePanel';
 import { NodeLastTrackPreview } from '@/components/nodes/NodeLastTrackPreview';
 import { NodeOverflowHoldLine } from '@/components/nodes/NodeOverflowHoldLine';
 import { NodeScenarioCell } from '@/components/nodes/NodeScenarioCell';
@@ -21,6 +30,8 @@ export function NodesPage({ onOpenJournal, onOpenDeviceBoard, onOpenKeys }: Node
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  // #2632 g8c: отказ удаления из-за замороженного архива — объяснение на карточке узла.
+  const [deleteRefusal, setDeleteRefusal] = useState<NodeHasFrozenArchiveError | null>(null);
 
   const membraneId = data?.membrane.id ?? null;
   const runtime = useCabinetNodeRuntime(membraneId);
@@ -32,6 +43,8 @@ export function NodesPage({ onOpenJournal, onOpenDeviceBoard, onOpenKeys }: Node
     [data?.nodes],
   );
   const journalPreview = useCabinetNodesJournalPreview(membraneId, deviceIds);
+  // #2619: архив понижения — один запрос на страницу, панель на узле.
+  const archive = useDowngradeArchive();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -72,11 +85,18 @@ export function NodesPage({ onOpenJournal, onOpenDeviceBoard, onOpenKeys }: Node
 
     setBusy(true);
     setError(null);
+    setDeleteRefusal(null);
     try {
       await deleteNode(node.id);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Не удалось удалить узел');
+      if (e instanceof NodeHasFrozenArchiveError) {
+        setDeleteRefusal(e);
+        // Ссылка ведёт на панель архива — она должна показывать то, о чём говорит отказ.
+        void archive.reload();
+      } else {
+        setError(e instanceof Error ? e.message : 'Не удалось удалить узел');
+      }
     } finally {
       setBusy(false);
     }
@@ -130,6 +150,11 @@ export function NodesPage({ onOpenJournal, onOpenDeviceBoard, onOpenKeys }: Node
               node={node}
               runtime={runtime}
               journalPreview={journalPreview.getPreview(node.device?.mediaDeviceId ?? '')}
+              archive={archive.nodes.find((a) => a.nodeId === node.id)}
+              archiveLoadError={archive.error}
+              onArchiveRestored={archive.reload}
+              onArchiveRetry={archive.reload}
+              deleteRefusal={deleteRefusal?.nodeId === node.id ? deleteRefusal : null}
               busy={busy}
               onOpenJournal={onOpenJournal}
               onOpenDeviceBoard={onOpenDeviceBoard}
@@ -153,6 +178,24 @@ export function NodesPage({ onOpenJournal, onOpenDeviceBoard, onOpenKeys }: Node
   );
 }
 
+/** Якорь панели архива узла — цель ссылки из отказа удаления (#2632 g8c). */
+function archiveAnchorId(nodeId: string): string {
+  return `node-archive-${nodeId}`;
+}
+
+/**
+ * Объяснение отказа удаления узла (#2632 g8c, Т3): почему нельзя и когда станет можно. Срок
+ * уже прошёл, а архив ещё не убран — честно говорим «после уборки», а не дату из прошлого.
+ */
+function frozenArchiveRefusalText(nearestExpiresAt: string | null, now: number = Date.now()): string {
+  const head = 'Узел не удалён: у прибора есть архив записей после понижения тарифа.';
+  const at = nearestExpiresAt ? Date.parse(nearestExpiresAt) : Number.NaN;
+  if (Number.isNaN(at)) return `${head} Удаление станет возможно, когда архив удалится по сроку.`;
+  if (at <= now) return `${head} Срок архива истёк — удаление станет возможно после его очистки.`;
+  const day = new Date(at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+  return `${head} Удаление станет возможно после ${day}, когда архив удалится по сроку.`;
+}
+
 function runtimeConnectionLabel(state: ReturnType<typeof useCabinetNodeRuntime>['connection']): string {
   switch (state) {
     case 'connected':
@@ -170,6 +213,11 @@ function NodeCard({
   node,
   runtime,
   journalPreview,
+  archive,
+  archiveLoadError,
+  onArchiveRestored,
+  onArchiveRetry,
+  deleteRefusal,
   busy,
   onOpenJournal,
   onOpenDeviceBoard,
@@ -179,6 +227,11 @@ function NodeCard({
   node: NodeView;
   runtime: ReturnType<typeof useCabinetNodeRuntime>;
   journalPreview: NodeJournalPreviewState;
+  archive: ArchiveNodeView | undefined;
+  archiveLoadError: string | null;
+  onArchiveRestored: () => Promise<void>;
+  onArchiveRetry: () => Promise<void>;
+  deleteRefusal: NodeHasFrozenArchiveError | null;
   busy: boolean;
   onOpenJournal: () => void;
   onOpenDeviceBoard: () => void;
@@ -483,6 +536,26 @@ function NodeCard({
             loading={journalPreview.loading}
           />
         ) : null}
+
+        {deleteRefusal ? (
+          <div className="alert alert-warning py-2 text-sm" role="alert" data-testid="node-delete-refusal">
+            <span>
+              {frozenArchiveRefusalText(deleteRefusal.nearestExpiresAt)}{' '}
+              <a className="link" href={`#${archiveAnchorId(node.id)}`}>
+                Открыть архив прибора
+              </a>
+            </span>
+          </div>
+        ) : null}
+
+        <div id={archiveAnchorId(node.id)}>
+          <NodeDowngradeArchivePanel
+            view={archive}
+            loadError={archiveLoadError}
+            onRetryLoad={onArchiveRetry}
+            onRestored={onArchiveRestored}
+          />
+        </div>
 
         {isCaptured && deviceId ? (
           <NodeScenarioCell

@@ -1,0 +1,10 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "device-quota-after-tariff-2538",
+  "measuredAt": "2026-10-01T17:24:00Z",
+  "segments": [
+    { "cutBlockId": "b1-quota-reread-light-and-aged", "changedLines": 425, "evidence": "git diff --numstat d364ef64..2b09b9f3 по файлам зоны b1 — media-library-service.ts 39/2 + types.ts 6/0 + test/media-library.test.ts 107/0 + OverflowWindowHost.tsx 14/4 + OverflowWindowHost.test.tsx 53/5 + viewModel.ts 27/2 + viewModel.test.ts 86/1 + reasonTexts.ts 31/0 + OverflowWindow.tsx 8/0 + OverflowWindow.test.tsx 33/0 + structural.test.ts 5/2 (код 133, зубы 292; коммит 2b09b9f3)" },
+    { "cutBlockId": "b2-tariff-reaches-device-ticks", "changedLines": 320, "evidence": "git diff --numstat 2b09b9f3..4133dfcc — mediaLibraryHubBridge.ts 15/1 + mediaLibraryHubBridge.test.ts 70/0 + usePairStatusMonitor.ts 3/0 + usePairStatusMonitor.test.tsx 158/0 (новый) + pairingCredentials.ts 18/3 + pairingCredentials.test.ts 44/2 + nodeConnectionMode.ts 6/0 (код 46, зубы 274; коммит 4133dfcc)" },
+    { "cutBlockId": "b3-live-check-closure", "changedLines": 400, "evidence": "ветка chore/close-device-quota-after-tariff-2538 от f9e9ad64 — CLOSURE.md 150 (+ раздел гейта ~30) + execution-traces.jsonl 6 + reviews/*.md 143 (+ второй круг angelina ~25) + LOCAL_SPRINT_ACTIVE/LOG ~34 + segments ~12 (wc -l на момент замера 17:24Z)" }
+  ]
+}

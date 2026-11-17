@@ -1,3 +1,5 @@
+import { HttpResponseError } from '@/lib/connection-fallback/httpResponseError';
+
 const DEFAULT_CABINET_API_URL = 'https://cabinet.membrana.space';
 const DEFAULT_MEDIA_API_URL = 'https://media.membrana.space';
 
@@ -79,7 +81,7 @@ export async function pairWithAccessKey(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ accessKey, clientLabel }),
   });
-  if (!res.ok) throw new Error(await parseError(res));
+  if (!res.ok) throw new HttpResponseError(res.status, await parseError(res));
   return (await res.json()) as PairResponse;
 }
 
@@ -91,7 +93,9 @@ export async function fetchPairStatus(
   });
   if (res.status === 401) return 'session_expired';
   if (res.status === 404) return 'endpoint_unavailable';
-  if (!res.ok) throw new Error(await parseError(res));
+  // #2540: статус едет полем — `parseError` даёт текст тела либо `statusText`, а при HTTP/2
+  // `statusText` пуст, и без номера окно не отличит «кабинет ответил 502» от «связи нет».
+  if (!res.ok) throw new HttpResponseError(res.status, await parseError(res));
   return (await res.json()) as PairStatusResponse;
 }
 

@@ -5,8 +5,98 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14230/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 372 (причины в op-log) -->
+Записей: 50 · бюджет 14381/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 389 (причины в op-log) -->
+
+### 2026-10-08 · позиция · archive-gc-journal
+
+> Инвариант уборки из консилиума 05.10 и ADR-0031: `expiresAt = frozenAt + retentionDays`, предикат `now >= expiresAt` — не трогаем. Доказательство удаления — не «метка `deleted`», а тройка чисел на job: `bytesBefore`, `rmResult ∈ {removed, already_absent, failed}`, `existsAfter: […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/archive-gc-journal-2026-10-08.md#reply-1`
+
+### 2026-10-07 · позиция · team-evening-feedback
+
+> Dynin. Вёл `trace-freeze-b-live-sendsync`. Триаж 4 CVE задокументирован (#2625, `docs/security/cve-triage-2026-10-07.md`) — runtime vs dev вердикт по каждому; `@fastify/busboy` ×2 → runtime-exposed в `background-media`, lockfile-фикс через `resolutions` остаётся на утро (P1 […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-07.md#reply-1`
+
+### 2026-10-06 · позиция · team-evening-feedback
+
+> Dynin Оценка артефактов: sprint-cut tariff-downgrade-freeze-2587 с //measure, //owner-decisions и //recut — точный формат, инварианты заморозки описаны строго. Code-review выделил post-condition b3a (sum(active buffer bytes) ≤ bufferLimitBytes) как BLOCK-условие — корректно. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-06.md#reply-1`
+
+### 2026-10-05 · позиция · tariff-downgrade-freeze-consilium
+
+> Пункт (4) — численно однозначен. `expiresAt = frozenAt + retentionDays` как снимок в партии даёт инвариант: уборка = предикат `now >= expiresAt`, без гонок на «пользователь сменил срок между freeze и cron». Чтение срока при уборке = скрытое изменение контракта задним числом. […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/tariff-downgrade-freeze-consilium-2026-10-05-2026-10-05.md#reply-1`
+
+### 2026-10-05 · позиция · team-evening-feedback
+
+> Dynin Оценка артефактов: `MAIN_DAY_ISSUE` поставил мне P0 C9 первым действием (проверка #2582 на plain-text секреты) — правильная последовательность. Code-review вечера снял эту задачу: в диффе `de3b29a1` только шаблоны `${…:?…}`/`$$…`, 48-hex строк 0 — чисто. Это зафиксировано […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-05.md#reply-1`
+
+### 2026-10-04 · позиция · team-evening-feedback
+
+> Дынин. Оценка артефактов: `DAILY_CODE_REVIEW` корректно разобрало реляционную операцию сравнения двух списков (7/20 по позиции, 18/20 пересечение) без off-by-one. `inputHash` одинаковый для обоих прогонов — условие корректности эксперимента соблюдено. Итоги дня: прикладной […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-04.md#reply-1`
+
+### 2026-10-03 · позиция · team-evening-feedback
+
+> Дынин. Оценка артефактов: Канон корректно не назначил мне магистраль — зоны ответственности соблюдены. P1 по красному тесту `@membrana/background-cabinet` назван в `MAIN_DAY_ISSUE` и подтверждён в вечернем ревью. Итоги дня: по магистрали — не задействован. По P1 […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-03.md#reply-1`
+
+### 2026-10-02 · позиция · team-evening-feedback
+
+> Dynin Оценка артефактов: Документы дня по моей зоне не задевают — ядро FFT/детекторов не трогалось, и это честно отражено (ни в STANDUP, ни в MAIN_DAY_ISSUE нет мат-задач). STRATEGY_DAY — вещдок, не читать. Итоги дня: по ядру — тишина, что соответствует фиксированному потолку […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-02.md#reply-1`
+
+### 2026-10-01 · позиция · team-evening-feedback
+
+> Дынин. Оценка артефактов: Code-review корректно отметил, что `judgeOverflowStanding` — детерминированный предикат без NaN-рисков; данные `buffer-watch` JSONL консистентны (95.1 → 1.4 после вывоза проб, 95 на утро — физика сходится). Итоги дня: Trail-прогон […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-01.md#reply-1`
+
+### 2026-09-30 · позиция · team-evening-feedback
+
+> Дынин. Мой trail-прогон `ritual-day-2026-09-29-r2` (`runPhase: open`) — не закрыт, судя по отсутствию `docs/procedure-runs/trail/ritual-day-2026-09-29-r2-trail.jsonl` в правках. Утром это был P2 с явной командой (`yarn turbo run typecheck test lint --filter=@membrana/tooling`), […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-30.md#reply-1`
+
+### 2026-09-29 · позиция · team-evening-feedback
+
+> Dynin. Меня сегодня в коде не было — DSP-задач на дне не стояло. Оценка артефактов: DAILY_AUDIT — сухая механическая выжимка, 45% строк ушло в бизнес-процессы, 24% в «прочее», 17% в тулинг, только 6% в основной продукт. Это честная цифра: день был про инфраструктуру ритуала […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-29.md#reply-1`
+
+### 2026-09-29 · позиция · batch-collection-run-contour-architecture-gate
+
+> Численно batch — это чистая свёртка: вход = упорядоченный список идентификаторов проб + конфиг детектора(ов); выход = вектор `DetectionResult` + агрегаты (count, rate, latency p50/p95). `inputHash` обязан быть детерминированной функцией от канонического сериала входа (ids в […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/batch-collection-run-contour-architecture-gate-2026-09-29.md#reply-1`
+
+### 2026-09-28 · позиция · team-evening-feedback
+
+> Дынин. Оценка артефактов: `MAIN_DAY_ISSUE` явно назвал риск «пагинация на 1057 пробах может не устранить фриз #2476, если причина не в размере списка — smoke-замер это выявит» — гипотеза сформулирована с условием фальсификации, это правильно. `night-summary.mjs` теперь […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-28.md#reply-1`
+
+### 2026-09-27 · позиция · team-evening-feedback
+
+> Dynin **Оценка артефактов:** `DAILY_CODE_REVIEW` по `validateProcedureRunTrail` — точный: предикат корректно проверяет уникальность пары `(runId, sequence)` и монотонность внутри прогона, глобальная монотонность явно исключена. Мемо дня показывает «инсайтов дня нет — честная […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-27.md#reply-1`
+
+### 2026-09-26 · позиция · team-evening-feedback
+
+> Dynin **Оценка артефактов:** `DAILY_CODE_REVIEW` по C6 (чистые функции, границы/NaN) — точный: `entryKey` и `workspaceDescriptor` возвращают `null` при несовпадении вместо бросков; `assertWorkspaceGraphIntegrity` бросает `Error` при нарушении инварианта, а не молчит. Инвариант […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-26.md#reply-1`
 
 ### 2026-09-25 · позиция · team-evening-feedback
 
@@ -217,87 +307,3 @@
 > **Оценка артефактов:** Числового/FFT ядра в дне нет — оцениваю процесс: контракт двери формализован строго (коды 404/403, отсутствие `hasMore` — чистые предикаты), verify-скрипт с Proxy-stub корректен для mount-проверки. **Итоги дня:** Мой профиль в diff отсутствует — день чисто […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
-
-### 2026-09-02 · позиция · team-evening-feedback
-
-> Оценка артефактов: Артефакты дня не содержат математического контента — фокус на tooling и тестах. STRATEGY_DAY корректно определяет веху `secret-parser-built` как перспективную, не смешивая с primary. MAIN_DAY_ISSUE содержит проверяемые посылки с маркерами — это […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m0-order
-
-> Формализую граф G = ({1,2,3,4}, E). Ребро (A,B) ∈ E тогда и только тогда, когда вердикт A является необходимым входом для постановки задачи B, то есть без A задача B недоопределена. Из аргументов выше: (1)→(2) — чем адресовать, не зная чьё; (2)→(3) — ключ едет в теле списка, […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/library-open-api-m0-order-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m1-ownership
-
-> Формализую. Пусть функция `owner: Sample → Membrane` строится как транзитивное замыкание по цепочке. `owner(s) = membrane(device(collection(s)))`. Если `device.membraneId = null`, то `owner(s) = ⊥` — значение неопределено. Это не ошибка вычисления, это область определения […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/library-open-api-m1-ownership-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m2-contract
-
-> Зафиксирую по полноте. Факт входа: потолок страницы 100, ответ несёт `total`. Это не решение о полноте — это только то, что есть. Решение: ответ должен нести `page` и `limit` явно, чтобы читатель снаружи мог знать, получил ли он всё. Если `total ≤ limit` — страница полная и […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/library-open-api-m2-contract-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m3-key-ttl
-
-> Сформулирую точнее. Есть два различных объекта: `NodeAccessKey` с полями `duration`, `expiresAt`, `revokedAt` — это модель узлового ключа. И есть ключ-предъявитель трека, который лежит в JSON-списке и по фактуре не имеет собственного блока настроек. Это разные сущности. […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/library-open-api-m3-key-ttl-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m4-extraction
-
-> Численно: потолок страницы 100, ответ несёт `total`. Ночь 23.08 — 1136 проб → минимум ⌈1136/100⌉ = 12 страниц при фильтре по окну. Счётчика выдач ключей нет, предела частоты на вход нет. Значит цикл `for page in 1..N: GET list → for id in page: GET link` не упирается ни в один […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/library-open-api-m4-extraction-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · team-evening-feedback
-
-> Dynin. Оценка артефактов: ревью справедливо выделило P1 в `repo-links.mjs` — regex `ISSUE_LINK` с флагом `/g` в модульном скоупе; `lastIndex` не сбрасывается между вызовами, зубы косвенно покрывают через `assert.equal(rewritten.length, N)`, но прямого теста «два вызова с одним […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
-
-### 2026-08-31 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE корректно зафиксировал посылку «сервер уже умеет перенос» со ссылкой на `samples.service.ts` — это сэкономило день: не стали переписывать сервер. Code-review разложил `deletionAcknowledgementRisk` по веткам (evidence → unknown → scale, […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
-
-### 2026-08-30 · позиция · team-evening-feedback
-
-> Оценка артефактов: Алгоритмов/FFT в дне нет — день ритуальный, но документы дня (MAIN_DAY_ISSUE, code-review) согласованы и точны в терминах. Отмечу корректность зуба #2245: инвариант «все три или ни одного» для процедуры — правильная форма. Итоги дня: По моей зоне — «—». […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
-
-### 2026-08-29 · позиция · team-evening-feedback
-
-> Оценка артефактов: Артефакты дня корректны. `MAIN_DAY_ISSUE` чётко разделил «измерения/факты» (schedule drift, охота-враньё) от «гипотез». Код-ревью верно пометил мою роль как «нет FFT/спектра» — день не математический. Итоги дня: В изменениях нет математики, но есть корректные […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
-
-### 2026-08-28 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE — лучший пример формализации: посылки с маркерами `unknown` → к вечеру должны стать green или явный fail-log. Code-review точно указал на отсутствие стоп-предиката в диффе — это correctness-требование, не косметика. Итоги дня: `FIELD_NODE_RATE` […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m0-order
-
-> Формализую объект: ориентированный граф G на вершинах {1,2,3,4} в закрытой нумерации повестки. Ребро A→B ⇔ «вердикт A обязан предшествовать вердикту B»: без A обсуждение B бессмысленно или с высокой ценой переделки контракта. Транзитивность рёбрами «для красоты» не домысливаю. […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/hunt-and-canon-m0-order-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m1-silence-guard
-
-> Формализую. Пусть для каждого ожидаемого события e ∈ E заданы окно [t_e, t_e+δ] и носитель факта f_e (старт прогона, ненулевой exit, HTTP≥400 без маски). Предикат молчания: S(e) ⇔ ¬∃ факт в окне, который честно фиксирует исход e. «Не пришло» — нет f_start; «отказ проглочен» — […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m1-silence-guard-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m2-false-evidence
-
-> Формализую. Пусть источник s несёт метку рождения τ(s) (поле `Generated (UTC)` или эквивалент) и содержимое hash h(s). Ожидаемое окно ночи d: [t_d, t_d+δ]. Предикат свежести F(s,d) ⇔ τ(s) ∈ окну, согласованному с d (и/или h(s) не равен уже известному stale-эталону без новой […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m2-false-evidence-2026-08-27.md#reply-1`

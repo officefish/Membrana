@@ -47,9 +47,16 @@ export function describeOverflowReason(code: string): OverflowReasonDescription 
   return { code, text: OVERFLOW_WINDOW_TITLE, rawCode: code, axis: null };
 }
 
-/** Фаза удержания (M4): без серверного id / с id. Лексика согласована с кабинетом. */
+/**
+ * Фаза удержания (M4): без серверного id / с id. Лексика согласована с кабинетом.
+ *
+ * `held_local` — ПОСТОЯННОЕ состояние любой остановки при политике `stop`, а не переходное
+ * (#2533): страж прибора входит при 95 % (`BUFFER_STOP_RATIO`), сервер отказал бы при 100 %,
+ * а после стража шлюз не выпускает ни одной пробы — сервер эпизода не чеканит никогда.
+ * Слово «ещё не подтверждено» обещало подтверждение, которого не бывает; сказано, как есть.
+ */
 export const OVERFLOW_PHASE_TEXT: Record<RuntimeOverflowHoldPayload['phase'], string> = {
-  held_local: 'удержание · ещё не подтверждено сервером',
+  held_local: 'удержание · по стражу прибора (до отказа сервера не дошло)',
   held: 'удержание · подтверждено сервером',
 };
 
@@ -67,11 +74,68 @@ export const OVERFLOW_AXIS_TITLE: Record<QuotaSubject, string> = {
 /** Согласованная с кабинетом лексика M4: прибор на связи, детекция живёт, проб не пишет. */
 export const OVERFLOW_ALIVE_TEXT = 'жив, не пишет';
 
+/**
+ * Состояние МЕСТА по живой оси причины (#2533) — отдельно от факта удержания:
+ *  - `full` — место всё ещё занято не ниже порога стража (`BUFFER_STOP_RATIO`);
+ *  - `freed` — место освобождено (вывоз в набор / чистка снаружи), а удержание не снято:
+ *    снимает только человек (M3 DoD 7) — окно обязано сказать это словами, а не «полон» при 0 B;
+ *  - `unknown` — живой оси нет (снимка библиотеки нет либо код причины неизвестен) — говорим о
+ *    факте остановки, как и раньше.
+ */
+export type OverflowStanding = 'full' | 'freed' | 'unknown';
+
+/** Заголовок при освобождённом месте — развилка 1 плана #2533, умолчание владельца. */
+export const OVERFLOW_FREED_TITLE = 'Место освобождено — снимите удержание';
+
+export const OVERFLOW_TITLE_BY_STANDING: Record<OverflowStanding, string> = {
+  full: OVERFLOW_WINDOW_TITLE,
+  unknown: OVERFLOW_WINDOW_TITLE,
+  freed: OVERFLOW_FREED_TITLE,
+};
+
+/** Плашка окна при удержании — по состоянию места; вне окна тот же текст читают бейдж и панель. */
+export const OVERFLOW_HELD_TEXT_BY_STANDING: Record<OverflowStanding, string> = {
+  full: `Прибор ${OVERFLOW_ALIVE_TEXT}: новые пробы не отправляются, связь и наблюдение живут. Само не возобновится.`,
+  unknown: `Прибор ${OVERFLOW_ALIVE_TEXT}: новые пробы не отправляются, связь и наблюдение живут. Само не возобновится.`,
+  freed: `Прибор ${OVERFLOW_ALIVE_TEXT}: место освобождено, удержание держится до вашего слова.`,
+};
+
 /** Честная витрина тарифа при факте #2297 (M5 (б)). */
 export const TARIFF_NO_TRANSITIONS_TEXT = 'доступных тарифов для перехода нет';
 
 /** Явная строка, когда состояние узла не несёт счётчика (M5 (а)). */
 export const NOT_AVAILABLE_TEXT = 'н/д';
+
+/**
+ * Момент чтения предела (#2538): величина без момента чтения не живая. Окно обязано сказать,
+ * КОГДА предел прочитан, а при отказе чтения — что показан снимок (развилка 4: числа не
+ * скрываются, помечается источник). Тексты — только здесь (структурный зуб).
+ */
+export interface QuotaReadState {
+  /** Последнее чтение удалось (не серверный бэкенд считается прочитанным: локальный предел). */
+  readonly fresh: boolean;
+  /** ISO момента последнего успешного чтения; `null` — успешного чтения ещё не было. */
+  readonly readAt: string | null;
+}
+
+export const QUOTA_READ_FRESH_PREFIX = 'предел сервера прочитан';
+export const QUOTA_READ_STALE_PREFIX = 'предел не прочитан — показан снимок от';
+export const QUOTA_READ_NONE_TEXT = 'предел не прочитан — снимка ещё нет';
+
+export function describeQuotaRead(state: QuotaReadState): string {
+  if (state.readAt === null) {
+    return state.fresh ? `${QUOTA_READ_FRESH_PREFIX}: момент чтения ${NOT_AVAILABLE_TEXT}` : QUOTA_READ_NONE_TEXT;
+  }
+  const at = formatReadAt(state.readAt);
+  return state.fresh ? `${QUOTA_READ_FRESH_PREFIX} ${at}` : `${QUOTA_READ_STALE_PREFIX} ${at}`;
+}
+
+/** Время чтения в локали оператора (только часы:минуты:секунды — дата у окна своя). */
+export function formatReadAt(iso: string): string {
+  const t = Date.parse(iso);
+  if (!Number.isFinite(t)) return iso;
+  return new Date(t).toLocaleTimeString();
+}
 
 export function formatBytes(bytes: number): string {
   if (!Number.isFinite(bytes) || bytes < 0) return NOT_AVAILABLE_TEXT;

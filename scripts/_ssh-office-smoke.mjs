@@ -6,9 +6,12 @@
  * Usage:
  *   node scripts/_ssh-office-smoke.mjs
  *   node scripts/_ssh-office-smoke.mjs --external   # also curl from this machine
+ *
+ * [7] (#2580): проба хранилищ office — см. блок в конце файла и scripts/lib/office-store-probe.mjs.
  */
 import { Client } from 'ssh2';
 import { getOfficeSshConfig, getOfficeDomain } from './_ssh-office-config.mjs';
+import { formatProbeVerdict, judgeOfficeStoreProbe } from './lib/office-store-probe.mjs';
 
 const external = process.argv.includes('--external');
 const domain = getOfficeDomain();
@@ -118,7 +121,7 @@ echo "=== summary: $PASS ok, $FAIL fail, $SKIP skip ==="
 [[ "$FAIL" -eq 0 ]]
 `;
 
-function runRemote() {
+function runRemote(script = remoteScript) {
   return new Promise((resolvePromise, rejectPromise) => {
     const conn = new Client();
     const timeout = setTimeout(() => {
@@ -135,14 +138,19 @@ function runRemote() {
             rejectPromise(err);
             return;
           }
-          stream.write(remoteScript);
+          stream.write(script);
           stream.end();
-          stream.on('data', (d) => process.stdout.write(d));
+          // stdout копится для суда пробы [7]; секретов в нём нет (только OK/FAIL и строки probe).
+          let out = '';
+          stream.on('data', (d) => {
+            out += d.toString();
+            process.stdout.write(d);
+          });
           stream.stderr.on('data', (d) => process.stderr.write(d));
           stream.on('close', (code) => {
             clearTimeout(timeout);
             conn.end();
-            if (code === 0) resolvePromise(code);
+            if (code === 0) resolvePromise(out);
             else rejectPromise(new Error(`remote exit ${code}`));
           });
         });
@@ -172,10 +180,31 @@ async function externalChecks() {
 
 const { host, username } = getOfficeSshConfig();
 console.log(`Office smoke → ${username}@${host}\n`);
-await runRemote();
+let failed = false;
+try {
+  await runRemote();
+} catch (e) {
+  failed = true;
+  console.error(String(e?.message ?? e));
+}
+
+// [7] Проба хранилищ (#2580): отдельный exec, чтобы FAIL пунктов [1]–[6] её не отменял.
+// Сбор — `office-stack.sh probe` на VPS (тот же, что после выкатки в _ssh-office-prod-up.mjs),
+// суд — ЛОКАЛЬНО общим предикатом. Старый office-stack.sh без probe → пустой вывод → FAIL.
+console.log('\n[7] Store probe (office-stack.sh probe → judgeOfficeStoreProbe)');
+try {
+  const probeOut = await runRemote('#!/bin/bash\n/root/membrana/deploy/office-stack.sh probe || true\n');
+  const verdict = judgeOfficeStoreProbe(probeOut);
+  console.log(verdict.ok ? '  OK   store probe' : `  FAIL ${formatProbeVerdict(verdict)}`);
+  if (!verdict.ok) failed = true;
+} catch (e) {
+  failed = true;
+  console.log(`  FAIL store probe: ${String(e?.message ?? e)}`);
+}
 
 if (external) {
   await externalChecks();
 }
 
 console.log('\nSmoke finished.');
+if (failed) process.exitCode = 1;

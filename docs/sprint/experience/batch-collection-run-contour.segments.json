@@ -1,0 +1,11 @@
+{
+  "//": "Замер по numstat и строкам новых файлов до документации закрытия. Прогноз runner промахнулся: отдельный executor, семь зубов и регистрация заняли больше ожидаемого; числа не подгонялись.",
+  "sprintId": "batch-collection-run-contour",
+  "measuredAt": "2026-09-29T16:18:00+03:00",
+  "segments": [
+    { "blockId": "architecture-gate", "changedLines": 168 },
+    { "blockId": "run-contract", "changedLines": 65 },
+    { "blockId": "detector-runner", "changedLines": 514 },
+    { "blockId": "cabinet-entry", "changedLines": 381 }
+  ]
+}

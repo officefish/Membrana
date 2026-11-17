@@ -22,6 +22,13 @@ on:
       - 'docs/anchors/thresholds.json'
       - 'scripts/benchmark-detectors.mjs'
       - 'scripts/drift-anchor-code.mjs'
+      # Строка «ансамбль» (#2529): судья берётся из dist ядра и проходит замок на КАЖДОМ прогоне —
+      # этот гейт и есть проверка identity в CI; test:scripts идёт до сборки и dist не видит.
+      - 'scripts/lib/benchmark-ensemble.mjs'
+      - 'scripts/lib/benchmark-ensemble.test.mjs'
+      - 'scripts/lib/benchmark-report-md.mjs'
+      - 'scripts/lib/benchmark-metrics.mjs'
+      - 'packages/core/src/contracts/detection-fusion.ts'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}

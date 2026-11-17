@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-25 |
-| Head SHA | 5485ede5ba16cc92d6b2b12a217c29fa4834ff1d |
+| Date | 2026-10-08 |
+| Head SHA | 869885fa65c62876e5634dd24e4b953daa8f2332 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1251 |
-| Yarn scripts (package.json) | 475 |
-| Yarn → `scripts/` | 421 |
+| Code files under `scripts/` | 1287 |
+| Yarn scripts (package.json) | 477 |
+| Yarn → `scripts/` | 423 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 913 |
+| Code files without yarn ref | 947 |
 
-## Yarn → scripts/ (421)
+## Yarn → scripts/ (423)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -309,6 +309,7 @@
 - `sessions:scan` → `scripts/session-scan.mjs`
 - `skills:closure-review:sync` → `scripts/sync-task-closure-review-skills.mjs`
 - `skills:closure-review:verify` → `scripts/sync-task-closure-review-skills.mjs`
+- `skills:sync-readme` → `scripts/skills-sync-readme.mjs`
 - `skills:verify-mirrors` → `scripts/verify-skill-mirrors.mjs`
 - `snapshots:rebuild` → `scripts/snapshots-rebuild.mjs`
 - `sprint:cut` → `scripts/sprint-cut-check.mjs`
@@ -428,6 +429,7 @@
 - `verify:adr-registry` → `scripts/verify-adr-registry.mjs`
 - `verify:branch-protection` → `scripts/verify-branch-protection.mjs`
 - `verify:declared-imports` → `scripts/verify-declared-imports.mjs`
+- `verify:dist-fresh` → `scripts/verify-dist-fresh.mjs`
 - `verify:encoding` → `scripts/verify-encoding.mjs`
 - `verify:image-workspace-deps` → `scripts/verify-image-workspace-deps.mjs`
 - `verify:install-state` → `scripts/require-install-state.mjs`
@@ -447,7 +449,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (913)
+## Code files without yarn ref (947)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -506,6 +508,7 @@
 - `scripts/angelina-adapter.test.mjs`
 - `scripts/angelina-cascade.test.mjs`
 - `scripts/angelina-delegate.test.mjs`
+- `scripts/angelina-session.test.mjs`
 - `scripts/angelina-validate.test.mjs`
 - `scripts/angelina.mjs`
 - `scripts/anthropic-credit-hint.test.mjs`
@@ -674,6 +677,7 @@
 - `scripts/lib/angelina-adapter.mjs`
 - `scripts/lib/angelina-cascade.mjs`
 - `scripts/lib/angelina-delegate.mjs`
+- `scripts/lib/angelina-session.mjs`
 - `scripts/lib/angelina-validate.mjs`
 - `scripts/lib/archivarius.mjs`
 - `scripts/lib/archive-doc-snapshot.mjs`
@@ -690,6 +694,8 @@
 - `scripts/lib/bash-invoke.mjs`
 - `scripts/lib/belongs-invariant.mjs`
 - `scripts/lib/belongs.mjs`
+- `scripts/lib/benchmark-ensemble.mjs`
+- `scripts/lib/benchmark-ensemble.test.mjs`
 - `scripts/lib/benchmark-metrics.mjs`
 - `scripts/lib/benchmark-report-md.mjs`
 - `scripts/lib/bestiary-audit.mjs`
@@ -752,6 +758,9 @@
 - `scripts/lib/debt-classify.test.mjs`
 - `scripts/lib/debt-gate.mjs`
 - `scripts/lib/debt-gate.test.mjs`
+- `scripts/lib/decisions-ledger-port.mjs`
+- `scripts/lib/decisions-ledger.mjs`
+- `scripts/lib/decisions-ledger.test.mjs`
 - `scripts/lib/declared-imports.mjs`
 - `scripts/lib/deep-research.mjs`
 - `scripts/lib/delivery-report.mjs`
@@ -759,8 +768,12 @@
 - `scripts/lib/deps-watch-audit-state.test.mjs`
 - `scripts/lib/deps-watch-diff.mjs`
 - `scripts/lib/deps-watch-diff.test.mjs`
+- `scripts/lib/deps-watch-security-triage-coverage.test.mjs`
+- `scripts/lib/deps-watch-triage-coverage.mjs`
 - `scripts/lib/detection-planning-priorities.mjs`
 - `scripts/lib/detector-compare-lib.mjs`
+- `scripts/lib/dist-freshness.mjs`
+- `scripts/lib/dist-freshness.test.mjs`
 - `scripts/lib/docs-canon.mjs`
 - `scripts/lib/dreams-format.mjs`
 - `scripts/lib/dreams-log.mjs`
@@ -836,6 +849,8 @@
 - `scripts/lib/llm-procedure-transport.mjs`
 - `scripts/lib/llm-procedure-transport.test.mjs`
 - `scripts/lib/long-temp-path.mjs`
+- `scripts/lib/main-day-assertions-view.mjs`
+- `scripts/lib/main-day-assertions-view.test.mjs`
 - `scripts/lib/main-day-issue-paths.mjs`
 - `scripts/lib/main-day-magistral-freshness.mjs`
 - `scripts/lib/main-day-magistral-freshness.test.mjs`
@@ -882,8 +897,10 @@
 - `scripts/lib/night-report-gate.mjs`
 - `scripts/lib/night-research.mjs`
 - `scripts/lib/night-summary.mjs`
+- `scripts/lib/noncritical-streak.mjs`
 - `scripts/lib/norm-liveness.mjs`
 - `scripts/lib/office-image-smoke.mjs`
+- `scripts/lib/office-store-probe.mjs`
 - `scripts/lib/office-token.mjs`
 - `scripts/lib/one-shot-rank.mjs`
 - `scripts/lib/one-shot-run.mjs`
@@ -893,10 +910,12 @@
 - `scripts/lib/orphan-waiver.mjs`
 - `scripts/lib/percentile-template.mjs`
 - `scripts/lib/persona-memory.mjs`
+- `scripts/lib/personas.mjs`
 - `scripts/lib/pr-mergeability.mjs`
 - `scripts/lib/pr-mergeability.test.mjs`
 - `scripts/lib/pr-ship-size.mjs`
 - `scripts/lib/precedent-store.mjs`
+- `scripts/lib/prepush-secret-gate.mjs`
 - `scripts/lib/prisma-docker-guard.mjs`
 - `scripts/lib/procedural-workshop.mjs`
 - `scripts/lib/procedure-contract-license.mjs`
@@ -924,6 +943,9 @@
 - `scripts/lib/resolutions-liveness.mjs`
 - `scripts/lib/review-diff-source.mjs`
 - `scripts/lib/review-diff-source.test.mjs`
+- `scripts/lib/review-done-ledger-port.mjs`
+- `scripts/lib/review-done-ledger.mjs`
+- `scripts/lib/review-done-ledger.test.mjs`
 - `scripts/lib/review-gate.mjs`
 - `scripts/lib/review-gate.test.mjs`
 - `scripts/lib/review-lead.mjs`
@@ -947,6 +969,7 @@
 - `scripts/lib/run-ledger/index.mjs`
 - `scripts/lib/run-ledger/merkle.mjs`
 - `scripts/lib/scenario-node-kinds.mjs`
+- `scripts/lib/scenario-trace-teardown-measure.mjs`
 - `scripts/lib/scripts-inventory.mjs`
 - `scripts/lib/scripts-workshop.mjs`
 - `scripts/lib/scripts-workshop.test.mjs`
@@ -1104,6 +1127,8 @@
 - `scripts/mcp-tier0.mjs`
 - `scripts/measure-metrics.test.mjs`
 - `scripts/measure-report.test.mjs`
+- `scripts/measure-scenario-trace-ipc.mjs`
+- `scripts/measure-scenario-trace-teardown.mjs`
 - `scripts/media-samples-client.test.mjs`
 - `scripts/media-token.test.mjs`
 - `scripts/meeting-agenda.test.mjs`
@@ -1139,6 +1164,7 @@
 - `scripts/network/lib/history-merge.mjs`
 - `scripts/network/lib/probe-core.mjs`
 - `scripts/network/probe-core.test.mjs`
+- `scripts/network/tooth-upkeep.test.mjs`
 - `scripts/network/tooth.test.mjs`
 - `scripts/night-build-handoff.test.mjs`
 - `scripts/night-hunt-veracity.test.mjs`
@@ -1151,10 +1177,13 @@
 - `scripts/node-duty-ready.test.mjs`
 - `scripts/node-link-probe.test.mjs`
 - `scripts/node-link-state.test.mjs`
+- `scripts/noncritical-streak.test.mjs`
 - `scripts/norm-liveness.test.mjs`
+- `scripts/office-env-credentials.test.mjs`
 - `scripts/office-image-smoke-workflow.test.mjs`
 - `scripts/office-image-smoke.test.mjs`
 - `scripts/office-prod-up-tar-coverage.test.mjs`
+- `scripts/office-store-probe.test.mjs`
 - `scripts/office-token.test.mjs`
 - `scripts/one-shot-rank.test.mjs`
 - `scripts/one-shot-run.test.mjs`
@@ -1190,6 +1219,7 @@
 - `scripts/persona-memory/lib/subconscious-lift.test.mjs`
 - `scripts/persona-memory/lib/subconscious-retrieval.mjs`
 - `scripts/persona-memory/lib/subconscious-retrieval.test.mjs`
+- `scripts/personas-source.test.mjs`
 - `scripts/plan-week-if-monday.mjs`
 - `scripts/plan-week-if-monday.test.mjs`
 - `scripts/pr-perimeter-check.test.mjs`
@@ -1202,6 +1232,7 @@
 - `scripts/precedent-store.test.mjs`
 - `scripts/prepare-free-v1-content.mjs`
 - `scripts/prepush-env-guard.test.mjs`
+- `scripts/prepush-secret-gate-reach.test.mjs`
 - `scripts/prepush-typecheck-scope.mjs`
 - `scripts/prepush-typecheck-scope.test.mjs`
 - `scripts/prisma-docker-guard.test.mjs`
@@ -1249,6 +1280,10 @@
 - `scripts/rootpolicy.test.mjs`
 - `scripts/run-ledger.test.mjs`
 - `scripts/scaffold-detectors.mjs`
+- `scripts/scenario-trace-buffer-parity.test.mjs`
+- `scripts/scenario-trace-ipc-probe/main.js`
+- `scripts/scenario-trace-ipc-probe/preload.js`
+- `scripts/scenario-trace-teardown-measure.test.mjs`
 - `scripts/scripts-inventory.test.mjs`
 - `scripts/scripts-orphans.test.mjs`
 - `scripts/scripts-workshop.test.mjs`
@@ -1260,6 +1295,7 @@
 - `scripts/session-floor-verbs.test.mjs`
 - `scripts/session-floor.test.mjs`
 - `scripts/skill-status.test.mjs`
+- `scripts/skills-sync-readme.test.mjs`
 - `scripts/snapshots-plan.test.mjs`
 - `scripts/sprint-cut-acts.test.mjs`
 - `scripts/sprint-cut-check.test.mjs`
@@ -1373,7 +1409,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1251)
+## All code files (1287)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1460,6 +1496,7 @@
 - `scripts/angelina-adapter.test.mjs`
 - `scripts/angelina-cascade.test.mjs`
 - `scripts/angelina-delegate.test.mjs`
+- `scripts/angelina-session.test.mjs`
 - `scripts/angelina-validate.test.mjs`
 - `scripts/angelina.mjs`
 - `scripts/anthropic-credit-hint.test.mjs`
@@ -1748,6 +1785,7 @@
 - `scripts/lib/angelina-adapter.mjs`
 - `scripts/lib/angelina-cascade.mjs`
 - `scripts/lib/angelina-delegate.mjs`
+- `scripts/lib/angelina-session.mjs`
 - `scripts/lib/angelina-validate.mjs`
 - `scripts/lib/archivarius.mjs`
 - `scripts/lib/archive-doc-snapshot.mjs`
@@ -1764,6 +1802,8 @@
 - `scripts/lib/bash-invoke.mjs`
 - `scripts/lib/belongs-invariant.mjs`
 - `scripts/lib/belongs.mjs`
+- `scripts/lib/benchmark-ensemble.mjs`
+- `scripts/lib/benchmark-ensemble.test.mjs`
 - `scripts/lib/benchmark-metrics.mjs`
 - `scripts/lib/benchmark-report-md.mjs`
 - `scripts/lib/bestiary-audit.mjs`
@@ -1826,6 +1866,9 @@
 - `scripts/lib/debt-classify.test.mjs`
 - `scripts/lib/debt-gate.mjs`
 - `scripts/lib/debt-gate.test.mjs`
+- `scripts/lib/decisions-ledger-port.mjs`
+- `scripts/lib/decisions-ledger.mjs`
+- `scripts/lib/decisions-ledger.test.mjs`
 - `scripts/lib/declared-imports.mjs`
 - `scripts/lib/deep-research.mjs`
 - `scripts/lib/delivery-report.mjs`
@@ -1833,8 +1876,12 @@
 - `scripts/lib/deps-watch-audit-state.test.mjs`
 - `scripts/lib/deps-watch-diff.mjs`
 - `scripts/lib/deps-watch-diff.test.mjs`
+- `scripts/lib/deps-watch-security-triage-coverage.test.mjs`
+- `scripts/lib/deps-watch-triage-coverage.mjs`
 - `scripts/lib/detection-planning-priorities.mjs`
 - `scripts/lib/detector-compare-lib.mjs`
+- `scripts/lib/dist-freshness.mjs`
+- `scripts/lib/dist-freshness.test.mjs`
 - `scripts/lib/docs-canon.mjs`
 - `scripts/lib/dreams-format.mjs`
 - `scripts/lib/dreams-log.mjs`
@@ -1910,6 +1957,8 @@
 - `scripts/lib/llm-procedure-transport.mjs`
 - `scripts/lib/llm-procedure-transport.test.mjs`
 - `scripts/lib/long-temp-path.mjs`
+- `scripts/lib/main-day-assertions-view.mjs`
+- `scripts/lib/main-day-assertions-view.test.mjs`
 - `scripts/lib/main-day-issue-paths.mjs`
 - `scripts/lib/main-day-magistral-freshness.mjs`
 - `scripts/lib/main-day-magistral-freshness.test.mjs`
@@ -1956,8 +2005,10 @@
 - `scripts/lib/night-report-gate.mjs`
 - `scripts/lib/night-research.mjs`
 - `scripts/lib/night-summary.mjs`
+- `scripts/lib/noncritical-streak.mjs`
 - `scripts/lib/norm-liveness.mjs`
 - `scripts/lib/office-image-smoke.mjs`
+- `scripts/lib/office-store-probe.mjs`
 - `scripts/lib/office-token.mjs`
 - `scripts/lib/one-shot-rank.mjs`
 - `scripts/lib/one-shot-run.mjs`
@@ -1967,10 +2018,12 @@
 - `scripts/lib/orphan-waiver.mjs`
 - `scripts/lib/percentile-template.mjs`
 - `scripts/lib/persona-memory.mjs`
+- `scripts/lib/personas.mjs`
 - `scripts/lib/pr-mergeability.mjs`
 - `scripts/lib/pr-mergeability.test.mjs`
 - `scripts/lib/pr-ship-size.mjs`
 - `scripts/lib/precedent-store.mjs`
+- `scripts/lib/prepush-secret-gate.mjs`
 - `scripts/lib/prisma-docker-guard.mjs`
 - `scripts/lib/procedural-workshop.mjs`
 - `scripts/lib/procedure-contract-license.mjs`
@@ -1998,6 +2051,9 @@
 - `scripts/lib/resolutions-liveness.mjs`
 - `scripts/lib/review-diff-source.mjs`
 - `scripts/lib/review-diff-source.test.mjs`
+- `scripts/lib/review-done-ledger-port.mjs`
+- `scripts/lib/review-done-ledger.mjs`
+- `scripts/lib/review-done-ledger.test.mjs`
 - `scripts/lib/review-gate.mjs`
 - `scripts/lib/review-gate.test.mjs`
 - `scripts/lib/review-lead.mjs`
@@ -2021,6 +2077,7 @@
 - `scripts/lib/run-ledger/index.mjs`
 - `scripts/lib/run-ledger/merkle.mjs`
 - `scripts/lib/scenario-node-kinds.mjs`
+- `scripts/lib/scenario-trace-teardown-measure.mjs`
 - `scripts/lib/scripts-inventory.mjs`
 - `scripts/lib/scripts-workshop.mjs`
 - `scripts/lib/scripts-workshop.test.mjs`
@@ -2191,6 +2248,8 @@
 - `scripts/mcp-workstation-phase-d.mjs`
 - `scripts/measure-metrics.test.mjs`
 - `scripts/measure-report.test.mjs`
+- `scripts/measure-scenario-trace-ipc.mjs`
+- `scripts/measure-scenario-trace-teardown.mjs`
 - `scripts/media-env-check.mjs`
 - `scripts/media-provision-catalog.mjs`
 - `scripts/media-samples-client.test.mjs`
@@ -2248,6 +2307,7 @@
 - `scripts/network/probe-core.test.mjs`
 - `scripts/network/probe.mjs`
 - `scripts/network/snapshot.mjs`
+- `scripts/network/tooth-upkeep.test.mjs`
 - `scripts/network/tooth.mjs`
 - `scripts/network/tooth.test.mjs`
 - `scripts/night-build-checkpoint.mjs`
@@ -2273,12 +2333,15 @@
 - `scripts/node-link-probe.test.mjs`
 - `scripts/node-link-state.mjs`
 - `scripts/node-link-state.test.mjs`
+- `scripts/noncritical-streak.test.mjs`
 - `scripts/norm-liveness.test.mjs`
+- `scripts/office-env-credentials.test.mjs`
 - `scripts/office-image-smoke-workflow.test.mjs`
 - `scripts/office-image-smoke.mjs`
 - `scripts/office-image-smoke.test.mjs`
 - `scripts/office-prod-up-tar-coverage.test.mjs`
 - `scripts/office-research-digest.mjs`
+- `scripts/office-store-probe.test.mjs`
 - `scripts/office-token.test.mjs`
 - `scripts/one-shot-rank.mjs`
 - `scripts/one-shot-rank.test.mjs`
@@ -2322,6 +2385,7 @@
 - `scripts/persona-memory/lib/subconscious-lift.test.mjs`
 - `scripts/persona-memory/lib/subconscious-retrieval.mjs`
 - `scripts/persona-memory/lib/subconscious-retrieval.test.mjs`
+- `scripts/personas-source.test.mjs`
 - `scripts/plan-week-if-monday.mjs`
 - `scripts/plan-week-if-monday.test.mjs`
 - `scripts/plugin-run-mfcc.mjs`
@@ -2341,6 +2405,7 @@
 - `scripts/precedent-store.test.mjs`
 - `scripts/prepare-free-v1-content.mjs`
 - `scripts/prepush-env-guard.test.mjs`
+- `scripts/prepush-secret-gate-reach.test.mjs`
 - `scripts/prepush-typecheck-scope.mjs`
 - `scripts/prepush-typecheck-scope.test.mjs`
 - `scripts/prisma-docker-guard.test.mjs`
@@ -2421,6 +2486,10 @@
 - `scripts/rt-day-report.mjs`
 - `scripts/run-ledger.test.mjs`
 - `scripts/scaffold-detectors.mjs`
+- `scripts/scenario-trace-buffer-parity.test.mjs`
+- `scripts/scenario-trace-ipc-probe/main.js`
+- `scripts/scenario-trace-ipc-probe/preload.js`
+- `scripts/scenario-trace-teardown-measure.test.mjs`
 - `scripts/scripts-inventory.test.mjs`
 - `scripts/scripts-orphans.mjs`
 - `scripts/scripts-orphans.test.mjs`
@@ -2440,6 +2509,8 @@
 - `scripts/session-floor.test.mjs`
 - `scripts/session-scan.mjs`
 - `scripts/skill-status.test.mjs`
+- `scripts/skills-sync-readme.mjs`
+- `scripts/skills-sync-readme.test.mjs`
 - `scripts/snapshots-plan.test.mjs`
 - `scripts/snapshots-rebuild.mjs`
 - `scripts/sprint-cut-acts.test.mjs`
@@ -2581,6 +2652,7 @@
 - `scripts/verify-branch-protection.mjs`
 - `scripts/verify-client-catalog.mjs`
 - `scripts/verify-declared-imports.mjs`
+- `scripts/verify-dist-fresh.mjs`
 - `scripts/verify-docs-canon.mjs`
 - `scripts/verify-encoding.mjs`
 - `scripts/verify-encoding.test.mjs`

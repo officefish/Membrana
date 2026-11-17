@@ -1,0 +1,120 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "trace-freeze-dual-candidate-sprint",
+  "taskId": "trace-freeze-dual-candidate-sprint",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-09-29T15:00:00+03:00",
+    "to": "2026-09-29T18:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "a-cut-contract",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md",
+        "docs/sprint/cut/trace-freeze-dual-candidate-sprint.json",
+        "docs/sprint/cut/trail/trace-freeze-dual-candidate-sprint.jsonl",
+        "docs/tasks/registry.json",
+        "docs/tasks/README.md"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "note": "Register the sprint family, name both freeze candidates before execution, write predictions and falsifiers, run sprint:cut equivalent without Yarn, and stop for owner ratification.",
+      "revisionAt": "2026-09-29T21:14:40+03:00",
+      "revisionOf": "edf029566a328dbad3b91c28a2f9ba3faf3a96ce4add69934420af337c31dbf9"
+    },
+    {
+      "blockId": "b-live-sendsync-measure",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "apps/membrana-studio/src/preload.ts",
+        "apps/membrana-studio/src/logging/register-ipc.ts",
+        "apps/membrana-studio/src/logging/trace-flush-timing.ts",
+        "apps/membrana-studio/src/logging/trace-flush-timing.test.ts",
+        "apps/client/src/lib/electronScenarioTracePort.ts"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "note": "Measure real Studio renderer blocking around ipcRenderer.sendSync on stop recording and board exit, under a diagnostic flag. Live Studio proved the renderer remains blocked after the main process writes the trace because the sync listener never sets event.returnValue; close that sync contract with an explicit empty reply and rerun the measurement. A live number under one frame after the reply weakens the remaining sendSync cost; a multi-frame tail strengthens it.",
+      "revisionAt": "2026-09-29T15:37:40+03:00",
+      "revisionOf": "ae491683620e94dac38ddac94a146afbc7b53cf1f78ae32e7bafbbbb8b6d8f41"
+    },
+    {
+      "blockId": "c-library-render-candidate",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "apps/client/src/modules/SampleLibraryModule.tsx",
+        "apps/client/src/components/sample-library/sample-library-render-cost.test.tsx",
+        "packages/services/media-library/src/media-library-service.ts",
+        "packages/services/media-library/src/backends/server-storage-backend.ts"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "note": "Account for #2505 as a second candidate: full-library render cost versus paginated render, and separate the nearby sequential listSamples loading path without redesigning it in this sprint.",
+      "revisionAt": "2026-09-29T15:15:45+03:00",
+      "revisionOf": "0edd7822dc6a873d67c555235ecc6b8009045b009ab4a0c43090fcfa8724e693"
+    },
+    {
+      "blockId": "d-probe-truth-tooth",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/scenario-trace-teardown-measure.mjs",
+        "scripts/scenario-trace-teardown-measure.test.mjs",
+        "scripts/scenario-trace-buffer-parity.test.mjs",
+        ".github/workflows/unit-tests.yml",
+        "tests/test-scripts.catalog.json",
+        "kits/tests-master/MANIFEST.json",
+        "scripts/measure-scenario-trace-ipc.mjs",
+        "scripts/measure-scenario-trace-teardown.mjs",
+        "scripts/scenario-trace-ipc-probe/index.html",
+        "scripts/scenario-trace-ipc-probe/main.js",
+        "scripts/scenario-trace-ipc-probe/package.json",
+        "scripts/scenario-trace-ipc-probe/preload.js"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "note": "Finish sorting the existing uncommitted probe work: portable source tooth for Node 20, behavioral parity import on Node >= 22, no silent drift between ScenarioTraceProbe and scenarioTraceBuffer.ts, and refresh the mandatory tests-master pin after changing the test catalog.",
+      "revisionAt": "2026-09-29T18:15:01+03:00",
+      "revisionOf": "507620716321588b9a008d71e367345f1d8ba64661c1b5155f3f8777fd51c0cf"
+    },
+    {
+      "blockId": "e-adr-gate-pr",
+      "persona": "angelina",
+      "context": "angelina",
+      "zone": [
+        "docs/adr/ADR-0030-scenario-trace-run-evidence.md",
+        "docs/local-sprint/trace-freeze-dual-candidate-sprint/CLOSURE.md",
+        "docs/local-sprint/trace-freeze-dual-candidate-sprint/GATE_REPORT.md",
+        "docs/local-sprint/trace-freeze-dual-candidate-sprint/reviews/**",
+        "docs/sprint/trail/trace-freeze-dual-candidate-sprint.jsonl",
+        "docs/procedure-runs/trail/2026-09-29.jsonl",
+        "scripts/tasks-decompose.config.json"
+      ],
+      "estimate": {
+        "changedLines": 160
+      },
+      "note": "Rewrite ADR conclusion as exclusion/candidate/proof, run sprint gate and experience, fix task-decompose category if still needed, then ship a non-merged PR and publish review-gate.",
+      "revisionAt": "2026-09-29T15:15:45+03:00",
+      "revisionOf": "99e896ad97bfcb9132308caadd21ab9ecab911ad1a6da8032043171406f64c2c"
+    }
+  ],
+  "//cutter": "Context: owner assignment 2026-09-29 plus GitHub issue #2476 comments from 2026-09-27 and 2026-09-28. Worktree: C:/Users/user190825/practice/Membrana/.worktrees/trace-run-2476-rethink. Dependencies absent; phase A uses node/static checks only.",
+  "//out-of-scope": "No yarn install in this worktree. No product fix before owner ratification. No R2 evidence-sink redesign before consilium. No merge; PR must be shipped with --no-merge.",
+  "//recut-29-09-retro": "Перерезка в работе по слову владельца 29.09: зона блока замеров (vesnin) расширена на шесть файлов — приборы, давшие живой замер sendSync (20.5–34.2 мс после починки). Исполнитель вышел за ратифицированные зоны МОЛЧА — отчёт о сдаче этого не называл, выход нашла ведущая сверкой файлов PR с зонами. Процедура велит перерезку с новой ратификацией ДО выхода; здесь оформлено ПОСЛЕ. Это нарушение, записанное по решению владельца, а не образец.",
+  "//recut-29-09-readme": "Вторая перерезка 29.09 по слову владельца: в зону блока реестра добавлен docs/tasks/README.md — производный файл, его пересобирает task:sync-readme из registry.json, который в зоне. На вершине 922c2d75 README терял шесть АКТИВНЫХ карточек ствола (ritual-reads-done-work ×5, sample-library-paging-a11y) — они выпали при разрешении конфликта слияния. Нашло ревью (BLOCK, P1), но под неверной формулировкой «правка вне авторства»; настоящий дефект — потеря строк производного файла. Сведено к командам сессией-доводчицей; вторая претензия того же ревью (порядок журналов) — ложная посылка, журналы не пересортированы.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-09-29T21:14:40+03:00",
+    "digest": "3303294b81323b40b303e5531b549aab58d006beaacc23de4e1d522b6d2a3f00"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "library-loading-state-2570",
+  "measuredAt": "2026-10-03T15:53:00Z",
+  "segments": [
+    { "cutBlockId": "b1-loading-state", "changedLines": 345, "evidence": "git diff --numstat 57fa4b39..f16f5db0 (только зона b1) — library-loading-state.test.ts 173/0 (новый) + MediaLibraryQuotaBanner.test.tsx 53/0 (новый) + media-library-service.ts 47/7 + MediaLibraryQuotaBanner.tsx 31/0 + hooks.ts 13/3 + types.ts 8/0 + SampleLibraryModule.tsx 5/3 + index.ts 2/0 = 332+/13− (код ~119, зубы 226; коммит f16f5db0, PR #2574 влит f4e74219)" },
+    { "cutBlockId": "b2-live-check-closure", "changedLines": 250, "evidence": "ветка chore/close-library-2569-2570 от f4e74219 — CLOSURE.md ~120 (+ разделы ревью/гейта/опыта ~30) + reviews/dynin.md ~35 + reviews/angelina.md ~35 + execution-traces.jsonl 4 + segments ~10 + доля LOCAL_SPRINT_ACTIVE/LOG ~10 + перерезка окна (план 2/6, акт 1) (wc -l на момент замера 15:53Z + прогноз дельты до сдачи)" }
+  ]
+}
