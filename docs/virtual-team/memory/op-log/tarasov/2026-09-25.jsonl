@@ -1,0 +1,5 @@
+{"ts":"2026-09-25T06:57:31.908Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-09-25T14:12:56.742Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-09-25-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-25T14:12:56.742Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-27-hunt-and-canon-m2-false-evidence","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-25T14:12:56.742Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-04-static-mmbrn-container-m3-access","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-25T14:12:56.742Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

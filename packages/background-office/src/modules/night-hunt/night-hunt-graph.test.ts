@@ -2,6 +2,7 @@
  * Зубы графа зависимостей ночной охоты. Предмет — фикстура lock-файла: разбор,
  * рёбра, правила §1 и циклы. Красный вход показывается подсадкой нарушающего ребра.
  */
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -62,6 +63,54 @@ const HEALTHY_LOCK = `
 `;
 
 describe('разбор yarn.lock', () => {
+  it('составной Berry-ключ разбирается по спецификации @workspace: (#2464)', () => {
+    const composite = HEALTHY_LOCK.replace(
+      '"@membrana/core@workspace:packages/core":',
+      '"@membrana/core@npm:*, @membrana/core@workspace:packages/core":',
+    );
+
+    expect(parseWorkspaceGraph(composite)).toContainEqual({
+      name: '@membrana/core',
+      path: 'packages/core',
+      deps: [],
+    });
+  });
+
+  it('живой yarn.lock не теряет составные workspace-записи и внутренние рёбра (#2464)', () => {
+    const lockText = readFileSync(new URL('../../../../../yarn.lock', import.meta.url), 'utf8');
+    const declared = [...lockText.matchAll(/^"[^"]*@workspace:[^"]*":\s*$/gmu)].filter(
+      ([header]) => !header.includes('@workspace:.'),
+    ).length;
+    const workspaces = parseWorkspaceGraph(lockText);
+
+    expect(workspaces).toHaveLength(declared);
+    expect(buildGraphEdges(workspaces).length).toBeGreaterThan(0);
+  });
+
+  it('workspace-запись, которую парсер не разобрал, объявляется отказом (#2464)', () => {
+    const malformed = `
+"@membrana/core@workspace:":
+  version: 0.0.0-use.local
+  languageName: unknown
+  linkType: soft
+`;
+
+    expect(() => parseWorkspaceGraph(malformed)).toThrow(/workspace.*разобран/u);
+  });
+
+  it('зависимости при нуле внутренних рёбер — противоречие, а не чистый граф (#2464)', () => {
+    const missingTarget = `
+"@membrana/client@workspace:apps/client":
+  version: 0.0.0-use.local
+  dependencies:
+    "@membrana/core": "npm:*"
+  languageName: unknown
+  linkType: soft
+`;
+
+    expect(() => parseWorkspaceGraph(missingTarget)).toThrow(/зависимост.*р.б.*0/iu);
+  });
+
   it('рабочие области читаются с именем, путём и внутренними зависимостями', () => {
     const ws = parseWorkspaceGraph(HEALTHY_LOCK);
     const names = ws.map((w) => w.name);

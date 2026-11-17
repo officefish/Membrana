@@ -392,6 +392,84 @@ test('validateProcedureRunTrail: лента не мутируется — вал
   assert.equal(JSON.stringify(trail), before);
 });
 
+// ─── инвариант счёта (#2459) ─────────────────────────────────────────────────────
+//
+// Зуб на инвариант, объявленный словами у JOURNAL_SCHEMA. Он нужен не ради ещё одного
+// прогона по валидатору, а чтобы «четвёртый день P1» перестал быть спором словами: либо
+// машина краснеет, либо утверждение «два runId с пересекающимися sequence — дефект» ложно.
+// Лента СИНТЕТИЧЕСКАЯ: живая лента завтра другая, и зуб на ней доказывал бы только дату.
+//
+// ПОРЧА, которой держится этот раздел: один и тот же поток судится дважды — как есть
+// (здоров) и с дублем пары (красный). Предикат, отвечающий «пусто» всегда, зелёным второй
+// раз не пройдёт; предикат, краснеющий на чередование, не пройдёт первый.
+
+/** Утро 25.09 в форме ленты: три перезапуска утра и вечер, у каждого свой счёт от единицы. */
+const overlappingRuns = () => [
+  seqRec('ritual-day-2026-09-25', 1),
+  seqRec('ritual-day-2026-09-25', 2),
+  seqRec('ritual-day-2026-09-25-r2', 1),
+  seqRec('ritual-evening-2026-09-25', 1),
+  seqRec('ritual-day-2026-09-25-r2', 2),
+  seqRec('ritual-day-2026-09-25-r3', 1),
+  seqRec('ritual-evening-2026-09-25', 2),
+  seqRec('ritual-day-2026-09-25-r3', 2),
+];
+
+test('#2459 инвариант: прогоны внахлёст с пересекающимися номерами — лента ЗДОРОВА', () => {
+  const trail = overlappingRuns();
+  assert.equal(trail.length, 8, 'предмет суда непустой — иначе «пусто» ничего не значит');
+  assert.equal(new Set(trail.map((r) => r.runId)).size, 4, 'четыре РАЗНЫХ прогона в одной ленте');
+  assert.deepEqual(
+    validateProcedureRunTrail(trail),
+    [],
+    'пересечение номеров РАЗНЫХ прогонов инвариант не нарушает: sequence — адрес внутри прогона',
+  );
+});
+
+test('#2459 инвариант: глобальной монотонности НЕТ — и это не находка', () => {
+  const trail = overlappingRuns();
+  const flat = trail.map((r) => r.sequence);
+  const descents = flat.filter((s, i) => i > 0 && s <= flat[i - 1]).length;
+  assert.ok(descents > 0, `плоский столбец номеров не возрастает (${flat.join(',')})`);
+  assert.deepEqual(
+    validateProcedureRunTrail(trail),
+    [],
+    'глобальная монотонность НЕ обещана: порядок разных прогонов читается по at, не по sequence',
+  );
+  // Каждый прогон начинает счёт от единицы — ровно это и даёт нахлёст.
+  const firsts = [...new Set(trail.map((r) => r.runId))].map(
+    (id) => trail.find((r) => r.runId === id).sequence,
+  );
+  assert.deepEqual(firsts, [1, 1, 1, 1]);
+});
+
+test('#2459 порча: настоящий дубль пары (runId, sequence) в том же потоке — КРАСНЫЙ', () => {
+  const trail = overlappingRuns();
+  // Порча адресуемости: вторая запись прогона -r2 переписывает номер первой. Амандмент по
+  // паре (runId, sequence) попал бы теперь в две записи сразу — это и есть дефект.
+  trail[4] = seqRec('ritual-day-2026-09-25-r2', 1);
+  const findings = validateProcedureRunTrail(trail);
+  assert.equal(findings.length, 1, 'ровно одна находка — дубль пары, а не чередование прогонов');
+  assert.deepEqual(findings[0], {
+    runId: 'ritual-day-2026-09-25-r2',
+    problem: 'sequence_duplicate',
+    sequence: 1,
+    prevSequence: 1,
+    line: 5,
+    prevLine: 3,
+  });
+});
+
+test('#2459 порча: откат номера внутри прогона — КРАСНЫЙ (монотонность внутри обещана)', () => {
+  const trail = overlappingRuns();
+  trail.push(seqRec('ritual-day-2026-09-25-r3', 1));
+  const findings = validateProcedureRunTrail(trail);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].problem, 'sequence_regression');
+  assert.equal(findings[0].runId, 'ritual-day-2026-09-25-r3');
+  assert.equal(findings[0].prevSequence, 2);
+});
+
 // ─── область ленивого закрытия (#1705) ──────────────────────────────────────────
 
 test('область обязательна: вызов без неё — бросок, а не тихий выбор', () => {

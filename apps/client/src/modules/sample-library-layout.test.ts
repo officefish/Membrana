@@ -122,6 +122,14 @@ describe('перенос доступен из ЛЮБОГО набора, а н�
   const CABINET_TABLE = 'apps/cabinet/src/components/sample-library/CabinetSampleTable.tsx';
   const CABINET_HOOK = 'apps/cabinet/src/lib/useCabinetSampleLibrary.ts';
 
+  /**
+   * Сама ДВЕРЬ построчного переноса в кабинетной панели — одно выражение `showMove`.
+   * Вынесен именем, чтобы шаблон извлечения проверялся САМИМ ЗУБОМ (проба ниже): отрицательная
+   * проверка над дверью, которую шаблон не нашёл, зелена и при сломанном шаблоне.
+   */
+  const CABINET_MOVE_DOOR = /const showMove\s*=\s*([^;]*);/u;
+  const cabinetMoveDoor = (src: string): string | null => CABINET_MOVE_DOOR.exec(src)?.[1] ?? null;
+
   it('ПОРЧА: ни один дом не привязывает ДВЕРЬ переноса к буферу', () => {
     // Дефект был не в правах и не на сервере: `moveTargets` уже исключал буфер, системные и
     // текущий, сервер блокировал лишь тарифный набор и перенос в тот же самый. Дверь просто
@@ -141,7 +149,43 @@ describe('перенос доступен из ЛЮБОГО набора, а н�
         'showMoveFromBuffer=',
       );
     }
-    expect(read(CABINET_PANEL)).not.toMatch(/collectionId === BUFFER_COLLECTION_ID/u);
+
+    // ПРЕЖНЯЯ РЕДАКЦИЯ ЭТОЙ ПРОВЕРКИ ЧИТАЛА НЕ ТОТ ПРЕДМЕТ (найдено на #2520). Она искала
+    // `collectionId === BUFFER_COLLECTION_ID` по ВСЕМУ файлу панели, то есть сторожила не дверь
+    // переноса, а любое упоминание буфера рядом с ней. Панель законно сравнивает набор с буфером
+    // ради другого органа — предупреждения «буфер заполнен» у пакетного прогона детекторов, —
+    // и зуб покраснел на нём, ничего не сказав о переносе. Предмет зуба — сама дверь `showMove`:
+    // она обязана судить только род выборки и наличие адресатов, а КАКОЙ это набор — не знать.
+    const door = cabinetMoveDoor(read(CABINET_PANEL));
+    expect(door, 'дверь переноса `showMove` в панели кабинета не найдена').not.toBeNull();
+    expect(door, 'дверь переноса снова привязана к буферу').not.toContain('BUFFER_COLLECTION_ID');
+    expect(
+      door,
+      'дверь переноса судит, КАКОЙ это набор, — а должна лишь род выборки',
+    ).not.toContain('collectionId');
+    expect(door?.replace(/\s+/gu, ' ').trim()).toBe(
+      "selection.kind === 'node' && moveTargets.length > 0",
+    );
+  });
+
+  it('шаблон двери переноса сам краснеет на заведомо дурной строке', () => {
+    // Отрицательная проверка над извлечённой дверью свидетельствует лишь тогда, когда шаблон
+    // извлечения дверь находит. Иначе `null` содержит ничего — и зуб зелен при любом дефекте.
+    const bad =
+      'const showMove = selection.collectionId === BUFFER_COLLECTION_ID && moveTargets.length > 0;';
+    expect(cabinetMoveDoor(bad), 'шаблон обязан находить дверь').not.toBeNull();
+    expect(cabinetMoveDoor(bad), 'шаблон обязан видеть привязку к буферу в дурной двери').toContain(
+      'BUFFER_COLLECTION_ID',
+    );
+    // Многострочная запись двери (prettier переносит длинные условия) — тоже дверь.
+    const multiline =
+      "const showMove =\n    selection.kind === 'node' &&\n    moveTargets.length > 0;";
+    expect(cabinetMoveDoor(multiline)?.replace(/\s+/gu, ' ').trim()).toBe(
+      "selection.kind === 'node' && moveTargets.length > 0",
+    );
+    expect(
+      cabinetMoveDoor('const bufferFull = selection.collectionId === BUFFER_COLLECTION_ID;'),
+    ).toBeNull();
   });
 
   it('оба близнеца судят ИСТОЧНИК ОДНИМ предикатом ядра, а не своим условием', () => {

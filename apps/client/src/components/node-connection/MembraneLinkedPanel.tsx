@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { formatExpiresAt, shortId } from '../../lib/pairingDisplay';
 import { useNodeConnectionStore } from '../../stores/nodeConnectionStore';
+import { NodeRebindStepsNote } from './NodeRebindStepsNote';
 
 export const MembraneLinkedPanel: React.FC = () => {
   const showLinkedPanel = useNodeConnectionStore((s) => s.showLinkedPanel);
@@ -83,6 +84,10 @@ export const MembraneLinkedPanel: React.FC = () => {
             <dd className="text-xs text-right tabular-nums">{formatExpiresAt(pairing.expiresAt)}</dd>
           </div>
         </dl>
+
+        {/* #2461: здесь прибор нового аккаунта уже известен — второе действие печатается
+            с подставленным id, готовыми командами и глаголом сверки. */}
+        <NodeRebindStepsNote deviceId={pairing.deviceId} />
 
         <div className="modal-action mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           <button type="button" className="btn btn-error btn-sm flex-1" onClick={() => disconnectFromMembrane()}>

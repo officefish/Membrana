@@ -17,13 +17,16 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  ASK_PERSONAS,
+  CONSILIUM_PERSONA_FILES,
+  CONSILIUM_ROLE_KEY_TO_SLUG,
+} from './lib/personas.mjs';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => readFileSync(join(repoRoot, rel), 'utf8');
 
 const registry = JSON.parse(read('docs/virtual-team/voices.registry.json'));
-const askSrc = read('scripts/ask-persona.mjs');
-const consiliumSrc = read('scripts/consilium.mjs');
 const stormSrc = read('scripts/lib/storm-codex.mjs');
 
 const KINDS = new Set(['teamlead', 'architect', 'lead', 'advisor', 'voice']);
@@ -52,10 +55,12 @@ for (const v of voices) {
     }
   }
   for (const c of v.callable ?? []) {
-    if (c === 'ask' && !new RegExp(`^\\s*${v.id}:\\s*\\{`, 'mu').test(askSrc)) {
-      findings.push(`${who}: callable=ask, но в карте PERSONAS ask-persona его нет — вызвать нечем`);
-    } else if (c === 'consilium' && !consiliumSrc.includes(v.promptFile)) {
-      findings.push(`${who}: callable=consilium, но PERSONA_FILES не несёт ${v.promptFile}`);
+    if (c === 'ask' && !ASK_PERSONAS[v.id]) {
+      findings.push(`${who}: callable=ask, но ASK_PERSONAS его не несёт — вызвать нечем`);
+    } else if (c === 'consilium' && !Object.values(CONSILIUM_PERSONA_FILES).includes(v.promptFile)) {
+      findings.push(`${who}: callable=consilium, но CONSILIUM_PERSONA_FILES не несёт ${v.promptFile}`);
+    } else if (c === 'consilium' && !Object.values(CONSILIUM_ROLE_KEY_TO_SLUG).includes(v.id)) {
+      findings.push(`${who}: callable=consilium, но CONSILIUM_ROLE_KEY_TO_SLUG не резолвит id`);
     } else if (c === 'storm' && !/origin\s*!==\s*'pet'|origin\s*===\s*'pet'/u.test(stormSrc)) {
       findings.push(`${who}: callable=storm, но механизм origin:pet в движке шторма не найден`);
     } else if (c === 'bridge' && !(existsSync(join(repoRoot, 'scripts/bridge-lead-call.mjs')) && read('scripts/bridge-lead-call.mjs').includes(v.promptFile))) {

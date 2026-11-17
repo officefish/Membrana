@@ -1,0 +1,5 @@
+{"ts":"2026-10-08T11:06:33.064Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-10-08T21:26:34.938Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-10-08-archive-gc-journal","origin":"persona-extract"}
+{"ts":"2026-10-08T21:26:34.938Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-09-03-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-08T21:26:34.938Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-08-06-static-mmbrn-container-m6-intake-delivery","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-10-08T21:26:34.938Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

@@ -6,6 +6,7 @@ import {
   BUFFER_COLLECTION_ID,
   DEFAULT_MEDIA_LIBRARY_CONFIG,
   DEFAULT_SAMPLES_PAGE_SIZE,
+  TARIFF_DATASET_COLLECTION_ID,
   type MediaLibraryConfig,
 } from './constants.js';
 import { mediaLibraryTrace, traceElapsedMs } from './media-library-trace.js';
@@ -13,6 +14,7 @@ import { isBufferSampleCountCapActive } from './quota-status.js';
 import type { IStorageBackend } from './ports/storage-backend.js';
 import type {
   DeleteByIdsOutcome,
+  MoveBatchOutcome,
   BufferCleanupPlanOutcome,
   BufferCleanupPlanRequest,
   LibraryChartListRequest,
@@ -22,12 +24,15 @@ import type {
   LibraryDuplicatesRequest,
   LibraryDuplicatesRunOutcome,
   Collection,
+  CollectionDetectorBatchRequest,
+  CollectionDetectorBatchRunOutcome,
   ImportBlobOptions,
   MediaLibrarySnapshot,
   MediaSample,
   MediaPluginState,
   NewSampleMeta,
   PaginatedSamples,
+  StorageQuota,
 } from './types.js';
 
 export class MediaLibraryService {
@@ -43,6 +48,17 @@ export class MediaLibraryService {
 
   private initPromise: Promise<void> | null = null;
 
+  /** Идущая сверка открытия (#2569): параллельные вызовы (StrictMode) сливаются в один залп. */
+  private reconcilePromise: Promise<void> | null = null;
+
+  /**
+   * Каталог, для которого в снимке загружены пробы базового набора (#2569). Держится отдельно от
+   * `snapshot.quota.dataset`: квоту каждые 30 с перечитывает мост (`refreshQuota`), и сменённый
+   * каталог доехал бы в снимок раньше, чем перечитаны его пробы, — сверка открытия решила бы
+   * «тот же». Живёт в памяти сервиса: перезапуск и так читает всё через `init()`.
+   */
+  private datasetSamplesCatalogId: string | undefined;
+
   private snapshot: MediaLibrarySnapshot = {
     collections: [],
     samplesByCollection: {},
@@ -53,6 +69,8 @@ export class MediaLibraryService {
       serverReachable: false,
     },
     version: 0,
+    // #2570: квота выше — заглушка до первого чтения, не запасной режим; баннер судит по loadState.
+    loadState: 'loading',
   };
 
   constructor(backend: IStorageBackend, config?: Partial<MediaLibraryConfig>) {
@@ -105,7 +123,7 @@ export class MediaLibraryService {
 
     try {
       const quota = await this.backend.getQuota();
-      this.snapshot = { ...this.snapshot, quota };
+      this.snapshot = { ...this.snapshot, quota: this.mergeQuota(quota) };
       mediaLibraryTrace('snapshot-quota-done', { elapsedMs: traceElapsedMs(mergeStartedAt) });
     } catch {
       mediaLibraryTrace('snapshot-quota-skip', { reason: 'getQuota-failed' });
@@ -119,6 +137,13 @@ export class MediaLibraryService {
     });
   }
 
+  /**
+   * Полное чтение снимка. Порядок (#2570, инвариант I3 резчика): квота ПЕРВОЙ — одним запросом, с
+   * промежуточной публикацией (числа хранилища видны сразу, `loadState` прежний); затем коллекции и
+   * пробы (буфер — сотни страниц, #2571); в самом конце — пометка каталога базового набора (#2569:
+   * иначе сбой списков оставил бы «пробы загружены для нового каталога», и сверка открытия пропустила
+   * бы перечитывание) и `ready` (I1). Сбой списков бросает и `ready` не ставит.
+   */
   async refresh(): Promise<void> {
     const refreshStartedAt = performance.now();
     mediaLibraryTrace('refresh-start');
@@ -127,6 +152,12 @@ export class MediaLibraryService {
     mediaLibraryTrace('ensure-reserved-start');
     await this.backend.ensureReservedCollections();
     mediaLibraryTrace('ensure-reserved-done', { elapsedMs: traceElapsedMs(ensureStartedAt) });
+
+    const quotaStartedAt = performance.now();
+    const quota = await this.backend.getQuota();
+    mediaLibraryTrace('quota-done', { elapsedMs: traceElapsedMs(quotaStartedAt) });
+    this.snapshot = { ...this.snapshot, quota: this.mergeQuota(quota) };
+    this.emit();
 
     const listColStartedAt = performance.now();
     const collections = await this.backend.listCollections();
@@ -146,18 +177,118 @@ export class MediaLibraryService {
       });
     }
 
-    const quotaStartedAt = performance.now();
-    const quota = await this.backend.getQuota();
-    mediaLibraryTrace('quota-done', { elapsedMs: traceElapsedMs(quotaStartedAt) });
+    if (quota.dataset) this.datasetSamplesCatalogId = quota.dataset.catalogId;
 
     this.snapshot = {
       collections,
       samplesByCollection,
-      quota,
+      quota: this.snapshot.quota,
       version: this.version,
+      loadState: 'ready',
     };
     this.emit();
     mediaLibraryTrace('refresh-done', { elapsedMs: traceElapsedMs(refreshStartedAt) });
+  }
+
+  /**
+   * Лёгкое перечитывание предела (#2538): один `getQuota()`, без списков коллекций и проб.
+   *
+   * Полный `refresh()` читает квоту ПОСЛЕДНИМ шагом после списка всех проб: любой сбой раньше
+   * оставлял в снимке прежний предел без следа (живой опыт 01.10 — 512 МБ при сервере 2 ГБ).
+   * Здесь предел читается сам, одним запросом, и получает момент чтения (`readAt`).
+   * Списки снимка не трогаются; emit один. Бросает только то, что бросил бэкенд.
+   */
+  async refreshQuota(): Promise<void> {
+    const startedAt = performance.now();
+    mediaLibraryTrace('refreshQuota-start');
+    const quota = await this.backend.getQuota();
+    this.snapshot = { ...this.snapshot, quota: this.mergeQuota(quota) };
+    this.emit();
+    mediaLibraryTrace('refreshQuota-done', { elapsedMs: traceElapsedMs(startedAt) });
+  }
+
+  /**
+   * Сверка с сервером при открытии библиотеки (#2569; слово владельца 03.10: «коллекции должны
+   * пересматриваться при открытии библиотеки»; глубже — только при смене тарифа).
+   *
+   * Не инициализирован → `init()` и всё: init уже читает полностью, второй сверки нет.
+   * Иначе ЛЁГКАЯ сверка — всегда: ensure-reserved (сервер чинит заводское имя набора) + список
+   * коллекций + квота, три малых запроса, ни одного списка проб. Коллекции снимка заменяются,
+   * пробы не трогаются. ГЛУБЖЕ — только базовый набор и только когда сменился назначенный каталог
+   * (`quota.dataset.catalogId`) или `sampleCount` набора разошёлся с загруженным списком (фоновый
+   * досев). Пробы буфера (тысячи, постранично по 40) на этом пути не читаются никогда.
+   * Зовёт модуль библиотеки при монтировании, НЕ хук `useMediaLibrary` (его зовут и панели).
+   */
+  async reconcileOnOpen(): Promise<void> {
+    if (!this.initialized) {
+      await this.init();
+      return;
+    }
+    if (!this.reconcilePromise) {
+      this.reconcilePromise = this.runReconcileOnOpen().finally(() => {
+        this.reconcilePromise = null;
+      });
+    }
+    await this.reconcilePromise;
+  }
+
+  private async runReconcileOnOpen(): Promise<void> {
+    const startedAt = performance.now();
+    mediaLibraryTrace('reconcile-start');
+    await this.backend.ensureReservedCollections();
+    const collections = await this.backend.listCollections();
+    const quota = await this.backend.getQuota();
+
+    const live = new Set(collections.map((c) => c.id));
+    const prev = this.snapshot.samplesByCollection;
+    let samplesByCollection = Object.keys(prev).every((id) => live.has(id))
+      ? prev
+      : Object.fromEntries(Object.entries(prev).filter(([id]) => live.has(id)));
+
+    const dataset = collections.find((c) => c.id === TARIFF_DATASET_COLLECTION_ID);
+    const loadedCount = prev[TARIFF_DATASET_COLLECTION_ID]?.length ?? 0;
+    const catalogChanged =
+      quota.dataset !== undefined && quota.dataset.catalogId !== this.datasetSamplesCatalogId;
+    const reseeded = dataset?.sampleCount !== undefined && dataset.sampleCount !== loadedCount;
+    if (dataset && (catalogChanged || reseeded)) {
+      const rows = await this.backend.listSamples(TARIFF_DATASET_COLLECTION_ID);
+      samplesByCollection = { ...samplesByCollection, [TARIFF_DATASET_COLLECTION_ID]: rows };
+      if (quota.dataset) this.datasetSamplesCatalogId = quota.dataset.catalogId;
+    }
+
+    this.snapshot = {
+      ...this.snapshot,
+      collections,
+      samplesByCollection,
+      quota: this.mergeQuota(quota),
+    };
+    this.emit();
+    mediaLibraryTrace('reconcile-done', {
+      collections: collections.length,
+      datasetReloaded: dataset !== undefined && (catalogChanged || reseeded),
+      catalogChanged,
+      reseeded,
+      elapsedMs: traceElapsedMs(startedAt),
+    });
+  }
+
+  /**
+   * Единственное место, где прочитанная квота ложится в снимок (#2538).
+   *
+   * Успех — числа бэкенда и свежий `readAt`. Отказ серверного чтения (`serverReachable=false`)
+   * прежний предел НЕ стирает: числа остаются, `serverReachable` опускается, `readAt` — момент
+   * последнего успешного чтения (развилка 4 плана — слово владельца: «прежний предел с пометкой
+   * „снимок от …“, числа не скрываем»). Пока успешного серверного чтения не было (снимок ещё
+   * локальный), отказ ложится как есть — нули без `readAt`: нечего помечать «снимком от».
+   */
+  private mergeQuota(next: StorageQuota): StorageQuota {
+    const failed = next.backend === 'server' && !next.serverReachable;
+    if (!failed) return { ...next, readAt: new Date().toISOString() };
+    const prev = this.snapshot.quota;
+    if (prev.backend === 'server' && prev.readAt !== undefined) {
+      return { ...prev, serverReachable: false };
+    }
+    return next;
   }
 
   async listSamplesPage(
@@ -170,6 +301,9 @@ export class MediaLibraryService {
 
   async init(): Promise<void> {
     if (this.initialized) return;
+    // #2570: временный ленивый default (до решения моста) не читается — иначе он засевает локальный
+    // каталог и становится «готовым запасным», и модуль рисует «Media-server недоступен».
+    if (provisionalServices.has(this)) return;
     if (!this.initPromise) {
       this.initPromise = this.runInit()
         .then(() => {
@@ -271,6 +405,16 @@ export class MediaLibraryService {
     return this.backend.requestLibraryChartList(collectionId, req);
   }
 
+  async requestCollectionDetectorBatch(
+    collectionId: string,
+    req: CollectionDetectorBatchRequest = {},
+  ): Promise<CollectionDetectorBatchRunOutcome> {
+    if (!this.backend.requestCollectionDetectorBatch) {
+      throw new Error('Batch-прогон детекторов доступен только при серверной библиотеке (media-server)');
+    }
+    return this.backend.requestCollectionDetectorBatch(collectionId, req);
+  }
+
   /** Свод сеанса (#2039): двадцать опорных звуков окна. Ядро отчёта — на media, здесь только заказ. */
   async requestSessionDigest(
     collectionId: string,
@@ -351,6 +495,33 @@ export class MediaLibraryService {
     return moved;
   }
 
+  /**
+   * МАССОВЫЙ ВЫВОЗ ПРОБ ИЗ БУФЕРА В НАБОР — одно действие человека «перенести все».
+   *
+   * Цикл по `moveSample` тут не годится по той же причине, по какой не годился при удалении
+   * пачкой: тысяча запросов даёт худший из возможных ответов — отказ на пятисотой и никакого
+   * внятного числа. Место считает сервер по осям квоты, потому что перенос ПЕРЕЛИВАЕТ байты из
+   * оси буфера в ось наборов, и половина этой арифметики в браузере жить не может.
+   *
+   * `dryRun` — счёт без движения: то, что окно показывает до подтверждения. Обновление
+   * снимка после него НЕ делается — двигать было нечего, а лишний обход страниц на полном
+   * буфере не бесплатен.
+   */
+  async moveSamplesBatch(
+    sampleIds: readonly string[],
+    toCollectionId: string,
+    options: { readonly dryRun?: boolean } = {},
+  ): Promise<MoveBatchOutcome> {
+    if (!this.backend.moveSamplesBatch) {
+      throw new Error('Массовый перенос доступен только при серверной библиотеке (media-server)');
+    }
+    const outcome = await this.backend.moveSamplesBatch(sampleIds, toCollectionId, options);
+    if (options.dryRun !== true && outcome.moved.length > 0) {
+      await this.refresh();
+    }
+    return outcome;
+  }
+
   async updateSampleLabelNotes(
     sampleId: string,
     patch: import('./types.js').UpdateSampleLabelNotes,
@@ -379,6 +550,27 @@ export class MediaLibraryService {
 
 let defaultService: MediaLibraryService | null = null;
 
+/**
+ * Временные сервисы (#2570): ленивый default, созданный ДО того, как мост решил, где хранилище
+ * (пинг media идёт до 3 попыток). Пишущие методы работают как прежде (их данные и раньше уходили
+ * вместе с заменой), но `init()` не исполняется: снимок остаётся `loading`.
+ */
+const provisionalServices = new WeakSet<MediaLibraryService>();
+
+const defaultServiceListeners = new Set<() => void>();
+
+/**
+ * Подписка на подмену default-сервиса (#2570, инвариант I4): ровно одна нотификация на каждую
+ * `configureDefaultMediaLibraryService`. До неё подмену никто не слышал, и `useMediaLibrary()`
+ * оставался на прежнем сервисе до случайного ререндера.
+ */
+export function subscribeDefaultMediaLibraryService(listener: () => void): () => void {
+  defaultServiceListeners.add(listener);
+  return () => {
+    defaultServiceListeners.delete(listener);
+  };
+}
+
 export function createMediaLibraryService(
   backend: IStorageBackend,
   config?: Partial<MediaLibraryConfig>,
@@ -391,17 +583,20 @@ export function getDefaultMediaLibraryService(): MediaLibraryService {
     defaultService = createMediaLibraryService(
       createBrowserLimitedStorageBackend(DEFAULT_MEDIA_LIBRARY_CONFIG.localQuotaBytes),
     );
+    provisionalServices.add(defaultService);
   }
   return defaultService;
 }
 
-/** Replace singleton backend (e.g. switch to remote-server after pairing). */
+/** Replace singleton backend (e.g. switch to remote-server after pairing). Оповещает подписчиков (#2570). */
 export function configureDefaultMediaLibraryService(
   backend: IStorageBackend,
   config?: Partial<MediaLibraryConfig>,
 ): MediaLibraryService {
-  defaultService = createMediaLibraryService(backend, config);
-  return defaultService;
+  const next = createMediaLibraryService(backend, config);
+  defaultService = next;
+  defaultServiceListeners.forEach((listener) => listener());
+  return next;
 }
 
 export function resetDefaultMediaLibraryServiceForTests(): void {

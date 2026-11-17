@@ -1,0 +1,12 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "evening-reads-done-work-20261002",
+  "forTask": "evening-reads-done-work — вечер и code-review не объявляют влитые результаты несделанными без сверки носителей",
+  "note": "Замер объёма: git diff --numstat после b1/b2; b3 — закрывающие документы и строки LOCAL_SPRINT_*.",
+  "measuredAt": "2026-10-02T11:05:00+03:00",
+  "segments": [
+    { "cutBlockId": "b1-evening-done-sprint-results", "changedLines": 93, "evidence": "scripts/lib/review-done-ledger*.mjs/test + review-done-ledger-port: носители результата и CLOSURE absence" },
+    { "cutBlockId": "b2-review-oversized-premise-replacement", "changedLines": 154, "evidence": "scripts/lib/day-work-diff.mjs/test + scripts/lib/code-review-ritual.mjs/test: oversized replacement + provenance" },
+    { "cutBlockId": "b3-live-evening-20261002-check", "changedLines": 170, "evidence": "OPEN/CLOSURE/reviews/execution-traces/segments + LOCAL_SPRINT_ACTIVE/LOG" }
+  ]
+}

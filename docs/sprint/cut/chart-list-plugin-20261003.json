@@ -1,0 +1,61 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "chart-list-plugin-20261003",
+  "taskId": "chart-list-plugin",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-10-03T11:30:00Z",
+    "to": "2026-10-04T20:00:00Z"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-journal-run-record-office-trace",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/background-cabinet/src/modules/journal/journal.module.ts",
+        "packages/background-cabinet/src/modules/journal/plugin-host/journal-plugin-host.service.ts",
+        "packages/background-cabinet/src/modules/journal/plugin-host/journal-plugin-host.service.test.ts",
+        "packages/background-cabinet/src/modules/journal/plugin-host/journal-results-bridge.service.ts",
+        "packages/background-cabinet/src/modules/journal/plugin-host/journal-results-bridge.service.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 230
+      },
+      "revisionAt": "2026-10-03T11:58:33Z",
+      "revisionOf": "f5a66e8da2d9b67acda9d045a6610a8ec57ac374355ab473b4220b51c87d8124"
+    },
+    {
+      "blockId": "b2-owner-live-cabinet-acceptance",
+      "persona": "angelina",
+      "context": "angelina",
+      "zone": [
+        "docs/field/chart-list-acceptance-2026-08-22.md",
+        "docs/local-sprint/chart-list-plugin-20261003/",
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/sprint/experience/chart-list-plugin-20261003.segments.json"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionAt": "2026-10-04T18:42:49+03:00",
+      "revisionOf": "a5513f605c35a1426d3c557f7ccef6b9872e2336ab5e00a712d0151c4f5061e3"
+    }
+  ],
+  "//why": "Аудит origin/main 2e59a5c3 оставил два обещания: журнальный RunRecord и живую приёмку. b1 влит PR #2567 и развёрнут @ ee405f48. Владелец 04.10 принял три критерия, объёмы 20/200, playback/waveform и вытеснения; дополнительная ратифицированная сверка различает spectral-variety и loudness-over-floor на одном корпусе из 1838 измеренных записей. План не повторяет готовые ядро, UI, БД, адресацию или media-витрину.",
+  "//measure": "Два повторных прогона 04.10 имеют одинаковый inputHash, asked=3970 и measured=1838. Упорядоченные entryId совпали на 7 из 20 позиций, пересечение множеств 18 из 20, первое различие на позиции 8; spectral-variety записал 567 вытеснений у двадцати оставленных. Исходный факт 18:43:53 уточнён по БД: сохранённая строка имеет criterion=loudness-over-floor, поэтому не используется как прогон разнообразия. b1 подтверждён PR #2567, тестами 550/550 и деплоем cabinet @ ee405f48.",
+  "//order": "b1 → b2. B2 после деплоя проверяет продукт живьём и отдельной парой повторов различает критерии. Поломка базы office не отменяет состоявшийся пользовательский отбор: это внешний блок #2580, названный в CLOSURE. Точка перерезки b1 на plugin-contracts/endpoint не сработала.",
+  "//forecast": "b1: после успешного executor журнал составляет RunRecord и неблокирующе отправляет его в существующий office endpoint; unit и host integration зелёные. b2: на одном inputHash списки loudness-over-floor и spectral-variety объёма 20 различаются, если жадный отсев вытеснит хотя бы одного кандидата из громкостной двадцатки; проверка — полные упорядоченные entryId, совпадения по позиции и пересечение. Опровержение: 20/20 по позиции — тогда до закрытия регистрируется отдельная измерительная задача по объёмам 20/60/100/200. Фактический исход: 7/20 по позиции, 18/20 пересечение, поэтому отдельная задача по условию не нужна.",
+  "//porcha": "b1: успешный executor обязан дать один POST /plugin-results/runs, throw — ноль. b2: сравнение краснеет при разных inputHash/asked/measured либо при подмене одного entryId; первые четыре строки и визуальная похожесть недостаточны. Закрытие запрещено без полного массива 20+20 и точного счёта совпадений.",
+  "//dod": "b1: RunRecord составляется только после успешного исполнения; office-not-configured/unreachable/rejected именованы и не стирают выборку; контракты и endpoint не меняются. b2: владелец принимает три критерия, объёмы 20 и 200, playback/waveform и пары вытеснений; повторные loudness-over-floor/spectral-variety идут на одинаковом inputHash с measured=1838 и сравниваются целиком; протокол несёт времена, selectionId/runId, 7/20 по позиции, 18/20 пересечение, первое различие 8 и внешний блок office #2580; затем experience и gate.",
+  "//out-of-scope": "Починка базы office (#2580), изменение метрик/порога 0.05, четвёртый критерий, исчезновение собаки/машин, RecordingPassport, уборка буфера, schema telemetry-journal, plugin-contracts, повторный деплой. Архив карточки предлагается владельцу после гейта отдельным PR.",
+  "//forks": "1. Узкий кабинетный адаптер b1 сохранён, общего пакета нет. 2. Недоставка в office не блокирует состоявшийся отбор и названа внешним блоком #2580. 3. Если малые списки 20/20, отдельная задача масштабного замера обязательна; фактически 7/20, развилка не сработала. 4. Исходную отметку 18:43:53 не переименовывать: БД называет её loudness-over-floor.",
+  "//recut": "04.10 владелец ратифицировал дополнительную сверку малого объёма. Окно расширено до 04.10; b2 дополнен полным поэлементным сравнением. Момент инструментальной подписи берётся из reflog входа в ветку 18:42:49+03:00: после слова владельца и до повторных прогонов 19:21/19:23. Старый b1 не переисполняется.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-10-04T18:42:49+03:00",
+    "digest": "5fb8e9c2000f24656744c77c0431d504eb0714ab9adec820a66df9087ec6cecd"
+  }
+}

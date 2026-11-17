@@ -78,6 +78,9 @@ model Device {
   deviceWorkspaces        DeviceWorkspace[]
   /** Ключи полевого узла (ADR-0027 Р3): отзываемый секрет только на ручки узла своего устройства. */
   nodeKeys                NodeKey[]
+  /// Архив понижения (ADR-0031, #2587 b2): партии и перенесённые строки проб. Каскад от прибора.
+  downgradeArchiveBatches  DowngradeArchiveBatch[]
+  downgradeArchivedSamples DowngradeArchivedSample[]
   /** Active user workspace id for device-board multi-slot persist (U10 W5). */
   activeWorkspaceId       String?
   /// Политика переполнения (#2308, M1): carrier рантайма — прибор читает ЭТО через `/quota`.
@@ -226,4 +229,81 @@ model TrackKeyTtlSetting {
   updatedAt  DateTime  @updatedAt
 
   @@unique([membraneId])
+}
+
+/// Состояние партии архива понижения (ADR-0031). Закрытый список: `failed` — частичный перенос,
+/// уборка по сроку его не трогает, хвост подбирает следующая заморозка.
+enum DowngradeArchiveState {
+  frozen
+  restored
+  deleted
+  failed
+}
+
+/// Партия архива понижения (#2587 b2; ADR-0031, решения 2 и 4) — единица заморозки, возврата и
+/// удаления. Отдельная таблица, а НЕ пометка на `Sample`: `getQuota`, списки и витрины читают
+/// `Sample` и об архиве не знают. `expiresAt` — СНИМОК `frozenAt + retentionDays` суток: смена срока
+/// на мембране старые партии не пересчитывает. Идемпотентность freeze держит `@@unique([deviceId,
+/// planDigest])`, а не порядок вызовов. Не путать с тарифной ячейкой `storage.cold`:
+/// downgrade-archive ≠ tariff-cold.
+model DowngradeArchiveBatch {
+  id            String                    @id @default(uuid()) @db.Uuid
+  deviceId      String                    @db.Uuid
+  device        Device                    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  membraneId    String                    @db.Uuid
+  /// Закрытый словарь оснований; v1 — только `tariff_downgrade`.
+  reason        String                    @default("tariff_downgrade")
+  fromTariffId  String
+  toTariffId    String
+  /// Режим chart-list, по которому отбирали живое.
+  criterion     String
+  /// Хеш подтверждённого предпросмотра.
+  planDigest    String
+  /// Срок в сутках — снимок от кабинета на момент заморозки.
+  retentionDays Int
+  frozenAt      DateTime                  @default(now())
+  expiresAt     DateTime
+  state         DowngradeArchiveState     @default(frozen)
+  restoredAt    DateTime?
+  deletedAt     DateTime?
+  /// Вещдок post-condition: сумма живого после заморозки и сумма ушедшего в партию.
+  keptBytes     BigInt
+  frozenBytes   BigInt
+  samples       DowngradeArchivedSample[]
+
+  @@unique([deviceId, planDigest])
+  @@index([expiresAt])
+  @@index([deviceId, state])
+}
+
+/// Строка пробы, перенесённая из `Sample` ЦЕЛИКОМ под ТЕМ ЖЕ `id` (возврат восстанавливает прежний
+/// адрес). Файл блоба остаётся на месте (`storageRef`). Связь с партией — `NoAction`, не
+/// `Restrict`: RESTRICT проверяется немедленно и ломает каскад от `Device`; NO ACTION проверяется
+/// в конце оператора — каскад прибора проходит, явное удаление живой партии получает отказ.
+model DowngradeArchivedSample {
+  id           String                @id @db.Uuid
+  batchId      String                @db.Uuid
+  batch        DowngradeArchiveBatch @relation(fields: [batchId], references: [id], onDelete: NoAction)
+  deviceId     String                @db.Uuid
+  device       Device                @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  collectionId String
+  title        String
+  class        String
+  label        SampleLabel
+  source       SampleSource
+  durationSec  Float
+  sampleRate   Int
+  channels     Int
+  audioFormat  AudioFormat
+  contentType  String
+  sizeBytes    Int
+  storageRef   String
+  notes        String?
+  createdAt    DateTime
+  /// Ранг режима на момент заморозки; `null` — неизмеримая (ADR-0031, решение 6).
+  modeRank     Int?
+  archivedAt   DateTime              @default(now())
+
+  @@index([batchId])
+  @@index([deviceId])
 }

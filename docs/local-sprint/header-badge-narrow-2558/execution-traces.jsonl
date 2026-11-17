@@ -1,0 +1,4 @@
+{"traceId":"hbn-2558-b1-run","blockId":"b1-hold-badge-yields-last","kind":"context_run","subject":"rodchenko","at":"2026-10-03T10:30:00Z","ref":"packages/device-board/src/components/device-board-shell.tsx","relatesToSprint":true}
+{"traceId":"hbn-2558-b1-review","blockId":"b1-hold-badge-yields-last","kind":"review_pass","subject":"rodchenko","at":"2026-10-03T11:21:00Z","ref":"docs/local-sprint/header-badge-narrow-2558/reviews/rodchenko.md","relatesToSprint":true}
+{"traceId":"hbn-2558-b2-run","blockId":"b2-live-check-closure-1065","kind":"context_run","subject":"angelina","at":"2026-10-03T11:20:00Z","ref":"docs/local-sprint/header-badge-narrow-2558/CLOSURE.md","relatesToSprint":true}
+{"traceId":"hbn-2558-b2-review","blockId":"b2-live-check-closure-1065","kind":"review_pass","subject":"angelina","at":"2026-10-03T11:22:00Z","ref":"docs/local-sprint/header-badge-narrow-2558/reviews/angelina.md","relatesToSprint":true}

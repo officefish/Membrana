@@ -23,7 +23,8 @@ import { fileURLToPath } from 'node:url';
 
 import { provenanceHeader } from './lib/angelina-adapter.mjs';
 import { assemble, FILL_STATUS, sign } from './lib/day-plan-assemble.mjs';
-import { buildTop3, candidatesFromRegistry, frame } from './lib/day-plan-frame.mjs';
+import { buildTop3, candidatesFromRegistry, excludedCandidates, frame } from './lib/day-plan-frame.mjs';
+import { collectDecisionsLedger } from './lib/decisions-ledger-port.mjs';
 import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -65,10 +66,19 @@ function yesterdayIso(today = new Date()) {
 /** Чистая сборка контекста дня из уже прочитанных источников — тестируема без ФС. */
 export function buildContext(sources) {
   const tasks = sources.registryTasks ?? [];
-  let candidates = candidatesFromRegistry(tasks, { size: 'L' });
-  if (candidates.length === 0) candidates = candidatesFromRegistry(tasks, { size: 'M' });
+  // b3 ritual-reads-decisions: карточки закрытых прогонов спринтов — не кандидаты. Закрытые
+  // прогоны приходят значением из ведомости решённого; без неё отбор прежний (и это честно
+  // сказано посылкой ниже, а не молчанием).
+  const closedSprints = sources.closedSprints ?? undefined;
+  let size = 'L';
+  let candidates = candidatesFromRegistry(tasks, { size, closedSprints });
+  if (candidates.length === 0) {
+    size = 'M';
+    candidates = candidatesFromRegistry(tasks, { size, closedSprints });
+  }
+  const excluded = excludedCandidates(tasks, { size, closedSprints });
   const top3 = buildTop3({ candidates });
-  return { top3, handoff: sources.handoff ?? null, horizon: sources.horizon ?? null, feedback: sources.feedback ?? null };
+  return { top3, excluded, handoff: sources.handoff ?? null, horizon: sources.horizon ?? null, feedback: sources.feedback ?? null };
 }
 
 /** Чистая сборка промпта слота — стенка Slot → Text: kind и материал, без id/order/title. */
@@ -148,9 +158,22 @@ export function yesterdayClosure(repoRoot, dateIso) {
   return { closed: feedback && swallow, feedback, swallow, why };
 }
 
-export function gatherPremises(sources, top3) {
+export function gatherPremises(sources, top3, excluded = []) {
   const p = [];
   p.push(`реестр задач: кандидатов магистрали ${top3.length} (детерминированный ранг, зоны по разметке)`);
+  // b3 ritual-reads-decisions: исключённые кандидаты — ПОСЫЛКОЙ и поимённо. Только исключение
+  // спрятало бы долг закрытия; только пометка вернула бы карточку в ранг (утро 30.09).
+  if (sources.closedSprints === undefined || sources.closedSprints === null) {
+    p.push('закрытые прогоны спринтов НЕ прочитаны — карточки закрытых спринтов из кандидатов не исключены');
+  } else if (excluded.length === 0) {
+    p.push(`закрытые прогоны спринтов прочитаны (${sources.closedSprints.length}) — среди кандидатов их карточек нет`);
+  } else {
+    p.push(
+      `из кандидатов исключено ${excluded.length} (вычислено): ` +
+        excluded.map((e) => `${e.id} — ${e.reason}`).join('; ') +
+        ' — в магистраль их НЕ предлагать; долг закрытия назвать в санитарных',
+    );
+  }
   p.push(sources.horizon ? 'горизонт: docs/STRATEGY_DAY.md прочитан (живой генератор #592)' : 'горизонт: docs/STRATEGY_DAY.md отсутствует — веха не задана');
   p.push(sources.handoff ? 'рука: docs/HANDOFF.md прочитан' : 'рука: docs/HANDOFF.md отсутствует');
   p.push(sources.feedback ? 'фидбек: вчерашний протокол команды прочитан' : 'фидбек: вчерашнего протокола нет');
@@ -168,21 +191,42 @@ export function gatherPremises(sources, top3) {
 }
 
 async function main() {
-  const registryRaw = readBounded('docs/tasks/registry.json');
+  const dryRun = process.argv.includes('--dry-run');
   let registryTasks = [];
   try {
     const j = JSON.parse(readFileSync(join(repoRoot, 'docs/tasks/registry.json'), 'utf8'));
     registryTasks = Array.isArray(j) ? j : (j.tasks ?? []);
   } catch { /* реестр нечитаем — кандидатов нет, посылка скажет */ }
 
+  // b3 ritual-reads-decisions: закрытые прогоны спринтов — из ведомости решённого (порт один
+  // на трёх читателей). Нечитаемое печатается словами; отбор без ведомости честно назван посылкой.
+  const ledger = collectDecisionsLedger({ cwd: repoRoot, today: new Date().toISOString().slice(0, 10) });
+  console.error(
+    `[day-plan] закрытых прогонов спринтов за окно: ${ledger.closedSprints.length}` +
+      (ledger.ok ? '' : `; не прочитано: ${ledger.unreadable.join('; ')}`),
+  );
+
   const sources = {
     registryTasks,
+    closedSprints: ledger.closedSprints,
     handoff: readBounded('docs/HANDOFF.md'),
     horizon: readBounded('docs/STRATEGY_DAY.md'),
     feedback: readBounded(`docs/seanses/team-evening-feedback-${yesterdayIso()}.md`),
     closure: yesterdayClosure(repoRoot, yesterdayIso()),
   };
   const ctx = buildContext(sources);
+
+  if (dryRun) {
+    // Живой замер без LLM: кандидаты, исключённые и посылки — то, что модель получит как данность.
+    console.log('day-plan --dry-run: top-3 кандидатов магистрали');
+    for (const c of ctx.top3) console.log(`- ${c.id} (зона: ${c.zone ?? 'не размечена'}, размер: ${c.size})`);
+    console.log(`исключено из кандидатов: ${ctx.excluded.length}`);
+    for (const e of ctx.excluded) console.log(`- ${e.id} — ${e.reason}`);
+    console.log('посылки:');
+    for (const line of gatherPremises(sources, ctx.top3, ctx.excluded)) console.log(`- ${line}`);
+    console.error('dry-run: цепочка не вызывалась, docs/DAY_PLAN.md не записан.');
+    return;
+  }
 
   const fills = {};
   for (const slot of frame()) {
@@ -200,7 +244,7 @@ async function main() {
     }
   }
 
-  const premises = gatherPremises(sources, ctx.top3);
+  const premises = gatherPremises(sources, ctx.top3, ctx.excluded);
   const { markdown, emptyCount, statuses } = assemble(fills, { premises });
   const signature = sign(markdown, 'llm', { signedAt: new Date().toISOString() });
 

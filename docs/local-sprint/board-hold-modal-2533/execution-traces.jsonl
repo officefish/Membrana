@@ -1,0 +1,6 @@
+{"traceId":"bhm-2533-b1-run","blockId":"b1-freed-standing-viewmodel","kind":"context_run","subject":"ozhegov","at":"2026-10-01T08:12:30Z","ref":"apps/client/src/lib/overflow-window/viewModel.ts","relatesToSprint":true}
+{"traceId":"bhm-2533-b1-review","blockId":"b1-freed-standing-viewmodel","kind":"review_pass","subject":"ozhegov","at":"2026-10-01T08:12:56Z","ref":"docs/local-sprint/board-hold-modal-2533/reviews/ozhegov.md","relatesToSprint":true}
+{"traceId":"bhm-2533-b2-run","blockId":"b2-surfaces-read-standing","kind":"context_run","subject":"rodchenko","at":"2026-10-01T08:12:57Z","ref":"apps/client/src/lib/overflow-window/useOverflowHoldBoardView.ts","relatesToSprint":true}
+{"traceId":"bhm-2533-b2-review","blockId":"b2-surfaces-read-standing","kind":"review_pass","subject":"rodchenko","at":"2026-10-01T08:13:30Z","ref":"docs/local-sprint/board-hold-modal-2533/reviews/rodchenko.md","relatesToSprint":true}
+{"traceId":"bhm-2533-b3-run","blockId":"b3-live-check-closure","kind":"context_run","subject":"dynin","at":"2026-10-01T08:15:01Z","ref":"docs/local-sprint/board-hold-modal-2533/CLOSURE.md","relatesToSprint":true}
+{"traceId":"bhm-2533-b3-review","blockId":"b3-live-check-closure","kind":"review_pass","subject":"dynin","at":"2026-10-01T08:15:35Z","ref":"docs/local-sprint/board-hold-modal-2533/reviews/dynin.md","relatesToSprint":true}

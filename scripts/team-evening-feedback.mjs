@@ -37,6 +37,8 @@ import {
   writeEveningFeedbackMarkdown,
 } from './lib/team-evening-feedback-ritual.mjs';
 import { gitFsIo, readEntry } from './lib/angelina-adapter.mjs';
+import { collectDoneLedgerBlock } from './lib/review-done-ledger-port.mjs';
+import { collectDecisionsLedger } from './lib/decisions-ledger-port.mjs';
 import {
   formatRagContextBlock,
   logRagStatus,
@@ -67,7 +69,25 @@ const today = new Date().toISOString().slice(0, 10);
 const dayDocs = collectDayDocumentsContext({ day: today });
 const { block: gitSummary } = collectGitDaySummary();
 // #2107: магистраль — из состояния гейта; MAIN_DAY_ISSUE ручной чеканки не знает.
+// b3 ritual-reads-done-work: блок гейта несёт и строку свежести посылок (предикат probe).
 const gate = collectGateMagistral({ day: today });
+// b3 ritual-reads-done-work (И8): книга сделанного — oversized-PR ствола за неделю и билеты,
+// заведённые по их разбору. Недоступный gh печатается в блок словами, а не пустотой.
+const doneWork = collectDoneLedgerBlock({ cwd: process.cwd(), today });
+console.error(
+  doneWork.ok
+    ? `[done-ledger] oversized-PR за окно: ${doneWork.oversized}, разбор заведён у ${doneWork.ticketed}`
+    : `[done-ledger] книга сделанного недоступна: ${doneWork.reason}`,
+);
+// b2 ritual-reads-decisions: ведомость решённого — ратифицированные //decisions и //recut-* планов
+// нарезки и закрытые прогоны спринтов (ленты) со сверкой карточек реестра. Нечитаемые носители
+// перечислены в блоке словами, вечер из-за них не падает.
+const decisions = collectDecisionsLedger({ cwd: process.cwd(), today });
+console.error(
+  `[decisions-ledger] с ${decisions.sinceDay}: решений ${decisions.decisions.length}, закрытых прогонов ${decisions.closedSprints.length}` +
+    ` (карточка не архивирована у ${decisions.closedSprints.filter((c) => c.stale).length})` +
+    (decisions.ok ? '' : `; не прочитано: ${decisions.unreadable.length}`),
+);
 // #2107: readAt — версия+отпечаток каждого входа на момент генерации (форма утра).
 const readAt = buildEveningReadAt(
   gitFsIo(process.cwd(), { execFileSync, readFileSync, existsSync, join }),
@@ -104,6 +124,8 @@ const bodyText = buildEveningFeedbackUserMessage({
   gitSummary,
   ragBlock,
   magistralBlock: gate.block,
+  doneWorkBlock: doneWork.block,
+  decisionsBlock: decisions.block,
   freshnessNotice,
   focusNote: cli.focusNote,
 });

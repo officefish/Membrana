@@ -11,13 +11,7 @@ import {
   type CleanOutcome,
   type SinceStopDelta,
 } from './ledger';
-import {
-  NOT_AVAILABLE_TEXT,
-  OVERFLOW_ALIVE_TEXT,
-  OVERFLOW_AXIS_TITLE,
-  formatBytes,
-  formatOverflowAt,
-} from './reasonTexts';
+import { NOT_AVAILABLE_TEXT, OVERFLOW_AXIS_TITLE, formatBytes, formatOverflowAt } from './reasonTexts';
 import type { OverflowAxisView, OverflowWindowViewModel } from './viewModel';
 
 export interface OverflowWindowProps {
@@ -49,22 +43,38 @@ export interface OverflowWindowProps {
 
 const AXES: readonly QuotaSubject[] = ['buffer', 'userStorage'];
 
-function AxisMeter({ subject, axis }: { readonly subject: QuotaSubject; readonly axis: OverflowAxisView | null }) {
+function axisSummary(axis: OverflowAxisView | null): string {
+  if (axis === null) return NOT_AVAILABLE_TEXT;
+  return `занято ${formatBytes(axis.usedBytes)} / лимит ${formatBytes(axis.limitBytes)} / свободно ${formatBytes(axis.freeBytes)}`;
+}
+
+function AxisMeter({
+  subject,
+  axis,
+  axisAtStop,
+}: {
+  readonly subject: QuotaSubject;
+  readonly axis: OverflowAxisView | null;
+  readonly axisAtStop: OverflowAxisView | null;
+}) {
   const title = OVERFLOW_AXIS_TITLE[subject];
   if (axis === null) {
     return (
       <div className="flex flex-col gap-1" data-testid={`overflow-axis-${subject}`}>
         <div className="flex justify-between text-xs">
-          <span>{title}</span>
+          <span>{title} сейчас</span>
           <span className="opacity-70">{NOT_AVAILABLE_TEXT}</span>
         </div>
+        <p className="text-xs opacity-60" data-testid={`overflow-axis-${subject}-at-stop`}>
+          При остановке: {axisSummary(axisAtStop)}
+        </p>
       </div>
     );
   }
   return (
     <div className="flex flex-col gap-1" data-testid={`overflow-axis-${subject}`}>
       <div className="flex justify-between text-xs">
-        <span>{title}</span>
+        <span>{title} сейчас</span>
         <span className="tabular-nums">
           занято {formatBytes(axis.usedBytes)} / лимит {formatBytes(axis.limitBytes)} / свободно{' '}
           {formatBytes(axis.freeBytes)}
@@ -76,6 +86,9 @@ function AxisMeter({ subject, axis }: { readonly subject: QuotaSubject; readonly
         max={100}
         aria-label={`${title}: занято ${axis.percent}%`}
       />
+      <p className="text-xs opacity-60" data-testid={`overflow-axis-${subject}-at-stop`}>
+        При остановке: {axisSummary(axisAtStop)}
+      </p>
     </div>
   );
 }
@@ -204,9 +217,15 @@ export function OverflowWindow({
             Удержание снято — запись снова возможна.
           </p>
         ) : (
-          <p className="alert alert-error py-2 text-sm" role="status" data-testid="overflow-held">
-            Прибор {OVERFLOW_ALIVE_TEXT}: новые пробы не отправляются, связь и наблюдение живут. Само не
-            возобновится.
+          // Плашка — по состоянию места (#2533): занято — красная, освобождено при неснятом
+          // удержании — жёлтая; слова приходят из vm, окно их не сочиняет.
+          <p
+            className={`alert ${vm.standing === 'freed' ? 'alert-warning' : 'alert-error'} py-2 text-sm`}
+            role="status"
+            data-testid="overflow-held"
+            data-overflow-standing={vm.standing}
+          >
+            {vm.heldText}
           </p>
         )}
 
@@ -219,8 +238,16 @@ export function OverflowWindow({
 
         <div className="flex flex-col gap-3 rounded border border-base-300 p-3" data-testid="overflow-axes">
           {AXES.map((subject) => (
-            <AxisMeter key={subject} subject={subject} axis={vm.axes[subject]} />
+            <AxisMeter key={subject} subject={subject} axis={vm.axes[subject]} axisAtStop={vm.axesAtStop[subject]} />
           ))}
+          {/* #2538: предел без момента чтения — не живой; отказ чтения помечается, числа остаются. */}
+          <p
+            className={`text-xs ${vm.quotaRead.fresh ? 'opacity-60' : 'text-warning'}`}
+            data-testid="overflow-quota-read"
+            data-quota-fresh={vm.quotaRead.fresh ? 'true' : 'false'}
+          >
+            {vm.quotaReadText}
+          </p>
         </div>
 
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
@@ -233,8 +260,6 @@ export function OverflowWindow({
             <span className="badge badge-outline badge-sm mr-2">{vm.policyText}</span>
             {vm.phaseText}
           </dd>
-          <dt className="opacity-70">Записано до остановки</dt>
-          <dd data-testid="overflow-recorded">{vm.recordedBeforeStopText}</dd>
           <dt className="opacity-70">В буфере при остановке</dt>
           <dd data-testid="overflow-buffer-at-stop">
             {bufferAtStop === null

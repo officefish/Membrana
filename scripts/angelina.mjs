@@ -20,6 +20,7 @@ import { orchestrateCascade, presentNode } from './lib/angelina-cascade.mjs';
 import { buildSnapshot, gitFsIo } from './lib/angelina-adapter.mjs';
 import { canSend, todayIso } from './lib/morning-gates.mjs';
 import { entryLine, judgeMorningEntries } from './lib/morning-entry.mjs';
+import { ANGELINA_SESSION_REL, renderHostessArtifact } from './lib/angelina-session.mjs';
 
 const EXIT_BLOCKED = 22;
 
@@ -153,9 +154,20 @@ function greet(repoRoot) {
   const entries = judgeMorningEntries(
     observeMorningEntries(repoRoot, { readFileSync, existsSync, readdirSync, join }),
   );
+  const entry = entryLine(entries);
+  let session = 'unknown';
+  try {
+    const value = JSON.parse(readFileSync(join(repoRoot, ANGELINA_SESSION_REL), 'utf8'));
+    session = value.active ? `active (${value.source})` : `inactive (${value.source})`;
+  } catch { /* explicit unknown is safer than invented availability */ }
   console.log(`Доброе утро. Ведёт Ангелина · head ${head}.`);
-  console.log(entryLine(entries));
-  console.log(gatesLine);
+  console.log(renderHostessArtifact({
+    premises: `head=${head}; frontier=${gatesLine}`,
+    entry,
+    gates: gatesLine,
+    analysts: 'каскад проверен чистыми механическими предикатами',
+    session,
+  }));
 }
 
 function main() {

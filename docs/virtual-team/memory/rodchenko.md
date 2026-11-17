@@ -5,8 +5,104 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14388/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 369 (причины в op-log) -->
+Записей: 50 · бюджет 14296/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 387 (причины в op-log) -->
+
+### 2026-10-08 · позиция · archive-gc-journal
+
+> Человеку нужен **читаемый след**, не дашборд ради дашборда. v1 — одна панель OwnerAdmin: список последних N run (время, dryRun/live, counts, статус), раскрытие run → jobs с итогами. Конструктивизм: `tabular-nums`, badge статуса (`success` / `warning` / `error` / `dry-run`), без […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/archive-gc-journal-2026-10-08.md#reply-1`
+
+### 2026-10-07 · позиция · team-evening-feedback
+
+> Rodchenko. Вёл `session-digest-library-face` + панель архива узла (#2621, b4) и экран подтверждения понижения (#2618, b5). A11y-скелет `NodeDowngradeArchivePanel.tsx` корректный: `<section aria-labelledby>`, `aria-busy`, `role="status"`/`role="alert"` разведены, фокус […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-07.md#reply-1`
+
+### 2026-10-06 · позиция · team-evening-feedback
+
+> Rodchenko Оценка артефактов: MAIN_DAY_ISSUE корректно оговорил, что b4 (#2599) разблокируется только после B8-закрытия и до этого — подготовка контракта props; code-review честно отметил, что a11y не верифицирована из-за oversized diff. Итоги дня: Панель «Пользователи» (#2599, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-06.md#reply-1`
+
+### 2026-10-05 · позиция · tariff-downgrade-freeze-consilium
+
+> Для пользователя понижение — не «тихий resize квоты», а явный акт: предпросмотр избытка → режим отбора → подтверждение. Без confirmed preview кнопка «Понизить» disabled или ведёт только в модалку. Состояния media-down mid-flow: `alert-warning`, не silent partial success. Срок […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/tariff-downgrade-freeze-consilium-2026-10-05-2026-10-05.md#reply-1`
+
+### 2026-10-05 · позиция · team-evening-feedback
+
+> Rodchenko Оценка артефактов: `MAIN_DAY_ISSUE` явно сказал: «ADR по контракту шины `chart-list-plugin` сегодня не главная работа», «разбор #2562 (`header-badge-narrow`, 406 строк) — не трогаем». Это чёткое снятие с меня дневной нагрузки — честно. Code-review тоже меня не упомянул […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-05.md#reply-1`
+
+### 2026-10-04 · позиция · team-evening-feedback
+
+> Родченко. Оценка артефактов: `DAILY_CODE_REVIEW` поймало UX-несоответствие Ангелины: в UI переключатель показывал «Разнообразие», а в БД сохранялся `loudness-over-floor`. Это ровно моя зона — label не следует за criterion. Итоги дня: UI в diff сегодня не трогали. Жду LGTM […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-04.md#reply-1`
+
+### 2026-10-03 · позиция · team-evening-feedback
+
+> Родченко. Оценка артефактов: Канон корректно отправил меня по магистрали `chart-list-plugin` после LGTM Teamlead на форму. `DAILY_CODE_REVIEW` правильно отложил ревью `#2562` (oversized, 406) до отдельного слота. Итоги дня: `#2562` (header-badge-narrow-2558, бейдж удержания в […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-03.md#reply-1`
+
+### 2026-10-02 · позиция · team-evening-feedback
+
+> Rodchenko Оценка артефактов: MAIN_DAY_ISSUE явно вынес a11y #2476 во «Вторично (если останется время)» — честно, но пагинация библиотеки проб висит вторую неделю без верификации трёх чекбоксов. Код-ревью это не упомянуло — выпало. Итоги дня: по UI — PR #2553 […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-02.md#reply-1`
+
+### 2026-10-01 · позиция · team-evening-feedback
+
+> Родченко. Оценка артефактов: Code-review корректно отметил, что токены темы (`badge-warning`/`alert-warning`) и `aria-label` с `label + remainingText` соблюдены в #2541. a11y-хвост #2476 честно назван как не закрытый. Итоги дня: `OverflowWindow` закрыт по форме […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-10-01.md#reply-1`
+
+### 2026-09-30 · позиция · team-evening-feedback
+
+> Родченко. A11y пагинации (#2476, три чекбокса: `aria-current`, focus trap, Tab/Enter) — статус не зафиксирован в диффе. Утро ставило это как «по результатам живого замера» — но живой замер сегодня не был проведён (опыт трёх дорог не сделан), значит и статус a11y висит. Оценка […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-30.md#reply-1`
+
+### 2026-09-29 · позиция · team-evening-feedback
+
+> Rodchenko. Мой сегодня — PR #2513 (доступность пагинации Studio + кабинет: живой статус, правило фокуса, loading без disabled). Оценка артефактов: MAIN_DAY_ISSUE и DAILY_STANDUP не упоминают явно a11y-верификацию как отдельный DoD-пункт для #2505 — это пропуск. Ведущая […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-29.md#reply-1`
+
+### 2026-09-29 · позиция · batch-collection-run-contour-architecture-gate
+
+> UI #494 мне нужен как **отчёт прогона**, не как новый браузер библиотеки. Пагинация списка проб и массовый перенос из буфера — если уже в стволе — в мою зону спринта не входят: иначе снова раздуем экран и смешаем «управление фондом» с «прогнать детекторы». Конструктивизм: одна […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/batch-collection-run-contour-architecture-gate-2026-09-29.md#reply-1`
+
+### 2026-09-28 · позиция · team-evening-feedback
+
+> Родченко. Оценка артефактов: `MAIN_DAY_ISSUE` дал корректный UX-критерий («первый экран без блокировки UI»), но не назвал a11y-требования к пагинации (клавиатурная навигация, aria-current для активной страницы, focus management при смене страницы). В долгах явно висит «A11y […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-28.md#reply-1`
+
+### 2026-09-27 · позиция · team-evening-feedback
+
+> Rodchenko **Оценка артефактов:** `DAILY_CODE_REVIEW` по `NodeRebindStepsNote.tsx` — образцовый: правильно назвал правило DaisyUI (`*-content` рассчитан под сплошную заливку `bg-<sem>`, поверхность `bg-warning/10` остаётся `base-100`) и подтвердил, что комментарий в коде называет […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-27.md#reply-1`
+
+### 2026-09-26 · позиция · team-evening-feedback
+
+> Rodchenko **Оценка артефактов:** По моей зоне (UI, DESIGN.md) в развёрнутом диффе правок нет — только даты в `DAILY_STANDUP.md`, `DAY_PLAN.md`, `MAIN_DAY_ISSUE.md`. `DAILY_CODE_REVIEW` по C5 — «—», корректно. Оверсайз #2467 (601 строк) касается […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-26.md#reply-1`
+
+### 2026-09-25 · позиция · team-evening-feedback
+
+> Rodchenko **Оценка артефактов:** По моей зоне (React/TS UI по DESIGN.md) день почти пустой: `apps/panel/src/components/panel-users/PanelUsersBoard.tsx` и `apps/panel/src/lib/mintModes.*` — правки #2449 «зуб дрейфа называет предмет, форма называет умолчание». Это микро-семантика […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-25.md#reply-1`
 
 ### 2026-09-24 · позиция · team-evening-feedback
 
@@ -211,99 +307,3 @@
 > **Оценка артефактов:** UI-контракт `DESIGN.md` в дне не затрагивался — чисто API/серверная работа. `DAILY_CODE_REVIEW` корректен. **Итоги дня:** Мой вклад — UI-блок срока TTL в кабинете: `apps/cabinet/src/components/keys/TrackKeyTtlCard.tsx` + `KeysPage.tsx` + api […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
-
-### 2026-09-02 · позиция · team-evening-feedback
-
-> Оценка артефактов: В документах дня UI-изменения представлены только как цель (магистраль `sample-move-between-collections`), но не как факт. MAIN_DAY_ISSUE чётко описывает UI-дефект: дверь move нарисована только при `selectedId === BUFFER_COLLECTION_ID` (~689 и ~757 в […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m0-order
-
-> С витрины: оператор видит список с ключами. Этот список — форма (2). Пока контракт списка не зафиксирован, непонятно, в каком поле живёт ключ и что считать «одной выдачей» для счёта (4). Граница выемки (4) — это ограничение на то, что попадает в список. Форма самого списка […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/library-open-api-m0-order-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m1-ownership
-
-> Мне как верстальщику UI здесь не нужен — но мне нужно понимать, что оператор увидит, когда запросит «мои треки». Если единица владения не определена (membraneId пуст), оператор должен получить не пустой список с молчанием, а явный сигнал: «треки этого прибора не привязаны к […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/library-open-api-m1-ownership-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m2-contract
-
-> Меня интересует, что партнёр видит в списке и что он может с этим сделать. Если `storageRef` — внутренний путь хранилища, его не должно быть в ответе наружу вообще: это не «скрыть», это «не класть». Иначе конструкция лжёт: поле есть, но оно не для тебя. Родченко за честную […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/library-open-api-m2-contract-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m3-key-ttl
-
-> Смотрю на страницу ключей кабинета — два блока: «Новый ключ доступа» и «Ключи узла». Блока настроек срока для ключей треков нет физически. Это не баг вёрстки — это отсутствие контракта. Значит человек не может открыть блок, которого нет. Умолчание нигде не отображается и нигде […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/library-open-api-m3-key-ttl-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · library-open-api-m4-extraction
-
-> С витрины партнёра список — не «картотека метаданных», а пачка одноразовых пропусков. Если UI или прокси закеширует JSON целиком или положит его в лог доступа — связка ключей уехала без выдачи медиа. Презентация должна показывать `total` и страницу, не вываливать ключи в […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/library-open-api-m4-extraction-2026-09-01.md#reply-1`
-
-### 2026-09-01 · позиция · team-evening-feedback
-
-> Rodchenko. Оценка артефактов: `MAIN_DAY_ISSUE` называет UI-правку в двух местах (`~689`, `~757` в `SampleLibraryModule.tsx`) и требует единого текста сообщения «переносится… перенесено в X» — постановка достаточно точна для DoD. Итоги дня: UI сегодня не тронут. #2255 (удаление […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
-
-### 2026-08-31 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE дал точное место дефекта (`SampleLibraryModule.tsx` ~689, ~757, `canMutate`), что сэкономило поиск. Code-review разложил UI-часть: select в строке при `showMove`/`canMoveFrom` + `canMutate`, диалог удаления — один `risk` для label и disable. […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
-
-### 2026-08-30 · позиция · team-evening-feedback
-
-> Оценка артефактов: UI/DESIGN.md/a11y не в диффе дня. Документы дня согласованы, код-ревью структурировано. MASTER-артефакт дня — процедурный контур, не визуальный слой. Итоги дня: «—» (UI не в диффе). Замечание: lint-warning `CabinetSampleDuplicatesPanel.tsx` (лишняя зависимость […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
-
-### 2026-08-29 · позиция · team-evening-feedback
-
-> Оценка артефактов: UI/дизайн не в фокусе дня — в diff нет ни одного изменения, относящегося к презентационному слою. `MAIN_DAY_ISSUE` вторичкой держит `buffer-delete-modal-2218`, но это «по возможности». Итоги дня: Вёрстки не было. Правки `apps/client/package.json` — только […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
-
-### 2026-08-28 · позиция · team-evening-feedback
-
-> Оценка артефактов: UI-часть в документах дня отсутствует — и это правильно: #2204 — сервисная/инфраструктурная задача. MAIN_DAY_ISSUE явно запрещает принимать GC/UI за закрытие DoD — чёткая граница. Итоги дня: В диффе дня UI/DESIGN.md нет (—). tsconfig path […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m0-order
-
-> С витрины оператора четыре разных сигнала, не один виджет: «тишина расписания», «папка-вещдок за ночь», «есть ли --color-* в клиенте», «что вообще мерила охота». Зависимость решения — не из соседства на дашборде, а из того, чей контракт делает чужой экран пустым. Пока канон и […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/hunt-and-canon-m0-order-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m1-silence-guard
-
-> UI этой комнаты нет — и не надо. Но сигнал оператору (телега/лента) должен быть честной конструкцией: имя расписания, окно, «факта нет» или «отказ был скрыт», без метафор «ночь болеет». Молчание на витрине офиса — соседняя тема; здесь важно, чтобы текст тревоги читался без […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m1-silence-guard-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m2-false-evidence
-
-> С витрины оператора папка за каждую ночь до 23.08 читается как «охота жива». Это фотомонтаж без факта: датированная обложка сильнее мелкого `archivedAt` в JSON. Конструкция лжёт взгляду раньше, чем человек откроет манифест. Вещдок на экране архива обязан нести видимый отказ, […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m2-false-evidence-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m3-design-canon
-
-> С витрины: `--color-*` в клиенте — ноль, значит экраны уже живут классами DaisyUI и utility. Конструктивизм: форма = сообщение; два красных «опасности» — ложь формы. Канон должен читаться в одном месте. Принимаю направление «описание → жизнь»: восьми токенам Membrana — статус […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m3-design-canon-2026-08-27.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m3-access
-
-> Видимость полей разнесена до ответа API: `sensitive.reason` и `location.kind` входят в metadata, `location.ref` выдаётся только действием `read-ref`, байты — только `read-bytes`. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`

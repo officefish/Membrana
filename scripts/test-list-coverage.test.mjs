@@ -58,12 +58,24 @@ test('каждое исключение несёт непустую причин
   }
 });
 
+/**
+ * Разбиение набора по группам ОДНИМ каталогом: и группы, и «весь набор» считаются через
+ * `cat`. Раньше «весь набор» брался без каталога (то есть DEFAULT-каталогом с пустыми `skips`),
+ * а группы — с каталогом: любая первая запись в `skips` давала «сумма ≠ набор» (29.09, #2508:
+ * 445 !== 446). До сих пор не проявлялось, потому что `skips` в стволе ни разу не был непуст.
+ */
+function partitionByGroups(files, cat) {
+  const names = cat.groups.map((g) => g.name);
+  const byGroup = names.map((g) => planTestRun({ files, group: g, catalog: cat }).run);
+  const all = planTestRun({ files, catalog: cat }).run;
+  return { byGroup, all };
+}
+
 test('группы разбивают набор без пересечений и без остатка', () => {
   const files = discoverTestFiles();
-  const byGroup = groups.map((g) => planTestRun({ files, group: g, catalog }).run);
+  const { byGroup, all } = partitionByGroups(files, catalog);
   const sum = byGroup.reduce((n, list) => n + list.length, 0);
-  const all = planTestRun({ files }).run.length;
-  assert.equal(sum, all, 'сумма групп ≠ общему набору: файл попал в две группы или ни в одну');
+  assert.equal(sum, all.length, 'сумма групп ≠ общему набору: файл попал в две группы или ни в одну');
   const seen = new Set();
   for (const list of byGroup) {
     for (const f of list) {
@@ -71,6 +83,20 @@ test('группы разбивают набор без пересечений �
       seen.add(f);
     }
   }
+});
+
+test('непустой skips не ломает разбиение: «весь набор» считается тем же каталогом, что и группы', () => {
+  const files = discoverTestFiles();
+  const excluded = files[0];
+  const synthetic = {
+    ...catalog,
+    skips: { ...catalog.skips, [excluded]: 'синтетическое исключение: держит разбиение при непустом skips' },
+  };
+  const { byGroup, all } = partitionByGroups(files, synthetic);
+  const sum = byGroup.reduce((n, list) => n + list.length, 0);
+  assert.ok(!all.includes(excluded), 'исключённый файл попал в «весь набор» — набор посчитан не тем каталогом');
+  assert.equal(all.length, files.length - Object.keys(synthetic.skips).length);
+  assert.equal(sum, all.length, 'при непустом skips сумма групп разошлась с набором — «весь набор» считан без каталога');
 });
 
 test('каждая группа из package.json существует в ядре плана', () => {

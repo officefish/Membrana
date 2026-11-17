@@ -7,6 +7,10 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
+import {
+  ASK_PERSONAS,
+  CONSILIUM_ROLE_KEY_TO_SLUG,
+} from './lib/personas.mjs';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => readFileSync(join(REPO, rel), 'utf8');
@@ -52,10 +56,19 @@ test('у каждого — три склада: память, эрудиция,
 });
 
 test('callable=ask резолвится в карте PERSONAS (Тарасов, Веснин, Ангелина — заведены)', () => {
-  const askSrc = read('scripts/ask-persona.mjs');
   for (const v of voices) {
     if ((v.callable ?? []).includes('ask')) {
-      assert.match(askSrc, new RegExp(`^\\s*${v.id}:\\s*\\{`, 'mu'), `${v.id}: ask не резолвится`);
+      assert.ok(ASK_PERSONAS[v.id], `${v.id}: ask не резолвится`);
+    }
+  }
+});
+
+test('callable=consilium резолвит role.key в persona id из реестра', () => {
+  assert.equal(CONSILIUM_ROLE_KEY_TO_SLUG.teamlead, 'tarasov');
+  assert.equal(CONSILIUM_ROLE_KEY_TO_SLUG.architect, 'vesnin');
+  for (const v of voices) {
+    if ((v.callable ?? []).includes('consilium')) {
+      assert.ok(Object.values(CONSILIUM_ROLE_KEY_TO_SLUG).includes(v.id), `${v.id}: consilium не резолвится`);
     }
   }
 });

@@ -15,17 +15,32 @@ export function pairResponseToCredentials(result: PairResponse): PairedNodeCrede
     nodeLabel: result.node.label,
     pairedKeyId: result.pairedKeyId,
     maxUserWorkspaces: result.tariff?.maxUserWorkspaces,
+    tariffId: result.tariff?.id,
   };
 }
 
-/** Merges tariff quota from pair status poll into existing credentials. */
+/**
+ * Merges tariff (id + workspace quota) from pair status poll into existing credentials.
+ *
+ * #2538: id тарифа сливается наравне с квотой рабочих пространств. Новая ссылка означает «тариф
+ * сменился» — монитор сопряжения применяет её, и цикл опроса перезапускается сразу, перечитывая
+ * предел прибора (`tryUpgradeMediaLibraryToRemote` → `refreshQuota`). Поле, которого в ответе нет,
+ * не трогает сохранённое; равные значения → тот же объект (identity по Object.is).
+ */
 export function mergePairStatusTariff(
   pairing: PairedNodeCredentials,
   status: PairStatusLinked,
 ): PairedNodeCredentials {
   const nextQuota = status.tariff?.maxUserWorkspaces;
-  if (nextQuota === undefined || nextQuota === pairing.maxUserWorkspaces) {
+  const nextTariffId = status.tariff?.id;
+  const quotaChanged = nextQuota !== undefined && nextQuota !== pairing.maxUserWorkspaces;
+  const tariffChanged = nextTariffId !== undefined && nextTariffId !== pairing.tariffId;
+  if (!quotaChanged && !tariffChanged) {
     return pairing;
   }
-  return { ...pairing, maxUserWorkspaces: nextQuota };
+  return {
+    ...pairing,
+    ...(quotaChanged ? { maxUserWorkspaces: nextQuota } : {}),
+    ...(tariffChanged ? { tariffId: nextTariffId } : {}),
+  };
 }

@@ -25,7 +25,16 @@ export interface ChartListSettingsProps {
   readonly onCriterion: (c: ChartListCriterion) => void;
 }
 
+function criterionLabel(id: string): string {
+  const label = CHART_LIST_CRITERIA.find((c) => c.id === id)?.label ?? id;
+  return label.charAt(0).toLocaleLowerCase('ru-RU') + label.slice(1);
+}
+
 export function ChartListSettings({ state, onVolume, onCriterion }: ChartListSettingsProps) {
+  const shownSelectionChanged =
+    state.selection !== null &&
+    (state.selection.criterion !== state.criterion || state.selection.volume !== state.volume);
+
   return (
     <div className="space-y-3">
       <fieldset disabled={state.busy}>
@@ -68,7 +77,13 @@ export function ChartListSettings({ state, onVolume, onCriterion }: ChartListSet
         // будто список уже пересобран. Список пересобирается только кнопкой.
         <p className="text-xs text-base-content/50">
           Показана выборка от {new Date(state.selection.createdAt).toLocaleString('ru-RU')}:{' '}
-          {state.selection.picks.length} из {state.selection.measured} измеренных.
+          {state.selection.picks.length} из {state.selection.measured} измеренных ·{' '}
+          {criterionLabel(state.selection.criterion)} · объём {state.selection.volume}
+        </p>
+      ) : null}
+      {shownSelectionChanged ? (
+        <p className="text-xs text-warning" role="status">
+          Настройки изменены, выборка не пересчитана.
         </p>
       ) : null}
     </div>

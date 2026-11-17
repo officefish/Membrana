@@ -75,6 +75,11 @@ COPY --from=build /app/packages/services/audio-engine/dist /app/packages/service
 COPY --from=build /app/packages/services/audio-engine/package.json /app/packages/services/audio-engine/package.json
 COPY --from=build /app/packages/services/trends-detector/dist /app/packages/services/trends-detector/dist
 COPY --from=build /app/packages/services/trends-detector/package.json /app/packages/services/trends-detector/package.json
+# Шаблоны классов: tsc -b (по ссылке из оркестратора) собирает trends-detector пофайлово, и
+# dist/data/free-v1-templates.js импортирует ../../templates/*.json — путь ВНЕ dist. Без этой
+# строки импорт оркестратора падает ERR_MODULE_NOT_FOUND, и media стартует без detector-batch
+# (прод 03.10). Сторож класса — правило 4 verify:image-workspace-deps.
+COPY --from=build /app/packages/services/trends-detector/templates /app/packages/services/trends-detector/templates
 COPY --from=build /app/packages/services/drone-detection-orchestrator/dist /app/packages/services/drone-detection-orchestrator/dist
 COPY --from=build /app/packages/services/drone-detection-orchestrator/package.json /app/packages/services/drone-detection-orchestrator/package.json
 COPY --from=build /app/packages/services/detectors/base/dist /app/packages/services/detectors/base/dist

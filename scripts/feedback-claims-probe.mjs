@@ -29,13 +29,15 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import { ATOM_CLASSES, dedupeAtoms, extractAtoms } from './lib/feedback-claims/atoms.mjs';
+import { ATOM_CLASSES, dedupeAtoms, extractAtoms, symbolHeadOf } from './lib/feedback-claims/atoms.mjs';
 import {
+  decidedInOf,
   formatClaimsReport,
   hasHardViolation,
   OUTCOMES,
   verdictsFor,
 } from './lib/feedback-claims/verdict.mjs';
+import { collectDecisionsLedger } from './lib/decisions-ledger-port.mjs';
 
 export const SEANCES_REL = 'docs/seanses';
 export const PROTOCOL_PREFIX = 'team-evening-feedback-';
@@ -292,10 +294,15 @@ export function collectEvidence(atom, ctx) {
   /** @type {Record<string, unknown>} */
   const e = { sha };
 
+  // b4 ritual-reads-decisions: решённость — вещдок для ЛЮБОГО класса. Ведомость не подана
+  // (`ctx.ledger` нет) → `null`, «не узнали», а не пустой список «не решено».
+  e.decidedIn = ctx.ledger ? decidedInOf(token, ctx.ledger) : null;
+
   for (const klass of classes) {
     switch (klass) {
       case ATOM_CLASSES.SYMBOL:
-        e.symbolDecls = hasGit ? symbolDecls(token, cwd) : null;
+        // Выражение `NAME = 36 ч` ищется по голове: значение — не часть имени.
+        e.symbolDecls = hasGit ? symbolDecls(symbolHeadOf(token) ?? token, cwd) : null;
         break;
       case ATOM_CLASSES.PATH:
         e.pathExists = hasGit ? trackedPath(token, cwd) : null;
@@ -541,7 +548,10 @@ function main() {
   const markdown = readFileSync(protocolPath, 'utf8');
   const atoms = dedupeAtoms(extractAtoms(withoutClaimsSections(markdown)));
   const sha = headSha(cwd);
-  const ctx = { cwd, sha, registry, scripts, hasGit };
+  // b4 ritual-reads-decisions: ведомость решённого — тот же порт, что у вечера и каркаса дня.
+  const ledger = collectDecisionsLedger({ cwd, today: new Date().toISOString().slice(0, 10) });
+  if (!ledger.ok) console.error(`feedback:claims — ведомость решённого прочитана не полностью: ${ledger.unreadable.join('; ')}`);
+  const ctx = { cwd, sha, registry, scripts, hasGit, ledger };
 
   const verdicts = verdictsFor(
     atoms.map((atom) => ({ atom, evidence: collectEvidence(atom, ctx) })),

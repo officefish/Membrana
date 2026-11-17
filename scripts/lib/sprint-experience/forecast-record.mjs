@@ -1,3 +1,5 @@
+import { loadKnownPersonaIds } from '../personas.mjs';
+
 /**
  * forecast-record — схема ЧЕТВЁРТОГО рода записи памяти: «моё предсказание ↔ его исход».
  *
@@ -42,10 +44,8 @@ export const CUT_CLAIMS = Object.freeze(['fits', 'does-not-fit']);
 /** Наблюдаемый вердикт по блоку. */
 export const CUT_VERDICTS = Object.freeze(['fitted', 'overflowed']);
 
-/** Канонические слаги персон из `docs/virtual-team/memory/*.md`. Не имя модели, не sessionId. */
-export const PERSONA_IDS = Object.freeze([
-  'tarasov', 'angelina', 'vesnin', 'ozhegov', 'dynin', 'kuryokhin', 'rodchenko', 'farrell',
-]);
+/** Канонические слаги персон из `docs/virtual-team/voices.registry.json`. Не имя модели, не sessionId. */
+export const PERSONA_IDS = loadKnownPersonaIds();
 
 const CUT_BLOCK_ID = /^[a-z0-9][a-z0-9-]*$/u;
 const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/u;

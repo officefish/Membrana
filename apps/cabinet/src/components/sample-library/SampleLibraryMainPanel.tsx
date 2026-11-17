@@ -1,6 +1,8 @@
 import { MediaLibraryQuotaBanner } from '@/components/MediaLibraryQuotaBanner';
 import { CabinetSampleCollectionBody } from '@/components/sample-library/CabinetSampleCollectionBody';
+import { BatchDetectorRunPanel } from '@/components/sample-library/BatchDetectorRunPanel';
 import type { CabinetSampleLibraryModel } from '@/lib/useCabinetSampleLibrary';
+import { BUFFER_COLLECTION_ID, isBufferQuotaFull } from '@membrana/media-library-service';
 
 export type SampleLibraryMainPanelProps = Pick<
   CabinetSampleLibraryModel,
@@ -40,6 +42,8 @@ export type SampleLibraryMainPanelProps = Pick<
   | 'setSamplesPage'
   | 'samplesPageLoading'
   | 'samplesPagination'
+  | 'detectorBatch'
+  | 'handleRunDetectorBatch'
 >;
 
 export function SampleLibraryMainPanel({
@@ -79,6 +83,8 @@ export function SampleLibraryMainPanel({
   setSamplesPage,
   samplesPageLoading,
   samplesPagination,
+  detectorBatch,
+  handleRunDetectorBatch,
 }: SampleLibraryMainPanelProps) {
   /**
    * Показывать ли орган переноса в строке.
@@ -93,6 +99,10 @@ export function SampleLibraryMainPanel({
    * оставить дефект в словаре, сняв его в коде.
    */
   const showMove = selection.kind === 'node' && moveTargets.length > 0;
+  const bufferFull =
+    selection.kind === 'node' &&
+    selection.collectionId === BUFFER_COLLECTION_ID &&
+    isBufferQuotaFull(snapshot.quota);
 
   if (isOfflineView && selection.kind === 'node-offline') {
     return (
@@ -207,6 +217,14 @@ export function SampleLibraryMainPanel({
           </label>
         )}
       </div>
+      <BatchDetectorRunPanel
+        state={detectorBatch.state}
+        outcome={detectorBatch.outcome}
+        error={detectorBatch.error}
+        bufferFull={bufferFull}
+        disabled={!active}
+        onRun={() => void handleRunDetectorBatch()}
+      />
       <CabinetSampleCollectionBody
         libLoading={libLoading}
         playback={playback}

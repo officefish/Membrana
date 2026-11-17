@@ -1,0 +1,17 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "chart-list-plugin-20261003",
+  "measuredAt": "2026-10-04T19:35:00+03:00",
+  "segments": [
+    {
+      "cutBlockId": "b1-journal-run-record-office-trace",
+      "changedLines": 331,
+      "evidence": "merge ee405f48, git show --numstat по зоне b1: journal.module.ts 12, journal-plugin-host.service.test.ts 69, journal-plugin-host.service.ts 25, journal-results-bridge.service.test.ts 105, journal-results-bridge.service.ts 120"
+    },
+    {
+      "cutBlockId": "b2-owner-live-cabinet-acceptance",
+      "changedLines": 299,
+      "evidence": "git diff --numstat origin/main и wc -l новых файлов: живой протокол 156, OPEN 8, CLOSURE 53, review 15, traces 4, recut plan 29, trail/procedure 3, ACTIVE/LOG 15, persona archive 2, segments 14"
+    }
+  ]
+}

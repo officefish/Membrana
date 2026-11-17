@@ -23,6 +23,30 @@ test('LGTM по текущему SHA → pass', () => {
   assert.match(d.reason, /LGTM тимлида \(tarasov\)/u);
 });
 
+// #2491: «у диффа нет хозяина ревью» обязан доехать до причины решения, потому что причина —
+// это description commit-статуса `review/teamlead`, то есть единственное место, где сигнал
+// читают на PR. До 28.09 признак жил одной строкой в stderr `code-review.mjs` и терялся.
+test('вне конвенции: признак из артефакта доезжает до причины и статуса (#2491)', () => {
+  const verdict = { sha: SHA, verdict: 'LGTM', lead: 'tarasov' };
+  const flagged = reviewGateDecision({ headSha: SHA, verdict, leadConvention: { outOfConvention: true } });
+  assert.equal(flagged.state, 'pass', 'состояние гейта признак не меняет — закрывать мердж непокрытому решает владелец');
+  assert.match(flagged.reason, /ВНЕ КОНВЕНЦИИ/u, 'причина называет, что ведущий назначен умолчанием');
+  assert.match(statusFromDecision(flagged).description, /ВНЕ КОНВЕНЦИИ/u, 'сигнал виден в commit-статусе на PR');
+
+  const clean = reviewGateDecision({ headSha: SHA, verdict, leadConvention: { outOfConvention: false } });
+  assert.ok(!/ВНЕ КОНВЕНЦИИ/u.test(clean.reason), 'на покрытом скоупе пометки нет — иначе она ничего не значит');
+  const legacy = reviewGateDecision({ headSha: SHA, verdict });
+  assert.ok(!/ВНЕ КОНВЕНЦИИ/u.test(legacy.reason), 'без признака поведение прежнее (legacy-вызовы)');
+
+  const blocked = reviewGateDecision({
+    headSha: SHA,
+    verdict: { sha: SHA, verdict: 'BLOCK', lead: 'tarasov' },
+    leadConvention: { outOfConvention: true },
+  });
+  assert.equal(blocked.state, 'block');
+  assert.match(blocked.reason, /ВНЕ КОНВЕНЦИИ/u, 'признак не теряется и на красном пути');
+});
+
 test('BLOCK по текущему SHA → жёсткий стоп (слово владельца 29.07)', () => {
   const d = reviewGateDecision({ headSha: SHA, verdict: { sha: SHA, verdict: 'BLOCK', lead: 'tarasov' } });
   assert.equal(d.state, 'block');

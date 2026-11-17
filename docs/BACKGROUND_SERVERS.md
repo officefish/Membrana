@@ -83,6 +83,14 @@ owner-gated шаг. Не смешивать это с media blob storage.
 - вызовы Anthropic / Linear / GitHub (→ `background-office`);
 - FFT / детекторы (→ `packages/services/*`).
 
+Входящая служебная дверь кабинета для office — **одна и узкая** (`/v1/internal/office/*`,
+[ADR-0031](./adr/ADR-0031-downgrade-archive.md) р.3, #2588): охрана `OfficeTokenGuard` по отдельному
+ключу `CABINET_OFFICE_TOKEN` (не `API_INTERNAL_TOKEN` — тот исходящий к media), без ключа — 503;
+ровно два маршрута (список мембран минимумом полей, `PUT` срока хранения архива на мембрану).
+Office **не** получает admin-API кабинета; третий маршрут или новое поле — только новым ADR.
+Обратная сторона и пусковик уборки office → media — [`ARCHITECTURE.md`](./ARCHITECTURE.md) §1d
+«Рёбра между серверами», инвентарь живых дверей — [`LIVE_SERVICES.md`](./LIVE_SERVICES.md).
+
 **Общее для обоих:**
 
 - NestJS + TypeScript strict + zod env + pino + `X-Membrana-Token` на `/v1/*` и **`/api/rag/*`** (R4);
@@ -205,6 +213,7 @@ Device (deviceId)
 | Devices | `POST /v1/devices` | первый запуск клиента |
 | Quota | `GET .../quota` | `StorageRuntimeIndicator`, banner |
 | Collections / samples | CRUD + multipart | `ServerStorageBackend` → `@membrana/media-library-service` |
+| Collection detector batch | `POST .../collections/:collectionId/plugins/membrana.report.detector-batch/request` | read-only последовательный прогон зарегистрированных детекторов |
 | Trends templates | `GET/PUT .../trends-templates` | `userTemplatesPersistence` / zustand store |
 
 Полная спецификация: [`prompts/BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md`](./prompts/BACKGROUND_MEDIA_A5A_SERVER_PROMPT.md).

@@ -5,6 +5,195 @@
 
 ---
 
+## 2026-10-04 — `chart-list-plugin-20261003` — **CLOSED · gate pass 2/2 · experience hit 2/2 · PR #2567 влит (`ee405f48`)**
+
+- **Closure:** [`local-sprint/chart-list-plugin-20261003/CLOSURE.md`](./local-sprint/chart-list-plugin-20261003/CLOSURE.md) —
+  кабинет выкачен; владелец принял три критерия, объёмы 20/200, playback/waveform и вытеснения. Повторная сверка на
+  одинаковом inputHash и 1838 измеренных записях: 7/20 совпадений по позиции, 18/20 пересечение, первое различие 8.
+- **Goal:** доказать, что разнообразие на малом объёме не совпадает целиком с превышением над фоном, и объяснить общий
+  громкостный префикс жадным порядком до первого вытеснения.
+- **External block:** prod RunRecord в office не проверен из-за #2580; починка базы вне спринта.
+- **Archive:** карточка `chart-list-plugin` остаётся active до отдельного решения владельца.
+
+## 2026-10-03 — `library-loading-state-2570` — **CLOSED · gate pass 2/2 · experience hit (2/2; b1 345 > оценки 260, порог не пробит) · PR #2574 влит (`f4e74219`)**
+
+- **Closure:** [`local-sprint/library-loading-state-2570/CLOSURE.md`](./local-sprint/library-loading-state-2570/CLOSURE.md) —
+  ратификация 03.10 12:35:56Z с умолчаниями; окно перерезано по слову владельца (b1 исполнен раньше `window.from` фазы 1,
+  поставленного на глаз; `recut_act` 15:50:39Z, повторная ратификация 15:51:41Z); b1 `f16f5db0` (dynin); живая приёмка
+  Studio `f4e74219`, прибор `9e86ec85`: «Загрузка коллекций…» вместо жёлтого, числа квоты раньше списков.
+- **Goal:** однозначное состояние загрузки библиотеки; предупреждение о недоступности — только по факту отказа.
+- **Source:** [#2570](https://github.com/officefish/Membrana/issues/2570) — наблюдение владельца 03.10.
+- **Cut:** [`sprint/cut/library-loading-state-2570.json`](./sprint/cut/library-loading-state-2570.json) — 2 блока, резчик dynin
+  ([конспект](./discussions/cut-library-loading-state-2570-dynin.md)).
+- **Boundary:** мост, пинги, `quota-status.ts`, бэкенды, сервер не тронуты; микрофон — #2573; загрузка буфера — #2571.
+
+## 2026-10-03 — `library-reconcile-on-open-2569` — **CLOSED · gate pass 2/2 · experience hit (2/2; b1 321 > оценки 220, порог не пробит) · PR #2572 влит (`0d39cbad`)**
+
+- **Closure:** [`local-sprint/library-reconcile-on-open-2569/CLOSURE.md`](./local-sprint/library-reconcile-on-open-2569/CLOSURE.md) —
+  ратификация 03.10 12:05:39Z; b1 `b736e739` (dynin); живая приёмка Studio `f4e74219`, прибор `9e86ec85`: «Базовый
+  набор», 120 без перезапуска; сеть в devtools и смена каталога — n/a.
+- **Goal:** коллекции сверяются с сервером при открытии библиотеки; глубже — только базовый набор при смене каталога или
+  досеве; буфер не читается.
+- **Source:** [#2569](https://github.com/officefish/Membrana/issues/2569) — слово владельца 03.10.
+- **Cut:** [`sprint/cut/library-reconcile-on-open-2569.json`](./sprint/cut/library-reconcile-on-open-2569.json) — 2 блока,
+  резчик dynin ([конспект](./discussions/cut-library-reconcile-on-open-2569-dynin.md)).
+- **Boundary:** порт `IStorageBackend`, сервер, хук `useMediaLibrary` не тронуты; #2563 сужен до бейджа; #2571 отдельно.
+
+## 2026-10-03 — `header-badge-narrow-2558` — **CLOSED · gate pass 2/2 · experience hit (2/2; b1 147 > оценки 80, порог не пробит) · PR #2562 влит (`d8105f64`)**
+
+- **Closure:** [`local-sprint/header-badge-narrow-2558/CLOSURE.md`](./local-sprint/header-badge-narrow-2558/CLOSURE.md) —
+  ратификация 03.10 10:25:10Z инструментом с умолчаниями; b1 `abb03c11` (rodchenko); PR #2562 влит владельцем 03.10
+  (`d8105f64`; CONFLICTING по union-jsonl журнала снят `git merge origin/main`); живая приёмка b2 на приборе `9e86ec85`,
+  Studio `d8105f64`: ≈1290 px — бейдж первым, ничего не налезает; ≈1045 px — «Буфер пол…» держится, «Сохранить» уступил
+  целиком, правая группа целиком (02.10 здесь бейдж исчезал); ≈970 px — левая группа исчезает целиком — предел из
+  прогноза, вынесен в #2565; свёрнутый сайдбар / ≥1600 px / Tab — n/a.
+- **Goal:** при сжатии шапки доски бейдж удержания уступает последним — после крошки сценария и «Сохранить» — и всегда
+  оставляет минимум «Буфер пол…»: порядок уступки задан положением (первый ребёнок левой группы), весом (крошка
+  `shrink-[4]`) и полом (`min-w-[5.5rem]`); константы в `types/board-ui.ts`.
+- **Source:** [#2558](https://github.com/officefish/Membrana/issues/2558) — живая приёмка #2552 владельцем 02.10: при ≈1065 px
+  бейдж исчезал целиком, «Сохранить» → «Сохрани», крошка держала место.
+- **OPEN:** [`local-sprint/header-badge-narrow-2558/OPEN.md`](./local-sprint/header-badge-narrow-2558/OPEN.md)
+- **Cut:** [`sprint/cut/header-badge-narrow-2558.json`](./sprint/cut/header-badge-narrow-2558.json) — 2 блока (b1 вёрстка +
+  зубы/rodchenko · b2 приёмка/angelina), резчик rodchenko
+  ([конспект](./discussions/cut-header-badge-narrow-2558-rodchenko.md)); ратифицирован 2026-10-03T10:25:10Z.
+- **Finding at cut:** два сжимаемых ребёнка левой группы (бейдж, крошка) с одним весом `flex-shrink: 1` доходили до нуля
+  одновременно; остальные `shrink-0` вытекали, `overflow-x-clip` резал правый хвост, бейдж стоял в DOM правее «Сохранить» —
+  потому исчезал первым; коробка при 1065 px и открытом сайдбаре ≈100 px.
+- **Boundary:** правая группа, отступ сайдбара, server-first, тема, слова бейджа не тронуты; предел ≈970–1000 px — #2565.
+
+## 2026-10-02 — `evening-reads-done-work-20261002` — **IMPLEMENTED · gate pass 3/3 · experience hit · PR #2551**
+
+- **Closure:** [`local-sprint/evening-reads-done-work-20261002/CLOSURE.md`](./local-sprint/evening-reads-done-work-20261002/CLOSURE.md) —
+  ратификация 02.10 10:26:49+03; focused suite 73/73; живой `collectDoneLedgerBlock({today:'2026-10-02', days:2})` показал
+  #2544 с `docs/discussions/personas-source-phase1-report.md` + `docs/sprint/cut/personas-source-phase1.json`, #2543 с
+  `AUDIT.md` + cut + experience; `appendTaskContext('pr')` печатает источник документов дня из рабочего дерева.
+- **Goal:** вечер и code-review не объявляют влитые #2543/#2544 несделанными по пустому oversized: носители результата
+  показаны, отсутствие `CLOSURE` названо отдельно, источник дневных документов подписан.
+- **OPEN:** [`local-sprint/evening-reads-done-work-20261002/OPEN.md`](./local-sprint/evening-reads-done-work-20261002/OPEN.md)
+- **Cut:** [`sprint/cut/evening-reads-done-work-20261002.json`](./sprint/cut/evening-reads-done-work-20261002.json)
+- **Boundary:** подписанные документы дня не правились; `gh issue list` при отказе не даёт билетный статус, только запрет на вывод «разбор не сделан».
+## 2026-10-01 — `device-quota-after-tariff-2538` — **CLOSED · gate pass 3/3 · experience miss (объём b1 425 > 400; предмет 3/3) · PR #2541 влит (`00257180`)**
+
+- **Closure:** [`local-sprint/device-quota-after-tariff-2538/CLOSURE.md`](./local-sprint/device-quota-after-tariff-2538/CLOSURE.md) —
+  ратификация 01.10 08:35:59Z инструментом с умолчаниями; b1 `2b09b9f3` (dynin), b2 `4133dfcc` (vesnin); PR #2541 влит
+  владельцем 01.10 (merge-коммит `7441a7ac` после снятия CONFLICTING по union-jsonl); живая приёмка b3 на приборе
+  `9e86ec85`, Studio `00257180`: окно «буфер 1.90 GB / лимит 2.00 GB», «коллекции 486.7 MB / лимит 2.00 GB», «предел сервера
+  прочитан 20:05:41», 4195 проб; сервер 17:14Z 1945.6/2048 МБ (95 %) — совпадает; до починки (сборка `02c6396a`) сервер стоял
+  на 510 115 200 байт 07:17Z→09:28Z, после установки запись пошла (09:42Z 490.9 МБ → 09:47Z 518.9 МБ). «Место освобождено»
+  при 2 ГБ и бейдж после «Возобновить» на новой сборке — n/a.
+- **Goal:** предел прибора — не копия без возраста: `MediaLibraryService.refreshQuota()` читает его одним запросом и
+  штампует `readAt`; отказ чтения не стирает предел и помечается в окне «снимок от …»; тики связанного режима и смена
+  `tariff.id` в опросе кабинета перечитывают предел, так что смена тарифа доезжает до прибора без действий оператора.
+- **Source:** [#2538](https://github.com/officefish/Membrana/issues/2538) — живой опыт владельца 01.10: тариф 512 МБ → 2 ГБ,
+  сервер 2 ГБ, окно 512 МБ, страж перевходил по старому пределу.
+- **OPEN:** [`local-sprint/device-quota-after-tariff-2538/OPEN.md`](./local-sprint/device-quota-after-tariff-2538/OPEN.md)
+- **Cut:** [`sprint/cut/device-quota-after-tariff-2538.json`](./sprint/cut/device-quota-after-tariff-2538.json) — 3 блока
+  (b1 сервис + окно/dynin · b2 мост + опрос кабинета + учётные данные/vesnin · b3 приёмка/angelina), резчик dynin
+  ([конспект](./discussions/cut-device-quota-after-tariff-2538-dynin.md)); ратифицирован 2026-10-01T08:35:59Z.
+- **Finding at cut:** предел перечитывался только полным `refresh()` (квота последним шагом после списка всех проб), отказ
+  глотался хостом, тики при живом сервере квоту не читали, опрос кабинета видел `tariff.id` и молчал; запасные хранилища
+  (100 МБ / 50 ГБ) исключены — 512 МБ могло прийти только ответом сервера до смены; перевход стража после «Возобновить» —
+  510115200/536870912 = 0.9502 ≥ 0.95 по тому же застрявшему пределу.
+- **Review rounds:** vesnin b2 — BLOCK на посылке «до 30 с задержки» → сведена к коду `check()` и зубу хука → LGTM, код не
+  менялся; angelina b3 — BLOCK до заполнения «Гейт и опыт» → заполнено прогонами → второй круг LGTM.
+- **Not in sprint:** #2540 «cabinet unreachable» (выделено), #2484, #2319, слияние трёх чтений `/quota`, порог стража,
+  авто-снятие удержания, кабинет, прод-квота/тариф; попутная находка — наложение бейджа и галки «INFO» в шапке доски.
+
+## 2026-10-01 — `board-hold-modal-2533` — **CLOSED · gate pass 3/3 · experience hit (предмет 3/3; объём b1 +17 %, b2 +50 % над оценкой, порог 400 не пробит) · PR #2534 влит**
+
+- **Closure:** [`local-sprint/board-hold-modal-2533/CLOSURE.md`](./local-sprint/board-hold-modal-2533/CLOSURE.md) —
+  ратификация 30.09 14:51Z инструментом с умолчаниями; b1 `0f4b03bf` (ozhegov), b2 `c20b9a96` (rodchenko); PR #2534 влит
+  владельцем 30.09 15:23Z; живая приёмка b3 на приборе `9e86ec85` — три состояния словами владельца (30.09 «окно
+  починилось» — жёлтое «место освобождено»; 01.10 — красный «Буфер полон», фаза «по стражу прибора», 1056 проб · 486.5 MB;
+  после «Возобновить» — «Удержание снято»). Сервер 01.10 07:17Z: 486.5 / 512 MB.
+- **Goal:** окно «Буфер полон», бейдж доски и плашка панели судят место по живой оси причины тем же порогом, что страж
+  (`BUFFER_STOP_RATIO`): место освобождено при неснятом удержании → «Место освобождено — снимите удержание»; фаза
+  локального эпизода честная — подтверждения сервера при политике `stop` не бывает.
+- **Source:** [#2533](https://github.com/officefish/Membrana/issues/2533) — живая проверка владельца 30.09 после вывоза 1057 проб.
+- **OPEN:** [`local-sprint/board-hold-modal-2533/OPEN.md`](./local-sprint/board-hold-modal-2533/OPEN.md)
+- **Cut:** [`sprint/cut/board-hold-modal-2533.json`](./sprint/cut/board-hold-modal-2533.json) — 3 блока (b1 view-model/ozhegov ·
+  b2 поверхности + пакет доски/rodchenko · b3 приёмка/dynin), резчик rodchenko
+  ([конспект](./discussions/cut-board-hold-modal-2533-rodchenko.md)); ратифицирован 2026-09-30T14:51:27Z.
+- **Finding at cut:** гипотеза #2319 (рестарт media) к окну не относится — канала сервер→клиент об эпизоде нет; «ещё не
+  подтверждено сервером» — постоянное состояние любой остановки по стражу 95 % (сервер отказывает при 100 %, после стража
+  POST закрыт); 486.7 MB / 512 MB = 95.06 % — первое пересечение порога стража.
+- **Not in sprint:** #2319, #2484, счётчик «Записано до остановки», порог стража, авто-снятие удержания, квота наборов,
+  кабинет; соседняя находка 01.10 — #2538 (старый предел 512 МБ после смены тарифа).
+
+## 2026-09-30 — `ritual-reads-decisions` — **CLOSED · gate pass 5/5 · experience miss (overflow b1, предмет 5/5)**
+
+- **Closure:** [`local-sprint/ritual-reads-decisions/CLOSURE.md`](./local-sprint/ritual-reads-decisions/CLOSURE.md) —
+  ратификация 30.09 15:14+03 инструментом; b1 `9b3a5abc` (+`91e28d71`, `0262e151` по ревью), b2 `85bf1bce`,
+  b3 `1663f4ca`, b4 `ecfdbb83`; живая проверка трёх читателей на файлах 28–30.09 при ещё активных карточках
+  закрытых спринтов; PR `--no-merge`, мердж — слово владельца.
+
+- **Goal:** решения, принятые в спринтах, доходят до читателей ритуала по машинному носителю: ведомость
+  решённого (ратифицированные `//decisions` / `//recut-*` планов нарезки + закрытые прогоны лент ↔ карточки
+  реестра) для вечернего фидбека, каркаса дня и зуба утверждений; голова выражения как символ в зубе.
+- **Source:** остаток [`ritual-reads-done-work`](./local-sprint/ritual-reads-done-work/CLOSURE.md) (#2514) по
+  первому боевому прогону 29.09 (протокол `team-evening-feedback-2026-09-29.md`, утро 30.09).
+- **OPEN:** [`local-sprint/ritual-reads-decisions/OPEN.md`](./local-sprint/ritual-reads-decisions/OPEN.md)
+- **Prompt:** [`prompts/RITUAL_READS_DECISIONS_PROMPT.md`](./prompts/RITUAL_READS_DECISIONS_PROMPT.md)
+- **Cut:** [`sprint/cut/ritual-reads-decisions.json`](./sprint/cut/ritual-reads-decisions.json) — 5 блоков
+  (b1 ядро/dynin · b2 порт+вечер/vesnin · b3 каркас дня/ozhegov · b4 зуб утверждений/tarasov · b5 приёмка/angelina),
+  резчик ozhegov ([конспект](./discussions/cut-ritual-reads-decisions-ozhegov.md)); ратифицирован владельцем 2026-09-30T15:14:18+03:00.
+- **Finding at cut:** за 16–30.09 закрыто 4 прогона спринтов, архивировано 0 карточек — каркас дня читает только
+  `status === 'active'`; зуб утверждений видит `NIGHT_RUN_MAX_AGE_MS = 36 ч` как непрозрачную форму при нуле
+  вхождений символа в стволе; тело PR (#2506) — не машинный носитель, признанный предел.
+- **Boundary:** порядок ритуалов, промпты персон и регламенты, список OUTCOMES зуба, архивация карточек ритуалом,
+  тело PR как носитель решений — вне спринта.
+
+## 2026-09-29 — `ritual-reads-done-work` — **CLOSED · gate pass 4/4 · experience hit**
+
+- **Closure:** [`local-sprint/ritual-reads-done-work/CLOSURE.md`](./local-sprint/ritual-reads-done-work/CLOSURE.md) —
+  ратификация 15:19+03 инструментом; b1 `b9418242`, b2 `3f1471c9`, b3 `9963fd10`; живая проверка обоих
+  `:dry` на документах 29.09 при ещё не исправленном `//date`; PR `--no-merge`, мердж — слово владельца.
+
+- **Goal:** читатели ритуала судят по предмету, а не по документу: проекция ассерций + строка свежести
+  для каркаса дня; блок «сделанное, заведённое билетами» + свежесть посылок для вечернего фидбека.
+- **Source:** И8, [`PREP_2026-09-28_PRODUCT_AND_TOOLING_WEEK.md`](./PREP_2026-09-28_PRODUCT_AND_TOOLING_WEEK.md) §4
+- **OPEN:** [`local-sprint/ritual-reads-done-work/OPEN.md`](./local-sprint/ritual-reads-done-work/OPEN.md)
+- **Prompt:** [`prompts/RITUAL_READS_DONE_WORK_PROMPT.md`](./prompts/RITUAL_READS_DONE_WORK_PROMPT.md)
+- **Cut:** [`sprint/cut/ritual-reads-done-work.json`](./sprint/cut/ritual-reads-done-work.json) — 4 блока,
+  резчик ozhegov ([конспект](./discussions/cut-ritual-reads-done-work-ozhegov.md)); ратифицирован владельцем 2026-09-29T15:19:14+03:00.
+- **Finding at cut:** гипотеза «генератор читает архивные ключи» опровергнута замером — архив за
+  границей чтения 22k; корень — `//date` застрял на 24.09 и отсутствие факта свежести во входах.
+- **Boundary:** порядок ритуалов, формат `main-day-assertions.json`, промпты персон, основание снятия
+  с очереди `review:oversized`, `DAILY_CODE_REVIEW` как второй потребитель — вне спринта.
+
+## 2026-09-29 — `sample-library-paging-a11y` — **CLOSED (gate pass 3/3 · experience hit)**
+
+- **CLOSURE:** [`local-sprint/sample-library-paging-a11y/CLOSURE.md`](./local-sprint/sample-library-paging-a11y/CLOSURE.md) —
+  прогноз ↔ исход (150/170/50 → 256/306/78, все под порогом), 12 порч красные, ревью Родченко LGTM /
+  Дынин BLOCK→LGTM, gap живого замера 320px.
+
+- **Goal:** доступность органов листания библиотеки проб в Studio и кабинете: индикатор как живой
+  статус (снять пустой `aria-current`), правило фокуса после смены страницы, клавиатура без
+  глобальных слушателей, разметка узкого экрана.
+- **Issue:** — (заведётся с первым PR фазы Б)
+- **OPEN:** [`local-sprint/sample-library-paging-a11y/OPEN.md`](./local-sprint/sample-library-paging-a11y/OPEN.md)
+- **Prompt:** [`prompts/SAMPLE_LIBRARY_PAGING_A11Y_PROMPT.md`](./prompts/SAMPLE_LIBRARY_PAGING_A11Y_PROMPT.md)
+- **Cut:** [`sprint/cut/sample-library-paging-a11y.json`](./sprint/cut/sample-library-paging-a11y.json) — 3 блока
+  (a1 Studio · a2 кабинет · a3 зуб близнецов), резчик rodchenko
+  ([конспект](./discussions/cut-sample-library-paging-a11y-rodchenko.md)); ждёт ратификации владельца.
+- **Boundary:** `MoveAllToCollectionDialog` (проверен 27.09), `OverflowWindow`, общий пакет под `nav`,
+  стрелки и набор страниц, мердж — вне спринта. Узкий экран без браузера — gap.
+
+## 2026-09-29 — `batch-collection-run-contour` — **IMPLEMENTED (gate pass 4/4 · experience miss)**
+
+- **Goal:** прогон детекторов по коллекции как отдельный live↔batch контур, без повторного
+  строительства уже закрытых массового переноса из буфера и пагинации библиотеки.
+- **Issue:** [#494](https://github.com/officefish/Membrana/issues/494)
+- **OPEN:** [`local-sprint/batch-collection-run-contour/OPEN.md`](./local-sprint/batch-collection-run-contour/OPEN.md)
+- **Prompt:** [`prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md`](./prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md)
+- **CLOSURE:** [`local-sprint/batch-collection-run-contour/CLOSURE.md`](./local-sprint/batch-collection-run-contour/CLOSURE.md)
+- **Cut:** [`sprint/cut/batch-collection-run-contour.json`](./sprint/cut/batch-collection-run-contour.json) ·
+  ратифицирован владельцем; architecture verdict принят без recut.
+- **Gate:** 4/4 `honest_pair`; experience `miss`, runner 514 строк против 390.
+- **Delivery:** stacked PR #2517 → #2518 → #2519 → #2520 → evidence; везде `--no-merge`.
+- **Boundary:** новый `SampleCollectionRef` / batch-runtime не введён; перенос и пагинация не
+  переисполнялись; merge запрещён заказом владельца.
+
 ## 2026-09-08 — `tariff-matrix-2333` — **OPEN**
 
 - **Goal:** серверная адаптация к матрице тарифов по принятому M1: версия контракта,

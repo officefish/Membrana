@@ -64,11 +64,62 @@ export interface ResolvedSuspicion extends GraphSuspicion {
 
 const MEMBRANA_SCOPE = '@membrana/';
 
+function entryKey(line: string): string | null {
+  const header = /^(?:"([^"]+)"|(\S.*)):\s*$/u.exec(line);
+  return header?.[1] ?? header?.[2] ?? null;
+}
+
+function workspaceDescriptor(key: string): { name: string; path: string } | null {
+  const workspaceSpec = key
+    .split(/,\s*/u)
+    .map((spec) => spec.trim())
+    .find((spec) => spec.includes('@workspace:'));
+  if (!workspaceSpec) return null;
+
+  const parsed = /^(.+)@workspace:(.+)$/u.exec(workspaceSpec);
+  return parsed ? { name: parsed[1]!, path: parsed[2]! } : null;
+}
+
+function countWorkspaceEntries(lines: readonly string[]): number {
+  let count = 0;
+  for (const line of lines) {
+    const key = entryKey(line);
+    if (!key) continue;
+    const specs = key.split(/,\s*/u).map((spec) => spec.trim());
+    const hasWorkspace = specs.some((spec) => spec.includes('@workspace:'));
+    const isRoot = specs.some((spec) => spec.endsWith('@workspace:.'));
+    if (hasWorkspace && !isRoot) count += 1;
+  }
+  return count;
+}
+
+/** Отказывает на неполном разборе: пустота графа не может выглядеть как чистота. */
+function assertWorkspaceGraphIntegrity(
+  workspaces: readonly WorkspaceEntry[],
+  expectedWorkspaceCount: number,
+): void {
+  if (workspaces.length !== expectedWorkspaceCount) {
+    throw new Error(
+      `monorepo-dependency-graph: workspace-записей ${expectedWorkspaceCount}, ` +
+        `разобрано рабочих областей ${workspaces.length}`,
+    );
+  }
+
+  const dependencyCount = workspaces.reduce((sum, workspace) => sum + workspace.deps.length, 0);
+  const edgeCount = buildGraphEdges(workspaces).length;
+  if (dependencyCount > 0 && edgeCount === 0) {
+    throw new Error(
+      `monorepo-dependency-graph: объявлено внутренних зависимостей ${dependencyCount}, ` +
+        'но внутренних рёбер 0 — разбор графа противоречив',
+    );
+  }
+}
+
 /**
  * Разбор `yarn.lock` (Yarn Berry): записи рабочих областей и их внутренние рёбра.
  *
  * Формат записи:
- *   "@membrana/background-cabinet@workspace:packages/background-cabinet":
+ *   "@membrana/core@npm:*, @membrana/core@workspace:packages/core":
  *     dependencies:
  *       "@membrana/core": "npm:*"
  *
@@ -87,12 +138,13 @@ export function parseWorkspaceGraph(lockText: string): WorkspaceEntry[] {
   };
 
   for (const line of lines) {
-    const header = /^"?([^"@\s][^"\s]*|@[^"\s/]+\/[^"\s]+)@workspace:([^"\s]+)"?:\s*$/.exec(line);
-    if (header) {
+    const key = entryKey(line);
+    if (key) {
       flush();
-      const [, name, path] = header;
+      const workspace = workspaceDescriptor(key);
+      if (!workspace) continue;
       // Корень репозитория объявлен как `@workspace:.` — он не пакет графа.
-      if (path !== '.') current = { name: name!, path: path!, deps: [] };
+      if (workspace.path !== '.') current = { ...workspace, deps: [] };
       continue;
     }
     if (!current) continue;
@@ -107,6 +159,7 @@ export function parseWorkspaceGraph(lockText: string): WorkspaceEntry[] {
     }
   }
   flush();
+  assertWorkspaceGraphIntegrity(out, countWorkspaceEntries(lines));
   return out;
 }
 
