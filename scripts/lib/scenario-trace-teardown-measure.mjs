@@ -229,6 +229,8 @@ export const PROBE_UNMODELLED_EXPORTS = Object.freeze({
   getScenarioTraceLineCount: 'дешёвое чтение length, вне измеряемой разборки',
   copyScenarioTraceToClipboard: 'требует navigator.clipboard, недоступен в node',
   downloadScenarioTraceFile: 'требует Blob/DOM, недоступен в node',
+  flushScenarioTraceNotifyForTests:
+    'крючок зубов модуля (#2328 g2): синхронно отдаёт отложенное до кадра пробуждение; данные буфера не меняет. Прибор будит подписчиков синхронно на каждую строку — то есть меряет верхнюю границу (поведение до g2), а не схлопнутое',
 });
 
 /**
