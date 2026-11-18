@@ -1,0 +1,71 @@
+{
+  "//": "Нарезка #2328 — зависание Студии при STOP во время удержания «буфер полон». Три куска по слову владельца 08.09: g1 репро и корень БЕЗ правок продукта (четыре кандидата отсекаются различающими пробами), g2 минимальная правка и зубы обеих ветвей удержания плюс трейс на потолке, g3 живая проверка на Студии из артефакта CI. Порядок нерушим: g2 не начинается, пока g1 не назвал корень; g3 судит уже влитую правку. Граница владельца: если корень в контракте удержания (#2309) или в окне (#2310) — стоп и доклад до правки.",
+  "schema": "sprint-cut/1",
+  "sprintId": "stop-hang-overflow-hold-2328",
+  "taskId": "stop-hang-overflow-hold-2328",
+  "mode": "explicit-honest",
+  "cutBy": "dynin",
+  "coverage": {
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "contract_signature",
+      "session_prep"
+    ],
+    "reason": "Носители contract_signature/session_prep не входят в обязательный машинный корпус membrana-local-sprint; ответственность держится планом, зонами, контекстными следами и review-вещдоками."
+  },
+  "window": {
+    "from": "2026-09-08T21:00:00+03:00",
+    "to": "2026-09-09T21:00:00+03:00"
+  },
+  "revisionAt": "2026-09-08T21:00:00+03:00",
+  "blocks": [
+    {
+      "blockId": "g1-repro-and-root",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "docs/field/2026-09-08-stop-hang-root.md"
+      ],
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionAt": "2026-09-08T21:00:00+03:00",
+      "revisionOf": "e243fa14e7d599cd7381b7299338a1f4263510fde8e742c154dacc8b7117b853"
+    },
+    {
+      "blockId": "g2-minimal-fix-and-teeth",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "apps/client/src/lib/device-overflow-hold/**",
+        "apps/client/src/modules/device-board/**"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionAt": "2026-09-08T21:00:00+03:00",
+      "revisionOf": "8419b37de9e3fa3142e13de327b431ea86c206436d9c83fe2186edcc7810e750"
+    },
+    {
+      "blockId": "g3-live-studio-evidence",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "docs/field/2026-09-08-stop-hang-live.md"
+      ],
+      "estimate": {
+        "changedLines": 90
+      },
+      "revisionAt": "2026-09-08T21:00:00+03:00",
+      "revisionOf": "3368c4e69da6b3f9a048605732f8bbda66e823c18d890d6e12d5a11952984abe"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-09-09T10:42:51+03:00",
+    "digest": "b9c87fb6fb1de30174d55d10f809413c87183e38eb3225262c66ecf694e94690"
+  }
+}

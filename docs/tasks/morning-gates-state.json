@@ -7,15 +7,15 @@
   "frozenDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
   "magistral": "tariff-downgrade-freeze",
   "swallow": {
-    "draftDigest": "1b4939d832069077c96adef8314eed5407d2e17422227fcd1ff7afd0d902cb32",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-10-08.md",
+    "draftDigest": "d235bbc3dbf1c32cda940c13f676acd082bed7e8e6b8a62cf66c5b826daaac4a",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-10-08.md",
     "ownerAck": true,
     "day": "2026-10-08",
     "claimsProbe": {
       "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-10-07.md",
-      "sha": "c5d2afe19cd6",
-      "at": "2026-10-07T18:05:51.607Z"
+      "protocol": "docs/seanses/team-evening-feedback-2026-10-08.md",
+      "sha": "8d70e11763a5",
+      "at": "2026-10-08T21:21:11.639Z"
     },
     "gate": "evening:partner-swallow"
   },

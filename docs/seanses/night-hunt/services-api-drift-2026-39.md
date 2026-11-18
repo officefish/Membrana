@@ -3,41 +3,37 @@
 | Поле | Значение |
 |------|----------|
 | Week | 2026-39 |
-| Generated (UTC) | 2026-09-21T14:05:13.247Z |
+| Generated (UTC) | 2026-09-25T12:45:19.540Z |
 | Channel | claude |
 
 ---
 
-# Weekly-отчёт: `services-api-contract-drift` — неделя 2026-39
+# Weekly-отчёт: services-api-contract-drift — 2026-39
 
 ## Находки
 
-- **Deprecated-поверхность в `fft-analyzer` разрастается.** Публичный `index.ts` продолжает экспортировать целый пласт устаревших сущностей: класс `AudioAnalyzer` и три хука (`useAudioAnalyzer`, `useFileAnalyzer`, `useMicrophoneAnalyzer`), помеченные `@deprecated`, но остающиеся в основном контракте наравне с актуальными `FftAnalyzer` / `useFftAnalyzer`. Дрейф: старый и новый API сосуществуют без явной даты удаления или мажорной вехи.
+- **Отсутствует обязательная константа-`DEFAULT_*` в контракте `audio-engine`.** SERVICES.md («Контракт публичного API») требует экспорт категории «Константы/defaults». В `audio-engine index.ts` из defaults экспортируется только `DEFAULT_LIVE_CAPTURE_CONFIG` (блок `// Типы`). Формально категория закрыта, дрейфа нет — но константа выведена не в отдельную секцию, а внутри `export { DEFAULT_LIVE_CAPTURE_CONFIG } from './types.js'` рядом с типами. Адрес: `DEFAULT_LIVE_CAPTURE_CONFIG` в `audio-engine/src/index.ts`.
 
-- **`fft-analyzer` экспортирует «сырую» математику как публичный контракт.** Из `src/math/` наружу торчат `FftCore`, `spectralFluxL2`, `SPECTRAL_FLUX_BYTE_SCALE`, `SPECTRAL_FLUX_L2_DIVISOR`, `mean`, `std`, `minOf`, `maxOf` и т.д. Это внутренние детали слоя `math/`, но они закреплены в API-поверхности — любое изменение алгоритма становится breaking change.
+- **Deprecated-экспорты остаются в публичной точке входа `fft-analyzer`.** В `fft-analyzer/src/index.ts` публично реэкспортируются помеченные `@deprecated` символы: `AudioAnalyzer` (из `./core/audio-analyzer.js`), `useAudioAnalyzer`, `useFileAnalyzer`, `useMicrophoneAnalyzer` (из соответствующих `./hooks/*`). Контракт SERVICES.md описывает актуальный API (`FftAnalyzerService`/`useFftAnalyzer`), но не регламентирует срок удаления устаревших — это точка дрейфа между «эталонным» именем и фактическим содержимым `index.ts`.
 
-- **Расхождение конфигов между слоями по имени.** В `audio-engine` дефолт называется `DEFAULT_LIVE_CAPTURE_CONFIG` (тип `LiveCaptureConfig.bufferSize`), в `fft-analyzer` — `DEFAULT_CONFIG` (поле `fftSize`). Норматив v0.1 (SERVICES.md) требует согласованных значений (`bufferSize`/`fftSize = 2048`), но именование/структура двух дефолтов не выражают этой связи в типах — контракт держится «на словах».
+- **Расхождение имени класса ядра.** SERVICES.md («Контракт публичного API», строка-пример) декларирует класс ядра `FftAnalyzerService`. В `fft-analyzer/src/index.ts` фактически экспортируется `FftAnalyzer` (из `./core/fft-analyzer.js`); экспорт `FftAnalyzerService` отсутствует. Адрес недостающего символа: `FftAnalyzerService` — нет в `fft-analyzer/src/index.ts`.
 
-- **Соблюдение слоёв в экспортах корректно.** `audio-engine` не экспортирует React-компоненты и analyzer-зависимостей; `fft-analyzer` зависит только от `audio-engine` (foundation) и `core`. Нарушений графа foundation→analyzer в публичных точках входа не обнаружено.
+- **Норматив захвата v0.1 привязан к двум разным именам конфигов.** SERVICES.md («Параметры захвата») указывает `fftSize`/`bufferSize` через `AudioAnalyzerConfig.fftSize` и `DEFAULT_CONFIG`/`DEFAULT_LIVE_CAPTURE_CONFIG`. `AudioAnalyzerConfig` соответствует deprecated-`AudioAnalyzer`, тогда как актуальный публичный тип конфигурации в приведённом фрагменте `fft-analyzer/src/index.ts` не виден (секция «Типы» обрезана). Проверяемый адрес: `DEFAULT_CONFIG` в `fft-analyzer/src/constants.js` — присутствует; `AudioAnalyzerConfig` — по индексу не подтверждён в приведённом фрагменте.
 
 ## Риски
 
-- **Скрытый breaking change через math-экспорты.** Пока `FftCore` и служебные константы/функции в публичном API, рефакторинг DSP-логики ломает внешних потребителей без предупреждения. Высокий риск незаметного мажорного дрейфа при «внутренней» правке.
+- Норматив захвата (v0.1) ссылается на `AudioAnalyzerConfig.fftSize`, а этот тип принадлежит deprecated-ветке (`AudioAnalyzer`). При удалении устаревших экспортов документ станет ссылаться на несуществующий символ — риск «висячей» нормы.
 
-- **Неопределённый срок жизни deprecated-API.** Отсутствие целевой версии удаления `AudioAnalyzer` и старых хуков ведёт к вечному сосуществованию, росту тестовой матрицы и путанице у ролей Музыканта/Математика при выборе точки входа.
+- Название `FftAnalyzerService` в контракте не совпадает с фактическим `FftAnalyzer`: потребители, ориентирующиеся на SERVICES.md, импортируют несуществующее имя — риск ломки внешнего потребления через `dist/`.
 
-- **Рассинхрон нормативных параметров захвата.** Значения sampleRate/fftSize/overlap заданы в двух местах (`DEFAULT_LIVE_CAPTURE_CONFIG` и `DEFAULT_CONFIG`) независимо. При правке одного из них цепочка `микрофон → audio-engine → fft-analyzer` может молча разъехаться, что критично перед полевыми тестами (Этап 1 WHITE_PAPER).
-
-- **Готовность к будущему `dsp-drone-detector-service`.** Норматив уже упоминает будущий детектор как потребителя цепочки; при нынешней «широкой» поверхности fft-analyzer детектор рискует завязаться на нестабильные math-экспорты вместо стабильных метрик высокого уровня.
+- Совмещение `DEFAULT_LIVE_CAPTURE_CONFIG` в секции «Типы» вместо секции defaults в `audio-engine` затрудняет автоматическую проверку категорий контракта — риск ложноотрицательного результата drift-джобы.
 
 ## Рекомендации
 
-- **Зафиксировать deprecation-политику.** Проставить в JSDoc `@deprecated since` и целевую мажорную версию удаления для `AudioAnalyzer`, `useAudioAnalyzer`, `useFileAnalyzer`, `useMicrophoneAnalyzer`; вынести список в CHANGELOG/RELEASE-заметку сервиса.
+- Привести SERVICES.md к факту: заменить пример `FftAnalyzerService` на `FftAnalyzer` **либо** добавить/переименовать экспорт до `FftAnalyzerService` в `fft-analyzer/src/index.ts` — выбрать одну сторону и синхронизировать.
 
-- **Сузить публичный контракт fft-analyzer.** Разделить экспорт на стабильный (`FftAnalyzer`, хуки, типы `Fft*`, `DEFAULT_CONFIG`/`PRESETS`) и явно-внутренний. Кандидаты на скрытие или на пометку «unstable»: `FftCore`, `spectralFluxL2`, `SPECTRAL_FLUX_*`, чистые `mean/std/minOf/maxOf`.
+- Заменить в «Параметры захвата» ссылку `AudioAnalyzerConfig.fftSize` на актуальный тип конфигурации fft-analyzer (не из deprecated-ветки), чтобы норматив не зависел от устаревших экспортов.
 
-- **Ввести единый источник нормативных параметров.** Вынести v0.1-значения (sampleRate 48000, fftSize/bufferSize 2048, overlap 50%) в общий константный контракт (в `@membrana/core` или общий `constants`), из которого оба дефолта производятся, чтобы дрейф ловился типами/тестом.
+- Назначить срок и версию удаления `@deprecated`-экспортов (`AudioAnalyzer`, `useAudioAnalyzer`, `useFileAnalyzer`, `useMicrophoneAnalyzer`) и зафиксировать его в README сервиса, чтобы drift-джоба отслеживала выпил по плану.
 
-- **Добавить контрактный snapshot-тест API.** Зафиксировать публичные экспорты `audio-engine` и `fft-analyzer` snapshot-тестом (api-extractor или ручной список), чтобы любой drift поверхности требовал явного апдейта в PR и попадал под ревью Teamlead.
-
-- **Согласовать точку входа для будущего детектора.** До старта `dsp-drone-detector-service` определить, какие именно метрики fft-analyzer являются стабильным контрактом для детекторов, и задокументировать это в README сервиса.
+- Вынести `DEFAULT_LIVE_CAPTURE_CONFIG` в `audio-engine/src/index.ts` в явную секцию defaults (отдельно от `// Типы`), чтобы категория «Константы/defaults» из контракта проверялась однозначно.

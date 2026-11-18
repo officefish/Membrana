@@ -1,0 +1,2 @@
+{"traceId":"g1-context-run-dynin-20260909","blockId":"g1-repro-and-root","kind":"context_run","subject":"dynin","at":"2026-09-09T11:53:07+03:00","ref":"docs/field/2026-09-08-stop-hang-root.md"}
+{"traceId":"g2-context-run-vesnin-20260910","blockId":"g2-minimal-fix-and-teeth","kind":"context_run","subject":"vesnin","at":"2026-09-10T16:49:24+03:00","ref":"apps/client/src/modules/device-board/scenarioTraceBuffer.ts"}

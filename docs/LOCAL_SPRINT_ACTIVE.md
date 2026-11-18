@@ -4,6 +4,9 @@
 
 ## Focus
 
+- **archive-gc-journal-2588** ([#2632](https://github.com/officefish/Membrana/issues/2632)) · уборщик холодного
+  архива с журналом заданий · план v2 ратифицирован владельцем 08.10 12:49:21Z (17 блоков ≈3410 строк) · исполнение
+  начато с g0 (флаги office) и g1a (схема журнала media) · [`OPEN.md`](./local-sprint/archive-gc-journal-2588/OPEN.md).
 - **chart-list-plugin-20261003** · b1 влит PR #2567 (`ee405f48`) и выкачен в cabinet; владелец 04.10 принял три
   критерия, объёмы 20/200, playback/waveform и вытеснения. Контрольная пара на одном корпусе 1838: loudness-over-floor
   и spectral-variety совпали на 7/20 позициях, пересечение 18/20, первое различие 8; **gate pass 2/2 `honest_pair`**,

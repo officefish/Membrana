@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14337/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 388 (причины в op-log) -->
+Записей: 50 · бюджет 14361/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 389 (причины в op-log) -->
+
+### 2026-10-08 · позиция · archive-gc-journal
+
+> С потока артефактов: media уже владеет файлами на диске; GC — тот же контур, что freeze/thaw, не параллельный «чистильщик в office». Порядок 06.10 «сначала строки, потом файлы» для live-партии оставляю, но журнал обязан **до** rm зафиксировать `storageRef` snapshot — иначе после […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/archive-gc-journal-2026-10-08.md#reply-1`
 
 ### 2026-10-07 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > **Оценка артефактов:** Документы дня не касаются audio-engine / Web Audio / 48 kHz path — мой контур не затронут. `DAILY_CODE_REVIEW` честно фиксирует отсутствие аудио-вклада. **Итоги дня:** Media open-API (#2271/#2276) — дверь библиотеки и ключ с TTL; blob-ручка […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
-
-### 2026-09-02 · позиция · team-evening-feedback
-
-> Оценка артефактов: Аудио-контур в документах дня не представлен. MAIN_DAY_ISSUE говорит о move-проб между наборами — это библиотечный, не аудио-функционал. DAILY_CODE_REVIEW чист от DSP/Web Audio изменений. Позитивно: запрет на повтор DSP/FFT benchmark без новых данных соблюдён […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
