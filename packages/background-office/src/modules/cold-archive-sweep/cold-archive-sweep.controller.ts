@@ -9,25 +9,39 @@
  *
  * Исходы клиента → HTTP своим кодом, не 500: 503 `media_not_configured`, 502 `media_unreachable`,
  * отказ media — его статус и код.
+ *
+ * #2632 g5a — прокси журнала уборщика, ТОЛЬКО ЧТЕНИЕ и только владельцу (`@OwnerAdmin`, не-owner → 404):
+ * `GET purge-runs?limit`, `GET purge-runs/:id`, `GET purge-schedule?limit` (Т5), `GET purge-runs/:id/verify`
+ * (Т4) → двери media g4a/g4b, ответ как есть (адресов файлов в нём нет). Кнопок удаления нет: боевую
+ * уборку по-прежнему делает только cron. Превью теперь помечает свой прогон в журнале `trigger=panel`.
  */
-import { Controller, Get, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpException, HttpStatus, Param, Query, UseGuards } from '@nestjs/common';
 
 import { OwnerAdmin } from '../panel-auth/panel-auth.decorators';
 import { PanelAuthGuard } from '../panel-auth/panel-auth.guard';
-import { ColdArchiveSweepClient, type SweepOutcome, type SweepReport } from './cold-archive-sweep.client';
+import { ColdArchiveSweepClient, type JournalOutcome, type SweepOutcome, type SweepReport } from './cold-archive-sweep.client';
 
 export const SWEEP_PREVIEW_ROUTE_PREFIX = 'v1/panel/admin/cold-archive';
 
 export function unwrapSweepOutcome(outcome: SweepOutcome): SweepReport {
+  return outcome.kind === 'ok' ? outcome.report : refuse(outcome);
+}
+
+/** Исход чтения журнала → тело media как есть или HTTP-отказ тем же словарём, что у превью. */
+export function unwrapJournalOutcome(outcome: JournalOutcome): unknown {
+  return outcome.kind === 'ok' ? outcome.body : refuse(outcome);
+}
+
+function refuse(outcome: Exclude<SweepOutcome, { readonly kind: 'ok' }>): never {
   switch (outcome.kind) {
-    case 'ok':
-      return outcome.report;
     case 'media-not-configured':
       throw new HttpException({ code: 'media_not_configured', missing: [...outcome.missing] }, HttpStatus.SERVICE_UNAVAILABLE);
     case 'media-unreachable':
       // Тело 502 — только код: detail сети остаётся в логе office.
       throw new HttpException({ code: 'media_unreachable' }, HttpStatus.BAD_GATEWAY);
     case 'media-rejected':
+      // 5xx media — сбой соседа, не наш: 502, а не проброс 500 (DoD g5a). 4xx — статус и код media.
+      if (outcome.status >= 500) throw new HttpException({ code: 'media_rejected', status: outcome.status }, HttpStatus.BAD_GATEWAY);
       throw new HttpException({ code: outcome.code ?? 'media_rejected', status: outcome.status }, outcome.status);
     default: {
       const never: never = outcome;
@@ -46,6 +60,30 @@ export class ColdArchiveSweepController {
   @OwnerAdmin()
   async sweepPreview(): Promise<SweepReport> {
     // dryRun ЖЁСТКО true: эта ручка не умеет удалять, какие бы флаги ни стояли.
-    return unwrapSweepOutcome(await this.client.purgeExpired(true));
+    return unwrapSweepOutcome(await this.client.purgeExpired(true, 'panel'));
+  }
+
+  @Get('purge-runs')
+  @OwnerAdmin()
+  async purgeRuns(@Query('limit') limit?: string): Promise<unknown> {
+    return unwrapJournalOutcome(await this.client.runs(limit));
+  }
+
+  @Get('purge-runs/:id')
+  @OwnerAdmin()
+  async purgeRun(@Param('id') id: string): Promise<unknown> {
+    return unwrapJournalOutcome(await this.client.run(id));
+  }
+
+  @Get('purge-runs/:id/verify')
+  @OwnerAdmin()
+  async purgeRunVerify(@Param('id') id: string): Promise<unknown> {
+    return unwrapJournalOutcome(await this.client.verify(id));
+  }
+
+  @Get('purge-schedule')
+  @OwnerAdmin()
+  async purgeSchedule(@Query('limit') limit?: string): Promise<unknown> {
+    return unwrapJournalOutcome(await this.client.schedule(limit));
   }
 }
