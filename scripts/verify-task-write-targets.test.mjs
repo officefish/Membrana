@@ -166,16 +166,8 @@ test('известный долг: исключение без находок �
   assert.deepEqual(r.stale.map((d) => d.dir), ['apps/cabinet']);
 });
 
-test('KNOWN_DEBT ствола — ровно 4 приложения второго шага #2660, пара build/typecheck, со ссылкой', () => {
-  assert.deepEqual(
-    KNOWN_DEBT.map((d) => d.dir).sort(),
-    ['apps/cabinet', 'apps/client', 'apps/demos/Research-Tree', 'apps/panel'],
-  );
-  for (const d of KNOWN_DEBT) {
-    assert.deepEqual(d.tasks, ['build', 'typecheck']);
-    assert.match(d.issue, /issues\/2660$/u);
-    assert.ok(d.reason.length > 0);
-  }
+test('KNOWN_DEBT ствола пуст: шаг 2 #2660 снял долг четырёх приложений', () => {
+  assert.deepEqual(KNOWN_DEBT, []);
 });
 
 test('живой прогон по дереву зелёный: параллельные задачи пакетов пишут в разные файлы', () => {

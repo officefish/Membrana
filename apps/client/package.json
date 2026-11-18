@@ -10,9 +10,9 @@
     "preview": "vite preview",
     "smoke:test": "playwright test --grep @smoke",
     "start": "vite",
-    "clean": "rimraf dist .turbo .tsbuildinfo .tsbuildinfo.app .tsbuildinfo.node",
+    "clean": "rimraf dist .turbo .tsbuildinfo .tsbuildinfo.app .tsbuildinfo.node .tsbuildinfo.typecheck.app .tsbuildinfo.typecheck.node",
     "lint": "eslint src --ext .ts,.tsx",
-    "typecheck": "tsc -b",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit --tsBuildInfoFile ./.tsbuildinfo.typecheck.app && tsc -p tsconfig.node.json --noEmit --tsBuildInfoFile ./.tsbuildinfo.typecheck.node",
     "test": "vitest run --passWithNoTests",
     "test:node": "node --experimental-strip-types --test src/plugins/microphone-stream-viz/types.test.ts src/modules/microphone/microphoneStreamHub.test.ts"
   },
