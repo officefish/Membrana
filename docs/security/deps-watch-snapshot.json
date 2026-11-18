@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-08",
+  "date": "2026-11-18",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -7,27 +7,6 @@
       "severity": "low",
       "issue": "@babel/core: Arbitrary File Read via sourceMappingURL Comment",
       "url": "https://github.com/advisories/GHSA-4x5r-pxfx-6jf8"
-    },
-    {
-      "pkg": "@fastify/busboy",
-      "id": "1240981",
-      "severity": "high",
-      "issue": "@fastify/busboy vulnerable to Denial of Service via oversized multipart boundary",
-      "url": "https://github.com/advisories/GHSA-xjh9-v7x6-24jw"
-    },
-    {
-      "pkg": "@fastify/busboy",
-      "id": "1240982",
-      "severity": "high",
-      "issue": "@fastify/busboy vulnerable to Denial of Service via prototype-named multipart part header",
-      "url": "https://github.com/advisories/GHSA-x8mw-p69m-v3mx"
-    },
-    {
-      "pkg": "@fastify/busboy",
-      "id": "1241276",
-      "severity": "moderate",
-      "issue": "@fastify/busboy vulnerable to CRLF injection via multipart Content-Disposition filename and name",
-      "url": "https://github.com/advisories/GHSA-gxm5-99cw-xjw9"
     },
     {
       "pkg": "@fastify/static",
@@ -91,6 +70,13 @@
       "severity": "moderate",
       "issue": "Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock",
       "url": "https://github.com/advisories/GHSA-82fw-gwwq-j7x9"
+    },
+    {
+      "pkg": "@vitest/mocker",
+      "id": "1242767",
+      "severity": "moderate",
+      "issue": "Vitest: Code injection via unauthenticated manual mock registration",
+      "url": "https://github.com/advisories/GHSA-qxg6-89mg-rqv8"
     },
     {
       "pkg": "@xmldom/xmldom",
@@ -422,11 +408,32 @@
       "url": "https://github.com/advisories/GHSA-c475-qrg2-pj4r"
     },
     {
+      "pkg": "basic-ftp",
+      "id": "1246355",
+      "severity": "moderate",
+      "issue": "basic-ftp: Uncaught TypeError in MLSD directory-listing parser via __proto__ fact name causes DoS in Client.list()",
+      "url": "https://github.com/advisories/GHSA-5pm8-86m8-9m6r"
+    },
+    {
+      "pkg": "basic-ftp",
+      "id": "1246367",
+      "severity": "moderate",
+      "issue": "basic-ftp: Uncaught exception crashes the Node.js process when a password (or resumed-download path) contains CR/LF",
+      "url": "https://github.com/advisories/GHSA-r4jh-29pc-gfqr"
+    },
+    {
       "pkg": "body-parser",
       "id": "1123977",
       "severity": "low",
       "issue": "body-parser vulnerable to denial of service when invalid limit value silently disables size enforcement",
       "url": "https://github.com/advisories/GHSA-v422-hmwv-36x6"
+    },
+    {
+      "pkg": "body-parser",
+      "id": "1243073",
+      "severity": "high",
+      "issue": "body-parser vulnerable to Denial of Service via trailing bytes after a compressed request body",
+      "url": "https://github.com/advisories/GHSA-27r3-jxmh-p828"
     },
     {
       "pkg": "boolean",
@@ -520,13 +527,6 @@
       "url": "https://github.com/advisories/GHSA-6j4f-fj2g-mc7p"
     },
     {
-      "pkg": "braces",
-      "id": "1240992",
-      "severity": "high",
-      "issue": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
-      "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm"
-    },
-    {
       "pkg": "browserslist",
       "id": "1153171",
       "severity": "high",
@@ -577,10 +577,66 @@
     },
     {
       "pkg": "electron",
-      "id": "1239985",
+      "id": "1241657",
       "severity": "high",
       "issue": "Electron: <webview> can enable Node.js integration in Web Workers despite embedder restrictions",
       "url": "https://github.com/advisories/GHSA-9qh4-3jw8-366w"
+    },
+    {
+      "pkg": "electron",
+      "id": "1242756",
+      "severity": "moderate",
+      "issue": "Electron: HID and USB permission checks can be attributed to the wrong origin",
+      "url": "https://github.com/advisories/GHSA-fw47-9c62-h3vw"
+    },
+    {
+      "pkg": "electron",
+      "id": "1242835",
+      "severity": "moderate",
+      "issue": "Electron: SameSite cookie restrictions are not applied to windows opened from links",
+      "url": "https://github.com/advisories/GHSA-2p8c-gr87-2676"
+    },
+    {
+      "pkg": "electron",
+      "id": "1242839",
+      "severity": "moderate",
+      "issue": "Electron: Pointer lock permission requests can be attributed to the wrong frame",
+      "url": "https://github.com/advisories/GHSA-x562-297c-g43g"
+    },
+    {
+      "pkg": "electron",
+      "id": "1242843",
+      "severity": "low",
+      "issue": "Electron: Extension tabs.query returns tab URLs and titles without the tabs permission",
+      "url": "https://github.com/advisories/GHSA-98mx-cjp9-gchm"
+    },
+    {
+      "pkg": "electron",
+      "id": "1242850",
+      "severity": "low",
+      "issue": "Electron: Frame subscription trusts GPU-supplied frame geometry",
+      "url": "https://github.com/advisories/GHSA-3qxv-5xgr-q7w9"
+    },
+    {
+      "pkg": "electron",
+      "id": "1242854",
+      "severity": "low",
+      "issue": "Electron: Off-screen rendering on macOS trusts GPU-supplied frame geometry",
+      "url": "https://github.com/advisories/GHSA-h3v5-h239-pg29"
+    },
+    {
+      "pkg": "electron",
+      "id": "1242858",
+      "severity": "moderate",
+      "issue": "Electron: openExternal permission requests can be attributed to the wrong origin",
+      "url": "https://github.com/advisories/GHSA-997q-gvvc-jwmx"
+    },
+    {
+      "pkg": "electron",
+      "id": "1243069",
+      "severity": "high",
+      "issue": "Electron: Mitigation for compromised eMudhra intermediate certificates",
+      "url": "https://github.com/advisories/GHSA-jr5w-w6x2-84p9"
     },
     {
       "pkg": "engine.io",
@@ -716,6 +772,62 @@
       "url": "https://github.com/advisories/GHSA-hrr3-gc8f-f4qj"
     },
     {
+      "pkg": "fast-uri",
+      "id": "1243097",
+      "severity": "moderate",
+      "issue": "fast-uri vulnerable to URI scheme spoofing via percent-encoded scheme decoding",
+      "url": "https://github.com/advisories/GHSA-w74x-v6f9-j3xg"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1243098",
+      "severity": "moderate",
+      "issue": "fast-uri vulnerable to URI scheme spoofing via percent-encoded scheme decoding",
+      "url": "https://github.com/advisories/GHSA-w74x-v6f9-j3xg"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1243100",
+      "severity": "low",
+      "issue": "fast-uri vulnerable to improper path equivalence in relative reference normalization",
+      "url": "https://github.com/advisories/GHSA-xhq7-xmqj-769h"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1243101",
+      "severity": "low",
+      "issue": "fast-uri vulnerable to improper path equivalence in relative reference normalization",
+      "url": "https://github.com/advisories/GHSA-xhq7-xmqj-769h"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1243103",
+      "severity": "moderate",
+      "issue": "fast-uri vulnerable to host confusion via unchecked WHATWG host canonicalization",
+      "url": "https://github.com/advisories/GHSA-wjr9-j795-jxcr"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1243104",
+      "severity": "moderate",
+      "issue": "fast-uri vulnerable to host confusion via unchecked WHATWG host canonicalization",
+      "url": "https://github.com/advisories/GHSA-wjr9-j795-jxcr"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1243106",
+      "severity": "low",
+      "issue": "fast-uri vulnerable to scheme injection via an unescaped first-segment colon in suffix references",
+      "url": "https://github.com/advisories/GHSA-333x-w4r6-6crp"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1243107",
+      "severity": "low",
+      "issue": "fast-uri vulnerable to scheme injection via an unescaped first-segment colon in suffix references",
+      "url": "https://github.com/advisories/GHSA-333x-w4r6-6crp"
+    },
+    {
       "pkg": "fastify",
       "id": "1158514",
       "severity": "moderate",
@@ -779,6 +891,27 @@
       "url": "https://github.com/advisories/GHSA-c96f-x56v-gq3h"
     },
     {
+      "pkg": "follow-redirects",
+      "id": "1242604",
+      "severity": "high",
+      "issue": "follow-redirects array-form headers bypass cross-origin credential stripping",
+      "url": "https://github.com/advisories/GHSA-q3jh-wrc6-jgq8"
+    },
+    {
+      "pkg": "follow-redirects",
+      "id": "1242605",
+      "severity": "high",
+      "issue": "follow-redirects sensitiveHeaders regex escaping can expose credential headers",
+      "url": "https://github.com/advisories/GHSA-8r9p-f939-6h3c"
+    },
+    {
+      "pkg": "follow-redirects",
+      "id": "1244003",
+      "severity": "high",
+      "issue": "follow-redirects: Cross-realm sensitiveHeaders arrays are discarded and custom credentials can follow redirects",
+      "url": "https://github.com/advisories/GHSA-mrwp-f3q8-3g9p"
+    },
+    {
       "pkg": "gauge",
       "id": "gauge (deprecation)",
       "severity": "moderate",
@@ -787,17 +920,17 @@
     },
     {
       "pkg": "glob",
+      "id": "1244013",
+      "severity": "moderate",
+      "issue": "Glob: AbortSignal cancellation bypass allows post-timeout filesystem traversal",
+      "url": "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4"
+    },
+    {
+      "pkg": "glob",
       "id": "glob (deprecation)",
       "severity": "moderate",
       "issue": "Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me",
       "url": ""
-    },
-    {
-      "pkg": "http-cache-semantics",
-      "id": "1240991",
-      "severity": "high",
-      "issue": "http-cache-semantics max-stale handling can disclose cross-user cached responses",
-      "url": "https://github.com/advisories/GHSA-ch52-4w7c-c8xp"
     },
     {
       "pkg": "inflight",
@@ -856,6 +989,13 @@
       "url": "https://github.com/advisories/GHSA-h3mg-xc3c-68pw"
     },
     {
+      "pkg": "ip-address",
+      "id": "1242883",
+      "severity": "moderate",
+      "issue": "ip-address: Address6 matches a zone identifier in quadratic time ahead of its length limit, allowing a single long string to stall the process",
+      "url": "https://github.com/advisories/GHSA-rxp7-6hxx-x8q5"
+    },
+    {
       "pkg": "js-yaml",
       "id": "1138114",
       "severity": "high",
@@ -906,9 +1046,9 @@
     },
     {
       "pkg": "lodash",
-      "id": "1115810",
+      "id": "1244437",
       "severity": "moderate",
-      "issue": "lodash vulnerable to Prototype Pollution via array path bypass in `_.unset` and `_.omit`",
+      "issue": "lodash vulnerable to prototype pollution via array-path bypass in `_.unset`, `_.omit`, and `_.pullAt",
       "url": "https://github.com/advisories/GHSA-f23m-r3pf-42rh"
     },
     {
@@ -926,11 +1066,53 @@
       "url": ""
     },
     {
+      "pkg": "minimatch",
+      "id": "1244623",
+      "severity": "moderate",
+      "issue": "minimatch has potential denial of service via globparts amplification",
+      "url": "https://github.com/advisories/GHSA-g3hv-75wg-m249"
+    },
+    {
       "pkg": "music-metadata",
       "id": "1114969",
       "severity": "high",
       "issue": "music-metadata has an infinite loop vulnerability in ASF parser",
       "url": "https://github.com/advisories/GHSA-v6c2-xwv6-8xf7"
+    },
+    {
+      "pkg": "music-metadata",
+      "id": "1241691",
+      "severity": "moderate",
+      "issue": "music-metadata: MP4 stsd sample-entry size==0 causes a synchronous infinite loop (DoS) — unreleased regression on master",
+      "url": "https://github.com/advisories/GHSA-f94x-6692-553q"
+    },
+    {
+      "pkg": "music-metadata",
+      "id": "1241692",
+      "severity": "moderate",
+      "issue": "music-metadata: Uncontrolled memory allocation in APEv2 parser",
+      "url": "https://github.com/advisories/GHSA-53v6-4h7p-p4gj"
+    },
+    {
+      "pkg": "music-metadata",
+      "id": "1241693",
+      "severity": "moderate",
+      "issue": "music-metadata: ID3v2 tag size not validated before allocation, causing memory exhaustion DoS",
+      "url": "https://github.com/advisories/GHSA-jjpr-9cvf-cq55"
+    },
+    {
+      "pkg": "music-metadata",
+      "id": "1241694",
+      "severity": "moderate",
+      "issue": "music-metadata: EBML parser trusts element lengths, allowing memory exhaustion or process abort",
+      "url": "https://github.com/advisories/GHSA-5gfj-9q3v-qfp3"
+    },
+    {
+      "pkg": "music-metadata",
+      "id": "1241708",
+      "severity": "moderate",
+      "issue": "music-metadata: uncatchable process crash parsing a crafted `.dsf` (residual of GHSA-v6c2-xwv6-8xf7)",
+      "url": "https://github.com/advisories/GHSA-8j4c-6x6g-rq3j"
     },
     {
       "pkg": "nanoid",
@@ -945,6 +1127,13 @@
       "severity": "moderate",
       "issue": "This package is no longer supported.",
       "url": ""
+    },
+    {
+      "pkg": "picomatch",
+      "id": "1247710",
+      "severity": "high",
+      "issue": "picomatch vulnerable to ReDoS through single-branch repeated extglobs",
+      "url": "https://github.com/advisories/GHSA-fc5q-39xc-vjpf"
     },
     {
       "pkg": "postcss",
@@ -962,7 +1151,7 @@
     },
     {
       "pkg": "postcss-selector-parser",
-      "id": "1241232",
+      "id": "1243379",
       "severity": "moderate",
       "issue": "PostCSS: Quadratic complexity in flat selector parsing allows CPU exhaustion",
       "url": "https://github.com/advisories/GHSA-rj75-hqrm-r3gf"
@@ -1024,6 +1213,13 @@
       "url": "https://github.com/advisories/GHSA-4mjr-xmp4-gh2g"
     },
     {
+      "pkg": "qs",
+      "id": "1243687",
+      "severity": "moderate",
+      "issue": "qs : qs.stringify with arrayFormat 'comma' throws an uncaught TypeError on array elements carrying a non-callable own toString (DoS)",
+      "url": "https://github.com/advisories/GHSA-6pq8-jhm2-2vcw"
+    },
+    {
       "pkg": "rimraf",
       "id": "rimraf (deprecation)",
       "severity": "moderate",
@@ -1064,13 +1260,6 @@
       "severity": "high",
       "issue": "source-map-js allows event-loop denial of service through indexed source-map section offsets",
       "url": "https://github.com/advisories/GHSA-68fv-2mgg-jv7q"
-    },
-    {
-      "pkg": "sprintf-js",
-      "id": "1241202",
-      "severity": "moderate",
-      "issue": "sprintf-js vulnerable to denial of service through unbounded precision specifiers",
-      "url": "https://github.com/advisories/GHSA-hp3w-g68c-fv3c"
     },
     {
       "pkg": "tar",
@@ -1255,6 +1444,132 @@
       "url": "https://github.com/advisories/GHSA-rx4f-c7p8-82vq"
     },
     {
+      "pkg": "undici",
+      "id": "1243078",
+      "severity": "moderate",
+      "issue": "undici vulnerable to Denial of Service via unbounded memory in the EventSource parser",
+      "url": "https://github.com/advisories/GHSA-4qv8-2p9j-2685"
+    },
+    {
+      "pkg": "undici",
+      "id": "1243079",
+      "severity": "moderate",
+      "issue": "undici vulnerable to Denial of Service via unbounded memory in the EventSource parser",
+      "url": "https://github.com/advisories/GHSA-4qv8-2p9j-2685"
+    },
+    {
+      "pkg": "undici",
+      "id": "1243081",
+      "severity": "moderate",
+      "issue": "undici vulnerable to Subresource Integrity bypass via non-lowercase algorithm tokens",
+      "url": "https://github.com/advisories/GHSA-f72v-6w45-q472"
+    },
+    {
+      "pkg": "undici",
+      "id": "1243113",
+      "severity": "high",
+      "issue": "undici vulnerable to Denial of Service via unhandled error on excessive content-encodings",
+      "url": "https://github.com/advisories/GHSA-xjj6-f33q-929c"
+    },
+    {
+      "pkg": "undici",
+      "id": "1243114",
+      "severity": "high",
+      "issue": "undici vulnerable to Denial of Service via unhandled error on excessive content-encodings",
+      "url": "https://github.com/advisories/GHSA-xjj6-f33q-929c"
+    },
+    {
+      "pkg": "undici",
+      "id": "1243473",
+      "severity": "high",
+      "issue": "undici vulnerable to cache poisoning and cross-user disclosure via cross-origin redirects",
+      "url": "https://github.com/advisories/GHSA-4w7w-5xrc-9h26"
+    },
+    {
+      "pkg": "undici",
+      "id": "1243475",
+      "severity": "high",
+      "issue": "undici vulnerable to TLS certificate validation bypass via dropped tls options in Agent",
+      "url": "https://github.com/advisories/GHSA-2m5v-pch6-74hx"
+    },
+    {
+      "pkg": "undici",
+      "id": "1243476",
+      "severity": "high",
+      "issue": "undici vulnerable to TLS certificate validation bypass via dropped tls options in Agent",
+      "url": "https://github.com/advisories/GHSA-2m5v-pch6-74hx"
+    },
+    {
+      "pkg": "undici",
+      "id": "1243478",
+      "severity": "high",
+      "issue": "undici vulnerable to Denial of Service via TLS 1.2 certificate-changing renegotiation",
+      "url": "https://github.com/advisories/GHSA-qrxm-fqhp-jwvm"
+    },
+    {
+      "pkg": "undici",
+      "id": "1243479",
+      "severity": "high",
+      "issue": "undici vulnerable to Denial of Service via TLS 1.2 certificate-changing renegotiation",
+      "url": "https://github.com/advisories/GHSA-qrxm-fqhp-jwvm"
+    },
+    {
+      "pkg": "undici",
+      "id": "1243481",
+      "severity": "moderate",
+      "issue": "undici WebSocket client vulnerable to Denial of Service via unbounded automatic PONG buffering",
+      "url": "https://github.com/advisories/GHSA-9fm3-97px-rjf6"
+    },
+    {
+      "pkg": "undici",
+      "id": "1243482",
+      "severity": "moderate",
+      "issue": "undici WebSocket client vulnerable to Denial of Service via unbounded automatic PONG buffering",
+      "url": "https://github.com/advisories/GHSA-9fm3-97px-rjf6"
+    },
+    {
+      "pkg": "undici",
+      "id": "1243484",
+      "severity": "moderate",
+      "issue": "undici vulnerable to Denial of Service via unhandled exception in the decompress interceptor",
+      "url": "https://github.com/advisories/GHSA-55wc-3pg8-jfw6"
+    },
+    {
+      "pkg": "vite",
+      "id": "1242623",
+      "severity": "moderate",
+      "issue": "launch-editor: escapeCmdArgs() omits % escaping on Windows",
+      "url": "https://github.com/advisories/GHSA-698v-4r3x-3vcv"
+    },
+    {
+      "pkg": "vite",
+      "id": "1242652",
+      "severity": "moderate",
+      "issue": "launch-editor: Editor CLI flag misinterpretation causing arbitrary command execution for some editors",
+      "url": "https://github.com/advisories/GHSA-r825-w8mm-5pxw"
+    },
+    {
+      "pkg": "vite",
+      "id": "1242659",
+      "severity": "high",
+      "issue": "launch-editor: `fs.existsSync()` existence check can be bypassed on Windows",
+      "url": "https://github.com/advisories/GHSA-587h-7wmj-h5pm"
+    },
+    {
+      "pkg": "vite",
+      "id": "1242725",
+      "severity": "low",
+      "issue": "Vite: Cross origin script execution through Vite custom middleware",
+      "url": "https://github.com/advisories/GHSA-9jrq-w75r-8gcw"
+    },
+    {
+      "pkg": "vite",
+      "id": "1242731",
+      "severity": "moderate",
+      "issue": "Vite: Files outside `server.fs.allow` could be served when project paths match system paths on non-Windows machine",
+      "url": "https://github.com/advisories/GHSA-rq7h-c2jc-7f22"
+    },
+    {
       "pkg": "vitest",
       "id": "1193683",
       "severity": "moderate",
@@ -1274,6 +1589,13 @@
       "severity": "moderate",
       "issue": "Use @exodus/bytes instead for a more spec-conformant and faster implementation",
       "url": ""
+    },
+    {
+      "pkg": "zod",
+      "id": "1243066",
+      "severity": "high",
+      "issue": "Zod can exhaust memory while validating oversized constrained collections",
+      "url": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5"
     }
   ]
 }
