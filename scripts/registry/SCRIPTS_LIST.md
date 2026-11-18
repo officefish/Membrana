@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-10-08 |
-| Head SHA | 869885fa65c62876e5634dd24e4b953daa8f2332 |
+| Date | 2026-11-18 |
+| Head SHA | 51d4ba98c9254e50bcb0d2dac2bddef11566d2ae |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1287 |
-| Yarn scripts (package.json) | 477 |
-| Yarn → `scripts/` | 423 |
+| Code files under `scripts/` | 1302 |
+| Yarn scripts (package.json) | 480 |
+| Yarn → `scripts/` | 426 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 947 |
+| Code files without yarn ref | 959 |
 
-## Yarn → scripts/ (423)
+## Yarn → scripts/ (426)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -428,12 +428,15 @@
 - `vds:run` → `scripts/deploy-run.mjs`, `scripts/_ssh-office-exec.mjs`
 - `verify:adr-registry` → `scripts/verify-adr-registry.mjs`
 - `verify:branch-protection` → `scripts/verify-branch-protection.mjs`
+- `verify:build-order` → `scripts/verify-build-order-deps.mjs`
 - `verify:declared-imports` → `scripts/verify-declared-imports.mjs`
 - `verify:dist-fresh` → `scripts/verify-dist-fresh.mjs`
 - `verify:encoding` → `scripts/verify-encoding.mjs`
 - `verify:image-workspace-deps` → `scripts/verify-image-workspace-deps.mjs`
 - `verify:install-state` → `scripts/require-install-state.mjs`
+- `verify:secrets-freshness` → `scripts/verify-secrets-freshness.mjs`
 - `verify:tailwind-coverage` → `scripts/generate-tailwind-configs.mjs`
+- `verify:task-writes` → `scripts/verify-task-write-targets.mjs`
 - `verify:voices` → `scripts/verify-voices.mjs`
 - `verify:wire-sync` → `scripts/verify-wire-sync.mjs`
 - `vitest:gate` → `scripts/vitest-gate.mjs`
@@ -449,7 +452,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (947)
+## Code files without yarn ref (959)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -714,6 +717,7 @@
 - `scripts/lib/bridge-debts.mjs`
 - `scripts/lib/bridge-room.mjs`
 - `scripts/lib/bridge-toolkit.mjs`
+- `scripts/lib/build-order-deps.mjs`
 - `scripts/lib/cabinet-catalog-client.mjs`
 - `scripts/lib/cabinet-mp2-smoke.mjs`
 - `scripts/lib/calibration-preset.mjs`
@@ -781,6 +785,8 @@
 - `scripts/lib/dreams-select.mjs`
 - `scripts/lib/dreams-tick.mjs`
 - `scripts/lib/drift-digest-section.mjs`
+- `scripts/lib/evening-canon-changes.mjs`
+- `scripts/lib/evening-canon-changes.test.mjs`
 - `scripts/lib/evening-gates.mjs`
 - `scripts/lib/evidence-index.mjs`
 - `scripts/lib/evidence-inventory.mjs`
@@ -799,6 +805,8 @@
 - `scripts/lib/execution-trace/stubs/stub-trace-corpus.mjs`
 - `scripts/lib/execution-trace/trace-corpus.mjs`
 - `scripts/lib/execution-trace/trace-kinds.mjs`
+- `scripts/lib/feedback-claims/absence.mjs`
+- `scripts/lib/feedback-claims/absence.test.mjs`
 - `scripts/lib/feedback-claims/atoms.mjs`
 - `scripts/lib/feedback-claims/atoms.test.mjs`
 - `scripts/lib/feedback-claims/verdict.mjs`
@@ -974,6 +982,7 @@
 - `scripts/lib/scripts-workshop.mjs`
 - `scripts/lib/scripts-workshop.test.mjs`
 - `scripts/lib/secret-redact.mjs`
+- `scripts/lib/secrets-freshness.mjs`
 - `scripts/lib/session-floor-render.mjs`
 - `scripts/lib/session-floor-validate.mjs`
 - `scripts/lib/session-floor.mjs`
@@ -1060,6 +1069,7 @@
 - `scripts/lib/task-tools.mjs`
 - `scripts/lib/task-validity-links.mjs`
 - `scripts/lib/task-validity.mjs`
+- `scripts/lib/task-write-targets.mjs`
 - `scripts/lib/tasks-audit.mjs`
 - `scripts/lib/tasks-decompose.mjs`
 - `scripts/lib/tasks-readme-engine.mjs`
@@ -1079,6 +1089,8 @@
 - `scripts/lib/transcript.mjs`
 - `scripts/lib/truth-graph.mjs`
 - `scripts/lib/u10-workspace-prod-smoke.mjs`
+- `scripts/lib/unpushed-count.mjs`
+- `scripts/lib/unpushed-count.test.mjs`
 - `scripts/lib/usercase-document.mjs`
 - `scripts/lib/usercase-embedded-write.mjs`
 - `scripts/lib/usercase-manifest.mjs`
@@ -1375,11 +1387,14 @@
 - `scripts/vdr-blind-corpus.test.mjs`
 - `scripts/vdr-labels-merge.test.mjs`
 - `scripts/verify-adr-registry.test.mjs`
+- `scripts/verify-build-order-deps.test.mjs`
 - `scripts/verify-encoding.test.mjs`
 - `scripts/verify-image-runtime-reads.test.mjs`
 - `scripts/verify-image-workspace-deps.test.mjs`
 - `scripts/verify-mcp-bootstrap.test.mjs`
 - `scripts/verify-mintlify-docs.test.mjs`
+- `scripts/verify-secrets-freshness.test.mjs`
+- `scripts/verify-task-write-targets.test.mjs`
 - `scripts/verify-usercase-write-paths.mjs`
 - `scripts/verify-void-barriers.test.mjs`
 - `scripts/verify-wire-sync.test.mjs`
@@ -1409,7 +1424,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1287)
+## All code files (1302)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1822,6 +1837,7 @@
 - `scripts/lib/bridge-debts.mjs`
 - `scripts/lib/bridge-room.mjs`
 - `scripts/lib/bridge-toolkit.mjs`
+- `scripts/lib/build-order-deps.mjs`
 - `scripts/lib/cabinet-catalog-client.mjs`
 - `scripts/lib/cabinet-mp2-smoke.mjs`
 - `scripts/lib/calibration-preset.mjs`
@@ -1889,6 +1905,8 @@
 - `scripts/lib/dreams-select.mjs`
 - `scripts/lib/dreams-tick.mjs`
 - `scripts/lib/drift-digest-section.mjs`
+- `scripts/lib/evening-canon-changes.mjs`
+- `scripts/lib/evening-canon-changes.test.mjs`
 - `scripts/lib/evening-gates.mjs`
 - `scripts/lib/evidence-index.mjs`
 - `scripts/lib/evidence-inventory.mjs`
@@ -1907,6 +1925,8 @@
 - `scripts/lib/execution-trace/stubs/stub-trace-corpus.mjs`
 - `scripts/lib/execution-trace/trace-corpus.mjs`
 - `scripts/lib/execution-trace/trace-kinds.mjs`
+- `scripts/lib/feedback-claims/absence.mjs`
+- `scripts/lib/feedback-claims/absence.test.mjs`
 - `scripts/lib/feedback-claims/atoms.mjs`
 - `scripts/lib/feedback-claims/atoms.test.mjs`
 - `scripts/lib/feedback-claims/verdict.mjs`
@@ -2082,6 +2102,7 @@
 - `scripts/lib/scripts-workshop.mjs`
 - `scripts/lib/scripts-workshop.test.mjs`
 - `scripts/lib/secret-redact.mjs`
+- `scripts/lib/secrets-freshness.mjs`
 - `scripts/lib/session-floor-render.mjs`
 - `scripts/lib/session-floor-validate.mjs`
 - `scripts/lib/session-floor.mjs`
@@ -2168,6 +2189,7 @@
 - `scripts/lib/task-tools.mjs`
 - `scripts/lib/task-validity-links.mjs`
 - `scripts/lib/task-validity.mjs`
+- `scripts/lib/task-write-targets.mjs`
 - `scripts/lib/tasks-audit.mjs`
 - `scripts/lib/tasks-decompose.mjs`
 - `scripts/lib/tasks-readme-engine.mjs`
@@ -2187,6 +2209,8 @@
 - `scripts/lib/transcript.mjs`
 - `scripts/lib/truth-graph.mjs`
 - `scripts/lib/u10-workspace-prod-smoke.mjs`
+- `scripts/lib/unpushed-count.mjs`
+- `scripts/lib/unpushed-count.test.mjs`
 - `scripts/lib/usercase-document.mjs`
 - `scripts/lib/usercase-embedded-write.mjs`
 - `scripts/lib/usercase-manifest.mjs`
@@ -2650,6 +2674,8 @@
 - `scripts/verify-adr-registry.mjs`
 - `scripts/verify-adr-registry.test.mjs`
 - `scripts/verify-branch-protection.mjs`
+- `scripts/verify-build-order-deps.mjs`
+- `scripts/verify-build-order-deps.test.mjs`
 - `scripts/verify-client-catalog.mjs`
 - `scripts/verify-declared-imports.mjs`
 - `scripts/verify-dist-fresh.mjs`
@@ -2664,7 +2690,11 @@
 - `scripts/verify-mcp-bootstrap.test.mjs`
 - `scripts/verify-mintlify-docs.mjs`
 - `scripts/verify-mintlify-docs.test.mjs`
+- `scripts/verify-secrets-freshness.mjs`
+- `scripts/verify-secrets-freshness.test.mjs`
 - `scripts/verify-skill-mirrors.mjs`
+- `scripts/verify-task-write-targets.mjs`
+- `scripts/verify-task-write-targets.test.mjs`
 - `scripts/verify-usercase-kinds.mjs`
 - `scripts/verify-usercase-layout.mjs`
 - `scripts/verify-usercase-prerun.mjs`
