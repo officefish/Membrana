@@ -6,7 +6,7 @@
  * ожидается); строка "false" как false → красный; снять ApiTokenGuard → красный; второй маршрут под
  * префиксом → красный; `now` из тела → красный (сервис получает серверное время).
  *
- * #2632 g4a: двери чтения журнала — ровно три GET под тем же префиксом и охранником (класс, не метод);
+ * #2632 g4a + g4b: двери чтения журнала — ровно пять GET под тем же префиксом и охранником (класс, не метод);
  * POST по-прежнему один; `limit` и `:id` разбираются до БД; незнакомый прогон — 404.
  */
 import 'reflect-metadata';
@@ -31,8 +31,9 @@ function make() {
   const prisma = {
     coldArchivePurgeRun: { findMany, findUnique: vi.fn(async () => null), findFirst: vi.fn(async () => null) },
     coldArchivePurgeJob: { findMany },
+    downgradeArchiveBatch: { findMany },
   };
-  return { controller: new DowngradeArchivePurgeController(service as never, prisma as never), service, prisma, findMany };
+  return { controller: new DowngradeArchivePurgeController(service as never, prisma as never, { resolvePath: (r: string) => r } as never), service, prisma, findMany };
 }
 
 describe('P25: dryRun в теле обязателен и булев', () => {
@@ -59,34 +60,39 @@ describe('P25: dryRun в теле обязателен и булев', () => {
   });
 });
 
-describe('g4a: двери чтения журнала — параметры до БД, 404 на незнакомый прогон', () => {
+describe('g4a + g4b: двери чтения журнала — параметры до БД, 404 на незнакомый прогон', () => {
   it.each(['0', '101', '-1', '2.5', 'abc', '1e2'])('?limit=%s → 400 invalid_limit, БД не спрошена', async (limit) => {
     const { controller, findMany } = make();
-    const err = await controller.runs(limit).catch((e: unknown) => e);
-    expect((err as BadRequestException).getResponse()).toMatchObject({ code: 'invalid_limit' });
+    for (const call of [() => controller.runs(limit), () => controller.schedule(limit)]) {
+      const err = await call().catch((e: unknown) => e);
+      expect((err as BadRequestException).getResponse()).toMatchObject({ code: 'invalid_limit' });
+    }
     expect(findMany).toHaveBeenCalledTimes(0);
   });
 
-  it('limit пустой → 20, иначе как есть; журнал читается с этим take', async () => {
+  it('limit пустой → 20, иначе как есть; журнал и график читаются с этим take', async () => {
     const { controller, findMany } = make();
     expect(parseLimit(undefined)).toBe(PURGE_LIST_DEFAULT_LIMIT);
     await controller.runs(undefined);
-    await controller.runs('7');
+    await controller.schedule('7');
     expect((findMany.mock.calls as unknown as [{ take: number }][]).map((c) => c[0].take)).toEqual([20, 7]);
   });
 
-  it(':id не uuid → 400 invalid_run_id; незнакомый uuid → 404 run_not_found', async () => {
+  it(':id не uuid → 400 invalid_run_id; незнакомый uuid → 404 run_not_found (run и verify)', async () => {
     const { controller } = make();
-    for (const id of ['../x', '1']) {
-      expect(((await controller.run(id).catch((e: unknown) => e)) as BadRequestException).getResponse()).toMatchObject({ code: 'invalid_run_id' });
+    for (const call of [() => controller.run('../x'), () => controller.verify('1')]) {
+      expect(((await call().catch((e: unknown) => e)) as BadRequestException).getResponse()).toMatchObject({ code: 'invalid_run_id' });
     }
-    const err = await controller.run('00000000-0000-4000-8000-000000000001').catch((e: unknown) => e);
-    expect(err).toBeInstanceOf(NotFoundException);
-    expect((err as NotFoundException).getResponse()).toMatchObject({ code: 'run_not_found' });
+    const id = '00000000-0000-4000-8000-000000000001';
+    for (const call of [() => controller.run(id), () => controller.verify(id)]) {
+      const err = await call().catch((e: unknown) => e);
+      expect(err).toBeInstanceOf(NotFoundException);
+      expect((err as NotFoundException).getResponse()).toMatchObject({ code: 'run_not_found' });
+    }
   });
 });
 
-describe('инвентарь двери: POST purge-expired и три GET журнала под v1/internal/downgrade-archive, охрана ApiTokenGuard', () => {
+describe('инвентарь двери: POST purge-expired и пять GET журнала под v1/internal/downgrade-archive, охрана ApiTokenGuard', () => {
   it('контракт маршрутов и охраны', () => {
     const proto = DowngradeArchivePurgeController.prototype as Record<string, unknown>;
     const handlers = Object.getOwnPropertyNames(proto).filter(
@@ -103,9 +109,11 @@ describe('инвентарь двери: POST purge-expired и три GET жур
       { method: 'POST', path: 'purge-expired' },
       { method: 'GET', path: 'purge-runs' },
       { method: 'GET', path: 'purge-runs/:id' },
+      { method: 'GET', path: 'purge-runs/:id/verify' },
       { method: 'GET', path: 'purge-pulse' },
+      { method: 'GET', path: 'purge-schedule' },
     ]);
-    // охранник — на классе и покрывает все маршруты; методы его не переопределяют
+    // охранник — на классе и покрывает все шесть маршрутов; методы его не переопределяют
     for (const name of handlers) expect(Reflect.getMetadata(GUARDS_METADATA, proto[name] as object)).toBeUndefined();
     expect(Reflect.getMetadata(GUARDS_METADATA, DowngradeArchivePurgeController)).toEqual([ApiTokenGuard]);
   });
