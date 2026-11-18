@@ -7,16 +7,21 @@
 # шаг делал `git push origin HEAD:main` и с 28.09 каждую неделю падал на GH006: план
 # генерировался и выбрасывался. Права на прямой пуш боту НЕ даются — защита остаётся целой.
 #
-# Обязательные проверки у заявки бота: PR, открытый под GITHUB_TOKEN, НЕ запускает
-# pull_request-прогоны (правило GitHub против рекурсии). Чтобы заявка получила scan и
-# «Lint, typecheck, test, build», человек закрывает и переоткрывает её (или пушит в ветку
-# свой коммит) — события идут уже от человека, и CI стартует; review/teamlead — как у
-# любой заявки: `yarn review:gate --pr <N> --ensure --publish`. Отдельного токена/приложения
-# для Actions в репозитории нет (ночные PR охоты создаёт офис под токеном владельца).
+# Обязательные проверки у заявки бота: пуш и PR, сделанные под GITHUB_TOKEN, НЕ запускают
+# push/pull_request-прогоны (правило GitHub против рекурсии). Поэтому ветка пушится и PR
+# открывается под секретом WEEKLY_PLAN_TOKEN (fine-grained PAT владельца: Contents RW +
+# Pull requests RW, заведён 18.11) — события идут от владельца токена, scan и
+# «Lint, typecheck, test, build» стартуют сами, переоткрывать заявку больше НЕ нужно.
+# review/teamlead — как у любой заявки: `yarn review:gate --pr <N> --ensure --publish`.
 #
-# Предусловие: Settings → Actions → General → «Allow GitHub Actions to create and approve
-# pull requests» включено, иначе `gh pr create` откажет (шаг падает громко; ветка с планом
-# к этому моменту уже лежит в origin, план не теряется).
+# Фолбэк: секрета нет (форк, удалён) — работаем под GITHUB_TOKEN, как раньше; заявка
+# создаётся, но CI сам не стартует — об этом строка в Summary и в теле PR (тогда закрыть
+# и переоткрыть заявку руками). Истёкший/отозванный PAT при НЕпустом секрете фолбэком не
+# ловится: checkout или push упадут громко — продлить токен.
+#
+# Для фолбэка нужно Settings → Actions → General → «Allow GitHub Actions to create and
+# approve pull requests» (включено 18.11), иначе `gh pr create` под GITHUB_TOKEN откажет
+# (шаг падает громко; ветка с планом к этому моменту уже в origin, план не теряется).
 #
 # Расписание: понедельник 07:00 UTC — после того, как `Scheduled CI` проверил здоровье main (06:00 UTC).
 # Ручной запуск: вкладка Actions → Weekly strategic plan → Run workflow.
@@ -49,8 +54,8 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write # push ветки bot/weekly-plan-* (не main: main защищена)
-  pull-requests: write # gh pr create
+  contents: write # фолбэк GITHUB_TOKEN: push ветки bot/weekly-plan-* (не main: main защищена)
+  pull-requests: write # фолбэк GITHUB_TOKEN: gh pr create
 
 jobs:
   plan-week:
@@ -58,13 +63,27 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      - name: Resolve PR token
+        env:
+          WEEKLY_PLAN_TOKEN: ${{ secrets.WEEKLY_PLAN_TOKEN }}
+        run: |
+          # Секрет нельзя проверить в `if:` — проверяем значение в окружении шага.
+          if [ -n "${WEEKLY_PLAN_TOKEN:-}" ]; then
+            echo "PLAN_TOKEN_SOURCE=WEEKLY_PLAN_TOKEN" >> "$GITHUB_ENV"
+          else
+            echo "::warning::Секрет WEEKLY_PLAN_TOKEN не задан — фолбэк на GITHUB_TOKEN: заявка CI сама не запустит."
+            echo "PLAN_TOKEN_SOURCE=GITHUB_TOKEN" >> "$GITHUB_ENV"
+          fi
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           # `_strategic-plan.mjs` зовёт `git log --since="7 days ago"` —
           # с дефолтным fetch-depth: 1 это вернуло бы один коммит. Нужна полная история.
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # Токен checkout сохраняется в git-конфиге, им же идёт `git push` ветки:
+          # пуш под PAT запускает push-прогоны, под GITHUB_TOKEN — нет.
+          token: ${{ secrets.WEEKLY_PLAN_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -116,7 +135,8 @@ jobs:
 
       - name: Open PR with the plan if changed
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # PR под PAT сам запускает pull_request-прогоны (обязательные проверки).
+          GH_TOKEN: ${{ secrets.WEEKLY_PLAN_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           if [ -z "$(git status --porcelain docs/STRATEGIC_PLAN_WEEK.md)" ]; then
@@ -139,9 +159,13 @@ jobs:
           {
             echo "Еженедельный стратегический план (\`yarn plan:week\`), прогон ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}."
             echo ""
-            echo "Заявка открыта ботом под GITHUB_TOKEN — CI сам НЕ стартует."
-            echo "Обязательные проверки: закрыть и переоткрыть заявку (scan, «Lint, typecheck, test, build»),"
-            echo "затем \`yarn review:gate --pr <N> --ensure --publish\` (review/teamlead)."
+            if [ "${PLAN_TOKEN_SOURCE:-}" = "WEEKLY_PLAN_TOKEN" ]; then
+              echo "Заявка открыта под WEEKLY_PLAN_TOKEN — scan и «Lint, typecheck, test, build» стартуют сами."
+            else
+              echo "Заявка открыта под GITHUB_TOKEN (секрета WEEKLY_PLAN_TOKEN нет) — CI сам НЕ стартует:"
+              echo "закрыть и переоткрыть заявку (scan, «Lint, typecheck, test, build»)."
+            fi
+            echo "review/teamlead: \`yarn review:gate --pr <N> --ensure --publish\`."
           } > "$body"
           if ! url="$(gh pr create --base main --head "$branch" \
             --title "docs(plan): еженедельный стратегический план ${day}" \
@@ -165,8 +189,17 @@ jobs:
             echo "- Источник цели: \`docs/WHITE_PAPER.md\`."
             echo "- Период: последние 7 дней (если не переопределён через \`since\`)."
             echo "- Выход: \`docs/STRATEGIC_PLAN_WEEK.md\`."
+            if [ "${PLAN_TOKEN_SOURCE:-}" = "GITHUB_TOKEN" ]; then
+              echo "- Токен: ФОЛБЭК на GITHUB_TOKEN — секрет WEEKLY_PLAN_TOKEN не задан; PR бота обязательные проверки сам не запустит."
+            else
+              echo "- Токен: ${PLAN_TOKEN_SOURCE:-не определён (шаг Resolve PR token не дошёл)}."
+            fi
             if [ -n "${PLAN_PR:-}" ]; then
-              echo "- Результат: заявка ${PLAN_PR} (CI — переоткрытием, см. тело PR)."
+              if [ "${PLAN_TOKEN_SOURCE:-}" = "WEEKLY_PLAN_TOKEN" ]; then
+                echo "- Результат: заявка ${PLAN_PR} (под WEEKLY_PLAN_TOKEN — CI стартует сам)."
+              else
+                echo "- Результат: заявка ${PLAN_PR} (под GITHUB_TOKEN — CI сам не стартует, переоткрыть заявку)."
+              fi
             elif [ "${PLAN_STATE:-}" = "unchanged" ]; then
               echo "- Результат: план не изменился — заявка не нужна."
             elif [ "${PLAN_STATE:-}" = "pr-failed" ]; then
