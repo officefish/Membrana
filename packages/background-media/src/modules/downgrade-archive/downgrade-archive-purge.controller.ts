@@ -10,13 +10,20 @@
  * `now` телом нельзя (иначе можно было бы убрать неистёкшее).
  *
  * Ответ 200 явно (прецедент 201/200 двери #2393); форма — `PurgeReport` сервиса, даты строками в JSON.
+ *
+ * #2632 g4a — двери ЧТЕНИЯ журнала под тем же охранником (служебные, для панели office; кнопок удаления
+ * нет): `GET purge-runs?limit`, `GET purge-runs/:id`, `GET purge-pulse`. Наружу — счётчики, id и
+ * булевы признаки, без адресов файлов. Незнакомый прогон — 404 `run_not_found`.
  */
-import { BadRequestException, Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
-import { ApiHeader, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, NotFoundException, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiHeader, ApiOkResponse, ApiOperation, ApiQuery, ApiSecurity, ApiTags } from '@nestjs/swagger';
 
 import { ApiTokenGuard } from '../../common/guards/api-token.guard';
 import { API_TOKEN_SECURITY } from '../../common/swagger/openapi.constants';
+import { PrismaService } from '../../prisma/prisma.service';
 import { DowngradeArchivePurgeService, type PurgeReport } from './downgrade-archive-purge.service';
+import { PurgePulseDto, PurgeRunDetailDto, PurgeRunSummaryDto, parseLimit, parseRunId } from './purge-journal.dto';
+import { getRun, listRuns, purgePulse } from './purge-journal-read';
 
 export const PURGE_ROUTE_PREFIX = 'v1/internal/downgrade-archive';
 
@@ -39,7 +46,10 @@ export function parseDryRun(body: PurgeExpiredDto | undefined): boolean {
 @ApiSecurity(API_TOKEN_SECURITY)
 @ApiHeader({ name: 'X-Membrana-Token', required: true })
 export class DowngradeArchivePurgeController {
-  constructor(private readonly purge: DowngradeArchivePurgeService) {}
+  constructor(
+    private readonly purge: DowngradeArchivePurgeService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   @Post('purge-expired')
   @HttpCode(HttpStatus.OK)
@@ -49,4 +59,32 @@ export class DowngradeArchivePurgeController {
     const dryRun = parseDryRun(body);
     return this.purge.purgeExpired(new Date(), { dryRun });
   }
+
+  @Get('purge-runs')
+  @ApiOperation({ summary: 'Cold-archive purge journal: latest runs (counters only, no file paths)' })
+  @ApiQuery({ name: 'limit', required: false, description: 'integer 1..100, default 20' })
+  @ApiOkResponse({ type: [PurgeRunSummaryDto] })
+  async runs(@Query('limit') limit?: string) {
+    return listRuns(this.prisma, parseLimit(limit));
+  }
+
+  @Get('purge-runs/:id')
+  @ApiOperation({ summary: 'One purge run with its jobs (path counts and outcome counts, no file paths)' })
+  @ApiOkResponse({ type: PurgeRunDetailDto })
+  async run(@Param('id') id: string) {
+    return found(await getRun(this.prisma, parseRunId(id)));
+  }
+
+  @Get('purge-pulse')
+  @ApiOperation({ summary: 'Last finished and last succeeded purge run' })
+  @ApiOkResponse({ type: PurgePulseDto })
+  async pulse() {
+    return purgePulse(this.prisma);
+  }
+
+}
+
+function found<T>(value: T | null): T {
+  if (value === null) throw new NotFoundException({ code: 'run_not_found', detail: 'no purge run with this id' });
+  return value;
 }
