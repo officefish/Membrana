@@ -27,27 +27,13 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const TURBO_JSON = join(ROOT, 'turbo.json');
 
 /**
- * Известный долг — второй шаг #2660 (решение владельца 18.11: сначала 34 пакета без смены
- * поведения, приложения — отдельным шагом после CI).
- *
- * У этих приложений `typecheck` = `tsc -b` — та же команда, что в начале `build`, и обе
- * пишут `.tsbuildinfo.app`/`.node` одновременно. Лечение (`tsc -p … --noEmit
- * --tsBuildInfoFile …` на каждый проект) МЕНЯЕТ поведение: `-p` не пересобирает соседей по
- * ссылкам, а читает их готовый dist. Поэтому — отдельным PR, после зелёного CI первого шага.
- * Находки по ним печатаются как долг и зуб не красят; другие пакеты и другие пары задач
- * исключение не накрывает. Шаг 2 сделан — строку снять: исключение без находок зуб считает
- * устаревшим и красит.
+ * Известный долг. Пуст с шага 2 #2660 (18.11): у четырёх приложений (cabinet, client, panel,
+ * Research-Tree) `typecheck` больше не `tsc -b`, а `tsc -p <проект> --noEmit
+ * --tsBuildInfoFile ./.tsbuildinfo.typecheck.<app|node>` на каждый проект — buildinfo сборки
+ * не делит. Новое исключение заводится строкой `{ dir, tasks, reason, issue }`; исключение без
+ * находок зуб считает устаревшим и красит.
  */
-export const KNOWN_DEBT = Object.freeze(
-  ['apps/cabinet', 'apps/client', 'apps/panel', 'apps/demos/Research-Tree'].map((dir) =>
-    Object.freeze({
-      dir,
-      tasks: ['build', 'typecheck'],
-      reason: 'typecheck = tsc -b, как в build: общий buildinfo приложения; второй шаг #2660',
-      issue: 'https://github.com/officefish/Membrana/issues/2660',
-    }),
-  ),
-);
+export const KNOWN_DEBT = Object.freeze([]);
 
 function configReader(abs) {
   return (rel) => {
@@ -83,7 +69,7 @@ function main(argv) {
   }
   const debtDirs = [...new Set(exempted.map((f) => f.dir))];
   if (debtDirs.length > 0) {
-    console.log(`  известный долг (не красит, #2660 шаг 2): ${debtDirs.join(', ')}`);
+    console.log(`  известный долг (не красит): ${debtDirs.join(', ')}`);
   }
   for (const d of stale) {
     console.error(`  ✗ исключение устарело: ${d.dir} (${d.tasks.join('/')}) находок больше нет — снять строку из KNOWN_DEBT`);
