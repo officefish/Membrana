@@ -15,6 +15,12 @@
  * `media-snapshot.client.ts`). Наружу — через прокси-обвязку `lib/proxy-fetch` (#1449); подменный
  * транспорт — `@Optional @Inject(COLD_ARCHIVE_SWEEP_FETCH)` (тесты).
  *
+ * #2632 g5a — чтение журнала уборщика для панели владельца: `runs`, `run`, `schedule`, `verify` — те же
+ * исходы, только `GET` к дверям media g4a/g4b (`purge-runs`, `purge-runs/:id`, `purge-schedule`,
+ * `purge-runs/:id/verify`). Тело ответа media отдаётся как есть: адресов файлов в нём нет по
+ * построению дверей. `purgeExpired` принимает необязательный `trigger`: передан — уходит в тело, не
+ * передан (cron) — тела `{ dryRun }` как раньше, умолчание media = `cron`.
+ *
  * СЕКРЕТ: токен уходит только заголовком `X-Membrana-Token`; в исходы, лог и тексты — никогда.
  * Сообщения сети санируются от URL/host/IP тем же приёмом, что у клиента кабинета (ревью #2596 P1).
  */
@@ -57,10 +63,24 @@ export const SWEEP_TIMEOUT_MS = 60_000;
 
 export const COLD_ARCHIVE_SWEEP_FETCH = 'COLD_ARCHIVE_SWEEP_FETCH';
 
+/** Префикс дверей чтения журнала media (g4a/g4b). */
+export const PURGE_JOURNAL_PATH = '/v1/internal/downgrade-archive';
+
+/** Чтение журнала — короткие запросы к БД (аудит — плюс stat по снимку); 15 с — потолок. */
+export const JOURNAL_TIMEOUT_MS = 15_000;
+
+/** Кто будит уборку — словарь media (`purge-journal.vocabulary.ts`). */
+export type SweepTrigger = 'cron' | 'panel' | 'manual';
+
 export type SweepFetch = (
   url: string,
-  init: { method: 'POST'; headers: Record<string, string>; body: string; signal: AbortSignal },
+  init: { method: 'POST' | 'GET'; headers: Record<string, string>; body?: string; signal: AbortSignal },
 ) => Promise<{ status: number; text(): Promise<string> }>;
+
+/** Исход чтения журнала: те же отказы, что у уборки; `body` — ответ media как есть. */
+export type JournalOutcome<T = unknown> =
+  | { readonly kind: 'ok'; readonly body: T }
+  | Exclude<SweepOutcome, { readonly kind: 'ok' }>;
 
 /** Адрес и ключ media из конфига, или имя недостающей переменной (без значений). */
 export function resolveMediaPair(config: Pick<AppConfig, 'MEDIA_API_URL' | 'MEDIA_API_TOKEN' | 'API_INTERNAL_TOKEN'>):
@@ -105,7 +125,7 @@ export class ColdArchiveSweepClient {
   }
 
   /** Один вызов двери. `dryRun` в теле всегда явный — умолчания «боевой» у двери нет (P25 плана). */
-  async purgeExpired(dryRun: boolean): Promise<SweepOutcome> {
+  async purgeExpired(dryRun: boolean, trigger?: SweepTrigger): Promise<SweepOutcome> {
     const pair = resolveMediaPair(this.config);
     if (!pair.ok) return { kind: 'media-not-configured', missing: pair.missing };
 
@@ -114,7 +134,7 @@ export class ColdArchiveSweepClient {
       res = await this.fetchImpl(`${pair.baseUrl}${PURGE_EXPIRED_PATH}`, {
         method: 'POST',
         headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-Membrana-Token': pair.token },
-        body: JSON.stringify({ dryRun }),
+        body: JSON.stringify(trigger ? { dryRun, trigger } : { dryRun }),
         signal: AbortSignal.timeout(SWEEP_TIMEOUT_MS),
       });
     } catch (error) {
@@ -141,4 +161,51 @@ export class ColdArchiveSweepClient {
       return { kind: 'media-unreachable', detail: 'invalid JSON from media' };
     }
   }
+
+  /** Журнал прогонов: `limit` уходит в media как есть — её разбор отвечает 400 `invalid_limit`. */
+  runs(limit?: string): Promise<JournalOutcome> {
+    return this.journalGet(`/purge-runs${limitQuery(limit)}`);
+  }
+
+  run(runId: string): Promise<JournalOutcome> {
+    return this.journalGet(`/purge-runs/${encodeURIComponent(runId)}`);
+  }
+
+  /** Т5: frozen-партии по сроку. */
+  schedule(limit?: string): Promise<JournalOutcome> {
+    return this.journalGet(`/purge-schedule${limitQuery(limit)}`);
+  }
+
+  /** Т4: аудит прогона сейчас. */
+  verify(runId: string): Promise<JournalOutcome> {
+    return this.journalGet(`/purge-runs/${encodeURIComponent(runId)}/verify`);
+  }
+
+  private async journalGet(path: string): Promise<JournalOutcome> {
+    const pair = resolveMediaPair(this.config);
+    if (!pair.ok) return { kind: 'media-not-configured', missing: pair.missing };
+    let res: Awaited<ReturnType<SweepFetch>>;
+    try {
+      res = await this.fetchImpl(`${pair.baseUrl}${PURGE_JOURNAL_PATH}${path}`, {
+        method: 'GET',
+        headers: { Accept: 'application/json', 'X-Membrana-Token': pair.token },
+        signal: AbortSignal.timeout(JOURNAL_TIMEOUT_MS),
+      });
+    } catch (error) {
+      const detail = sanitizeNetworkDetail(error);
+      this.logger.warn({ detail }, 'cold-archive journal: media unreachable');
+      return { kind: 'media-unreachable', detail };
+    }
+    const text = await res.text().catch(() => '');
+    if (res.status < 200 || res.status >= 300) return { kind: 'media-rejected', status: res.status, code: refusalCodeFrom(text) };
+    try {
+      return { kind: 'ok', body: JSON.parse(text) as unknown };
+    } catch {
+      return { kind: 'media-unreachable', detail: 'invalid JSON from media' };
+    }
+  }
+}
+
+function limitQuery(limit: string | undefined): string {
+  return limit === undefined || limit === '' ? '' : `?limit=${encodeURIComponent(limit)}`;
 }
