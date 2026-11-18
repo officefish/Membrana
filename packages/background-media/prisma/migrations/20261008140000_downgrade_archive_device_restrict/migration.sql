@@ -10,7 +10,8 @@
 --
 -- СНИМОК SQL НАПИСАН РУКОЙ ПО ОБРАЗЦУ СОСЕДЕЙ и сверен с `prisma migrate diff --from-schema-datamodel
 -- <схема ствола> --to-schema-datamodel <схема с Restrict> --script` (без БД) — совпадает построчно.
--- `prisma migrate deploy` на пустую БД в этом блоке НЕ гонялся (демон Docker не запущен).
+-- Сухой прогон 18.11.2026: `prisma migrate deploy` всей цепочки на пустую БД + `migrate diff` = пусто
+-- (протокол — `docs/deploy/MIGRATIONS_DRY_RUN.md`, раздел g1a).
 --
 -- Связь строк архива с партией ("DowngradeArchivedSample_batchId_fkey", NO ACTION) не меняется.
 

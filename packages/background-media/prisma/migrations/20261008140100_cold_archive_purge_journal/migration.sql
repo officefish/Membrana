@@ -5,7 +5,8 @@
 --
 -- СНИМОК SQL НАПИСАН РУКОЙ ПО ОБРАЗЦУ СОСЕДЕЙ и сверен с `prisma migrate diff --from-schema-datamodel
 -- <схема с Restrict> --to-schema-datamodel <схема с журналом> --script` (без БД) — тот же набор
--- операторов. `prisma migrate deploy` на пустую БД в этом блоке НЕ гонялся (демон Docker не запущен).
+-- операторов. Сухой прогон 18.11.2026: `prisma migrate deploy` всей цепочки на пустую БД + `migrate diff`
+-- = пусто (протокол — `docs/deploy/MIGRATIONS_DRY_RUN.md`, раздел g1a).
 --
 -- Литералы enum'ов — `src/modules/downgrade-archive/purge-journal.vocabulary.ts`; равенство словаря,
 -- схемы и этого файла держит `purge-journal.schema.test.ts`.
