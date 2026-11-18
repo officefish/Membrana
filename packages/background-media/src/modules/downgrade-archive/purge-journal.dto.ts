@@ -1,7 +1,7 @@
 /**
  * DTO дверей чтения журнала уборщика (#2632 g4a; формы графика и аудита — g4b): формы ответов для
  * Swagger и разбор параметров. Литералы — словарь `purge-journal.vocabulary.ts`; здесь их только
- * показывают. Адресов файлов в формах нет (см. `purge-journal-read.ts`).
+ * показывают. Адресов файлов в формах нет (см. `purge-journal-read.ts`, `purge-journal-verify.ts`).
  */
 import { BadRequestException } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -72,4 +72,33 @@ export class PurgeRunDetailDto extends PurgeRunSummaryDto {
 export class PurgePulseDto {
   @ApiPropertyOptional({ format: 'date-time', nullable: true }) lastFinishedRunAt!: string | null;
   @ApiPropertyOptional({ format: 'date-time', nullable: true }) lastSucceededRunAt!: string | null;
+}
+
+export class PurgeScheduleRowDto {
+  @ApiProperty({ format: 'uuid' }) batchId!: string;
+  @ApiProperty({ format: 'uuid' }) membraneId!: string;
+  @ApiProperty({ format: 'uuid' }) deviceId!: string;
+  @ApiProperty({ format: 'date-time', description: 'Когда партия станет кандидатом уборки' }) expiresAt!: string;
+  @ApiProperty() frozenBytes!: number;
+}
+
+export class PurgeJobVerificationDto {
+  @ApiProperty({ format: 'uuid' }) jobId!: string;
+  @ApiProperty({ enum: PURGE_JOB_TARGETS }) targetType!: string;
+  @ApiPropertyOptional({ format: 'uuid', nullable: true }) batchId!: string | null;
+  @ApiProperty({ enum: PURGE_JOB_STATUSES }) status!: string;
+  @ApiPropertyOptional({ nullable: true, description: 'Состояние партии сейчас' }) batchState!: string | null;
+  @ApiProperty({ description: 'Строк архива партии сейчас' }) rowsRemaining!: number;
+  @ApiProperty() pathsTotal!: number;
+  @ApiProperty({ description: 'Путей снимка, существующих сейчас' }) pathsRemaining!: number;
+  @ApiProperty({ type: [Boolean], description: 'Существует ли каждый путь снимка сейчас — в порядке снимка, без адресов' }) pathsExistNow!: boolean[];
+  @ApiProperty({ description: 'Партия deleted, строк 0, путей 0' }) clean!: boolean;
+}
+
+export class PurgeRunVerificationDto {
+  @ApiProperty({ format: 'uuid' }) runId!: string;
+  @ApiProperty({ enum: PURGE_RUN_MODES }) mode!: string;
+  @ApiProperty({ enum: PURGE_RUN_STATUSES }) status!: string;
+  @ApiProperty() clean!: boolean;
+  @ApiProperty({ type: [PurgeJobVerificationDto] }) jobs!: PurgeJobVerificationDto[];
 }
