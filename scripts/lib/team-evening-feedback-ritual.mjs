@@ -318,6 +318,7 @@ export function resolveEveningFeedbackOutputPath(opts) {
  *   readonly magistralBlock?: string;
  *   readonly doneWorkBlock?: string;
  *   readonly decisionsBlock?: string;
+ *   readonly canonChangesBlock?: string;
  *   readonly date?: Date;
  * }} p
  */
@@ -346,6 +347,9 @@ export function buildEveningFeedbackUserMessage(p) {
     // ревью и прежнему протоколу, написанным ДО решения. Ратифицированные решения и закрытые
     // прогоны спринтов читаются с их машинных носителей раньше документов дня.
     (p.decisionsBlock ? `${p.decisionsBlock}\n\n---\n\n` : '') +
+    // #2682: канон ствола за 7 дней — ДО документов дня. 05–07.10 команда три вечера писала
+    // «ADR-0031 не положен» при файле в стволе с 05.10: видела дифф дня, а не ствол.
+    (p.canonChangesBlock ? `${p.canonChangesBlock}\n\n---\n\n` : '') +
     // #2438: оговорка о свежести стоит ПЕРЕД документами дня, а не после. Команда должна
     // прочитать «вход датирован утром» до того, как начнёт судить по этому входу.
     (p.freshnessNotice ? `## Свежесть входов\n\n${p.freshnessNotice}\n\n---\n\n` : '') +

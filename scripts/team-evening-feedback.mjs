@@ -39,6 +39,7 @@ import {
 import { gitFsIo, readEntry } from './lib/angelina-adapter.mjs';
 import { collectDoneLedgerBlock } from './lib/review-done-ledger-port.mjs';
 import { collectDecisionsLedger } from './lib/decisions-ledger-port.mjs';
+import { CANON_READAT_KEY, collectCanonChanges } from './lib/evening-canon-changes.mjs';
 import {
   formatRagContextBlock,
   logRagStatus,
@@ -88,12 +89,25 @@ console.error(
     ` (карточка не архивирована у ${decisions.closedSprints.filter((c) => c.stale).length})` +
     (decisions.ok ? '' : `; не прочитано: ${decisions.unreadable.length}`),
 );
-// #2107: readAt — версия+отпечаток каждого входа на момент генерации (форма утра).
-const readAt = buildEveningReadAt(
-  gitFsIo(process.cwd(), { execFileSync, readFileSync, existsSync, join }),
+// #2682: канон (ADR, стратегия, регламенты, нормы агентов), изменённый в СТВОЛЕ за 7 дней —
+// путь, sha, дата. Без него команда судила «чего нет» по диффу дня (05–07.10, ADR-0031).
+const canon = collectCanonChanges({
   today,
-  readEntry,
-);
+  git: (args) => {
+    try {
+      return { ok: true, out: execFileSync('git', args, { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'] }) };
+    } catch (e) {
+      return { ok: false, out: String(e?.stderr ?? e?.message ?? '') };
+    }
+  },
+});
+console.error(`[canon-7d] ${canon.ref} с ${canon.sinceDay}: изменено канон-документов ${canon.entries.length}`);
+// #2107: readAt — версия+отпечаток каждого входа на момент генерации (форма утра).
+// #2682: плюс CANON_CHANGES_7D — вершина ствола, по которой собран список, и отпечаток списка.
+const readAt = {
+  ...buildEveningReadAt(gitFsIo(process.cwd(), { execFileSync, readFileSync, existsSync, join }), today, readEntry),
+  [CANON_READAT_KEY]: canon.readAtEntry,
+};
 // #2438: гарантия readAt доказывает, что входы прочитаны, и молчит о том, свежи ли они
 // относительно мира. Вечер 24.09 судил день по утреннему срезу MAIN_DAY_ISSUE и назвал
 // несделанным четыре вещи, сделанные после полудня. Оговорка печатается и в промпте
@@ -126,6 +140,7 @@ const bodyText = buildEveningFeedbackUserMessage({
   magistralBlock: gate.block,
   doneWorkBlock: doneWork.block,
   decisionsBlock: decisions.block,
+  canonChangesBlock: canon.block,
   freshnessNotice,
   focusNote: cli.focusNote,
 });
