@@ -19,9 +19,9 @@
   "scripts": {
     "build": "tsc -b",
     "dev": "tsc -b --watch",
-    "clean": "rimraf dist .turbo .tsbuildinfo",
+    "clean": "rimraf dist .turbo .tsbuildinfo .tsbuildinfo.typecheck",
     "lint": "eslint src --ext .ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --tsBuildInfoFile ./.tsbuildinfo.typecheck",
     "test": "vitest run --passWithNoTests"
   },
   "devDependencies": {

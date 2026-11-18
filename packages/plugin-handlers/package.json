@@ -18,9 +18,9 @@
   ],
   "scripts": {
     "build": "tsc -b",
-    "clean": "rimraf dist .turbo .tsbuildinfo",
+    "clean": "rimraf dist .turbo .tsbuildinfo .tsbuildinfo.typecheck",
     "lint": "eslint src --ext .ts",
-    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json",
+    "typecheck": "tsc --noEmit --tsBuildInfoFile ./.tsbuildinfo.typecheck && tsc -p tsconfig.test.json",
     "test": "vitest run"
   },
   "dependencies": {

@@ -41,7 +41,7 @@
         "^build"
       ],
       "outputs": [
-        ".tsbuildinfo"
+        ".tsbuildinfo.typecheck*"
       ]
     },
     "test": {
