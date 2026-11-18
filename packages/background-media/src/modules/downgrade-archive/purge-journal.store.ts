@@ -15,7 +15,8 @@
  * оно `pending`/`retry` и срок повтора наступил, ЛИБО `claimed`, но лиз истёк (держатель умер).
  * Чужой невыпущенный лиз не берётся. `leaseUntil` захвата — жетон: `completeJob` пишет исход только
  * при том же жетоне, поэтому держатель, у которого лиз истёк и задание перехватили, чужой исход не
- * затрёт. `attempt` захват не трогает: число попыток считает политика g3a (`decideAfterAttempt`).
+ * затрёт. `attempt` захват не трогает: число попыток считает политика g3a (`decideAfterAttempt`);
+ * исчерпанное по `PURGE_MAX_ATTEMPTS` задание не захватывается.
  *
  * ИДЕМПОТЕНТНОСТЬ ЗАДАНИЯ ПАРТИИ держит `UNIQUE (runId, batchId)`: повтор той же партии в прогоне
  * возвращает уже существующее задание (P2002), второго не создаёт. `orphan_blob` идёт с
@@ -34,6 +35,7 @@ import type {
   PurgeRunStatus,
   PurgeRunTrigger,
 } from './purge-journal.vocabulary';
+import { EMPTY_RUN_COUNTERS, PURGE_MAX_ATTEMPTS, type PurgeRunCounters, type RetryTransition } from './purge-retry-policy';
 
 /** Лиз по умолчанию: заметно больше одной партии (K партий за прогон, g3b), меньше часа метронома. */
 export const PURGE_JOB_LEASE_MS = 10 * 60 * 1000;
@@ -46,23 +48,6 @@ export interface OpenRunInput {
   readonly dryRunSnapshot: boolean;
 }
 
-/** Счётчики прогона — форма `PurgeRunCounters` g3a (`foldRunCounters`). */
-export interface RunCounters {
-  readonly jobsTotal: number;
-  readonly jobsSucceeded: number;
-  readonly jobsFailed: number;
-  readonly jobsDeadLetter: number;
-  readonly bytesFreed: number;
-}
-
-export const ZERO_RUN_COUNTERS: RunCounters = Object.freeze({
-  jobsTotal: 0,
-  jobsSucceeded: 0,
-  jobsFailed: 0,
-  jobsDeadLetter: 0,
-  bytesFreed: 0,
-});
-
 export interface AddJobInput {
   readonly runId: string;
   readonly targetType: PurgeJobTarget;
@@ -71,15 +56,6 @@ export interface AddJobInput {
   readonly deviceId?: string | null;
   /** Снимок путей ДО `markPurged` (порядок live по партии). */
   readonly storageRefs: readonly string[];
-}
-
-/** Итог попытки — форма `RetryTransition` g3a (`decideAfterAttempt`). */
-export interface JobTransition {
-  readonly status: Extract<PurgeJobStatus, 'succeeded' | 'retry' | 'dead_letter'>;
-  readonly attempt: number;
-  readonly nextAttemptAt: Date | null;
-  readonly bytesFreed: number;
-  readonly lastError: string | null;
 }
 
 export interface PurgeRunView {
@@ -91,7 +67,7 @@ export interface PurgeRunView {
   readonly finishedAt: Date | null;
   readonly enabledSnapshot: boolean;
   readonly dryRunSnapshot: boolean;
-  readonly counters: RunCounters;
+  readonly counters: PurgeRunCounters;
   readonly errorSummary: string | null;
 }
 
@@ -176,11 +152,12 @@ function jobViewOf(row: ColdArchivePurgeJob): PurgeJobView {
 
 /**
  * Условие захвата на момент `now` — SQL-зеркало `isDue` g3a плюс перехват истёкшего лиза.
- * Исчерпанные попытки отдельно не проверяются: политика g3a переводит их в `dead_letter`, а
- * `dead_letter` сюда не попадает.
+ * Исчерпанное задание (`attempt >= PURGE_MAX_ATTEMPTS`) не берётся ни в каком статусе — даже если
+ * исполнитель ещё не перевёл его в `dead_letter` (например, упал между попыткой и записью итога).
  */
 export function claimableWhere(now: Date): Prisma.ColdArchivePurgeJobWhereInput {
   return {
+    attempt: { lt: PURGE_MAX_ATTEMPTS },
     OR: [
       { status: 'pending' },
       { AND: [{ status: 'retry' }, { OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }] }] },
@@ -215,10 +192,10 @@ export class PurgeJournalStore {
    */
   async closeRun(
     runId: string,
-    outcome: { readonly status: Extract<PurgeRunStatus, 'succeeded' | 'failed'>; readonly counters?: RunCounters; readonly errorSummary?: string | null },
+    outcome: { readonly status: Extract<PurgeRunStatus, 'succeeded' | 'failed'>; readonly counters?: PurgeRunCounters; readonly errorSummary?: string | null },
     now: Date = new Date(),
   ): Promise<JournalResult<PurgeRunView>> {
-    const c = outcome.counters ?? ZERO_RUN_COUNTERS;
+    const c = outcome.counters ?? EMPTY_RUN_COUNTERS;
     const { count } = await this.prisma.coldArchivePurgeRun.updateMany({
       where: { id: runId, status: 'running' },
       data: {
@@ -305,7 +282,7 @@ export class PurgeJournalStore {
   async completeJob(
     jobId: string,
     leaseUntil: Date,
-    transition: JobTransition,
+    transition: RetryTransition,
     outcomes: Readonly<Record<string, PurgePathOutcome>>,
   ): Promise<JournalResult<PurgeJobView>> {
     const { count } = await this.prisma.coldArchivePurgeJob.updateMany({

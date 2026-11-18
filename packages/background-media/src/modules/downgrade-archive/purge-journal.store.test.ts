@@ -10,7 +10,8 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { PurgeJournalStore, ZERO_RUN_COUNTERS, claimableWhere, type JobTransition } from './purge-journal.store';
+import { PurgeJournalStore, claimableWhere } from './purge-journal.store';
+import { EMPTY_RUN_COUNTERS, PURGE_MAX_ATTEMPTS, type RetryTransition } from './purge-retry-policy';
 
 class UniqueViolation extends Error {
   readonly code = 'P2002';
@@ -23,7 +24,7 @@ const T0 = new Date('2026-11-18T10:00:00Z');
 const MIN = 60_000;
 const at = (ms: number): Date => new Date(T0.getTime() + ms);
 
-const time = (v: unknown): number => (v as Date).getTime();
+const time = (v: unknown): number => (v instanceof Date ? v.getTime() : (v as number));
 
 function matches(row: Row, where: Where): boolean {
   return Object.entries(where).every(([k, v]) => {
@@ -32,9 +33,10 @@ function matches(row: Row, where: Where): boolean {
     if (v === null) return row[k] === null || row[k] === undefined;
     if (v instanceof Date) return row[k] instanceof Date && time(row[k]) === v.getTime();
     if (typeof v === 'object') {
-      const op = v as { lt?: Date; lte?: Date; not?: unknown; in?: unknown[] };
-      if (op.lt !== undefined) return row[k] instanceof Date && time(row[k]) < op.lt.getTime();
-      if (op.lte !== undefined) return row[k] instanceof Date && time(row[k]) <= op.lte.getTime();
+      const op = v as { lt?: Date | number; lte?: Date | number; not?: unknown; in?: unknown[] };
+      const comparable = row[k] instanceof Date || typeof row[k] === 'number';
+      if (op.lt !== undefined) return comparable && time(row[k]) < time(op.lt);
+      if (op.lte !== undefined) return comparable && time(row[k]) <= time(op.lte);
       if ('not' in op) return row[k] !== op.not;
       if (op.in !== undefined) return op.in.includes(row[k]);
       throw new Error(`fake prisma: неизвестное условие ${k}=${JSON.stringify(v)}`);
@@ -103,7 +105,7 @@ async function runWithJob(store: PurgeJournalStore) {
   return { run, job: added.value.job };
 }
 
-const SUCCEEDED: JobTransition = { status: 'succeeded', attempt: 1, nextAttemptAt: null, bytesFreed: 300, lastError: null };
+const SUCCEEDED: RetryTransition = { status: 'succeeded', attempt: 1, nextAttemptAt: null, bytesFreed: 300, lastError: null };
 
 describe('PurgeJournalStore — прогон', () => {
   it('создание прогона: строка running со снимками флагов, startedAt = now, нули', async () => {
@@ -111,14 +113,14 @@ describe('PurgeJournalStore — прогон', () => {
     const run = await store.openRun({ trigger: 'panel', mode: 'live', enabledSnapshot: true, dryRunSnapshot: false }, T0);
     expect(db.coldArchivePurgeRun.rows.size).toBe(1);
     expect(run).toMatchObject({ trigger: 'panel', mode: 'live', status: 'running', startedAt: T0, finishedAt: null, enabledSnapshot: true, dryRunSnapshot: false });
-    expect(run.counters).toEqual(ZERO_RUN_COUNTERS);
+    expect(run.counters).toEqual(EMPTY_RUN_COUNTERS);
   });
 
   it('пустой прогон = строка succeeded с нулями и finishedAt', async () => {
     const { db, store } = setup();
     const run = await store.openRun(OPEN, T0);
     const closed = await store.closeRun(run.runId, { status: 'succeeded' }, at(MIN));
-    expect(closed.ok && closed.value).toMatchObject({ status: 'succeeded', finishedAt: at(MIN), counters: ZERO_RUN_COUNTERS, errorSummary: null });
+    expect(closed.ok && closed.value).toMatchObject({ status: 'succeeded', finishedAt: at(MIN), counters: EMPTY_RUN_COUNTERS, errorSummary: null });
     expect(db.coldArchivePurgeRun.rows.get(run.runId)).toMatchObject({ status: 'succeeded', jobsTotal: 0, bytesFreed: 0n });
     expect(db.coldArchivePurgeJob.rows.size).toBe(0);
   });
@@ -242,9 +244,31 @@ describe('PurgeJournalStore — захват по лизу', () => {
     expect(!(await store.claimJob(orphan.value.job.jobId, at(10_000 * MIN))).ok).toBe(true);
   });
 
+  it('исчерпанное задание (attempt >= PURGE_MAX_ATTEMPTS) не захватывается ни в каком статусе, даже до dead_letter', async () => {
+    const { db, store } = setup();
+    const { job } = await runWithJob(store);
+    const last = PURGE_MAX_ATTEMPTS - 1;
+    db.coldArchivePurgeJob.rows.set(job.jobId, { ...db.coldArchivePurgeJob.rows.get(job.jobId)!, status: 'retry', attempt: last });
+    const lastTry = await store.claimJob(job.jobId, T0, 5 * MIN);
+    expect(lastTry.ok && lastTry.value.attempt).toBe(last);
+
+    for (const status of ['pending', 'retry', 'claimed'] as const) {
+      db.coldArchivePurgeJob.rows.set(job.jobId, {
+        ...db.coldArchivePurgeJob.rows.get(job.jobId)!,
+        status,
+        attempt: PURGE_MAX_ATTEMPTS,
+        nextAttemptAt: null,
+        leaseUntil: status === 'claimed' ? at(-MIN) : null,
+      });
+      const refused = await store.claimJob(job.jobId, at(60 * MIN));
+      expect(!refused.ok && refused.refusal.reason).toBe('job_not_claimable');
+      expect(await store.listClaimable(at(60 * MIN), 10)).toEqual([]);
+    }
+  });
+
   it('claimableWhere: pending | retry по сроку | claimed с истёкшим лизом — и ничего больше', () => {
     const now = at(10 * MIN);
-    const row = (o: Partial<Row>): Row => ({ id: 'j', status: 'pending', nextAttemptAt: null, leaseUntil: null, ...o });
+    const row = (o: Partial<Row>): Row => ({ id: 'j', status: 'pending', attempt: 0, nextAttemptAt: null, leaseUntil: null, ...o });
     const w = claimableWhere(now);
     expect(matches(row({}), w)).toBe(true);
     expect(matches(row({ status: 'retry' }), w)).toBe(true);
@@ -253,5 +277,6 @@ describe('PurgeJournalStore — захват по лизу', () => {
     expect(matches(row({ status: 'claimed', leaseUntil: at(10 * MIN) }), w)).toBe(false);
     expect(matches(row({ status: 'succeeded' }), w)).toBe(false);
     expect(matches(row({ status: 'dead_letter' }), w)).toBe(false);
+    expect(matches(row({ attempt: PURGE_MAX_ATTEMPTS }), w)).toBe(false);
   });
 });
