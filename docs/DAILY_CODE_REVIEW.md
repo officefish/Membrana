@@ -1,62 +1,36 @@
-<!-- Сгенерировано: 2026-11-18T09:12:34.149Z (yarn code-review; daily, llm-anthropic) -->
+<!-- Сгенерировано: 2026-11-18T15:44:22.064Z (yarn code-review; daily, llm-xai) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: 1837b337e71287de19db78c641635bad4bc19c13^..c93b23e4f83de782c8ebbd8ba1e8403183b23c6c (5 коммит(ов))
+> Период: 1837b337e71287de19db78c641635bad4bc19c13^..d63a05be19960bfecfcbfc65d97ae19f2d1769c7 (24 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 8e4009b9 #2644 (601), ed29cf92 #2665 (813), 71b04ba8 #2668 (586), a2b3715b #2671 (731), 2c13609c #2669 (757), 3a801b96 #2662 (421), 9a363c6d #2615 (494), d63a05be (662)
 
 ---
 
-Tier: T0
+Tier: T2
 
----
+[Teamlead / Vesnin]: День — магистраль уборщика архива (#2632 g1–g4a) + return-hygiene + typecheck-развязка #2660. Влито много (в т.ч. #2661 busboy, #2666 proof, #2667 retry, #2670 unpushed, #2672 apps typecheck, #2674 read-doors); OPEN: #2632, #2350, #2662, #2587. **8 oversized** без развёрнутого diff (#2644 g1a, #2668 g1b, #2671 g3b, #2669 packages typecheck, #2665 ritual, #2662, #2615, хвост d63a05be) — утром **отдельный** `yarn code-review:pr` на каждый, не «выглядит ок». Бестиарий по раскрытому: B3 не пойман (зубы на исходы/пути/leak); B6/B8 на g4a — адреса не наружу, guard на классе. P1: не сливать g3b/g1b без чтения полного diff. Утро: media после busboy + зубы media + oversized PR.
 
-**[Vesnin — Архитектор, ведущий ревью]:**
-Дифф полностью в `docs/` — ни одного runtime-файла, ни одного пакета монорепо не затронуто. Бестиарий: B6 зафиксирован в `trail/2026-11-18.jsonl` — два прогона `ritual-day` закрыты со статусом `fail`, симптом `morning-care: отказ шага утренней цепочки (корень не назван)`, поля `root` и `fix` — `null`; это молчаливый зелёный наоборот: журнал честно пишет `fail`, но корень не установлен — третий прогон (`r3`) открыт без диагноза предыдущих. B10 не пойман: `deps-watch-snapshot.json` изменён, но содержимое вне диффа — проверить невозможно. Архитектурных нарушений в diff нет. **Вердикт ведущего: пропуск**, с наблюдением по B6.
+[Структурщик]: `background-media`: proof (g2) → policy (g3a) → journal/read (g4a) — чистые швы, blob не тянет словарь журнала (литералы сверяют тесты). `delete` сохранён; `removeWithProof` — новый путь. Controller: Prisma + purge service, GET под тем же `ApiTokenGuard`/префиксом. `unpushed-count.mjs` вынесен из `repo-clean` — правильно. Typecheck apps: отдельные `.tsbuildinfo.typecheck.*`, `KNOWN_DEBT` пуст. Риск: g1b/g3b oversized — лизы/транзакции/идемпотентность захвата смотреть в полном diff.
 
----
+[Математик]: `classifyRemoval` / `decideAfterAttempt` / `backoffMs` / `foldRunCounters` — чистые, границы attempt≥5, backoff монотонен с cap, `already_absent` = успех (идемпотентный повтор). Stat-ошибка ≠ ENOENT → failed (консервативно). NaN/дробный attempt → RangeError. Зубы на таблице исходов и fold∘merge — ок. Oversized g3b: сверить, что live-прогон не судит успех по коду rm.
 
-**[Teamlead — Tarasov]:**
-Tier T0. PR size: OK — 5 коммитов, ~59 строк суммарно, всё `docs/`.
+[Музыкант]: Web Audio / audio-engine не затронуты. Media-контур: удаление blob с proof — к байтам на диске; busboy 3.2.6 — multipart/upload path, после выката media проверить приём файлов. IoT/MCU — нет.
 
-Итоги дня хорошие: busboy закрыт (#2661, GHSA устранены), веха горизонта переключена на `return-hygiene` с корректным `lastGateTransition: 2026-11-18`, ласточка отправлена и залогирована в `sent-log.jsonl`, op-log всех персон обновлён. Lint зелёный (42/42, часть из кеша). Тесты: `@membrana/client#test` упал — но это не предмет сегодняшнего diff (ни одного изменения в `apps/client`), падение предшествующее; утром уточнить статус отдельно.
+[Верстальщик]: UI/DESIGN.md не в раскрытом diff; g4a — internal API для панели (счётчики, без путей). Когда g4b/UI — a11y и отсутствие «кнопок удаления» в read-only журнале по канону issue.
 
-Единственный риск на завтра — незакрытый корень `morning-care` в двух `fail`-записях `ritual-day`: три попытки, `r3` оставлена открытой (`status: started`, нет закрывающей записи в диффе). Нужно либо закрыть прогон, либо диагностировать шаг до следующего ритуала.
+Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 18.11; ствол ~1837b337..d63a05be, 24 коммита)
 
-Утро:
+Definition of Done (утро):
+1. `yarn turbo run lint typecheck test --filter=@membrana/background-media`
+2. `node --test scripts/lib/unpushed-count.test.mjs scripts/verify-task-write-targets.test.mjs`
+3. `yarn code-review:pr 2671` и `yarn code-review:pr 2668` (и при необходимости 2644, 2669) — закрыть слепые oversized
+4. Проверка выката media после #2661 (критерий gate `return-hygiene` 0.1)
+5. Статус OPEN: #2632 (остаток g*), #2662, #2350 — не плодить параллельный scope
 
-```bash
-# 1. Прочитать вчерашний DAILY_CODE_REVIEW (этот файл)
-# 2. Проверить, закрыт ли r3 — если нет, закрыть вручную или выяснить корень morning-care:
-cat docs/procedure-runs/trail/2026-11-18.jsonl | tail -5
-
-# 3. Выяснить причину падения client#test (не из сегодняшнего диффа, но висит):
-yarn turbo run test --filter=@membrana/client
-
-# 4. Проверить deps-watch-snapshot на актуальность после busboy:
-yarn turbo run lint --filter=@membrana/background-media
-```
-
-**[Структурщик — Ozhegov]:**
-Границы пакетов не затронуты — весь diff в `docs/`. `trail/2026-11-18.jsonl` содержит три `runId` одного `procedureId` без закрытой финальной записи для `r3` — структурно ожидается симметрия `started/close`; незакрытый прогон может сбить счётчик чистых прогонов, ради которого коммит и делался. Тесты в scope diff — `—`.
-
-**[Математик — Dynin]:** —
-
-**[Музыкант — Kuryokhin]:** —
-
-**[Верстальщик — Rodchenko]:** —
-
----
-
-**Итоговый артефакт:** `docs/DAILY_CODE_REVIEW.md`
-
-**Definition of Done (утро):**
-```bash
-cat docs/procedure-runs/trail/2026-11-18.jsonl | tail -3   # убедиться, что r3 закрыт
-yarn turbo run test --filter=@membrana/client               # прояснить упавший тест
-```
-
-**Риски:**
-- **P2** — `ritual-day-2026-11-18-r3` открыт без закрывающей записи; счётчик чистых прогонов может не досчитаться закрытия.
-- **P2** — `@membrana/client#test` красный вне scope сегодняшнего diff; проверить утром, не регрессия ли.
-- **P2 (наблюдение B6)** — корень `morning-care` не установлен в двух fail-записях; следующий ritual стартует без диагноза.
+Риски:
+- **P1** — восемь oversized без полного diff (особенно g1b storage + g3b executor): merge в стволе не отменяет утренний pass
+- **P1** — #2632 ещё OPEN: read-doors без полного executor/journal write = не закрывать epic по механике отдельных PR (B3)
+- **P2** — WEEKLY_PLAN_TOKEN: истёкший PAT не фолбэчится (задокументировано) — мониторинг понедельничного workflow
+- **P2** — горизонт `return-hygiene` / phase mid: Docker и «media выкачена» — human checklist, не CI
