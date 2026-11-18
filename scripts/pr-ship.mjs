@@ -294,6 +294,42 @@ export function extractIssueMentions(text) {
 }
 
 /**
+ * Строка связи с Issue в СВОЁМ теле PR (#2677). Раньше при `--body-file` тело уходило как
+ * есть, и `--issue N` молча терял `Closes #N` (PR #2672 создан без связи с #2660), а
+ * `--issue-mention N` — пометку «не закрывается». Теперь строка встаёт ПЕРВОЙ, если автор
+ * её ещё не написал:
+ * - `--issue N`: уже есть `Closes|Fixes|Resolves #N` (любой регистр/форма) → тело как есть;
+ * - `--issue-mention N`: уже есть `#N` → как есть; но закрывающее слово при `#N` — отказ:
+ *   флаг обещает «не закрывать», а тело закрыло бы (класс PR #1332).
+ * Без флагов — тело как есть.
+ *
+ * @param {string} text
+ * @param {{issue?: string|number|null, issueMention?: string|number|null}} link
+ * @returns {string}
+ */
+export function composeUserBody(text, link = {}) {
+  const body = String(text ?? '');
+  const closesRe = (n) => new RegExp(String.raw`\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s*:?\s+#${n}(?!\d)`, 'iu');
+  if (link.issue != null && link.issue !== '') {
+    const n = String(link.issue);
+    if (closesRe(n).test(body)) return body;
+    return `Closes #${n}\n\n${body}`;
+  }
+  if (link.issueMention != null && link.issueMention !== '') {
+    const n = String(link.issueMention);
+    if (closesRe(n).test(body)) {
+      throw new Error(
+        `pr:ship: --issue-mention ${n}, а в --body-file есть закрывающее слово при #${n} — ` +
+          'тело закроет Issue, которую флаг обещал не закрывать. Убери Closes из файла или возьми --issue.',
+      );
+    }
+    if (new RegExp(String.raw`#${n}(?!\d)`, 'u').test(body)) return body;
+    return `Issue: #${n} (не закрывается этим PR)\n\n${body}`;
+  }
+  return body;
+}
+
+/**
  * Шаг переключения на `--branch`: идемпотентен, если уже на ней;
  * существующая локальная ветка — `checkout`, новая — `checkout -b`.
  * Живой случай 19.07: `pr:ship --branch feat/…` на уже выбранной ветке → fatal
@@ -517,6 +553,8 @@ export function planPrShip(opts) {
     // #2020: причина размера уезжает В ТЕЛО PR — ревьюер видит её вместе с диффом.
     // При своём --body-file тело пишет пользователь: дописываем причину строкой ниже,
     // но файл не трогаем — вместо этого причина идёт в заголовок шага (см. main).
+    // #2677: связь с Issue для своего тела — исполнитель вписывает её через composeUserBody.
+    bodyLink: { issue: issue ?? null, issueMention },
     bodyText: opts.bodyFile
       ? `__USER_BODY_FILE__${opts.bodyFile}`
       : appendSizeReason(
@@ -923,12 +961,15 @@ function main(argv = process.argv) {
           // #2020: своё тело пишет пользователь, но причина размера обязана доехать до
           // ревьюера — иначе комментарий обещает то, чего код не делает. Пользовательский
           // файл НЕ трогаем: собираем временную копию с дописанной строкой.
+          // #2677: строка Closes/упоминания — тоже во временную копию, файл автора цел.
           let bodyPath = userFile;
-          if (sizeReasonForBody) {
+          const original = readFileSync(userFile, 'utf8');
+          let composed = composeUserBody(original, s.bodyLink ?? {});
+          if (sizeReasonForBody) composed = appendSizeReason(composed, sizeReasonForBody);
+          if (composed !== original) {
             bodyDir = makeLongTempDir(REPO_ROOT, 'pr-ship-');
-            const merged = join(bodyDir, 'body.md');
-            writeFileSync(merged, appendSizeReason(readFileSync(userFile, 'utf8'), sizeReasonForBody), 'utf8');
-            bodyPath = sizeReasonForBody ? merged : userFile;
+            bodyPath = join(bodyDir, 'body.md');
+            writeFileSync(bodyPath, composed, 'utf8');
           }
           args = s.args.map((a) => (a === '__BODY_FILE__' ? bodyPath : a));
         } else {
@@ -938,6 +979,8 @@ function main(argv = process.argv) {
           args = s.args.map((a) => (a === '__BODY_FILE__' ? bodyFile : a));
         }
       } else {
+        // dry-run: противоречие «--issue-mention, а в файле Closes» видно до --execute.
+        if (userFile) composeUserBody(readFileSync(userFile, 'utf8'), s.bodyLink ?? {});
         args = s.args.map((a) => (a === '__BODY_FILE__' ? (userFile ?? '<long-temp/body.md>') : a));
       }
     }

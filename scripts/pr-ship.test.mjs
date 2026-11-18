@@ -16,6 +16,7 @@ import {
   planMergeTail,
   reviewGateArgs,
   planPrShip,
+  composeUserBody,
   commitPreflightProblem,
   requestedPrMismatchProblem,
   finalStateLine,
@@ -835,4 +836,60 @@ test('#2247 ПРОВОДКА: упавшие шаги копятся, исход
   assert.match(src, /process\.exitCode\s*=\s*outcome\.exitCode/u, 'и доходит до кода возврата');
   // Состояние ствола обязано ДОЕЗЖАТЬ до решения, а не только печататься.
   assert.match(src, /=\s*printFinalPrState\(/u, 'состояние возвращается наружу');
+});
+
+// #2677: --issue / --issue-mention при --body-file не теряются. Вещдок — PR #2672
+// (`--issue 2660 --body-file`) создан без связи с Issue, Closes дописывали руками.
+
+test('#2677 план: pr-create несёт связь с Issue для своего тела (issue / mention / ничего)', () => {
+  const base = { type: 'fix', message: 'm', commit: false, currentBranch: 'fix/x', bodyFile: '/tmp/b.md' };
+  const pick = (o) => planPrShip({ ...base, ...o }).steps.find((s) => s.label === 'pr-create').bodyLink;
+  assert.deepEqual(pick({ issue: '7' }), { issue: '7', issueMention: null });
+  assert.deepEqual(pick({ issueMention: '8' }), { issue: null, issueMention: '8' });
+  assert.deepEqual(pick({}), { issue: null, issueMention: null });
+});
+
+test('#2677 без --body-file поведение прежнее: тело = Closes / упоминание / заголовок', () => {
+  const base = { type: 'fix', message: 'm', commit: false, currentBranch: 'fix/x' };
+  const body = (o) => planPrShip({ ...base, ...o }).steps.find((s) => s.label === 'pr-create').bodyText;
+  assert.equal(body({ issue: '7' }), 'Closes #7');
+  assert.equal(body({ issueMention: '8' }), 'Issue: #8 (не закрывается этим PR)');
+  assert.equal(body({}), 'fix: m');
+});
+
+test('#2677 --issue + свой файл без Closes → «Closes #N» первой строкой, текст автора цел', () => {
+  assert.equal(composeUserBody('## Тело\n\nтекст', { issue: '7' }), 'Closes #7\n\n## Тело\n\nтекст');
+});
+
+test('#2677 --issue + в файле уже есть закрывающее слово → не дублировать (любая форма)', () => {
+  for (const t of ['Closes #7', 'closes #7 — итог', 'Fixes #7', 'resolved #7', 'Закрытие.\n\nResolves: #7']) {
+    assert.equal(composeUserBody(t, { issue: '7' }), t, t);
+  }
+});
+
+test('#2677 --issue: «Closes #70» и голое «#7» не считаются закрытием #7', () => {
+  assert.equal(composeUserBody('Closes #70', { issue: '7' }), 'Closes #7\n\nCloses #70');
+  assert.equal(composeUserBody('Refs #7', { issue: '7' }), 'Closes #7\n\nRefs #7');
+});
+
+test('#2677 --issue-mention + свой файл без #N → строка упоминания первой', () => {
+  assert.equal(composeUserBody('тело', { issueMention: '8' }), 'Issue: #8 (не закрывается этим PR)\n\nтело');
+});
+
+test('#2677 --issue-mention + в файле уже есть #N → как есть; #80 — не то же самое', () => {
+  assert.equal(composeUserBody('Refs #8 (не закрывает)', { issueMention: '8' }), 'Refs #8 (не закрывает)');
+  assert.equal(composeUserBody('Refs #80', { issueMention: '8' }), 'Issue: #8 (не закрывается этим PR)\n\nRefs #80');
+});
+
+test('#2677 --issue-mention + в файле Closes #N → отказ: тело закрыло бы то, что флаг обещал не закрывать', () => {
+  assert.throws(() => composeUserBody('Closes #8', { issueMention: '8' }), /issue-mention 8/u);
+});
+
+test('#2677 без флагов и оба флага: тело как есть / отказ на уровне плана', () => {
+  assert.equal(composeUserBody('тело', {}), 'тело');
+  assert.equal(composeUserBody('тело', { issue: null, issueMention: null }), 'тело');
+  assert.throws(
+    () => planPrShip({ type: 'fix', message: 'm', issue: '7', issueMention: '8', bodyFile: '/tmp/b.md', currentBranch: 'fix/x' }),
+    /взаимоисключают/u,
+  );
 });
