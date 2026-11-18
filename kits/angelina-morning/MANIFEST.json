@@ -88,7 +88,7 @@
     "scripts/lib/task-registry.mjs": "94e4648c6b11c5ff1122f66f166449eb191ffde2",
     "scripts/lib/tasks-readme-engine.mjs": "3a45a41f5e17587bc54b85011eeacbeffa7c264b",
     "scripts/lib/truth-graph.mjs": "54f1c23e0f0449e4adde145aa2d2633030baa22a",
-    "scripts/lib/unpushed-count.mjs": "f7ef40dfc444083a1a3f65bab46e6ea4f2ddcb1d",
+    "scripts/lib/unpushed-count.mjs": "05b5d929f1898ed60a8284ee515c33fe9505fbe0",
     "scripts/lib/worktree-demolition.mjs": "d234e30a2faf44b0bcb48f252e67551ad4eae3e2",
     "scripts/lib/worktree-resolution.mjs": "731827bf01744a3f3a5ed4fc136bfb8206916c88",
     "scripts/lib/worktree-sync-check.mjs": "a86b1b518c06699535552e05a773bd0fc4b8658f",
