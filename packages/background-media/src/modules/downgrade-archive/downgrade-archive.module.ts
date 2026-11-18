@@ -7,7 +7,9 @@
  * исходниках esbuild не пишет `design:paramtypes`, и зелёный там граф не удостоверяет.
  *
  * Массивы — по элементу на строку: два блока (#2587 двери, #2588 уборка) добавляют свои строки,
- * и слияние остаётся построчным. Дверь уборки `purge-expired` — под `ApiTokenGuard` (служебная,
+ * и слияние остаётся построчным. #2632 g3b: журнал уборщика (`PurgeJournalStore`) и исполнитель
+ * (`PurgeGcRunner`) — провайдеры модуля; дверь уборки зовёт исполнителя через сервис.
+ * Дверь уборки `purge-expired` — под `ApiTokenGuard` (служебная,
  * для cron office), двери понижения — под `MediaDeviceAccessGuard` (прибор).
  */
 import { Module } from '@nestjs/common';
@@ -21,6 +23,8 @@ import { DowngradeArchivePurgeService } from './downgrade-archive-purge.service'
 import { DowngradeArchiveController } from './downgrade-archive.controller';
 import { DowngradeArchiveService } from './downgrade-archive.service';
 import { DowngradeArchiveStore } from './downgrade-archive.store';
+import { PurgeGcRunner } from './purge-gc.runner';
+import { PurgeJournalStore } from './purge-journal.store';
 
 @Module({
   imports: [
@@ -36,6 +40,8 @@ import { DowngradeArchiveStore } from './downgrade-archive.store';
     DowngradeArchiveStore,
     DowngradeArchiveService,
     DowngradeArchivePurgeService,
+    PurgeJournalStore,
+    PurgeGcRunner,
   ],
   exports: [
     DowngradeArchiveStore,
