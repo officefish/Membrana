@@ -11,6 +11,11 @@
  * ADR-0024, влитый в тот же день. Поймала ведущая глазом — уже после генерации, и только
  * потому, что села перепроверять. На этом протоколе строится доклад союзникам.
  *
+ * УТВЕРЖДЕНИЯ ОБ ОТСУТСТВИИ (#2615). Атомы судят «X есть»; «X нет / не в стволе / не влит»
+ * для них — та же ссылка на X, и найденный X её «подтверждал»: 05–07.10 «ADR-0031 не положен»
+ * прошло три вечера при файле в стволе. Такие утверждения распознаёт и судит по стволу
+ * (`origin/main`, на день протокола) `lib/feedback-claims/absence.mjs`; граница — там же.
+ *
  * READ-ONLY и НЕ ЧИНИТ — прямой запрет консилиума `main-day-issue-accuracy-2026-07-16`,
  * унаследованный вместе с раскроем: автопочинка (стереть строку, переписать протокол)
  * скрыла бы находку, ради которой гейт и строится. Отчёт печатается, секция дописывается
@@ -38,6 +43,7 @@ import {
   verdictsFor,
 } from './lib/feedback-claims/verdict.mjs';
 import { collectDecisionsLedger } from './lib/decisions-ledger-port.mjs';
+import { absenceVerdict, extractAbsenceClaims } from './lib/feedback-claims/absence.mjs';
 
 export const SEANCES_REL = 'docs/seanses';
 export const PROTOCOL_PREFIX = 'team-evening-feedback-';
@@ -369,6 +375,100 @@ export function collectEvidence(atom, ctx) {
   return e;
 }
 
+/**
+ * Ствол для утверждений об отсутствии (#2615): `origin/main`, если он есть, иначе HEAD.
+ * Утверждение «X нет в стволе» судится по стволу, а не по ветке, где идёт прогон.
+ */
+export function trunkRef(cwd) {
+  return git(['rev-parse', '--verify', '--quiet', 'origin/main'], cwd).value.trim() ? 'origin/main' : 'HEAD';
+}
+
+/** День протокола из имени `team-evening-feedback-ГГГГ-ММ-ДД.md`; не опознан — `null`. */
+export function protocolDayOf(protocolRel) {
+  const m = /(\d{4}-\d{2}-\d{2})\.md$/u.exec(String(protocolRel ?? ''));
+  return m ? m[1] : null;
+}
+
+/** Первая (самая ранняя) доставка файла в ствол: sha и день. */
+function addedIn(ref, path, cwd) {
+  const r = git(['log', ref, '--diff-filter=A', '--format=%H %cs', '--', path], cwd);
+  if (!r.ok) return {};
+  const last = lines(r.value).at(-1);
+  if (!last) return {};
+  const [sha, day] = last.split(' ');
+  return { sha, addedOn: day };
+}
+
+/**
+ * Факты по утверждению об отсутствии — по стволу (`git ls-tree`/`git log <ref>`), оффлайн.
+ *
+ * @param {{type: string, token: string, number?: string|number}} claim
+ * @returns {import('./lib/feedback-claims/absence.mjs').AbsenceEvidence}
+ */
+export function absenceEvidence(claim, { cwd, hasGit, ref }) {
+  if (!hasGit) return { present: null, ref };
+  if (claim.type === 'adr') {
+    const r = git(['ls-tree', '-r', '--name-only', ref, '--', 'docs/adr/'], cwd);
+    if (!r.ok) return { present: null, ref };
+    const prefix = `docs/adr/${claim.token}`;
+    // `ADR-0031` не должен находить `ADR-00310`: после номера — не цифра.
+    const hit = lines(r.value).find(
+      (p) => p.startsWith(prefix) && /\.mdx?$/u.test(p) && !/[0-9]/u.test(p.charAt(prefix.length)),
+    );
+    return hit ? { present: true, where: hit, ref, ...addedIn(ref, hit, cwd) } : { present: false, ref };
+  }
+  if (claim.type === 'path') {
+    const r = git(['ls-tree', '--name-only', ref, '--', claim.token], cwd);
+    if (!r.ok) return { present: null, ref };
+    const hit = lines(r.value)[0];
+    return hit ? { present: true, where: hit, ref, ...addedIn(ref, hit, cwd) } : { present: false, ref };
+  }
+  if (claim.type === 'pr') {
+    const tail = `(#${claim.number})`;
+    const r = git(['log', ref, '--format=%H %cs %s', '--fixed-strings', '--grep', tail, '-n', '20'], cwd);
+    if (!r.ok) return { present: null, ref };
+    // Доставка — `(#N)` В КОНЦЕ заголовка (правило `pickDeliverySha`): упоминание ≠ доставка.
+    for (const l of lines(r.value)) {
+      const [sha, day, ...subject] = l.split(' ');
+      if (subject.join(' ').trim().endsWith(tail)) {
+        return { present: true, where: `PR ${claim.token} (сквош)`, sha, addedOn: day, ref };
+      }
+    }
+    return { present: false, ref };
+  }
+  return { present: null, ref };
+}
+
+/**
+ * Вердикты по утверждениям об отсутствии — в той же форме, что вердикты атомов, чтобы
+ * отчёт, `hasHardViolation` и ласточка читали их одним путём.
+ */
+export function absenceVerdicts(markdown, ctx, protocolDay) {
+  // Одно утверждение пятью ролями — одна строка (эхо-камера, как в `dedupeAtoms`); строки
+  // протокола перечислены в доказательстве, чтобы поправку можно было вписать в каждую.
+  const byKey = new Map();
+  for (const claim of extractAbsenceClaims(markdown)) {
+    const key = `${claim.token}::${claim.kind}`;
+    const prev = byKey.get(key);
+    if (prev) prev.lines.push(claim.line);
+    else byKey.set(key, { claim, lines: [claim.line] });
+  }
+  return [...byKey.values()].map(({ claim, lines: at }) => {
+    const v = absenceVerdict(claim, absenceEvidence(claim, ctx), { protocolDay });
+    return {
+      token: claim.token,
+      line: claim.line,
+      classes: ['absence'],
+      context: claim.context,
+      kind: claim.kind,
+      klass: 'absence',
+      occurrences: at.length,
+      ...v,
+      reason: at.length > 1 ? `${v.reason} (строки ${at.join(', ')})` : v.reason,
+    };
+  });
+}
+
 /** Последний протокол вечернего фидбека. Имя несёт дату — сортировка по имени и есть хронология. */
 export function latestProtocol(cwd) {
   const dir = resolve(cwd, SEANCES_REL);
@@ -553,9 +653,16 @@ function main() {
   if (!ledger.ok) console.error(`feedback:claims — ведомость решённого прочитана не полностью: ${ledger.unreadable.join('; ')}`);
   const ctx = { cwd, sha, registry, scripts, hasGit, ledger };
 
-  const verdicts = verdictsFor(
-    atoms.map((atom) => ({ atom, evidence: collectEvidence(atom, ctx) })),
+  // #2615: утверждения об ОТСУТСТВИИ («ADR-0031 не в стволе») — по стволу на день протокола.
+  const absence = absenceVerdicts(
+    withoutClaimsSections(markdown),
+    { cwd, hasGit, ref: hasGit ? trunkRef(cwd) : 'HEAD' },
+    protocolDayOf(protocolRel),
   );
+  const verdicts = [
+    ...verdictsFor(atoms.map((atom) => ({ atom, evidence: collectEvidence(atom, ctx) }))),
+    ...absence,
+  ];
   const report = formatClaimsReport(verdicts, { includeHolds: cli.includeHolds });
   const hard = hasHardViolation(verdicts);
 
