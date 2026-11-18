@@ -180,7 +180,7 @@
       ],
       "notes": "После ратификации: разобрать незакоммиченный хвост — текущий split Node20/Node22 зуба, импорт подлинного module/или переносимый tooth на совпадение, NaN закрыт.",
       "archiveNotes": "Исполнено: PR #2508 (sha 5b4ce120) — зуб прибора трейса импортирует подлинный scenarioTraceBuffer (7/7 переносимый, 5/5 поведенческий) и подключён к CI, NaN в чтении потолка закрыт; файлы scripts/scenario-trace-buffer-parity.test.mjs и docs/local-sprint/trace-freeze-dual-candidate-sprint/CLOSURE.md в main. (ревизия реестра 17.11, шаг 0.7 RETURN_STRATEGY_2026-11)",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-11-18",
       "parentEpic": "trace-freeze-dual-candidate-sprint"
     },
     {
@@ -1262,7 +1262,7 @@
       ],
       "notes": "Выбор владельца 17.08 (магистраль дня, замысел словом: клиент несёт модульно-плагинную архитектуру — серверу нужна такая же основа, чтобы писать плагины серверного журнала для анализа и визуализации коллекций звуков). ФОРМА РЕШЕНА 17.08: шторм (4 тезиса) → заседание (10 комнат + независимый аудит, 3 переигрывания) → вердикт РАТИФИЦИРОВАН владельцем; Issue #1961 несёт вердикт и PR-план (PR-1 контракты → PR-2 хост → PR-3 membrana.handler.mfcc живым → PR-4 остальные пять). Вердикт: docs/meeting/server-plugin-foundation/MEETING_VERDICT.md. Разведка 17.08: контракт плагина уже живёт в packages/agenda/src/core (plugin-lifecycle, registry, types; 21 живой клиентский плагин; канон docs/MODULE_AND_PLUGIN_UI.md), но реализация привязана к Zustand/persist; сервер (Nest) модульность имеет — нехватка в другом: включение на ходу, самоописание для UI, привязка плагина к коллекции, след работы. Главная развилка: выносить контракт из agenda средонезависимым (один язык на оба берега, но трогаем носитель 21 плагина) против отдельного серверного словаря (безопаснее, дороже потом).",
       "archiveNotes": "Исполнено: PR-план вердикта собрания влит — контракты #1965 (sha ee40ba3b), хост #1966, живой mfcc #1975 (приёмка Т3.11, docs/plugins/first-live-run-2026-08-18.md), манифесты остальных пяти #1969 (sha 864581c7); packages/plugin-contracts и packages/plugin-handlers в main. Issue #1961 ещё OPEN — закрыть вместе с архивом. (ревизия реестра 17.11, шаг 0.7 RETURN_STRATEGY_2026-11)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-11-18"
     },
     {
       "id": "tw-handoff-status",
@@ -5754,7 +5754,7 @@
       ],
       "notes": "",
       "archiveNotes": "Исполнено: PR #941 (sha 72f72997) — комната капитана: чистое ядро scripts/lib/bridge-room.mjs, append-only docs/bridge/DEBTS.md (попугай зачитывает долги при yarn bridge open), неявное закрытие шагом bridge-close вечернего ритуала, жилец docs/procedures/bridge/ в main. Issue #936 ещё OPEN — закрыть вместе с архивом. (ревизия реестра 17.11, шаг 0.7 RETURN_STRATEGY_2026-11)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-11-18"
     },
     {
       "id": "precedent-container",
@@ -7191,7 +7191,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "Исполнено: все фазы Р1–Р5 (#782–#786) архивированы, последние — коммит 5fdaf6e8 (#876); процедурный слой docs/procedures с validateProcedure и layer-rules.json в main. (ревизия реестра 17.11, шаг 0.7 RETURN_STRATEGY_2026-11)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-11-18"
     },
     {
       "id": "angelina-hostess-impl",
@@ -8036,7 +8036,7 @@
       ],
       "notes": "ЭПИК. Собран из пяти вердиктов консилиума 17.07 (Q1 stop-doing, Q2 horizon=веха d/dt=0, Q3 утро+вырезать nextDay, Q4b pickTopic+nightYield, Q5 collectHorizonInputs+дедуп origin-hash) и трёх решений владельца, закрывших дыры Q5: своевременность = веха близко И область молчит (отвергнуто 'логи трогали' — инвертирует замысел); дикого слота в ночи нет, ночь 100% derived, дикое приходит утром само; отсутствующий вход помечать (вывод агента, не команды). Расследование: из семи задуманных функций работает одна — порядок запуска. Находка Q5: канал includeAnalyzersResearch не оборван заморозкой, а НИКОГДА не работал — крон 9 падений подряд с 18.05, артефакта нет нигде, ключ на месте, readBoundedFile->null->молча дальше. Кода нет.",
       "archiveNotes": "Исполнено: PR #596 (sha afd463bb) — генератор стратегии дня S1–S7 (горизонт-веха, один читатель, ночной контур, граф правды) и S5 коммитом 2e479f2f; scripts/lib/strategy-horizon.mjs в main. Issue #592 ещё OPEN — закрыть вместе с архивом. (ревизия реестра 17.11, шаг 0.7 RETURN_STRATEGY_2026-11)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-11-18"
     },
     {
       "id": "visor-mpvs-integration",
@@ -8302,7 +8302,7 @@
       ],
       "notes": "Требование владельца после инцидента 16.07 (ласточка ушла техно-ахинеей: жаргон, номера Issue, утечка '(исправлено — см. поправку выше)', балл 6.0/10 против собственного текста). Корень: дайджест ДЕТЕРМИНИРОВАН и наследует жаргон из team-evening-feedback/MAIN_DAY_ISSUE — чинить слой между артефактом и группой, не вёрстку. Три требования: (1) формулировка Ожеговым обязательна утром и вечером, (2) явное одобрение владельца перед отправкой, (3) в память только после показа партнёрам. Ломает: цепочка перестаёт быть одной командой (скрипт не ждёт одобрения), автоотправка (telegram-ritual-digest || true) уходит из ritual:day/evening, persona-memory-extract уезжает в конец за отправку. Сегодня память спаслась случайностью порядка (extract шёл ДО feedback). Развилки консилиума: кредит пуст (Ожегов = LLM, дайджест был детерминирован); память при несостоявшейся отправке (office мёртв → память не обновляется вообще?); чем фиксируется одобрение (слово в чате vs метка-гейт); где живёт продуктовый слой фактов (секция в артефакте vs перевод Ожеговым каждый раз). КОНСИЛИУМ УТРОМ 17.07 ДО КОДА.",
       "archiveNotes": "Исполнено: PR #637 (sha d03b4724) — автоотправка ласточки из ритуала снята, отправка руками через линзу Ожегова с гейтом одобрения scripts/evening-gate.mjs partner-swallow; PR #1382 (sha 2cdefdda) — извлечение памяти персон едет только после sent=true в scripts/telegram-swallow.mjs. Все три требования владельца из #569 в main. (ревизия реестра 17.11, шаг 0.7 RETURN_STRATEGY_2026-11)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-11-18"
     },
     {
       "id": "standup-charge-redesign",
@@ -8704,7 +8704,7 @@
       ],
       "notes": "Консилиум main-day-issue-accuracy-2026-07-16 (25 реплик, LGTM). Повод — разбор main-day-issue-drift-report-2026-07-16: план 16.07 назначил магистралью написать fuseDetectorConfidences, слитый 13.07 (#415 висел open — PR #417 дал «(#415)» вместо Closes). Read-only гейт: exists(symbol) + issue.state, расхождение → violated как НАХОДКА (реестр протух), автопочинка запрещена. Эталон структуры — evaluateProdMainDivergence (#413): чистое ядро + тонкая обвязка, exit 0/2, текст а не только цвет, graceful «нет данных ≠ алерт». XS по корням 1 и 3 уже в PR #532. Фазы PG0-PG5.",
       "archiveNotes": "Исполнено: PR #532 (sha fdc05d05) — препроцессор-гейт посылок MAIN_DAY_ISSUE: чистое ядро probeAssertion, read-only обвязка с exit 2 при нарушенной посылке, демонстрация на кейсе 16.07, критический шаг ritual:day; scripts/lib/main-day-probe.mjs в main. Issue #533 ещё OPEN — закрыть вместе с архивом. (ревизия реестра 17.11, шаг 0.7 RETURN_STRATEGY_2026-11)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-11-18"
     },
     {
       "id": "detector-metrics-characterization",
@@ -9306,7 +9306,7 @@
       ],
       "notes": "2 консилиума (nightly-agents-platform + drift-anchor-triggers, LGTM). DA0 computeDrift + DA1 структурный якорь + DA2 golden drone combinedScore + DA3-код раннер — СМЁРЖЕНЫ (#398-401). Консилиум-2 разрешил frozen-image развилку: «поведенческий» = 2 явления — code-anchor (дрейф кода детектора, golden-корпус const) → CI-гейт (блок merge); data-anchor (дрейф данных, детектор const) → серверное расписание frozen-image (background-media/NL, warning); scheduled-code-anchor (пересборка из main → «прод≠main») → сервер раз в сутки. Единый контракт DriftAnchorRecord в core. Новые фазы DA4 (scheduled-code-anchor) + DA5 (расхождение-алерт + UI-панель). Anti-fetish: серверное по существу, CI нативно в GH Actions. DA4+DA5-код СМЁРЖЕН 2026-07-13 (PR #413 контракт DriftAnchorRecord в core + ADR 0003; PR #414 producer drift-anchor-code, CI-гейт detector-drift-gate.yml, divergence-алерт, дрейф-секция ритуала, cron-обёртка office). Cron на office УСТАНОВЛЕН И ЖИВ 2026-07-13 (node20 на голом хосте /opt/membrana-drift, swap-фикс OOM, ручной прогон verdict=ok межхостово детерминирован, crontab 03:15 МСК активен). ADR 0004 ACCEPTED (LGTM Teamlead 2026-07-13) — транспорт журнала РЕАЛИЗОВАН И ЖИВ (PR #418): push CI/office-cron → background-office (новый модуль drift-anchor, in-memory store — office stateless, локальный DTO — office автономен от packages/*, POST защищён ApiTokenGuard, GET публичный по решению владельца). E2E подтверждён на реальном office: cron→push→digest виден локально и на office.mmbrn.tech. По ходу исправлены 2 непроверенные кодом ошибки черновика ADR (файлы→in-memory, core-импорт→локальный DTO). data-anchor РЕАЛИЗОВАН И ЖИВ 2026-07-13 (PR #419): владелец сузил охват до __tariff_dataset__ (не реальные записи пользователей — честно задокументировано как проверка целостности провижининга media, не акустический дрейф поля); buildCodeAnchorRecord обобщён в buildAnchorRecord(meta.anchorKind) — переиспользует существующий office-эндпоинт БЕЗ изменений office-кода; canary-устройство на прод-media, скрипт-библиотека media-samples-client.mjs. По ходу найден и починен реальный баг: benchmark-detectors.mjs вызывал main() безусловно на любой import — добавление reusable-экспортов (DSP_DETECTORS/runDetector/runTemplateMatch/runYamnet) впервые триггернуло тихую порчу канонического DETECTOR_BENCHMARK.md через простой node --test; добавлен entry-point guard. Живой E2E на office: оба якоря (code+data) в одном cron-прогоне, digest публично отдаёт 2 записи. ОСТАТОК: UI-панель кабинета (читает digest, сама считает divergence через @membrana/core).",
       "archiveNotes": "Исполнено: DA0–DA5 PR #398–#401, #413, #414, #418, #419; остаток-витрина — PR #455 (sha a35615cc), борд дрейф-якорей в панели по вердикту консилиума 14.07; файл apps/panel/src/components/DriftAnchorsBoard.tsx в main. (ревизия реестра 17.11, шаг 0.7 RETURN_STRATEGY_2026-11)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-11-18"
     },
     {
       "id": "night-hunt-office-real",

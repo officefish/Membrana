@@ -13,9 +13,9 @@
     "day": "2026-11-18",
     "claimsProbe": {
       "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-10-08.md",
-      "sha": "8d70e11763a5",
-      "at": "2026-10-08T21:21:11.639Z"
+      "protocol": "docs/seanses/team-evening-feedback-2026-11-18.md",
+      "sha": "d63a05be1996",
+      "at": "2026-11-18T15:58:39.998Z"
     },
     "gate": "evening:partner-swallow"
   },

@@ -1,0 +1,86 @@
+{
+  "day": "2026-09-25",
+  "files": [
+    "design-drift-2026-39.md",
+    "services-api-drift-2026-39.md"
+  ],
+  "archivedAt": "2026-11-18T15:24:36.929Z",
+  "evidenceClass": "exhibit",
+  "entries": [
+    {
+      "name": "design-drift-2026-39.md",
+      "bornAt": "2026-09-25T12:44:45.969Z",
+      "contentHash": "960ae7fec1128825117dc6ddea1e85283cb805e26155ce992518f5743f27ef3e",
+      "evidenceClass": "exhibit",
+      "verdict": "fresh"
+    },
+    {
+      "name": "services-api-drift-2026-39.md",
+      "bornAt": "2026-09-25T12:45:19.540Z",
+      "contentHash": "76f56ead51d86f058343213cc02972980a7a7092a6705883a3851e446f056151",
+      "evidenceClass": "exhibit",
+      "verdict": "fresh"
+    }
+  ],
+  "archivedBy": {
+    "runDay": "2026-11-18",
+    "sinceDay": "2026-09-21",
+    "windowHours": null,
+    "runRefused": [
+      {
+        "name": "design-drift-2026-28.md",
+        "bornAt": "2026-07-12T12:47:56.410Z",
+        "verdict": "refused_stale",
+        "ageHours": 3099
+      },
+      {
+        "name": "design-drift-2026-38.md",
+        "bornAt": "2026-09-16T07:00:44.945Z",
+        "verdict": "refused_stale",
+        "ageHours": 1520
+      },
+      {
+        "name": "graph-drift-2026-28.md",
+        "bornAt": "2026-07-12T12:54:20.673Z",
+        "verdict": "refused_stale",
+        "ageHours": 3099
+      },
+      {
+        "name": "graph-drift-2026-33.md",
+        "bornAt": "2026-08-11T08:30:37.316Z",
+        "verdict": "refused_stale",
+        "ageHours": 2383
+      },
+      {
+        "name": "services-api-drift-2026-28.md",
+        "bornAt": "2026-07-12T12:53:41.897Z",
+        "verdict": "refused_stale",
+        "ageHours": 3099
+      },
+      {
+        "name": "services-api-drift-2026-30.md",
+        "bornAt": "2026-07-20T11:00:32.726Z",
+        "verdict": "refused_stale",
+        "ageHours": 2908
+      },
+      {
+        "name": "services-api-drift-2026-32.md",
+        "bornAt": "2026-08-03T11:00:33.058Z",
+        "verdict": "refused_stale",
+        "ageHours": 2572
+      },
+      {
+        "name": "services-api-drift-2026-33.md",
+        "bornAt": "2026-08-10T11:00:35.915Z",
+        "verdict": "refused_stale",
+        "ageHours": 2404
+      },
+      {
+        "name": "services-api-drift-2026-38.md",
+        "bornAt": "2026-09-14T11:00:33.135Z",
+        "verdict": "refused_stale",
+        "ageHours": 1564
+      }
+    ]
+  }
+}
