@@ -1,1 +1,4 @@
 {"ts":"2026-11-18T10:05:43.189Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-11-18T12:54:14.461Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-11-18T12:53:47.769Z","origin":"ask-persona"}
+{"ts":"2026-11-18T12:54:14.512Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-11-18T12:53:47.769Z","origin":"ask-persona"}
+{"ts":"2026-11-18T12:54:14.515Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-30-sprint-honest-m7-second-door","reason":"там тот же жанр: узкая планка матча, разделение «кто решает нагрузку» и «кто открывает окно» до assign. Здесь — ровно про предварительное деление блока до исполнения следующей волны, без размывания DoD.","origin":"ask-persona"}
