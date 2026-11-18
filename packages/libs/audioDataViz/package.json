@@ -19,8 +19,8 @@
   ],
   "scripts": {
     "build": "tsc -b",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
-    "clean": "rimraf dist .tsbuildinfo"
+    "typecheck": "tsc --noEmit -p tsconfig.json --tsBuildInfoFile ./.tsbuildinfo.typecheck",
+    "clean": "rimraf dist .tsbuildinfo .tsbuildinfo.typecheck"
   },
   "peerDependencies": {
     "react": "^18.0.0",

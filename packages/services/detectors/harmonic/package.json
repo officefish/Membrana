@@ -18,10 +18,10 @@
   ],
   "scripts": {
     "build": "tsc -b && vite build",
-    "clean": "rimraf dist dist-demo .turbo .tsbuildinfo",
+    "clean": "rimraf dist dist-demo .turbo .tsbuildinfo .tsbuildinfo.typecheck",
     "dev:demo": "vite --config demo/vite.config.ts",
     "lint": "eslint src demo --ext .ts,.tsx",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --tsBuildInfoFile ./.tsbuildinfo.typecheck",
     "test": "vitest run --exclude '**/detector.integration.test.ts'",
     "test:integration": "vitest run src/detector.integration.test.ts"
   },
