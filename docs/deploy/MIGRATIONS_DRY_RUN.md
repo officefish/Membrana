@@ -160,3 +160,84 @@ SELECT days FROM "MembraneArchiveRetention"               → 14
   - `Tariff.datasetCatalogId` `column_default` — нет: прод ≡ схема, расходится только снимок (К3);
   - последняя применённая миграция — `20260908172033_tariff_contract_version` → миграции #2587 (media) и #2588 (`20261005160000_membrane_archive_retention`) поедут инкрементально.
 - **Вывод:** К1–К3 не блокируют выкатку холодного архива.
+
+---
+
+# Сухой прогон миграций g1a #2632 (media · журнал уборщика) — 18.11.2026
+
+Ответ на BLOCK ревью PR [#2644](https://github.com/officefish/Membrana/pull/2644): обе миграции блока
+`g1a-media-journal-schema` были написаны снимками SQL рукой и не применялись к живому Postgres.
+
+- `packages/background-media/prisma/migrations/20261008140000_downgrade_archive_device_restrict` — `CASCADE` → `RESTRICT` у связей архива с `Device`.
+- `packages/background-media/prisma/migrations/20261008140100_cold_archive_purge_journal` — `ColdArchivePurgeRun`, `ColdArchivePurgeJob`, пять enum'ов.
+
+Ветка `feat/archive-gc-g1a-media-journal-schema` после `git merge origin/main` (ствол `90bb39e2`).
+
+## Вердикт
+
+| Проверка | Итог |
+|---|---|
+| `prisma migrate deploy` всей цепочки media на пустую БД | **16/16 применены**, exit 0 |
+| `migrate diff --from-migrations … --to-schema-datamodel … --exit-code` (теневая БД) | **No difference detected**, exit 0 |
+| `migrate diff --from-url <прогнанная БД> --to-schema-datamodel … --exit-code` | **No difference detected**, exit 0 |
+| `migrate status` | Database schema is up to date, exit 0 |
+| Живые проверки ограничений (ниже) | 6 ожидаемых отказов, 0 неожиданных |
+
+**ГОДНЫ К ВЫКАТКЕ.** SQL не правился; в комментариях двух снимков строка «`migrate deploy` НЕ
+гонялся» заменена ссылкой на этот раздел (миграции ещё нигде не применены — контрольная сумма не
+важна), после правки прогон повторён на заново созданных пустых БД — тот же итог.
+
+## Условия прогона
+
+- Docker Desktop (демон 29.2.0) работает у владельца; после прогона не останавливался.
+- Временный контейнер `postgres:16-alpine`, имя `membrana-mig-dryrun-g1a`, порт только `127.0.0.1:54330`, пользователь `dryrun`, пароль — `openssl rand -hex 24` в scratchpad, в вывод не попадал (`<pw>`).
+- Базы `media_dryrun`, `media_shadow` — пустые на старте (дважды: до и после правки комментариев).
+- Prisma CLI 6.19.3 из дерева, без `yarn install`; `prisma validate` — ok.
+
+## На базе
+
+```
+cd packages/background-media
+DATABASE_URL=postgresql://dryrun:<pw>@127.0.0.1:54330/media_dryrun npx prisma migrate deploy
+  16 migrations found in prisma/migrations
+  … Applying migration `20261005200000_downgrade_archive`
+  Applying migration `20261008140000_downgrade_archive_device_restrict`
+  Applying migration `20261008140100_cold_archive_purge_journal`
+  All migrations have been successfully applied.                        → exit 0
+
+npx prisma migrate diff --from-migrations ./prisma/migrations --to-schema-datamodel ./prisma/schema.prisma \
+  --shadow-database-url postgresql://dryrun:<pw>@127.0.0.1:54330/media_shadow --exit-code
+  No difference detected.                                                → exit 0
+npx prisma migrate diff --from-url …/media_dryrun --to-schema-datamodel ./prisma/schema.prisma --exit-code
+  No difference detected.                                                → exit 0
+```
+
+Живые проверки (`psql` в контейнере, БД `media_dryrun`):
+
+```
+enum_range: trigger {cron,panel,manual} · mode {dry_run,live} · run {running,succeeded,failed,abandoned}
+            target {batch,orphan_blob} · job {pending,claimed,succeeded,retry,dead_letter}
+INSERT Device + DowngradeArchiveBatch                           → INSERT 0 1 ×2
+DELETE Device с партией                                          → ERROR: violates foreign key constraint "DowngradeArchiveBatch_deviceId_fkey"  (RESTRICT)
+INSERT Run (только trigger/mode/снимки)                          → status=running, jobsTotal=0, bytesFreed=0, finishedAt NULL
+INSERT Run trigger='timer'                                       → ERROR: invalid input value for enum "ColdArchivePurgeTrigger"
+INSERT Job batch                                                 → status=pending, attempt=0, outcomes={}
+повтор той же партии в том же прогоне                            → ERROR: duplicate key … "ColdArchivePurgeJob_runId_batchId_key"
+два orphan_blob с batchId NULL в одном прогоне                   → INSERT 0 2 (NULL различны)
+Job на несуществующий прогон                                     → ERROR: violates foreign key constraint "ColdArchivePurgeJob_runId_fkey"
+DELETE Run с заданиями                                           → ERROR: … "ColdArchivePurgeJob_runId_fkey" (RESTRICT)
+DELETE партии с заданием                                         → ERROR: … "ColdArchivePurgeJob_batchId_fkey" (NO ACTION)
+индексы: Job pkey · batchId_idx · runId_batchId_key · status_nextAttemptAt_idx; Run pkey · startedAt_idx · status_finishedAt_idx
+_prisma_migrations: applied=16, rolled_back=0
+```
+
+## Что НЕ проверено
+
+- Прод-состояние `_prisma_migrations` media (серверы не трогались). По закрытию 06.10 обе миграции поедут инкрементально после `20261005200000_downgrade_archive`.
+- RESTRICT на проде: если на проде уже есть приборы с архивом, миграция сама не падает (меняется только правило удаления), но удалить такой прибор после выкатки БД не даст — так и задумано (Т3, Д6).
+- Частичный уникальный индекс «один активный live-прогон» — Prisma не выражает, за g3b.
+
+## Снос
+
+`docker rm -f -v membrana-mig-dryrun-g1a` — контейнер и его анонимный том удалены; файл с паролем в
+scratchpad удалён. Docker Desktop оставлен работающим.
