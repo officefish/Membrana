@@ -173,11 +173,60 @@ jobs:
             echo "::error::Ветка ${branch} запушена, но PR не создан. Проверьте Settings → Actions → General → «Allow GitHub Actions to create and approve pull requests»."
             echo "PLAN_STATE=pr-failed" >> "$GITHUB_ENV"
             # Ветка остаётся НАМЕРЕННО: в ней сгенерированный план, без неё он потерян.
-            # Уборка осиротевших bot/weekly-plan-* — follow-up #2650.
+            # Уборка осиротевших bot/weekly-plan-* — шаг «Sweep stale…» ниже (#2650).
             exit 1
           fi
           echo "PR: ${url}"
           echo "PLAN_PR=${url}" >> "$GITHUB_ENV"
+
+      - name: Sweep stale bot/weekly-plan-* branches
+        # Уборка (#2650): ветка плана пушится ДО `gh pr create` намеренно — при отказе
+        # создания PR план не теряется. Цена — ветки без PR копятся. Здесь сносятся ветки
+        # `bot/weekly-plan-<run_id>` старше SWEEP_DAYS без ОТКРЫТОГО PR. Ветка этого прогона
+        # не трогается никогда (её возраст 0, и она исключена явно). Не знаю → не сношу:
+        # отказ gh/git по ветке = ветка остаётся, предупреждение в лог и в сводку.
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.WEEKLY_PLAN_TOKEN || secrets.GITHUB_TOKEN }}
+          SWEEP_DAYS: '14'
+        run: |
+          set -uo pipefail
+          own="bot/weekly-plan-${GITHUB_RUN_ID}"
+          now="$(date -u +%s)"
+          limit=$(( now - SWEEP_DAYS * 86400 ))
+          deleted=0; kept=0; failed=0
+          # checkout с fetch-depth: 0 приносит все ветки как refs/remotes/origin/*.
+          if ! refs="$(git for-each-ref --format='%(refname:strip=3) %(committerdate:unix)' 'refs/remotes/origin/bot/weekly-plan-*')"; then
+            echo "::warning::Уборка: не удалось перечислить ветки bot/weekly-plan-* — ничего не снесено."
+            echo "SWEEP_SUMMARY=отказ перечисления, ничего не снесено" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          while read -r b ts; do
+            [ -n "${b:-}" ] || continue
+            # Только точная форма имени бота: чужие ветки с похожим префиксом не трогаем.
+            if ! [[ "$b" =~ ^bot/weekly-plan-[0-9]+$ ]] || [ "$b" = "$own" ]; then
+              kept=$((kept + 1)); continue
+            fi
+            if [ "$ts" -gt "$limit" ]; then
+              kept=$((kept + 1)); continue
+            fi
+            if ! open="$(gh pr list --head "$b" --state open --json number --jq 'length')"; then
+              echo "::warning::Уборка: gh не ответил про PR ветки ${b} — оставлена."
+              failed=$((failed + 1)); continue
+            fi
+            if [ "$open" != "0" ]; then
+              kept=$((kept + 1)); continue
+            fi
+            if git push origin --delete "$b"; then
+              echo "Снесена ${b} (последний коммит $(date -u -d "@${ts}" +%Y-%m-%d), открытого PR нет)."
+              deleted=$((deleted + 1))
+            else
+              echo "::warning::Уборка: не удалось удалить ${b} — оставлена."
+              failed=$((failed + 1))
+            fi
+          done <<< "$refs"
+          echo "Уборка: снесено ${deleted}, оставлено ${kept}, отказов ${failed} (порог ${SWEEP_DAYS} дн.)."
+          echo "SWEEP_SUMMARY=снесено ${deleted}, оставлено ${kept}, отказов ${failed} (порог ${SWEEP_DAYS} дн., без открытого PR)" >> "$GITHUB_ENV"
 
       - name: Job summary
         if: always()
@@ -203,8 +252,9 @@ jobs:
             elif [ "${PLAN_STATE:-}" = "unchanged" ]; then
               echo "- Результат: план не изменился — заявка не нужна."
             elif [ "${PLAN_STATE:-}" = "pr-failed" ]; then
-              echo "- Результат: ОТКАЗ — ветка с планом запушена, PR не создан (см. ошибку шага; уборка ветки — #2650)."
+              echo "- Результат: ОТКАЗ — ветка с планом запушена, PR не создан (см. ошибку шага; ветку снесёт уборка через SWEEP_DAYS, если PR так и не появится)."
             else
               echo "- Результат: генерация не дошла до заявки (см. упавший шаг выше)."
             fi
+            echo "- Уборка веток bot/weekly-plan-*: ${SWEEP_SUMMARY:-шаг уборки не дошёл}."
           } >> "$GITHUB_STEP_SUMMARY"
