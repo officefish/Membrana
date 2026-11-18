@@ -490,6 +490,7 @@
     "verify:declared-imports": "node scripts/verify-declared-imports.mjs",
     "verify:build-order": "node scripts/verify-build-order-deps.mjs",
     "verify:task-writes": "node scripts/verify-task-write-targets.mjs",
+    "verify:secrets-freshness": "node scripts/verify-secrets-freshness.mjs",
     "verify:adr-registry": "node scripts/verify-adr-registry.mjs"
   },
   "devDependencies": {
