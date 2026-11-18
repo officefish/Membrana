@@ -20,6 +20,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { classifyWorktree, parseWorktreeCard } from './lib/classify-worktree.mjs';
+import { countUnpushed } from './lib/unpushed-count.mjs';
 import {
   resolveLinkTarget,
   targetIsOutsideTree,
@@ -139,28 +140,9 @@ function readWorktreeCard(wtPath) {
   }
 }
 
-/**
- * Локальные коммиты, которых нет снаружи. После squash-мёржа remote-ветку обычно
- * удаляют, поэтому «ahead origin/main» тут не годится (squash делает его >0 всегда):
- * при живом origin/<branch> считаем против него, иначе сверяем tip с headRefOid PR —
- * совпал → всё, что было в PR, снаружи есть. Непонятно → 1 (fail-closed, не сносить).
- */
+/** Незапушенное = нет ни в origin/<ветка>, ни в origin/main, ни в вершине PR (#2350, lib/unpushed-count). */
 function unpushedCount(branch, pr) {
-  try {
-    return Number(git(['rev-list', '--count', `origin/${branch}..${branch}`]));
-  } catch {
-    /* origin-ветки нет — сверяем с PR */
-  }
-  if (pr?.headRefOid) {
-    try {
-      return git(['rev-parse', branch]) === pr.headRefOid
-        ? 0
-        : Number(git(['rev-list', '--count', `${pr.headRefOid}..${branch}`]));
-    } catch {
-      return 1;
-    }
-  }
-  return aheadOfMain(branch) > 0 ? 1 : 0;
+  return countUnpushed({ branch, prHeadOid: pr?.headRefOid ?? null, git: (args) => git(args) });
 }
 
 /**
