@@ -88,6 +88,7 @@
     "scripts/lib/task-registry.mjs": "94e4648c6b11c5ff1122f66f166449eb191ffde2",
     "scripts/lib/tasks-readme-engine.mjs": "3a45a41f5e17587bc54b85011eeacbeffa7c264b",
     "scripts/lib/truth-graph.mjs": "54f1c23e0f0449e4adde145aa2d2633030baa22a",
+    "scripts/lib/unpushed-count.mjs": "f7ef40dfc444083a1a3f65bab46e6ea4f2ddcb1d",
     "scripts/lib/worktree-demolition.mjs": "d234e30a2faf44b0bcb48f252e67551ad4eae3e2",
     "scripts/lib/worktree-resolution.mjs": "731827bf01744a3f3a5ed4fc136bfb8206916c88",
     "scripts/lib/worktree-sync-check.mjs": "a86b1b518c06699535552e05a773bd0fc4b8658f",
@@ -98,7 +99,7 @@
     "scripts/network/lib/classify.mjs": "2b5f6946d183ed579643a51e3e1dcd02c25b1c92",
     "scripts/network/lib/probe-core.mjs": "099f5529ec7e198db1638d817b31cadbffc917df",
     "scripts/plan-week-if-monday.mjs": "4de9f7e1d42d88c5cd262041c3eb29e918cec194",
-    "scripts/repo-clean.mjs": "57e8a25a5e835ddded1d180ceb3b7b8712031829",
+    "scripts/repo-clean.mjs": "e8462f21633d904624ae0505a91d21ac07c8b450",
     "scripts/strategy-day.mjs": "4e87373353828c2551fe04f740fd6b600a09dfe6",
     "scripts/telegram-swallow.mjs": "8164cfe6d01764034e8e8c162d5e79c6f31b6eb5",
     "scripts/worktree-sync.mjs": "1c727649ab55edf61a96e9fc8722a0708ab0cf92"
