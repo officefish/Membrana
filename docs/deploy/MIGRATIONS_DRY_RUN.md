@@ -241,3 +241,75 @@ _prisma_migrations: applied=16, rolled_back=0
 
 `docker rm -f -v membrana-mig-dryrun-g1a` — контейнер и его анонимный том удалены; файл с паролем в
 scratchpad удалён. Docker Desktop оставлен работающим.
+
+---
+
+# #2611 — цепочка кабинета разворачивается на пустую БД (К1–К3) — 18.11.2026
+
+Ответ на находки К1–К3 от 06.10 (выше). **Ни одна применённая на проде миграция не правилась**:
+имена и содержимое старых папок те же, их checksum в `_prisma_migrations` прода не меняется.
+Добавлены четыре НОВЫЕ миграции, каждая — no-op на базе, где история уже пройдена:
+
+| Миграция | Находка | Пустая БД | Прод (Tariff есть, NodeDeviceCapture есть) |
+|---|---|---|---|
+| `20260612110000_tariff_bootstrap_empty_db` | К1 | нет `"Tariff"` → таблица-подставка с меткой `COMMENT 'membrana-2611-bootstrap'` — старое переименование проходит | `"Tariff"` есть → ничего |
+| `20260612120001_tariff_bootstrap_drop` | К1 | снять подставку (только по метке) до `mp2_domain` | метки нет → ничего |
+| `20260614120001_tariff_quota_rename_replay` | К1 | повтор переименования и `datasetCatalogId` после `mp2_domain` | столбцы уже такие → ничего |
+| `20261118120000_node_device_capture_catchup` | К2, К3 | enum + `NodeDeviceCapture` + индексы + FK; `DROP DEFAULT` | всё «если ещё нет» → ничего; `DROP DEFAULT` без умолчания — no-op |
+
+Prisma `migrate deploy` применяет неприменённые миграции и с именем СТАРШЕ последней
+применённой — проверено на модели прода ниже.
+
+## Условия прогона
+
+Контейнер `postgres:16-alpine` `membrana-mig-dryrun-2611`, порт только `127.0.0.1:54331`, пароль
+`openssl rand -hex 24` в scratchpad (в вывод не попадал, `<pw>`), Prisma CLI 6.19.3 из дерева.
+
+## Воспроизведение (ствол, до правки)
+
+```
+DATABASE_URL=…/c_empty npx prisma migrate deploy
+  Migration name: 20260612120000_tariff_quota_rename
+  Database error code: 42P01 — ERROR: relation "Tariff" does not exist        → exit 1
+```
+
+## После правки — пустая БД
+
+```
+npx prisma migrate deploy                     25 migrations found … All migrations have been successfully applied.   exit 0
+  порядок: 20260612110000_tariff_bootstrap_empty_db → 20260612120000_tariff_quota_rename →
+           20260612120001_tariff_bootstrap_drop → 20260613120000_init → 20260614120000_mp2_domain →
+           20260614120001_tariff_quota_rename_replay → … → 20261118120000_node_device_capture_catchup
+npx prisma migrate diff --from-migrations … --to-schema-datamodel … --shadow-database-url … --exit-code
+                                              No difference detected.                                                exit 0
+npx prisma migrate diff --from-url <БД> --to-schema-datamodel … --exit-code   No difference detected.               exit 0
+npx prisma migrate status                     Database schema is up to date!                                         exit 0
+```
+
+## После правки — модель прода
+
+Модель: цепочка ствола применена в «прод-порядке» (переименование после `mp2_domain`, запись в
+`_prisma_migrations` под исходным именем `20260612120000_tariff_quota_rename`), затем — как `db push`
+на проде — разность до схемы (`NodeDeviceCapture`, enum, `DROP DEFAULT`); строка в `"Tariff"`.
+
+```
+migrate status (до)    Following migrations have not yet been applied: четыре новые
+migrate deploy         Applying 20260612110000… 20260612120001… 20260614120001… 20261118120000…  exit 0
+migrate diff --from-url … --exit-code   No difference detected.                                exit 0
+migrate status         Database schema is up to date!
+pg_dump -s до/после    идентичны (кроме случайного токена \restrict); строка "Tariff" цела
+```
+
+## Что сверить на проде (чтением, до выкатки)
+
+1. `_prisma_migrations`: нет строк с `finished_at IS NULL` или `rolled_back_at IS NOT NULL` — иначе
+   `migrate deploy` откажет до разбора.
+2. `npx prisma migrate diff --from-url <прод> --to-schema-datamodel ./prisma/schema.prisma --exit-code`
+   → «No difference detected». Миграция К2 написана «если ещё нет»: если `NodeDeviceCapture` на
+   проде отличается от схемы (столбцы, индексы), она этого НЕ исправит, и разность покажет это.
+3. `obj_description('"Tariff"'::regclass, 'pg_class')` → не `membrana-2611-bootstrap` (иначе вторая
+   миграция снесёт таблицу; метку ставит только первая из новых и только на пустой БД).
+
+## Снос
+
+`docker rm -f -v membrana-mig-dryrun-2611`; файл с паролем и копия миграций в scratchpad удалены.
