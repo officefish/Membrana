@@ -50,32 +50,34 @@ const job = (status: PurgeJobSummary['status'], jobId: string): PurgeJobSummary 
 });
 const DETAIL: PurgeRunDetail = { ...RUN, jobs: [job('succeeded', 'j1'), job('dead_letter', 'j2')] };
 const noop = () => undefined;
+const P = { staleAfterMs: 7_200_000, lastFinishedRunAt: null, lastSucceededRunAt: null, checkedAt: '2026-11-20T12:00:00.000Z' };
 const noDeleteButton = (html: string) => expect(html).not.toMatch(/<button[^>]*>[^<]*(Удал|удал)/);
 
 describe('значок пульса', () => {
   it('stale — role=alert, «Тревога», режим текстом', () => {
     const html = renderToStaticMarkup(
-      <ColdArchivePulseBadge pulse={{ mode: 'dry_run', pulse: 'stale', lastFinishedRunAt: null, lastSucceededRunAt: null }} />,
+      <ColdArchivePulseBadge pulse={{ mode: 'dry-run', pulse: 'stale', ...P }} />,
     );
     expect(html).toContain('role="alert"');
     expect(html).toContain('Тревога');
+    expect(html).toMatch(/больше (<!-- -->)?2(<!-- -->)? ч/);
     expect(html).toContain('пробный режим');
   });
 
   it('ok — role=status, aria-live; disabled — «уборка выключена»; null — «не подключён», не «работает»', () => {
     const ok = renderToStaticMarkup(
-      <ColdArchivePulseBadge pulse={{ mode: 'live', pulse: 'ok', lastFinishedRunAt: null, lastSucceededRunAt: RUN.finishedAt }} />,
+      <ColdArchivePulseBadge pulse={{ mode: 'live', pulse: 'ok', ...P, lastSucceededRunAt: RUN.finishedAt }} />,
     );
     expect(ok).toContain('role="status"');
     expect(ok).toContain('aria-live="polite"');
     expect(ok).toContain('Уборщик работает');
     const off = renderToStaticMarkup(
-      <ColdArchivePulseBadge pulse={{ mode: 'disabled', pulse: 'disabled', lastFinishedRunAt: null, lastSucceededRunAt: null }} />,
+      <ColdArchivePulseBadge pulse={{ mode: 'disabled', pulse: 'disabled', ...P }} />,
     );
     expect(off).toContain('уборка выключена');
     expect(off).not.toContain('Тревога');
     const unknown = renderToStaticMarkup(<ColdArchivePulseBadge pulse={null} />);
-    expect(unknown).toContain('не подключён');
+    expect(unknown).toContain('неизвестно');
     expect(unknown).not.toContain('работает');
   });
 });

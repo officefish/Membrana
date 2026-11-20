@@ -2,13 +2,13 @@ import type { ColdArchivePulse } from '@/lib/coldArchiveApi';
 
 /**
  * #2632 g6b (Т1, Т6): значок пульса уборщика — иконка + текст, тревога при `stale`.
- * Данные — проп; загрузку делает вкладка g6c. `pulse === null` — ручки пульса ещё нет (g5b не влит):
- * значок честно говорит «пульс не подключён», а не «всё хорошо». Тип — интерфейс g6a по DoD g5b.
+ * Данные — проп (ответ ручки office g5b `pulse`); загрузку делает вкладка g6c. `pulse === null` — пульс не получен:
+ * значок честно говорит «состояние неизвестно», а не «всё хорошо».
  */
 
 const MODE_TEXT: Record<ColdArchivePulse['mode'], string> = {
   disabled: 'уборка выключена',
-  dry_run: 'пробный режим — файлы не удаляются',
+  'dry-run': 'пробный режим — файлы не удаляются',
   live: 'боевой режим',
 };
 
@@ -23,7 +23,7 @@ export function ColdArchivePulseBadge({ pulse }: { pulse: ColdArchivePulse | nul
     return (
       <div role="status" className="alert" data-pulse="unknown">
         <span aria-hidden="true">○</span>
-        <span>Пульс уборщика пока не подключён — состояние неизвестно.</span>
+        <span>Пульс уборщика не получен — состояние неизвестно.</span>
       </div>
     );
   }
@@ -33,7 +33,7 @@ export function ColdArchivePulseBadge({ pulse }: { pulse: ColdArchivePulse | nul
       <div role="alert" className="alert alert-warning" data-pulse="stale">
         <span aria-hidden="true">⚠</span>
         <span>
-          Тревога: уборщик молчит больше 2 часов ({MODE_TEXT[pulse.mode]}). {last}
+          Тревога: уборщик молчит больше {Math.round(pulse.staleAfterMs / 3_600_000)} ч ({MODE_TEXT[pulse.mode]}). {last}
         </span>
       </div>
     );

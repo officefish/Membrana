@@ -88,19 +88,20 @@ export interface PurgeScheduleRow {
 }
 
 /**
- * Пульс и режим уборщика — контракт g5b по плану v3 (`docs/sprint/cut/archive-gc-journal-2588.json`,
- * DoD g5b, Т1/Т6): `pulseOf(mode, lastSucceededRunAt, now) → disabled|ok|stale`, порог 2 ч, ответ несёт
- * режим по флагам. Ручки office ещё НЕТ (g5b не влит) — здесь только форма, вызова нет; путь и имена
- * полей сверить с g5b при его вливании.
+ * Пульс и режим уборщика — ручка office g5b (#2691, `cold-archive-pulse.controller.ts`, форма `PulseView`
+ * в `cold-archive-pulse.ts`): режим по флагам office (`SweepMode`, через дефис — не путать с `mode`
+ * прогона media `dry_run`) и пульс `disabled|ok|stale`; `stale` — успешного прогона нет дольше `staleAfterMs`.
  */
-export type ColdArchiveSweepMode = 'disabled' | 'dry_run' | 'live';
+export type ColdArchiveSweepMode = 'disabled' | 'dry-run' | 'live';
 export type ColdArchivePulseState = 'disabled' | 'ok' | 'stale';
 
 export interface ColdArchivePulse {
   mode: ColdArchiveSweepMode;
   pulse: ColdArchivePulseState;
-  lastFinishedRunAt: string | null;
+  staleAfterMs: number;
   lastSucceededRunAt: string | null;
+  lastFinishedRunAt: string | null;
+  checkedAt: string;
 }
 
 export class ColdArchiveApiError extends Error {
@@ -163,6 +164,11 @@ export async function fetchPurgeRun(runId: string): Promise<PurgeRunDetail> {
 export async function fetchPurgeRunVerification(runId: string): Promise<PurgeRunVerification> {
   const raw = (await coldArchiveGet(`purge-runs/${encodeURIComponent(runId)}/verify`)) as PurgeRunVerification;
   return { ...raw, jobs: Array.isArray(raw?.jobs) ? raw.jobs : [] };
+}
+
+/** Пульс и режим уборщика (Т1, Т6). */
+export async function fetchColdArchivePulse(): Promise<ColdArchivePulse> {
+  return (await coldArchiveGet('pulse')) as ColdArchivePulse;
 }
 
 /** Ближайшие удаления (Т5): замороженные партии по сроку. */

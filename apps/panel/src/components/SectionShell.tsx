@@ -5,6 +5,7 @@ import { canAccessSection, ROLE_LABELS, type PanelRole } from '@/lib/roles';
 import { PANEL_SECTIONS, type PanelSection } from '@/lib/sections';
 import { DriftAnchorsBoard } from './DriftAnchorsBoard';
 import { SectionCard } from './SectionCard';
+import { ColdArchiveScheduleTab } from './cold-archive/ColdArchiveScheduleTab';
 import { DetectorCompareSection } from './detector-compare/DetectorCompareSection';
 import { GraphifyBoard } from './graphify/GraphifyBoard';
 import { LlmChannelsBoard } from './llm-channels/LlmChannelsBoard';
@@ -25,6 +26,7 @@ const SECTION_BOARDS: Partial<Record<string, ComponentType>> = {
   'detector-compare': DetectorCompareSection,
   'panel-users': PanelUsersBoard,
   'llm-channels': LlmChannelsBoard,
+  'cold-archive-schedule': ColdArchiveScheduleTab,
   'tooling-atlas': ToolingAtlasBoard,
   'strategic-docs': StrategicDocsBoard,
   graphify: GraphifyBoard,
@@ -36,6 +38,7 @@ const WIDE_SECTIONS = new Set([
   'detector-compare',
   'panel-users',
   'llm-channels',
+  'cold-archive-schedule',
   'graphify',
   'research-tree',
 ]);

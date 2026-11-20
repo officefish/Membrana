@@ -51,6 +51,12 @@ export const PANEL_SECTIONS: readonly PanelSection[] = [
     minRole: 'owner',
   },
   {
+    id: 'cold-archive-schedule',
+    title: 'График удалений',
+    description: 'Когда удалятся старые записи после понижения тарифа и как прошли прошлые уборки (owner, только чтение).',
+    minRole: 'owner',
+  },
+  {
     id: 'tooling-atlas',
     title: 'Контейнеры',
     description: 'Карта домов туллинга: задания, отчёты, атлас — без второго «tasks».',
