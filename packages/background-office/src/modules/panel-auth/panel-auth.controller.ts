@@ -108,7 +108,9 @@ export class PanelAuthController {
     if (!this.service.isGithubConfigured()) {
       throw new ServiceUnavailableException('github oauth is not configured');
     }
-    void res.redirect(this.service.authorizeUrl(this.service.mintOauthState()));
+    // #2375: код явно. Nest до обработчика ставит статус метода (200), а Fastify 5 `redirect(url)` без кода
+    // берёт уже выставленный — выходил 200 с Location, браузер не шёл на GitHub.
+    void res.redirect(this.service.authorizeUrl(this.service.mintOauthState()), 302);
   }
 
   /** Callback GitHub: state → code → user → allowlist-роль → cookie → redirect на витрину. */
@@ -138,7 +140,7 @@ export class PanelAuthController {
         this.service.cookieSecure(),
       ),
     );
-    void res.redirect('/');
+    void res.redirect('/', 302);
   }
 
   /** Выход: гашение cookie. */
