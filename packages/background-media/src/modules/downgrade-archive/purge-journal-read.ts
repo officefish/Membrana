@@ -7,7 +7,10 @@
  * (`lastError`, `errorSummary`) путей не содержат по построению (политика g3a, исполнитель g3b).
  *
  * - `listRuns` / `getRun` — журнал прогонов и задания прогона;
- * - `purgePulse` — последний завершённый и последний успешный прогон (пульс g5b).
+ * - `purgePulse` — последний завершённый и последний успешный прогон ПО РАСПИСАНИЮ (пульс g5b).
+ *   #2690 (решение владельца 20.11): считаются только `trigger=cron`. Пробный прогон из панели
+ *   (`panel`) и ручной (`manual`) пишутся в журнал, но пульс не освежают — иначе свежее превью
+ *   скрыло бы остановившееся расписание.
  *
  * График удалений (Т5) и аудит прогона (Т4) — блок g4b.
  */
@@ -72,10 +75,13 @@ export async function getRun(db: PurgeJournalDb, runId: string): Promise<(PurgeR
   return { ...runView(run), jobs: jobs.map(jobView) };
 }
 
+/** Пульс — только прогоны по расписанию (#2690). */
+export const PULSE_TRIGGER = 'cron' as const;
+
 export async function purgePulse(db: PurgeJournalDb): Promise<{ lastFinishedRunAt: Date | null; lastSucceededRunAt: Date | null }> {
   const last = (status?: 'succeeded') =>
     db.coldArchivePurgeRun.findFirst({
-      where: { finishedAt: { not: null }, ...(status ? { status } : {}) },
+      where: { trigger: PULSE_TRIGGER, finishedAt: { not: null }, ...(status ? { status } : {}) },
       orderBy: { finishedAt: 'desc' },
       select: { finishedAt: true },
     });

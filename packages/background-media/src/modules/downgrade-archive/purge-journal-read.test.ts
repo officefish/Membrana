@@ -48,7 +48,7 @@ function fixture() {
     },
   });
   const db = { coldArchivePurgeRun: table(runs), coldArchivePurgeJob: table(jobs) } as never;
-  return { db };
+  return { db, runs };
 }
 
 const noPaths = (value: unknown) => expect(JSON.stringify(value)).not.toMatch(/secret-/);
@@ -73,8 +73,20 @@ describe('журнал прогонов', () => {
     expect(await getRun(db, 'r-none')).toBeNull();
   });
 
-  it('purgePulse: последний завершённый (любой исход) и последний успешный; running не считается', async () => {
+  it('purgePulse: только прогоны по расписанию (cron) — последний завершённый и последний успешный; running не считается', async () => {
     const { db } = fixture();
-    expect(await purgePulse(db)).toEqual({ lastFinishedRunAt: at(6), lastSucceededRunAt: at(2) });
+    // r-new (panel, failed, at 6) — не по расписанию: пульс его не видит (#2690)
+    expect(await purgePulse(db)).toEqual({ lastFinishedRunAt: at(2), lastSucceededRunAt: at(2) });
+  });
+
+  it('#2690: превью из панели свежее, cron старше 2 ч → пульс отдаёт время cron (office: stale)', async () => {
+    const { db, runs } = fixture();
+    for (const trigger of ['panel', 'manual']) {
+      runs.push({ id: `r-${trigger}`, trigger, mode: 'dry_run', status: 'succeeded', startedAt: at(9), finishedAt: at(10), enabledSnapshot: false, dryRunSnapshot: true, jobsTotal: 0, jobsSucceeded: 0, jobsFailed: 0, jobsDeadLetter: 0, bytesFreed: 0n, errorSummary: null });
+    }
+    const pulse = await purgePulse(db);
+    expect(pulse).toEqual({ lastFinishedRunAt: at(2), lastSucceededRunAt: at(2) });
+    // порог office (> 2 ч, cold-archive-pulse.ts): на момент at(10) успех cron 8 ч назад — тревога
+    expect(at(10).getTime() - pulse.lastSucceededRunAt!.getTime()).toBeGreaterThan(2 * 60 * 60 * 1000);
   });
 });
