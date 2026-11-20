@@ -1,1 +1,5 @@
 {"ts":"2026-11-18T10:05:42.073Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-11-18T16:13:13.123Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-11-18-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-11-18T16:13:13.123Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-09-06-buffer-full-stop-m5-operator-window","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-11-18T16:13:13.123Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-09-03-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-11-18T16:13:13.123Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

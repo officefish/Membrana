@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14389/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 402 (причины в op-log) -->
+Записей: 50 · бюджет 14376/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 403 (причины в op-log) -->
+
+### 2026-11-18 · позиция · team-evening-feedback
+
+> Тарасов. Магистраль — уборщик архива (#2632 g1–g5a), возвращение фазы 1 стратегии. Оценка артефактов: `STRATEGY_DAY`/`STRATEGIC_PLAN_DAY` в контексте — **протухшие** (2980 ч), вердикт заседания `strategy-day-investigation` прямо запрещает читать план-день как источник; […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-11-18.md#reply-1`
 
 ### 2026-10-08 · позиция · archive-gc-journal
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/buffer-full-stop-m4-life-after-2026-09-06.md#reply-1`
 
-### 2026-09-06 · позиция · buffer-full-stop-m5-operator-window
+### 2026-09-05 · позиция · team-evening-feedback
 
-> Планка: вещдоки не страдают. Значит первая кнопка — путь, который не стирает. «Вывезти в набор» (#2226 уже есть) — первая. «Почистить» — вторая, только с подтверждением и счётом. «Сменить тариф» — третья, честная: если переходить некуда (#2297 как факт constrайнта UI, не как […] _(реплик в сеансе: 6)_
+> Оценка артефактов: Документы дня согласованы и честны: стендап и MAIN_DAY_ISSUE прямо фиксируют расхождение (review self-select как «одно главное» утром vs owner-choice `cabinet-hotfix-2287`), не замалчивая его. STRATEGY_DAY устарел (горизонт 18.07) — читать как вещдок, не […]
 
-— источник: `docs/seanses/buffer-full-stop-m5-operator-window-2026-09-06.md#reply-1`
-
-### 2026-09-03 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** Стратегический план дня (`STRATEGIC_PLAN_DAY.md`) — устаревший вещдок (генератор 17.07), читать нельзя; фактическим источником плана служили `DAILY_STANDUP` и `MAIN_DAY_ISSUE`. Утренний стендап чётко зафиксировал P0-фокус — магистраль […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`

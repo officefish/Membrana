@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-18",
+  "date": "2026-11-20",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -553,6 +553,13 @@
       "severity": "high",
       "issue": "DeepmergeTS has stack exhaustion when merging recursive object graphs",
       "url": "https://github.com/advisories/GHSA-ggr8-5vv4-36mx"
+    },
+    {
+      "pkg": "effect",
+      "id": "1248071",
+      "severity": "high",
+      "issue": "Effect: ReDoS in Schema.TemplateLiteral compiled regex",
+      "url": "https://github.com/advisories/GHSA-7589-6fvf-x4pw"
     },
     {
       "pkg": "electron",
@@ -1127,13 +1134,6 @@
       "severity": "moderate",
       "issue": "This package is no longer supported.",
       "url": ""
-    },
-    {
-      "pkg": "picomatch",
-      "id": "1247710",
-      "severity": "high",
-      "issue": "picomatch vulnerable to ReDoS through single-branch repeated extglobs",
-      "url": "https://github.com/advisories/GHSA-fc5q-39xc-vjpf"
     },
     {
       "pkg": "postcss",

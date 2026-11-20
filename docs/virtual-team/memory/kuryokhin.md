@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14361/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 389 (причины в op-log) -->
+Записей: 50 · бюджет 14373/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 390 (причины в op-log) -->
+
+### 2026-11-18 · позиция · team-evening-feedback
+
+> Курёхин. Аудио-контур не в фокусе. Оценка артефактов: `DAILY_CODE_REVIEW` честно фиксирует «Web Audio / audio-engine не затронуты». `MAIN_DAY_ISSUE` §«Сознательно не делаем сегодня» правильно закрывает фазу 2 (FREE / качество обнаружения) — прямого отношения к аудио-продукту […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-11-18.md#reply-1`
 
 ### 2026-10-08 · позиция · archive-gc-journal
 
@@ -301,9 +307,3 @@
 > Оценка артефактов: Документы лаконичны и не противоречат; Web Audio не затронут — отсутствие моего вклада закономерно. Подкрепление `node-duty-ready` в MAIN_DAY_ISSUE — полевой контур, не код дня. Итоги дня: По аудио-контуру — «—». Живой контекст: #2204 (полный буфер на тарифе) […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-04.md#reply-1`
-
-### 2026-09-03 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** Документы дня не касаются audio-engine / Web Audio / 48 kHz path — мой контур не затронут. `DAILY_CODE_REVIEW` честно фиксирует отсутствие аудио-вклада. **Итоги дня:** Media open-API (#2271/#2276) — дверь библиотеки и ключ с TTL; blob-ручка […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`

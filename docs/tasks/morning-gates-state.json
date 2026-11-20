@@ -7,10 +7,10 @@
   "frozenDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
   "magistral": "archive-gc-journal-2588",
   "swallow": {
-    "draftDigest": "306ce44f3806d3ae4728a42229291af1e7c1abc9f063d814e52c5c68235e733a",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-11-18.md",
+    "draftDigest": "86708ebf40d371ac659b4cb93366143952ea5f6bc9b2824171503fd51fb5fb76",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-11-20.md",
     "ownerAck": true,
-    "day": "2026-11-18",
+    "day": "2026-11-20",
     "claimsProbe": {
       "verdict": "hard",
       "protocol": "docs/seanses/team-evening-feedback-2026-11-18.md",
@@ -20,10 +20,10 @@
     "gate": "evening:partner-swallow"
   },
   "day": "2026-10-07",
-  "magistralChosenAt": "2026-11-18",
+  "magistralChosenAt": "2026-11-20",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-11-18",
+    "at": "2026-11-20",
     "chosen": "archive-gc-journal-2588",
     "snapshotDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
     "inSnapshot": false

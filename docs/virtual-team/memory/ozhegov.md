@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14385/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 396 (причины в op-log) -->
+Записей: 50 · бюджет 14397/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 397 (причины в op-log) -->
+
+### 2026-11-18 · позиция · team-evening-feedback
+
+> Ожегов. Смотрю связность service/controller/runner в media. Оценка артефактов: `DAILY_STANDUP` справедливо выносит P2-хвост (`@membrana/client#test` красный, `ritual-day-2026-11-18-r3` без закрывающей записи). `MAIN_DAY_ISSUE` DoD «15 деревьев Codex видны `repo:clean`» — не […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-11-18.md#reply-1`
 
 ### 2026-10-08 · позиция · archive-gc-journal
 
@@ -295,12 +301,6 @@
 > Оценка артефактов: C1/C4/C7 не применимы — циклов пакетов в видимом diff нет. Артефакты ритуала согласованы; приятно, что `morning-gates-state.json` и assertions перечеканены под owner-choice. Единственная шероховатость — реестр задач не двигался (1142 → 1142), хвосты остаются […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`
-
-### 2026-09-04 · позиция · team-evening-feedback
-
-> Оценка артефактов: Документы согласованы; расхождение ритуал-фокуса и магистрали — норма, вердикт владельца приоритетен. Структура кода не размазана: tariff-ручки в `tariff.controller` → `tariff-transition.service` (существующий), новые `tariff-catalog.service`, […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-04.md#reply-1`
 
 ### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 
