@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `archive-gc-journal-2588` | Уборщик холодного архива с журналом заданий: доказать удаление по сроку (#2588) | L | [`OPEN.md`](../local-sprint/archive-gc-journal-2588/OPEN.md) | [#2632](https://github.com/officefish/Membrana/issues/2632) |
 | `node-duty-ready-predicate` | Узел к дежурству: предикат готовности Firebat — сон/гибернация/автовход/служба (Г4) | S | [`NODE_DUTY_READY_PREDICATE_PROMPT.md`](../prompts/NODE_DUTY_READY_PREDICATE_PROMPT.md) | [#2049](https://github.com/officefish/Membrana/issues/2049) |
 | `session-digest-library-face` | Разбор сеанса лицом: витрина session-digest в библиотеке по образцу чарт-листа (Г2) | M | [`SESSION_DIGEST_LIBRARY_FACE_PROMPT.md`](../prompts/SESSION_DIGEST_LIBRARY_FACE_PROMPT.md) | [#2039](https://github.com/officefish/Membrana/issues/2039) |
 | `dedup-pairs-show-and-wait` | Чистка дублей в наборах: показать пары и ждать слова, не удалять по порогу (Г1) | M | [`DEDUP_PAIRS_SHOW_AND_WAIT_PROMPT.md`](../prompts/DEDUP_PAIRS_SHOW_AND_WAIT_PROMPT.md) | [#2109](https://github.com/officefish/Membrana/issues/2109) |
@@ -85,6 +84,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `archive-gc-journal-2588` | Уборщик холодного архива с журналом заданий: доказать удаление по сроку (#2588) | 2026-11-20 | [`OPEN.md`](../local-sprint/archive-gc-journal-2588/OPEN.md) | #2632 (Issue открыт) | [карточка](./archive/archive-gc-journal-2588.md) |
 | `trace-freeze-e-adr-gate-pr` | Фаза E: ADR различает кандидатов, gate и PR без merge | 2026-11-17 | [`OPEN.md`](../local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md) | — | [карточка](./archive/trace-freeze-e-adr-gate-pr.md) |
 | `trace-freeze-d-probe-truth-tooth` | Фаза D: прибор трейса перестаёт судить копию без зуба | 2026-11-17 | [`OPEN.md`](../local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md) | #2485 | [карточка](./archive/trace-freeze-d-probe-truth-tooth.md) |
 | `trace-freeze-c-library-render` | Фаза C: проверить DOM-кандидат библиотеки после #2505 | 2026-11-17 | [`OPEN.md`](../local-sprint/trace-freeze-dual-candidate-sprint/OPEN.md) | — | [карточка](./archive/trace-freeze-c-library-render.md) |
