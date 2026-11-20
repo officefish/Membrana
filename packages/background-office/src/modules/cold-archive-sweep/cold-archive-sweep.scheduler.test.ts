@@ -139,7 +139,7 @@ describe('ColdArchiveSweepScheduler — P26 выключено = тишина; D
     const live: SweepReport = { ...REPORT, dryRun: false, purged: ['b-1', 'b-2'] };
     const { scheduler, fetchSpy } = makeScheduler({ COLD_ARCHIVE_SWEEP_ENABLED: true, COLD_ARCHIVE_SWEEP_DRY_RUN: false }, async () => response(200, live));
     await scheduler.hourly();
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(fetchSpy.mock.calls.map(([url, init]) => [init.method, url.replace(BASE, '')])).toEqual([['POST', PURGE_EXPIRED_PATH], ['GET', '/v1/internal/downgrade-archive/purge-pulse']]); // g5b: пульс после тика
     expect(JSON.parse(fetchSpy.mock.calls[0]![1].body)).toEqual({ dryRun: false });
     const summary = log.mock.calls.find((c) => String(c[1]).includes('purged'))?.[0] as Record<string, unknown>;
     expect(summary).toMatchObject({ outcome: 'ok', dryRun: false, purged: 2, purgedIds: ['b-1', 'b-2'] });
@@ -174,6 +174,33 @@ describe('ColdArchiveSweepScheduler — P26 выключено = тишина; D
     // @nestjs/schedule@5 хранит опции под SCHEDULE_CRON_OPTIONS, а выражение — под ключом cronTime внутри них.
     expect(options).toMatchObject({ name: 'cold-archive-sweep-hourly', timeZone: 'UTC' });
     expect(String((options as Record<string, unknown> | undefined)?.cronTime)).toBe('0 * * * *');
+  });
+
+  it('g5b Т1: тик при включённой уборке читает пульс; stale (> 2 ч) и нечитаемый пульс → warn; свежий — тишина; выключено — 0 вызовов', async () => {
+    const warn = vi.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+    vi.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined);
+    const NOW = new Date('2026-11-20T12:00:00.000Z');
+    const pulseAt = (lastSucceededRunAt: string | null): SweepFetch => async (url) =>
+      url.endsWith('/purge-pulse') ? response(200, { lastFinishedRunAt: lastSucceededRunAt, lastSucceededRunAt }) : response(200, REPORT);
+    const on = { COLD_ARCHIVE_SWEEP_ENABLED: true, COLD_ARCHIVE_SWEEP_DRY_RUN: true };
+
+    const fresh = makeScheduler(on, pulseAt('2026-11-20T10:30:00.000Z'));
+    expect(await fresh.scheduler.checkPulse(NOW)).toBe('ok');
+    expect(fresh.fetchSpy.mock.calls.map(([url, init]) => [init.method, url.replace(BASE, '')])).toEqual([['GET', '/v1/internal/downgrade-archive/purge-pulse']]);
+    expect(warn).toHaveBeenCalledTimes(0);
+
+    expect(await makeScheduler(on, pulseAt('2026-11-20T09:59:59.000Z')).scheduler.checkPulse(NOW)).toBe('stale');
+    expect(await makeScheduler(on, pulseAt(null)).scheduler.checkPulse(NOW)).toBe('stale');
+    expect(warn.mock.calls.map((c) => String(c[1]))).toEqual([expect.stringContaining('pulse stale'), expect.stringContaining('pulse stale')]);
+
+    expect(await makeScheduler(on, async () => response(503, 'down')).scheduler.checkPulse(NOW)).toBeNull();
+    expect(String(warn.mock.calls.at(-1)![1])).toContain('pulse unreadable');
+
+    const off = makeScheduler({ COLD_ARCHIVE_SWEEP_ENABLED: false, COLD_ARCHIVE_SWEEP_DRY_RUN: true }, pulseAt(null));
+    expect(await off.scheduler.checkPulse(NOW)).toBe('disabled');
+    await off.scheduler.hourly();
+    expect(off.fetchSpy).toHaveBeenCalledTimes(0);
+    expect(warn).toHaveBeenCalledTimes(3);
   });
 
   it('без MEDIA_API_URL → media-not-configured, fetch 0; MEDIA_API_TOKEN пуст → заголовок несёт API_INTERNAL_TOKEN', async () => {
