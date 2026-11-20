@@ -20,10 +20,17 @@
  * уходит в исполнитель, не передан — умолчание исполнителя `cron`; иное — 400 `invalid_trigger` до сервиса.
  * Снимок флагов office `enabledSnapshot`/`dryRunSnapshot` — необязательные булевы ради честной строки
  * журнала (превью панели при выключенной уборке); иное — 400 `invalid_snapshot`.
+ *
+ * Долг Д3 ADR-0032 — ВТОРОЙ КЛЮЧ на стороне media: `dryRun:false` исполняется только при флаге media
+ * `PURGE_LIVE_ENABLED` (умолчание выключено); иначе 403 `purge_live_disabled` после разбора тела и ДО
+ * сервиса — прогон не открывается, файлы не трогаются. Токен двери держит не только office, поэтому
+ * флагов office мало. Пробный прогон (`dryRun:true`) от флага не зависит.
  */
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, NotFoundException, Param, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiHeader, ApiOkResponse, ApiOperation, ApiQuery, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, HttpCode, HttpStatus, Inject, NotFoundException, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiHeader, ApiOkResponse, ApiOperation, ApiQuery, ApiResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 
+import { APP_CONFIG } from '../../config/config.tokens';
+import type { AppConfig } from '../../config/env.schema';
 import { ApiTokenGuard } from '../../common/guards/api-token.guard';
 import { API_TOKEN_SECURITY } from '../../common/swagger/openapi.constants';
 import { BlobStorageService } from '../../blob/blob-storage.service';
@@ -90,16 +97,22 @@ export class DowngradeArchivePurgeController {
     private readonly purge: DowngradeArchivePurgeService,
     private readonly prisma: PrismaService,
     private readonly blobs: BlobStorageService,
+    @Inject(APP_CONFIG) private readonly config: Pick<AppConfig, 'PURGE_LIVE_ENABLED'>,
   ) {}
 
   @Post('purge-expired')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Purge expired downgrade-archive batches (frozen and past expiresAt); dryRun lists candidates only' })
+  @ApiResponse({ status: 403, description: 'purge_live_disabled — dryRun:false while media PURGE_LIVE_ENABLED is off (second key, ADR-0032 Д3)' })
   async purgeExpired(@Body() body: PurgeExpiredDto): Promise<PurgeReport> {
     // async — чтобы отказ разбора тела был отклонённым промисом, а не синхронным броском (единый путь для Nest и зубов).
     const dryRun = parseDryRun(body);
     const trigger = parseTrigger(body);
-    return this.purge.purgeExpired(new Date(), { dryRun, ...(trigger ? { trigger } : {}), ...parseSnapshot(body) });
+    const snapshot = parseSnapshot(body);
+    if (!dryRun && this.config.PURGE_LIVE_ENABLED !== true) {
+      throw new ForbiddenException({ code: 'purge_live_disabled', detail: 'live purge is off on media (PURGE_LIVE_ENABLED); dryRun:true still works' });
+    }
+    return this.purge.purgeExpired(new Date(), { dryRun, ...(trigger ? { trigger } : {}), ...snapshot });
   }
 
   @Get('purge-runs')

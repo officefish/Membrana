@@ -15,17 +15,18 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { BadRequestException, NotFoundException, RequestMethod } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException, RequestMethod } from '@nestjs/common';
 import { GUARDS_METADATA, METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
 import { describe, expect, it, vi } from 'vitest';
 
 import { ApiTokenGuard } from '../../common/guards/api-token.guard';
+import { envSchema } from '../../config/env.schema';
 import { DowngradeArchivePurgeController, PURGE_ROUTE_PREFIX, parseDryRun } from './downgrade-archive-purge.controller';
 import { PURGE_LIST_DEFAULT_LIMIT, parseLimit } from './purge-journal.dto';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
-function make() {
+function make(config: { PURGE_LIVE_ENABLED: boolean } = { PURGE_LIVE_ENABLED: true }) {
   const service = { purgeExpired: vi.fn(async (now: Date, o: { dryRun: boolean }) => ({ dryRun: o.dryRun, now, candidates: [], frozenBytes: 0, purged: [], purgedIds: [], refused: [], blobs: { deleted: 0, failed: 0 }, refusal: null })) };
   const findMany = vi.fn(async () => []);
   const prisma = {
@@ -33,7 +34,7 @@ function make() {
     coldArchivePurgeJob: { findMany },
     downgradeArchiveBatch: { findMany },
   };
-  return { controller: new DowngradeArchivePurgeController(service as never, prisma as never, { resolvePath: (r: string) => r } as never), service, prisma, findMany };
+  return { controller: new DowngradeArchivePurgeController(service as never, prisma as never, { resolvePath: (r: string) => r } as never, config), service, prisma, findMany };
 }
 
 describe('P25: dryRun в теле обязателен и булев', () => {
@@ -57,6 +58,44 @@ describe('P25: dryRun в теле обязателен и булев', () => {
     await controller.purgeExpired({ dryRun: false });
     expect(service.purgeExpired.mock.calls[1]![1]).toEqual({ dryRun: false });
     expect(parseDryRun({ dryRun: false })).toBe(false);
+  });
+});
+
+describe('Д3 ADR-0032: второй ключ live-удаления на стороне media (PURGE_LIVE_ENABLED)', () => {
+  it('флаг выключен: dryRun:false → 403 purge_live_disabled, сервис не зван, прогона нет; dryRun:true работает как раньше', async () => {
+    const { controller, service } = make({ PURGE_LIVE_ENABLED: false });
+    const err = await controller.purgeExpired({ dryRun: false, trigger: 'manual' }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(ForbiddenException);
+    expect((err as ForbiddenException).getResponse()).toMatchObject({ code: 'purge_live_disabled' });
+    expect(service.purgeExpired).toHaveBeenCalledTimes(0);
+    expect((await controller.purgeExpired({ dryRun: true, trigger: 'panel' })).dryRun).toBe(true);
+    expect(service.purgeExpired.mock.calls.map((c) => c[1])).toEqual([{ dryRun: true, trigger: 'panel' }]);
+  });
+
+  it('разбор тела — раньше флага: кривое тело при выключенном флаге — 400, не 403', async () => {
+    const { controller } = make({ PURGE_LIVE_ENABLED: false });
+    const err = await controller.purgeExpired({ dryRun: false, trigger: 'nightly' }).catch((e: unknown) => e);
+    expect((err as BadRequestException).getResponse()).toMatchObject({ code: 'invalid_trigger' });
+  });
+
+  it('флаг включён: dryRun:false доходит до исполнителя', async () => {
+    const { controller, service } = make({ PURGE_LIVE_ENABLED: true });
+    await controller.purgeExpired({ dryRun: false });
+    expect(service.purgeExpired.mock.calls.map((c) => c[1])).toEqual([{ dryRun: false }]);
+  });
+
+  it('env: умолчание — выключено; включают только "true"/"1"; опечатка — выключено, старт не падает', () => {
+    const flag = (env: Record<string, string>) => {
+      const parsed = envSchema.safeParse({ API_INTERNAL_TOKEN: 't', DATABASE_URL: 'postgresql://u:p@localhost:5432/db', ...env });
+      expect(parsed.success).toBe(true);
+      return parsed.success ? parsed.data.PURGE_LIVE_ENABLED : 'unparsed';
+    };
+    expect(flag({})).toBe(false);
+    expect(flag({ PURGE_LIVE_ENABLED: 'true' })).toBe(true);
+    expect(flag({ PURGE_LIVE_ENABLED: '1' })).toBe(true);
+    for (const v of ['false', '0', 'yes', 'TRUE', '']) expect(flag({ PURGE_LIVE_ENABLED: v })).toBe(false);
+    const example = readFileSync(join(HERE, '..', '..', '..', '.env.example'), 'utf8');
+    expect(example).toMatch(/^PURGE_LIVE_ENABLED=false$/m);
   });
 });
 
