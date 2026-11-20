@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { pairResponseToCredentials } from '../../api/pairingCredentials';
 import { pairWithAccessKey } from '../../api/pairing';
+import { normalizeAccessKey, readClipboardText } from '../../lib/clipboardText';
 import { classifyConnectionFailure } from '../../lib/connection-fallback/classify';
 import { reconfigureMediaLibraryFromConnection } from '../../lib/mediaLibraryHubBridge';
 import { useNodeConnectionStore } from '../../stores/nodeConnectionStore';
@@ -21,12 +22,29 @@ export const MembranePairingPanel: React.FC = () => {
 
   if (!showPairingPanel) return null;
 
+  const key = normalizeAccessKey(accessKey);
+
+  /** Кнопка внутри поля: буфер → поле (без пробелов и переводов строк); отказ — фраза в окне. */
+  const onPasteFromClipboard = async (): Promise<void> => {
+    setError(null);
+    try {
+      const text = normalizeAccessKey(await readClipboardText());
+      if (!text) {
+        setError('Буфер обмена пуст — скопируйте ключ в кабинете ещё раз.');
+        return;
+      }
+      setAccessKey(text);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Не удалось прочитать буфер обмена.');
+    }
+  };
+
   const onSubmit = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault();
     setError(null);
     setBusy(true);
     try {
-      const result = await pairWithAccessKey(accessKey, clientLabel || undefined);
+      const result = await pairWithAccessKey(key, clientLabel || undefined);
       const credentials = pairResponseToCredentials(result);
       applyPairing(credentials);
       void reconfigureMediaLibraryFromConnection('paired', credentials);
@@ -58,14 +76,27 @@ export const MembranePairingPanel: React.FC = () => {
         <form className="mt-4 flex flex-col gap-3" onSubmit={(e) => void onSubmit(e)}>
           <label className="form-control w-full">
             <span className="label-text text-xs">Ключ доступа</span>
-            <input
-              className="input input-bordered input-sm w-full font-mono"
-              value={accessKey}
-              onChange={(e) => setAccessKey(e.target.value)}
-              placeholder="Вставьте ключ…"
-              required
-              autoComplete="off"
-            />
+            <div className="relative">
+              <input
+                className="input input-bordered input-sm w-full pr-24 font-mono"
+                value={accessKey}
+                onChange={(e) => setAccessKey(e.target.value)}
+                placeholder="Вставьте ключ…"
+                required
+                autoComplete="off"
+                spellCheck={false}
+              />
+              <button
+                type="button"
+                className="btn btn-ghost btn-xs absolute right-1 top-1/2 -translate-y-1/2"
+                onClick={() => void onPasteFromClipboard()}
+                disabled={busy}
+                aria-label="Вставить ключ из буфера обмена"
+                data-paste-access-key
+              >
+                Вставить
+              </button>
+            </div>
           </label>
           <label className="form-control w-full">
             <span className="label-text text-xs">Метка клиента (необязательно)</span>
@@ -84,7 +115,7 @@ export const MembranePairingPanel: React.FC = () => {
             <button type="button" className="btn btn-ghost btn-sm" onClick={() => closePairingPanel()}>
               Отмена
             </button>
-            <button type="submit" className="btn btn-primary btn-sm" disabled={busy || !accessKey.trim()}>
+            <button type="submit" className="btn btn-primary btn-sm" disabled={busy || !key}>
               {busy ? 'Подключение…' : 'Подключить'}
             </button>
           </div>

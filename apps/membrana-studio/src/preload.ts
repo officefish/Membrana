@@ -98,6 +98,8 @@ const studioShell = {
     ipcRenderer.send('membrana:studio-shell:captureAcquired');
   },
   getAppVersion: () => invoke<string>('membrana:studio-shell:getAppVersion'),
+  /** Текст буфера для кнопки «Вставить из буфера» (окно связки, 20.11); канал — `edit-context-menu.ts`. */
+  readClipboardText: () => invoke<string>('membrana:studio-shell:readClipboardText'),
 };
 
 // Диагностический замер простоя отрисовщика на сбросе трейса (#2476). По умолчанию ВЫКЛЮЧЕН;

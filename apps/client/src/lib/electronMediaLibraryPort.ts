@@ -23,6 +23,8 @@ declare global {
       studioShell?: {
         notifyCaptureAcquired: () => void;
         getAppVersion?: () => Promise<string>;
+        /** Текст буфера обмена (кнопка «Вставить из буфера», 20.11); старый preload — поля нет. */
+        readClipboardText?: () => Promise<string>;
       };
     };
   }

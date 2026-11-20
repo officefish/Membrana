@@ -1,6 +1,7 @@
-import { app, BrowserWindow, ipcMain, session, shell } from 'electron';
+import { app, BrowserWindow, clipboard, ipcMain, Menu, session, shell } from 'electron';
 import path from 'node:path';
 
+import { READ_CLIPBOARD_TEXT_CHANNEL, clipClipboardText, editContextMenuTemplate } from './edit-context-menu';
 import { registerLoggingIpc, attachWindowShellLogging } from './logging/register-ipc';
 import { registerSecureStorageIpc } from './secure-storage';
 import { initShellLog, writeShellLog } from './logging/shell-log';
@@ -45,6 +46,12 @@ function createMainWindow(): BrowserWindow {
 
   win.once('ready-to-show', () => {
     win.show();
+  });
+
+  // Electron не даёт контекстного меню по умолчанию — без этого в полях ввода нет «Вставить» (20.11).
+  win.webContents.on('context-menu', (_event, params) => {
+    const template = editContextMenuTemplate(params);
+    if (template.length > 0) Menu.buildFromTemplate(template).popup({ window: win });
   });
 
   win.webContents.setWindowOpenHandler(({ url }) => {
@@ -107,6 +114,9 @@ if (!app.requestSingleInstanceLock()) {
     // SC5: версия сборки студии — renderer включает её в WS handshake (clientVersion),
     // cabinet логирует устаревшие сборки warning-ом (strict gate — DR6).
     ipcMain.handle('membrana:studio-shell:getAppVersion', () => app.getVersion());
+
+    // Кнопка «Вставить из буфера» (окно связки): узкий канал вместо расширения прав navigator.clipboard.
+    ipcMain.handle(READ_CLIPBOARD_TEXT_CHANNEL, () => clipClipboardText(clipboard.readText()));
 
     // b4 studio-firebat-user-pairing: канал safeStorage — провод до ADR-0028, включение позже.
     registerSecureStorageIpc();
