@@ -25,7 +25,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import type { CabinetUserRow } from '@/lib/cabinetUsersApi';
-import { CabinetUsersRetention, CabinetUsersTable, NOT_CONFIGURED_BANNER, RETENTION_HINT } from './CabinetUsersRetention';
+import { ARCHIVE_SCHEDULE_LIMIT, CabinetUsersRetention, CabinetUsersTable, NOT_CONFIGURED_BANNER, RETENTION_HINT, archiveMarksFrom } from './CabinetUsersRetention';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -186,7 +186,7 @@ describe('CabinetUsersRetention — поведение (jsdom)', () => {
   it('загрузка: GET страницы, строки в таблице, подсказка о сроке', async () => {
     const calls = stubFetch(() => jsonResponse(200, { items: ROWS, nextCursor: null }));
     const el = await mount();
-    expect(calls.map((c) => c.url)).toEqual(['/v1/panel/admin/cabinet-users']);
+    expect(calls.map((c) => c.url).filter((u) => u.includes('cabinet-users'))).toEqual(['/v1/panel/admin/cabinet-users']);
     expect(el.querySelectorAll('tr[data-membrane-id]')).toHaveLength(2);
     expect(el.textContent).toContain(RETENTION_HINT);
     expect(el.textContent).toContain('Пользователи кабинета (2)');
@@ -286,10 +286,66 @@ describe('CabinetUsersRetention — поведение (jsdom)', () => {
     const el = await mount();
     expect(el.textContent).toContain('Пользователи кабинета (2+)');
     await click(el, 'Показать ещё');
-    expect(calls.map((c) => c.url)).toEqual(['/v1/panel/admin/cabinet-users', `/v1/panel/admin/cabinet-users?cursor=${M2}`]);
+    expect(calls.map((c) => c.url).filter((u) => u.includes('cabinet-users'))).toEqual(['/v1/panel/admin/cabinet-users', `/v1/panel/admin/cabinet-users?cursor=${M2}`]);
     expect(el.querySelectorAll('tr[data-membrane-id]')).toHaveLength(3);
     expect(el.textContent).toContain('carol');
     expect([...el.querySelectorAll('button')].some((b) => b.textContent === 'Показать ещё')).toBe(false);
     expect(el.textContent).toContain('Пользователи кабинета (3)');
+  });
+});
+
+// ─── #2632 g6d (Т5): пометка «архив ждёт удаления» ──────────────────────────────────
+
+const SCHEDULE_URL = '/v1/panel/admin/cold-archive/purge-schedule?limit=100';
+const scheduleRow = (membraneId: string, expiresAt: string, batchId = `b-${expiresAt}`) => ({ batchId, membraneId, deviceId: 'd-1', expiresAt, frozenBytes: 10 });
+
+describe('g6d: пометка «архив ждёт удаления» в строке пользователя', () => {
+  it('archiveMarksFrom: по мембране — ближайший срок из всех её партий', () => {
+    expect(
+      archiveMarksFrom([scheduleRow(M1, '2026-11-25T10:00:00.000Z'), scheduleRow(M1, '2026-11-22T10:00:00.000Z'), scheduleRow(M2, '2026-12-01T10:00:00.000Z')]),
+    ).toEqual({ [M1]: '2026-11-22T10:00:00.000Z', [M2]: '2026-12-01T10:00:00.000Z' });
+    expect(archiveMarksFrom([])).toEqual({});
+  });
+
+  it('статика: пометка с датой только в строке с архивом; без archiveMarks — пометок нет, кнопок не прибавилось', () => {
+    const marked = renderToStaticMarkup(
+      <CabinetUsersTable rows={ROWS} pending={null} busyMembraneId={null} rowErrors={{}} disabled={false} archiveMarks={{ [M2]: '2026-11-22T10:00:00.000Z' }} onPick={noop} onConfirm={noop} onCancel={noop} />,
+    );
+    expect(marked.match(/data-archive-mark/g)).toHaveLength(1);
+    const m2Row = marked.slice(marked.indexOf(`data-membrane-id="${M2}"`));
+    expect(m2Row.replace(/<!-- -->/g, '')).toContain('архив ждёт удаления: 22.11.2026');
+    expect(marked.match(/<button/g)).toBeNull();
+    const plain = renderToStaticMarkup(<CabinetUsersTable rows={ROWS} pending={null} busyMembraneId={null} rowErrors={{}} disabled={false} onPick={noop} onConfirm={noop} onCancel={noop} />);
+    expect(plain).not.toContain('архив ждёт удаления');
+  });
+
+  it('поведение: график удалений из office (только GET) → пометка в нужной строке; прочие строки без пометки', async () => {
+    const calls = stubFetch((url) =>
+      url.includes('purge-schedule') ? jsonResponse(200, [scheduleRow(M1, '2026-11-24T10:00:00.000Z'), scheduleRow(M1, '2026-11-21T10:00:00.000Z')]) : jsonResponse(200, { items: ROWS, nextCursor: null }),
+    );
+    const el = await mount();
+    const schedule = calls.filter((c) => c.url.includes('purge-schedule'));
+    expect(schedule.map((c) => [c.url, c.init?.method ?? 'GET'])).toEqual([[SCHEDULE_URL, 'GET']]);
+    expect(calls.every((c) => (c.init?.method ?? 'GET') === 'GET')).toBe(true);
+    expect(el.querySelector(`tr[data-membrane-id="${M1}"] [data-archive-mark]`)!.textContent).toBe('архив ждёт удаления: 21.11.2026');
+    expect(el.querySelector(`tr[data-membrane-id="${M2}"] [data-archive-mark]`)).toBeNull();
+    expect(el.querySelector('[data-archive-note]')).toBeNull();
+  });
+
+  it('отказ графика (503/502) → таблица работает, пометок нет, строка-объяснение role=status; полное окно — оговорка', async () => {
+    stubFetch((url) => (url.includes('purge-schedule') ? jsonResponse(502, { code: 'media_unreachable' }) : jsonResponse(200, { items: ROWS, nextCursor: null })));
+    const el = await mount();
+    expect(el.querySelectorAll('tr[data-membrane-id]')).toHaveLength(2);
+    expect(el.querySelector('[data-archive-mark]')).toBeNull();
+    const note = el.querySelector('[data-archive-note]')!;
+    expect(note.getAttribute('role')).toBe('status');
+    expect(note.textContent).toBe('Пометки «архив ждёт удаления» недоступны: Хранилище записей не отвечает — попробуйте позже.');
+    await act(async () => root!.unmount());
+    root = null;
+
+    const full = Array.from({ length: ARCHIVE_SCHEDULE_LIMIT }, (_, i) => scheduleRow(M2, `2026-12-${String((i % 28) + 1).padStart(2, '0')}T00:00:00.000Z`, `b-${i}`));
+    stubFetch((url) => (url.includes('purge-schedule') ? jsonResponse(200, full) : jsonResponse(200, { items: ROWS, nextCursor: null })));
+    const el2 = await mount();
+    expect(el2.querySelector('[data-archive-note]')!.textContent).toBe('Пометки архива — по 100 ближайшим удалениям.');
   });
 });

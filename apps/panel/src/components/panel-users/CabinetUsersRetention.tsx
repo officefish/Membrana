@@ -13,6 +13,7 @@ import {
   type CabinetUserRow,
   type RetentionOption,
 } from '@/lib/cabinetUsersApi';
+import { fetchPurgeSchedule, type PurgeScheduleRow } from '@/lib/coldArchiveApi';
 
 /**
  * #2588 b4: блок «Пользователи кабинета» в owner-разделе «Пользователи».
@@ -23,10 +24,27 @@ import {
  * показывает «сменить на N?» → подтверждение → PUT. Успех — строка из ответа кабинета;
  * 503 «связь не настроена» — баннер и список без правки; прочая ошибка — текст в строке,
  * значение откатывается. Смена действует на СЛЕДУЮЩИЕ заморозки (ADR-0031 п.4, снимок).
+ *
+ * #2632 g6d (Т5): строка пользователя с замороженной партией помечена «архив ждёт удаления» с датой
+ * ближайшего удаления — по графику удалений office (`purge-schedule`, только чтение). Иных действий
+ * нет. График не пришёл — таблица работает как раньше, под ней строка «пометки недоступны».
  */
 
 export const NOT_CONFIGURED_BANNER = 'Связь с кабинетом не настроена — список пользователей кабинета и срок архива недоступны.';
 export const RETENTION_HINT = 'Срок холодного архива при понижении тарифа, дней. 14 — по умолчанию, 1 — для проверок. Действует на следующие заморозки.';
+
+/** Окно графика удалений: дверь отдаёт не больше 100 ближайших партий. */
+export const ARCHIVE_SCHEDULE_LIMIT = 100;
+
+/** Мембрана → ближайший срок удаления её замороженных партий (ISO). */
+export function archiveMarksFrom(rows: readonly PurgeScheduleRow[]): Record<string, string> {
+  const marks: Record<string, string> = {};
+  for (const r of rows) {
+    const current = marks[r.membraneId];
+    if (current === undefined || Date.parse(r.expiresAt) < Date.parse(current)) marks[r.membraneId] = r.expiresAt;
+  }
+  return marks;
+}
 
 export interface PendingChange {
   membraneId: string;
@@ -40,13 +58,15 @@ export interface CabinetUsersTableProps {
   /** Ошибка последней смены по мембране — текст в строке. */
   rowErrors: Readonly<Record<string, string>>;
   disabled: boolean;
+  /** g6d: мембрана → ближайший срок удаления архива (ISO); нет ключа — пометки нет. */
+  archiveMarks?: Readonly<Record<string, string>>;
   onPick: (membraneId: string, days: RetentionOption) => void;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
 /** Презентационная таблица — без эффектов, рендерится статически (зубы). */
-export function CabinetUsersTable({ rows, pending, busyMembraneId, rowErrors, disabled, onPick, onConfirm, onCancel }: CabinetUsersTableProps) {
+export function CabinetUsersTable({ rows, pending, busyMembraneId, rowErrors, disabled, archiveMarks = {}, onPick, onConfirm, onCancel }: CabinetUsersTableProps) {
   if (rows.length === 0) {
     return <p className="text-sm text-base-content/60">В кабинете пока нет пользователей.</p>;
   }
@@ -66,11 +86,17 @@ export function CabinetUsersTable({ rows, pending, busyMembraneId, rowErrors, di
             const isPending = pending?.membraneId === r.membraneId;
             const busy = busyMembraneId === r.membraneId;
             const error = rowErrors[r.membraneId];
+            const archiveDue = archiveMarks[r.membraneId];
             return (
               <tr key={r.membraneId} data-membrane-id={r.membraneId}>
                 <td>
                   <div className="font-medium">{r.displayLabel}</div>
                   <div className="font-mono text-xs text-base-content/50">{r.membraneId.slice(0, 8)}…</div>
+                  {archiveDue && (
+                    <span className="badge badge-warning badge-sm mt-1" data-archive-mark title="Замороженный архив будет удалён по графику уборки после этой даты">
+                      архив ждёт удаления: {formatCreatedAt(archiveDue)}
+                    </span>
+                  )}
                 </td>
                 <td className="text-sm">{r.tariffId}</td>
                 <td>
@@ -138,6 +164,25 @@ export function CabinetUsersRetention() {
   const [pending, setPending] = useState<PendingChange | null>(null);
   const [busyMembraneId, setBusyMembraneId] = useState<string | null>(null);
   const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
+  const [archiveMarks, setArchiveMarks] = useState<Record<string, string>>({});
+  const [archiveNote, setArchiveNote] = useState('');
+
+  // g6d: график удалений — отдельно от списка; его отказ список не ломает.
+  useEffect(() => {
+    let cancelled = false;
+    fetchPurgeSchedule(ARCHIVE_SCHEDULE_LIMIT)
+      .then((schedule) => {
+        if (cancelled) return;
+        setArchiveMarks(archiveMarksFrom(schedule));
+        setArchiveNote(schedule.length >= ARCHIVE_SCHEDULE_LIMIT ? `Пометки архива — по ${ARCHIVE_SCHEDULE_LIMIT} ближайшим удалениям.` : '');
+      })
+      .catch((e) => {
+        if (!cancelled) setArchiveNote(`Пометки «архив ждёт удаления» недоступны: ${e instanceof Error ? e.message : 'график удалений не получен.'}`);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const failWith = useCallback((e: unknown) => {
     if (e instanceof CabinetUsersApiError && e.notConfigured) {
@@ -238,10 +283,16 @@ export function CabinetUsersRetention() {
             busyMembraneId={busyMembraneId}
             rowErrors={rowErrors}
             disabled={false}
+            archiveMarks={archiveMarks}
             onPick={onPick}
             onConfirm={() => void onConfirm()}
             onCancel={() => setPending(null)}
           />
+          {archiveNote && (
+            <p className="text-xs text-base-content/60" role="status" data-archive-note>
+              {archiveNote}
+            </p>
+          )}
           {nextCursor && (
             <button type="button" className="btn btn-ghost btn-sm" onClick={() => void loadMore()} disabled={loadingMore}>
               {loadingMore ? <span className="loading loading-spinner loading-xs" /> : 'Показать ещё'}
