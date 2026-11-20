@@ -7,6 +7,8 @@
  *
  * Источник времени последнего успеха — журнал media (дверь g4a `purge-pulse`), не память процесса office:
  * рестарт office не обнуляет пульс. Режим — по флагам office (`sweepModeOf`), не по журналу.
+ * Дверь считает ТОЛЬКО прогоны по расписанию (`trigger=cron`, #2690, решение владельца 20.11): пробный
+ * прогон из панели пульс не освежает, иначе свежее превью скрыло бы остановившийся cron.
  */
 import type { ColdArchiveSweepClient, JournalOutcome } from './cold-archive-sweep.client';
 import type { SweepMode } from './cold-archive-sweep.scheduler';

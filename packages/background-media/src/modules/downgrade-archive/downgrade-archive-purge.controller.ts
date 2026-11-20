@@ -125,7 +125,7 @@ export class DowngradeArchivePurgeController {
   }
 
   @Get('purge-pulse')
-  @ApiOperation({ summary: 'Last finished and last succeeded purge run' })
+  @ApiOperation({ summary: 'Last finished and last succeeded scheduled (trigger=cron) purge run; panel/manual runs do not refresh the pulse' })
   @ApiOkResponse({ type: PurgePulseDto })
   async pulse() {
     return purgePulse(this.prisma);
