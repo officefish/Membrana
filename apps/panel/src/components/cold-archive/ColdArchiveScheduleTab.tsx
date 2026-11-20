@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import {
   ColdArchiveApiError,
+  fetchColdArchivePulse,
   fetchPurgeRun,
   fetchPurgeRuns,
   fetchPurgeSchedule,
@@ -21,22 +22,23 @@ import { ColdArchiveScheduleTable } from './ColdArchiveScheduleTable';
  * журнал прогонов и задания выбранного прогона. ТОЛЬКО ЧТЕНИЕ: ни одной кнопки удаления, переключателя
  * режима нет (боевой режим — только словом владельца, флагами office).
  *
- * Пульс: ручки g5b ещё нет — `pulse` по умолчанию `null` (значок «не подключён»); режим до g5b показан
- * по снимку флагов последнего прогона и подписан именно так.
+ * Пульс и режим — ручка office g5b `pulse` (режим по флагам office). Её отказ не прячет график и журнал:
+ * значок остаётся «состояние неизвестно», причина — строкой с role=alert.
  */
 
 export const NOT_CONFIGURED_BANNER = 'Связь с хранилищем записей не настроена — график и журнал недоступны.';
 
 type LoadState = 'loading' | 'not-configured' | 'error' | 'ready';
 
-export function lastRunModeText(runs: readonly PurgeRunSummary[]): string {
-  const last = runs[0];
-  if (!last) return 'Режим по последнему прогону: прогонов ещё не было.';
-  const mode = !last.enabledSnapshot ? 'уборка выключена' : last.dryRunSnapshot ? 'пробный' : 'боевой';
-  return `Режим по последнему прогону: ${mode}.`;
+const MODE_LABEL: Record<ColdArchivePulse['mode'], string> = { disabled: 'выключена', 'dry-run': 'пробная', live: 'боевая' };
+
+export function modeText(pulse: ColdArchivePulse | null): string {
+  return pulse ? `Уборка по флагам office: ${MODE_LABEL[pulse.mode]}.` : 'Режим уборки неизвестен.';
 }
 
-export function ColdArchiveScheduleTab({ pulse = null }: { pulse?: ColdArchivePulse | null }) {
+export function ColdArchiveScheduleTab() {
+  const [pulse, setPulse] = useState<ColdArchivePulse | null>(null);
+  const [pulseError, setPulseError] = useState('');
   const [state, setState] = useState<LoadState>('loading');
   const [errorText, setErrorText] = useState('');
   const [schedule, setSchedule] = useState<PurgeScheduleRow[]>([]);
@@ -47,6 +49,13 @@ export function ColdArchiveScheduleTab({ pulse = null }: { pulse?: ColdArchivePu
 
   useEffect(() => {
     let cancelled = false;
+    fetchColdArchivePulse()
+      .then((p) => {
+        if (!cancelled) setPulse(p);
+      })
+      .catch((e: unknown) => {
+        if (!cancelled) setPulseError(e instanceof Error ? e.message : 'Не удалось узнать пульс уборщика.');
+      });
     Promise.all([fetchPurgeSchedule(), fetchPurgeRuns()])
       .then(([s, r]) => {
         if (cancelled) return;
@@ -84,6 +93,14 @@ export function ColdArchiveScheduleTab({ pulse = null }: { pulse?: ColdArchivePu
   return (
     <div className="space-y-6">
       <ColdArchivePulseBadge pulse={pulse} />
+      {pulseError && (
+        <p role="alert" className="text-sm text-error" data-pulse-error="">
+          {pulseError}
+        </p>
+      )}
+      <p className="text-sm" data-mode="">
+        {modeText(pulse)}
+      </p>
       {state === 'loading' && (
         <div className="flex justify-center py-6" aria-busy="true">
           <span className="loading loading-spinner loading-md text-primary" aria-label="Загрузка графика удалений" />
@@ -101,7 +118,6 @@ export function ColdArchiveScheduleTab({ pulse = null }: { pulse?: ColdArchivePu
       )}
       {state === 'ready' && (
         <>
-          <p className="text-sm" data-mode="last-run">{lastRunModeText(runs)}</p>
           <section aria-labelledby="cold-archive-schedule-title" className="space-y-2">
             <h3 id="cold-archive-schedule-title" className="text-sm font-semibold">
               Ближайшие удаления ({schedule.length})

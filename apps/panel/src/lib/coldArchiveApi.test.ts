@@ -8,6 +8,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   ColdArchiveApiError,
   describeColdArchiveError,
+  fetchColdArchivePulse,
   fetchPurgeRun,
   fetchPurgeRunVerification,
   fetchPurgeRuns,
@@ -61,6 +62,14 @@ describe('контракт ручек office g5a — только GET с credent
     const fn = mockFetchOnce(200, [row]);
     expect(await fetchPurgeSchedule(5)).toEqual([row]);
     expect(call(fn)[0]).toBe(`${BASE}/purge-schedule?limit=5`);
+  });
+
+  it('fetchColdArchivePulse: путь ручки g5b, ответ как есть', async () => {
+    const view = { mode: 'dry-run', pulse: 'ok', staleAfterMs: 7_200_000, lastSucceededRunAt: null, lastFinishedRunAt: null, checkedAt: 'x' };
+    const fn = mockFetchOnce(200, view);
+    expect(await fetchColdArchivePulse()).toEqual(view);
+    expect(call(fn)[0]).toBe(`${BASE}/pulse`);
+    expect(call(fn)[1].credentials).toBe('include');
   });
 });
 

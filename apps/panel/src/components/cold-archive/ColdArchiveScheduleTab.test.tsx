@@ -13,7 +13,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { canAccessSection } from '@/lib/roles';
 import { PANEL_SECTIONS } from '@/lib/sections';
 
-import { ColdArchiveScheduleTab, NOT_CONFIGURED_BANNER, lastRunModeText } from './ColdArchiveScheduleTab';
+import { ColdArchiveScheduleTab, NOT_CONFIGURED_BANNER, modeText } from './ColdArchiveScheduleTab';
 import { ColdArchiveScheduleTable, EMPTY_SCHEDULE_TEXT } from './ColdArchiveScheduleTable';
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -31,6 +31,10 @@ const RUN = {
   runId: RUN_ID, trigger: 'cron', mode: 'dry_run', status: 'succeeded', startedAt: '2026-11-20T10:00:00.000Z',
   finishedAt: null, enabledSnapshot: true, dryRunSnapshot: true, jobsTotal: 1, jobsSucceeded: 0, jobsFailed: 0,
   jobsDeadLetter: 1, bytesFreed: 0, errorSummary: null,
+} as const;
+const PULSE = {
+  mode: 'live', pulse: 'ok', staleAfterMs: 7_200_000, lastSucceededRunAt: '2026-11-20T11:00:00.000Z',
+  lastFinishedRunAt: '2026-11-20T11:00:00.000Z', checkedAt: '2026-11-20T12:00:00.000Z',
 } as const;
 const DEAD_JOB = {
   jobId: 'j1', targetType: 'orphan_blob', batchId: null, deviceId: null, status: 'dead_letter', attempt: 5,
@@ -74,13 +78,15 @@ describe('таблица графика', () => {
 });
 
 describe('вкладка', () => {
-  it('загружает график и журнал; режим по последнему прогону; пульс «не подключён»; ни одной кнопки удаления', async () => {
-    stubOffice({ 'purge-schedule': [200, [ROW]], 'purge-runs': [200, [RUN]] });
+  it('загружает пульс, график и журнал; режим — из ручки пульса, не из снимка прогона; ни одной кнопки удаления', async () => {
+    // снимок прогона — пробный, ручка пульса — боевой: показан режим ручки
+    const fn = stubOffice({ pulse: [200, PULSE], 'purge-schedule': [200, [ROW]], 'purge-runs': [200, [RUN]] });
     const { host, done } = await mount();
+    expect(fn).toHaveBeenCalledWith('/v1/panel/admin/cold-archive/pulse', expect.anything());
     expect(host.textContent).toContain('Ближайшие удаления (1)');
     expect(host.textContent).toContain('Журнал прогонов (1)');
-    expect(host.textContent).toContain('Режим по последнему прогону: пробный.');
-    expect(host.textContent).toContain('не подключён');
+    expect(host.querySelector('[data-mode]')?.textContent).toBe('Уборка по флагам office: боевая.');
+    expect(host.querySelector('[data-pulse="ok"]')?.textContent).toContain('Уборщик работает (боевой режим)');
     const labels = [...host.querySelectorAll('button')].map((b) => b.textContent ?? '');
     expect(labels).toEqual(['Задания']);
     expect(host.querySelector('input, select')).toBeNull();
@@ -100,6 +106,24 @@ describe('вкладка', () => {
     done();
   });
 
+  it('режим dry-run (через дефис, контракт g5b) — «пробная»; stale — тревога', async () => {
+    stubOffice({ pulse: [200, { ...PULSE, mode: 'dry-run', pulse: 'stale' }], 'purge-schedule': [200, []], 'purge-runs': [200, []] });
+    const { host, done } = await mount();
+    expect(host.querySelector('[data-mode]')?.textContent).toBe('Уборка по флагам office: пробная.');
+    expect(host.querySelector('[data-pulse="stale"]')?.textContent).toContain('пробный режим');
+    done();
+  });
+
+  it('отказ ручки пульса не прячет график: «неизвестно» + причина role=alert', async () => {
+    stubOffice({ pulse: [502, { code: 'media_unreachable' }], 'purge-schedule': [200, [ROW]], 'purge-runs': [200, []] });
+    const { host, done } = await mount();
+    expect(host.querySelector('[data-pulse="unknown"]')).not.toBeNull();
+    expect(host.querySelector('[data-pulse-error]')?.getAttribute('role')).toBe('alert');
+    expect(host.querySelector('[data-mode]')?.textContent).toBe('Режим уборки неизвестен.');
+    expect(host.textContent).toContain('Ближайшие удаления (1)');
+    done();
+  });
+
   it('503 media_not_configured — баннер, а не общая ошибка', async () => {
     stubOffice({ 'purge-schedule': [503, { code: 'media_not_configured' }], 'purge-runs': [200, []] });
     const { host, done } = await mount();
@@ -107,9 +131,8 @@ describe('вкладка', () => {
     done();
   });
 
-  it('lastRunModeText: выключено / боевой / прогонов не было', () => {
-    expect(lastRunModeText([{ ...RUN, enabledSnapshot: false }])).toContain('уборка выключена');
-    expect(lastRunModeText([{ ...RUN, dryRunSnapshot: false }])).toContain('боевой');
-    expect(lastRunModeText([])).toContain('прогонов ещё не было');
+  it('modeText: выключена; null — неизвестен', () => {
+    expect(modeText({ ...PULSE, mode: 'disabled', pulse: 'disabled' })).toBe('Уборка по флагам office: выключена.');
+    expect(modeText(null)).toBe('Режим уборки неизвестен.');
   });
 });
