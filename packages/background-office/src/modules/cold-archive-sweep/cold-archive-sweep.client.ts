@@ -21,6 +21,8 @@
  * построению дверей. `purgeExpired` принимает необязательный `trigger`: передан — уходит в тело, не
  * передан (cron) — тела `{ dryRun }` как раньше, умолчание media = `cron`.
  *
+ * #2632 g5b — `pulse()` читает дверь media `purge-pulse` (последний завершённый и успешный прогон).
+ *
  * СЕКРЕТ: токен уходит только заголовком `X-Membrana-Token`; в исходы, лог и тексты — никогда.
  * Сообщения сети санируются от URL/host/IP тем же приёмом, что у клиента кабинета (ревью #2596 P1).
  */
@@ -179,6 +181,11 @@ export class ColdArchiveSweepClient {
   /** Т4: аудит прогона сейчас. */
   verify(runId: string): Promise<JournalOutcome> {
     return this.journalGet(`/purge-runs/${encodeURIComponent(runId)}/verify`);
+  }
+
+  /** Т1: последний завершённый и последний успешный прогон (дверь g4a). */
+  pulse(): Promise<JournalOutcome> {
+    return this.journalGet('/purge-pulse');
   }
 
   private async journalGet(path: string): Promise<JournalOutcome> {

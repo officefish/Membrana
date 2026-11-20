@@ -10,12 +10,17 @@
  *
  * Расписание `0 * * * *` UTC — образец `dreams.scheduler.ts`; погрешность ≤ 1 ч на сроке «1 день»
  * — объявлена в плане. В логах — только числа и id партий, ни адресов, ни токена.
+ *
+ * #2632 g5b (Т1): после тика при включённой уборке — пульс по журналу media; `stale` (успешного прогона
+ * нет дольше 2 ч) → warn в лог office; пульс не прочитан → тоже warn (подтвердить свежесть нечем).
+ * Выключено — тишина и здесь: ни тика, ни чтения пульса, ни строки в лог.
  */
 import { Inject, Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 
 import { APP_CONFIG } from '../../config/config.tokens';
 import type { AppConfig } from '../../config/env.schema';
+import { readPulse, type PulseState } from './cold-archive-pulse';
 import { ColdArchiveSweepClient, type SweepOutcome } from './cold-archive-sweep.client';
 
 export const SWEEP_CRON = '0 * * * *';
@@ -69,6 +74,22 @@ export class ColdArchiveSweepScheduler implements OnModuleInit {
   @Cron(SWEEP_CRON, { name: 'cold-archive-sweep-hourly', timeZone: 'UTC' })
   async hourly(): Promise<void> {
     await this.tick();
+    await this.checkPulse(new Date());
+  }
+
+  /** Т1: пульс после тика. Выключено → `disabled` без вызова media (держит `readPulse`); `stale` и нечитаемый пульс → warn. */
+  async checkPulse(now: Date): Promise<PulseState | null> {
+    const mode = this.mode();
+    const outcome = await readPulse(mode, this.client, now).catch(() => null);
+    if (outcome === null || outcome.kind !== 'ok') {
+      this.logger.warn({ mode, outcome: outcome?.kind ?? 'error' }, 'cold-archive sweep: pulse unreadable from media — freshness unconfirmed');
+      return null;
+    }
+    const { view } = outcome;
+    if (view.pulse === 'stale') {
+      this.logger.warn({ mode, lastSucceededRunAt: view.lastSucceededRunAt, staleAfterMs: view.staleAfterMs }, 'cold-archive sweep: pulse stale — no succeeded run for over 2h');
+    }
+    return view.pulse;
   }
 
   /** Тик без расписания — для зубов и ручного вызова. Выключено → ни одного вызова media. */
