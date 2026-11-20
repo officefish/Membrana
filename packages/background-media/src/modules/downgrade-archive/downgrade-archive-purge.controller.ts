@@ -15,6 +15,11 @@
  * нет): `GET purge-runs?limit`, `GET purge-runs/:id`, `GET purge-pulse`. g4b — `GET purge-schedule?limit`
  * (Т5: frozen-партии по сроку) и `GET purge-runs/:id/verify` (Т4: аудит сейчас). Наружу — счётчики, id и
  * булевы признаки, без адресов файлов. Незнакомый прогон — 404 `run_not_found`.
+ *
+ * #2632 g5b (стык №3 g3b) — необязательный `trigger` из словаря журнала (`cron|panel|manual`): передан —
+ * уходит в исполнитель, не передан — умолчание исполнителя `cron`; иное — 400 `invalid_trigger` до сервиса.
+ * Снимок флагов office `enabledSnapshot`/`dryRunSnapshot` — необязательные булевы ради честной строки
+ * журнала (превью панели при выключенной уборке); иное — 400 `invalid_snapshot`.
  */
 import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, NotFoundException, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiHeader, ApiOkResponse, ApiOperation, ApiQuery, ApiSecurity, ApiTags } from '@nestjs/swagger';
@@ -35,11 +40,35 @@ import {
 } from './purge-journal.dto';
 import { getRun, listRuns, purgePulse } from './purge-journal-read';
 import { blobExistsProbe, purgeSchedule, verifyRun } from './purge-journal-verify';
+import { PURGE_RUN_TRIGGERS, type PurgeRunTrigger } from './purge-journal.vocabulary';
 
 export const PURGE_ROUTE_PREFIX = 'v1/internal/downgrade-archive';
 
 export interface PurgeExpiredDto {
   readonly dryRun?: unknown;
+  readonly trigger?: unknown;
+  readonly enabledSnapshot?: unknown;
+  readonly dryRunSnapshot?: unknown;
+}
+
+/** `trigger` необязателен; передан — только литерал словаря журнала, иначе 400 до сервиса. */
+export function parseTrigger(body: PurgeExpiredDto | undefined): PurgeRunTrigger | undefined {
+  const value = body?.trigger;
+  if (value === undefined) return undefined;
+  if (typeof value === 'string' && (PURGE_RUN_TRIGGERS as readonly string[]).includes(value)) return value as PurgeRunTrigger;
+  throw new BadRequestException({ code: 'invalid_trigger', detail: `body.trigger must be one of ${PURGE_RUN_TRIGGERS.join('|')}` });
+}
+
+/** Снимок флагов office: каждое поле необязательно, передано — только булев. */
+export function parseSnapshot(body: PurgeExpiredDto | undefined): { enabledSnapshot?: boolean; dryRunSnapshot?: boolean } {
+  const out: { enabledSnapshot?: boolean; dryRunSnapshot?: boolean } = {};
+  for (const key of ['enabledSnapshot', 'dryRunSnapshot'] as const) {
+    const value = body?.[key];
+    if (value === undefined) continue;
+    if (value !== true && value !== false) throw new BadRequestException({ code: 'invalid_snapshot', detail: `body.${key} must be boolean` });
+    out[key] = value;
+  }
+  return out;
 }
 
 /** Разбор тела — чистая функция ради зуба: только `true`/`false` как булев, всё иное — отказ. */
@@ -69,7 +98,8 @@ export class DowngradeArchivePurgeController {
   async purgeExpired(@Body() body: PurgeExpiredDto): Promise<PurgeReport> {
     // async — чтобы отказ разбора тела был отклонённым промисом, а не синхронным броском (единый путь для Nest и зубов).
     const dryRun = parseDryRun(body);
-    return this.purge.purgeExpired(new Date(), { dryRun });
+    const trigger = parseTrigger(body);
+    return this.purge.purgeExpired(new Date(), { dryRun, ...(trigger ? { trigger } : {}), ...parseSnapshot(body) });
   }
 
   @Get('purge-runs')

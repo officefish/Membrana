@@ -28,9 +28,12 @@ const REPORT: SweepReport = {
   refusal: null,
 };
 
+/** Уборка выключена (умолчания env): превью всё равно работает — от флагов оно не зависит (решение 05.10). */
+const FLAGS_OFF = { COLD_ARCHIVE_SWEEP_ENABLED: false, COLD_ARCHIVE_SWEEP_DRY_RUN: true };
+
 function make(outcome: SweepOutcome) {
   const client = { purgeExpired: vi.fn(async () => outcome) };
-  return { controller: new ColdArchiveSweepController(client as never), client };
+  return { controller: new ColdArchiveSweepController(client as never, FLAGS_OFF), client };
 }
 
 describe('GET v1/panel/admin/cold-archive/sweep-preview — P29', () => {
@@ -38,7 +41,7 @@ describe('GET v1/panel/admin/cold-archive/sweep-preview — P29', () => {
     const { controller, client } = make({ kind: 'ok', report: REPORT });
     expect(await controller.sweepPreview()).toEqual(REPORT);
     expect(client.purgeExpired).toHaveBeenCalledTimes(1);
-    expect(client.purgeExpired).toHaveBeenCalledWith(true, 'panel');
+    expect(client.purgeExpired).toHaveBeenCalledWith(true, 'panel', { enabledSnapshot: false, dryRunSnapshot: true });
   });
 
   it('исходы → HTTP своим кодом: 503 media_not_configured с именем переменной, 502 без detail, отказ media — его статус и код', async () => {
@@ -93,7 +96,7 @@ const reply = (status: number, body: unknown) => ({ status, text: async () => (t
 function real(fetchImpl: SweepFetch, url: string | undefined = BASE) {
   const fetchSpy = vi.fn(fetchImpl);
   const client = new ColdArchiveSweepClient({ MEDIA_API_URL: url, MEDIA_API_TOKEN: TOKEN, API_INTERNAL_TOKEN: 'x' } as never, fetchSpy);
-  return { controller: new ColdArchiveSweepController(client), client, fetchSpy };
+  return { controller: new ColdArchiveSweepController(client, FLAGS_OFF), client, fetchSpy };
 }
 
 describe('g5a: прокси журнала уборщика — только чтение, тело media как есть', () => {
@@ -148,6 +151,6 @@ describe('g5a: прокси журнала уборщика — только ч�
     const { controller, client, fetchSpy } = real(async () => reply(200, REPORT));
     await controller.sweepPreview();
     await client.purgeExpired(false);
-    expect(fetchSpy.mock.calls.map(([, init]) => JSON.parse(init.body!))).toEqual([{ dryRun: true, trigger: 'panel' }, { dryRun: false }]);
+    expect(fetchSpy.mock.calls.map(([, init]) => JSON.parse(init.body!))).toEqual([{ dryRun: true, trigger: 'panel', enabledSnapshot: false, dryRunSnapshot: true }, { dryRun: false }]);
   });
 });

@@ -74,6 +74,15 @@ export const JOURNAL_TIMEOUT_MS = 15_000;
 /** Кто будит уборку — словарь media (`purge-journal.vocabulary.ts`). */
 export type SweepTrigger = 'cron' | 'panel' | 'manual';
 
+/**
+ * #2632 g5b-stitch3 — снимок флагов office на момент вызова, в строку журнала media: превью панели
+ * пишет честные флаги, а не «включено». Не передан (cron) — умолчание исполнителя media.
+ */
+export interface SweepFlagsSnapshot {
+  readonly enabledSnapshot: boolean;
+  readonly dryRunSnapshot: boolean;
+}
+
 export type SweepFetch = (
   url: string,
   init: { method: 'POST' | 'GET'; headers: Record<string, string>; body?: string; signal: AbortSignal },
@@ -127,7 +136,7 @@ export class ColdArchiveSweepClient {
   }
 
   /** Один вызов двери. `dryRun` в теле всегда явный — умолчания «боевой» у двери нет (P25 плана). */
-  async purgeExpired(dryRun: boolean, trigger?: SweepTrigger): Promise<SweepOutcome> {
+  async purgeExpired(dryRun: boolean, trigger?: SweepTrigger, snapshot?: SweepFlagsSnapshot): Promise<SweepOutcome> {
     const pair = resolveMediaPair(this.config);
     if (!pair.ok) return { kind: 'media-not-configured', missing: pair.missing };
 
@@ -136,7 +145,7 @@ export class ColdArchiveSweepClient {
       res = await this.fetchImpl(`${pair.baseUrl}${PURGE_EXPIRED_PATH}`, {
         method: 'POST',
         headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-Membrana-Token': pair.token },
-        body: JSON.stringify(trigger ? { dryRun, trigger } : { dryRun }),
+        body: JSON.stringify({ dryRun, ...(trigger ? { trigger } : {}), ...snapshot }),
         signal: AbortSignal.timeout(SWEEP_TIMEOUT_MS),
       });
     } catch (error) {

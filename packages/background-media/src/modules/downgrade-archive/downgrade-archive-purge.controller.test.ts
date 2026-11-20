@@ -60,6 +60,36 @@ describe('P25: dryRun в теле обязателен и булев', () => {
   });
 });
 
+describe('g5b (стык №3 g3b): trigger и снимок флагов в теле purge-expired', () => {
+  it.each([
+    [{ dryRun: true, trigger: 'nightly' }, 'invalid_trigger'],
+    [{ dryRun: true, trigger: 'CRON' }, 'invalid_trigger'],
+    [{ dryRun: true, trigger: null }, 'invalid_trigger'],
+    [{ dryRun: true, trigger: 1 }, 'invalid_trigger'],
+    [{ dryRun: true, enabledSnapshot: 'false' }, 'invalid_snapshot'],
+    [{ dryRun: true, dryRunSnapshot: 0 }, 'invalid_snapshot'],
+  ])('тело %j → 400 %s, сервис не зван', async (body, code) => {
+    const { controller, service } = make();
+    const err = await controller.purgeExpired(body as never).catch((e: unknown) => e);
+    expect((err as BadRequestException).getResponse()).toMatchObject({ code });
+    expect(service.purgeExpired).toHaveBeenCalledTimes(0);
+  });
+
+  it('каждый литерал словаря доходит до исполнителя; без поля — опций trigger нет (умолчание cron у исполнителя)', async () => {
+    const { controller, service } = make();
+    for (const trigger of ['cron', 'panel', 'manual']) await controller.purgeExpired({ dryRun: true, trigger });
+    await controller.purgeExpired({ dryRun: false, trigger: 'panel', enabledSnapshot: false, dryRunSnapshot: true });
+    await controller.purgeExpired({ dryRun: true });
+    expect(service.purgeExpired.mock.calls.map((c) => c[1])).toEqual([
+      { dryRun: true, trigger: 'cron' },
+      { dryRun: true, trigger: 'panel' },
+      { dryRun: true, trigger: 'manual' },
+      { dryRun: false, trigger: 'panel', enabledSnapshot: false, dryRunSnapshot: true },
+      { dryRun: true },
+    ]);
+  });
+});
+
 describe('g4a + g4b: двери чтения журнала — параметры до БД, 404 на незнакомый прогон', () => {
   it.each(['0', '101', '-1', '2.5', 'abc', '1e2'])('?limit=%s → 400 invalid_limit, БД не спрошена', async (limit) => {
     const { controller, findMany } = make();
