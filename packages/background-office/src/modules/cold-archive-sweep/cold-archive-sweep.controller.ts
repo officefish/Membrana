@@ -15,8 +15,10 @@
  * (Т4) → двери media g4a/g4b, ответ как есть (адресов файлов в нём нет). Кнопок удаления нет: боевую
  * уборку по-прежнему делает только cron. Превью теперь помечает свой прогон в журнале `trigger=panel`.
  */
-import { Controller, Get, HttpException, HttpStatus, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpException, HttpStatus, Inject, Param, Query, UseGuards } from '@nestjs/common';
 
+import { APP_CONFIG } from '../../config/config.tokens';
+import type { AppConfig } from '../../config/env.schema';
 import { OwnerAdmin } from '../panel-auth/panel-auth.decorators';
 import { PanelAuthGuard } from '../panel-auth/panel-auth.guard';
 import { ColdArchiveSweepClient, type JournalOutcome, type SweepOutcome, type SweepReport } from './cold-archive-sweep.client';
@@ -54,13 +56,18 @@ function refuse(outcome: Exclude<SweepOutcome, { readonly kind: 'ok' }>): never 
 @Controller(SWEEP_PREVIEW_ROUTE_PREFIX)
 @UseGuards(PanelAuthGuard)
 export class ColdArchiveSweepController {
-  constructor(private readonly client: ColdArchiveSweepClient) {}
+  constructor(
+    @Inject(ColdArchiveSweepClient) private readonly client: ColdArchiveSweepClient,
+    @Inject(APP_CONFIG) private readonly config: Pick<AppConfig, 'COLD_ARCHIVE_SWEEP_ENABLED' | 'COLD_ARCHIVE_SWEEP_DRY_RUN'>,
+  ) {}
 
   @Get('sweep-preview')
   @OwnerAdmin()
   async sweepPreview(): Promise<SweepReport> {
-    // dryRun ЖЁСТКО true: эта ручка не умеет удалять, какие бы флаги ни стояли.
-    return unwrapSweepOutcome(await this.client.purgeExpired(true, 'panel'));
+    // dryRun ЖЁСТКО true: эта ручка не умеет удалять, какие бы флаги ни стояли. Флаги (g5b) только
+    // читаются в снимок журнала — превью при выключенной уборке не выдаёт себя за «включено».
+    const snapshot = { enabledSnapshot: this.config.COLD_ARCHIVE_SWEEP_ENABLED, dryRunSnapshot: this.config.COLD_ARCHIVE_SWEEP_DRY_RUN };
+    return unwrapSweepOutcome(await this.client.purgeExpired(true, 'panel', snapshot));
   }
 
   @Get('purge-runs')

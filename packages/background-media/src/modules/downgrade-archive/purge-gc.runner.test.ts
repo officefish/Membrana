@@ -145,6 +145,16 @@ describe('PurgeGcRunner — dry-run', () => {
     await w.runner().run(at(1000), { dryRun: false });
     expect(w.calls.filter((c) => c.startsWith('markPurged'))).toEqual(['markPurged(b-1)', 'markPurged(b-2)']);
   });
+
+  it('g5b: trigger и снимок флагов office ложатся в строку прогона; без снимка — enabled=true, DRY_RUN = режим', async () => {
+    const w = world();
+    await w.runner().run(T0, { dryRun: true, trigger: 'panel', enabledSnapshot: false, dryRunSnapshot: false });
+    await w.runner().run(at(1000), { dryRun: true });
+    expect(w.runs().map((r) => [r['trigger'], r['enabledSnapshot'], r['dryRunSnapshot']])).toEqual([
+      ['panel', false, false],
+      ['cron', true, true],
+    ]);
+  });
 });
 
 describe('PurgeGcRunner — live', () => {

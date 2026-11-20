@@ -42,6 +42,9 @@ export const PURGE_DEBT_PER_RUN = 50;
 export interface PurgeRunOptions {
   readonly dryRun: boolean;
   readonly trigger?: PurgeRunTrigger;
+  /** Снимок флагов office (g5b); не передан — будит включённая уборка, DRY_RUN равен режиму прогона. */
+  readonly enabledSnapshot?: boolean;
+  readonly dryRunSnapshot?: boolean;
 }
 
 const DRY_TRANSITION: RetryTransition = { status: 'succeeded', attempt: 0, nextAttemptAt: null, bytesFreed: 0, lastError: null };
@@ -68,7 +71,7 @@ export class PurgeGcRunner {
     }
     if (!options.dryRun) this.liveActive = true;
     const run = await this.journal
-      .openRun({ trigger: options.trigger ?? 'cron', mode: options.dryRun ? 'dry_run' : 'live', enabledSnapshot: true, dryRunSnapshot: options.dryRun }, now)
+      .openRun({ trigger: options.trigger ?? 'cron', mode: options.dryRun ? 'dry_run' : 'live', enabledSnapshot: options.enabledSnapshot ?? true, dryRunSnapshot: options.dryRunSnapshot ?? options.dryRun }, now)
       .catch((e: unknown) => {
         if (!options.dryRun) this.liveActive = false;
         throw e;
