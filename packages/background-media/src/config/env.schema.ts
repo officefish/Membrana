@@ -66,6 +66,16 @@ export const envSchema = z.object({
    */
   OFFICE_API_URL: z.string().url().optional(),
   OFFICE_API_TOKEN: z.string().min(1).optional(),
+  /**
+   * Второй ключ боевой уборки холодного архива (#2632, долг Д3 ADR-0032): `POST purge-expired`
+   * с `dryRun:false` исполняется ТОЛЬКО при `true`/`1`; иначе 403 `purge_live_disabled`. Флаги office
+   * решают «будить ли», этот — «можно ли удалять» на стороне media. Умолчание — выключено; неизвестное
+   * значение — тоже выключено (опечатка не включает удаление и не роняет media на старте).
+   */
+  PURGE_LIVE_ENABLED: z
+    .string()
+    .optional()
+    .transform((v) => v === 'true' || v === '1'),
 });
 
 const envSchemaWithDefaults = envSchema.transform((data) => ({
