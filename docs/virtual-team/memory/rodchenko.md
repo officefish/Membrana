@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14296/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 387 (причины в op-log) -->
+Записей: 50 · бюджет 14306/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 388 (причины в op-log) -->
+
+### 2026-11-18 · позиция · team-evening-feedback
+
+> Родченко. UI/панель журнала уборки. Оценка артефактов: `MAIN_DAY_ISSUE` §«Перспективные» — «журнал в панели офиса» — конкретно и по делу; `DAILY_CODE_REVIEW` для g4a говорит «панель не в раскрытом diff, счётчики без путей — правильно». Согласованность артефактов в этой теме […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-11-18.md#reply-1`
 
 ### 2026-10-08 · позиция · archive-gc-journal
 
@@ -301,9 +307,3 @@
 > Оценка артефактов: Документы согласованы; UI-часть дня (выбор тарифа на мембране) в #2286 вне обзора — вечерний code-review это честно фиксирует. Канон не даёт противоречивых указаний по интерфейсу. Итоги дня: По диффу виден `MembranePage.tsx` — селект тарифа добавлен. […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-04.md#reply-1`
-
-### 2026-09-03 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** UI-контракт `DESIGN.md` в дне не затрагивался — чисто API/серверная работа. `DAILY_CODE_REVIEW` корректен. **Итоги дня:** Мой вклад — UI-блок срока TTL в кабинете: `apps/cabinet/src/components/keys/TrackKeyTtlCard.tsx` + `KeysPage.tsx` + api […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`

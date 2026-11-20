@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14364/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 410 (причины в op-log) -->
+Записей: 50 · бюджет 14370/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 411 (причины в op-log) -->
+
+### 2026-11-18 · позиция · team-evening-feedback
+
+> Веснин. Смотрю границы media/blob и швы журнала. Оценка артефактов: `MAIN_DAY_ISSUE` §«Почему это магистраль» с таблицей первоисточников — хорошая форма, но одна строка («g1a ждёт только сухого прогона») помечена 2026-10-08 — устаревший вещдок в живом каноне. `DAILY_CODE_REVIEW` […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-11-18.md#reply-1`
 
 ### 2026-10-08 · позиция · archive-gc-journal
 
@@ -295,12 +301,6 @@
 > Оценка артефактов: Граница дня задана верно: owner `sources[0]` не синтезирован из стендапа/DAY_PLAN — это чисто. Запрет fallback «БД без сетки» — правильный инвариант: он сохраняет диагностируемость дыры образа. Странно, что STRATEGY_DAY почти двухмесячной давности всё ещё […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`
-
-### 2026-09-04 · позиция · team-evening-feedback
-
-> Оценка артефактов: Канон дня выровнен безупречно: `sources[0]` 04.09 = `tariff-self-select`, вчерашний door — `sources[1]`, не primary. Граница верная: third proof `self` + список/POST + UI, оплата/промо — одно будущее место. Мета-инвариант соблюдён — не дублировали домен, […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-04.md#reply-1`
 
 ### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 
