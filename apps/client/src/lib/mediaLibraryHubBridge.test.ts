@@ -34,6 +34,14 @@ vi.mock('./resolveMediaLibraryBackend', () => ({
   resolveMediaLibraryBackend: vi.fn(),
 }));
 
+/**
+ * `svc.init()` в node сеет встроенный каталог с диска (120 WAV, 64 МБ) — предмет этих тестов не он, а под
+ * нагрузкой полного прогона пакета init подбирался к таймауту 5 с. Без `importCatalogSample` сеяние — 0.
+ */
+function withoutCatalogSeed<T extends object>(backend: T): T {
+  return Object.assign(backend, { importCatalogSample: undefined });
+}
+
 describe('mediaLibraryHubBridge', () => {
   afterEach(() => {
     micBufferRecorderPluginState.reset();
@@ -45,7 +53,7 @@ describe('mediaLibraryHubBridge', () => {
   });
 
   it('imports blob into buffer on capture.stop', async () => {
-    const backend = new MemoryStorageBackend({ limitBytes: 1024 * 1024 });
+    const backend = withoutCatalogSeed(new MemoryStorageBackend({ limitBytes: 1024 * 1024 }));
     vi.mocked(resolveMediaLibraryBackend).mockResolvedValue(backend);
     const svc = createMediaLibraryService(backend);
     setDefaultMediaLibraryServiceForTests(svc);
@@ -79,7 +87,7 @@ describe('mediaLibraryHubBridge', () => {
   });
 
   it('clears buffer and publishes bufferCleared hub event', async () => {
-    const backend = new MemoryStorageBackend({ limitBytes: 1024 * 1024 });
+    const backend = withoutCatalogSeed(new MemoryStorageBackend({ limitBytes: 1024 * 1024 }));
     vi.mocked(resolveMediaLibraryBackend).mockResolvedValue(backend);
     const svc = createMediaLibraryService(backend);
     setDefaultMediaLibraryServiceForTests(svc);
@@ -121,7 +129,7 @@ describe('mediaLibraryHubBridge', () => {
   });
 
   it('publishes sampleImported with linked journal track id', async () => {
-    const backend = new MemoryStorageBackend({ limitBytes: 1024 * 1024 });
+    const backend = withoutCatalogSeed(new MemoryStorageBackend({ limitBytes: 1024 * 1024 }));
     vi.mocked(resolveMediaLibraryBackend).mockResolvedValue(backend);
     const svc = createMediaLibraryService(backend);
     setDefaultMediaLibraryServiceForTests(svc);

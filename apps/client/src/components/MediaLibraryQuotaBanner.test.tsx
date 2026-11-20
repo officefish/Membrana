@@ -34,7 +34,10 @@ describe('MediaLibraryQuotaBanner (#2570)', () => {
   });
 
   it('P8: реальный отказ — запасной локальный сервис после init: предупреждение есть', async () => {
-    const svc = createMediaLibraryService(createBrowserLimitedStorageBackend(100 * 1024 * 1024));
+    // Сеяние встроенного каталога (120 WAV, 64 МБ с диска) — не предмет баннера; под нагрузкой полного
+    // прогона пакета init вылезал за таймаут 5 с. Без `importCatalogSample` сеяние — 0, init — мгновенный.
+    const backend = Object.assign(createBrowserLimitedStorageBackend(100 * 1024 * 1024), { importCatalogSample: undefined });
+    const svc = createMediaLibraryService(backend);
     await svc.init();
     const snap = svc.getSnapshot();
     const html = render({ quota: snap.quota, loadState: snap.loadState });
