@@ -17,6 +17,7 @@ import { useCabinetNodesJournalPreview, type NodeJournalPreviewState } from '@/l
 import { NodeDowngradeArchivePanel, useDowngradeArchive } from '@/components/nodes/NodeDowngradeArchivePanel';
 import { NodeLastTrackPreview } from '@/components/nodes/NodeLastTrackPreview';
 import { NodeOverflowHoldLine } from '@/components/nodes/NodeOverflowHoldLine';
+import { NodeScenarioAutoResumeToggle } from '@/components/nodes/NodeScenarioAutoResumeToggle';
 import { NodeScenarioCell } from '@/components/nodes/NodeScenarioCell';
 
 interface NodesPageProps {
@@ -556,6 +557,11 @@ function NodeCard({
             onRestored={onArchiveRestored}
           />
         </div>
+
+        {/* ADR-0033: дежурство — возобновлять сценарий после перезапуска Студии (только сопряжённый прибор). */}
+        {node.device ? (
+          <NodeScenarioAutoResumeToggle nodeId={node.id} initial={node.device.scenarioAutoResume === true} />
+        ) : null}
 
         {isCaptured && deviceId ? (
           <NodeScenarioCell

@@ -39,6 +39,25 @@ export interface NodeDeviceView {
   bufferPolicy: BufferPolicyView;
   /** #2308: что прибор исполняет на самом деле — считает сервер, витрина не пересчитывает. */
   effectiveBufferPolicy: BufferPolicyView;
+  /** ADR-0033: возобновлять сценарий доски при старте Студии; старый сервер поля не шлёт — ВЫКЛ. */
+  scenarioAutoResume?: boolean;
+}
+
+/** ADR-0033: исход двери признака возобновления (доменный отказ — `200 { ok:false }`). */
+export type SetNodeScenarioAutoResumeOutcome =
+  | { ok: true; nodeId: string; scenarioAutoResume: boolean; contextSync: { updated: number; failed: number } }
+  | { ok: false; reason: 'invalid_value' | 'node_not_paired' };
+
+export async function setNodeScenarioAutoResume(
+  nodeId: string,
+  enabled: boolean,
+): Promise<SetNodeScenarioAutoResumeOutcome> {
+  const res = await authFetch(`/v1/nodes/${nodeId}/scenario-auto-resume`, {
+    method: 'PUT',
+    body: JSON.stringify({ enabled }),
+  });
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as SetNodeScenarioAutoResumeOutcome;
 }
 
 /**
