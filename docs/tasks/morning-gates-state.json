@@ -6,7 +6,12 @@
   ],
   "frozenDigest": "491aad5b8d91ca60c57a8f189cc53310d5adffe18fe04c5a2e8ec1ecd8b232a8",
   "magistral": "node-permanent-duty",
-  "swallow": null,
+  "swallow": {
+    "draftDigest": "d02f4e0fd22e9cbb4e85c60e6d11a17b1e33f4ff7710a7f390394f2a114a3d73",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-11-21.md",
+    "ownerAck": true,
+    "day": "2026-11-21"
+  },
   "day": "2026-11-21",
   "magistralChosenAt": "2026-11-21",
   "magistralAuthor": "snapshot"
