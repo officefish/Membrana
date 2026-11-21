@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { acIndexOf, judge, judgeAutologon, judgeSleep, judgeTask } from './node-duty-ready.mjs';
+import { acIndexOf, judge, judgeAutologon, judgeSleep, judgeTask, renderTable } from './node-duty-ready.mjs';
 
 const PC_EN_0 = 'Power Setting GUID: 29f6c1db-…  (Sleep after)\n    Current AC Power Setting Index: 0x00000000\n    Current DC Power Setting Index: 0x00000384';
 const PC_EN_20M = 'Power Setting GUID: 29f6c1db-…  (Sleep after)\n    Current AC Power Setting Index: 0x000004b0\n    Current DC Power Setting Index: 0x00000384';
@@ -17,8 +17,11 @@ const PC_RU_0 = 'GUID параметра питания: 29f6c1db-…  (Сон �
 const REG_ON = 'HKEY_LOCAL_MACHINE\\…\\Winlogon\n    AutoAdminLogon    REG_SZ    1\n    DefaultUserName    REG_SZ    indic\n';
 const REG_OFF = 'HKEY_LOCAL_MACHINE\\…\\Winlogon\n    AutoAdminLogon    REG_SZ    0\n    DefaultUserName    REG_SZ    indic\n';
 
-const TASK_EN_OK = 'TaskName:                             \\MembranaNode\nStatus:                               Ready\nTask To Run:                          C:\\Program Files\\nodejs\\node.exe firebat-poller.mjs\nScheduled Task State:                 Enabled\nSchedule Type:                        At logon time\n';
-const TASK_RU_OK = 'Имя задачи:                           \\MembranaNode\nСостояние:                            Готово\nЗадача для выполнения:                C:\\Program Files\\nodejs\\node.exe firebat-poller.mjs\nСостояние запланированной задачи:     Включено\nТип расписания:                       При входе в систему\n';
+const TASK_EN_OK = 'TaskName:                             \\MembranaNode\nStatus:                               Ready\nTask To Run:                          C:\\Program Files\\nodejs\\node.exe firebat-poller.mjs\nScheduled Task State:                 Enabled\nRun As User:                          indic\nSchedule Type:                        At logon time\n';
+// Подписи русской фикстуры — с ЖИВОГО вывода `schtasks /v` русской Windows 21.11 (cp866): «Состояние
+// назначенной задачи», «Запуск от имени». Прежняя фикстура угадала «запланированной» — судья с ней был
+// зелёным, а на живом узле назвал бы включённую задачу отключённой.
+const TASK_RU_OK = 'Имя задачи:                           \\MembranaNode\nСостояние:                            Готово\nРежим входа в систему:                Только интерактивный\nЗадача для выполнения:                C:\\Program Files\\nodejs\\node.exe firebat-poller.mjs\nСостояние назначенной задачи:         Включено\nЗапуск от имени:                      firebat-t6\\indic\nТип расписания:                       При входе в систему\n';
 const TASK_DISABLED = TASK_EN_OK.replace('Enabled', 'Disabled');
 const TASK_MISSING = 'ERROR: The system cannot find the file specified.\n[exit 1]';
 
@@ -85,4 +88,30 @@ test('итог: три «да» — готов; одно «нет» — не г�
   const no = judge({ sleep: { standby: PC_EN_0, hibernate: PC_EN_0 }, autologon: REG_OFF, task: TASK_EN_OK });
   assert.equal(no.ready, false);
   assert.deepEqual(no.checks.filter((c) => !c.ok).map((c) => c.name), ['автовход есть']);
+});
+
+test('задача: живая русская подпись «Состояние назначенной задачи: Отключено» — «нет», а не «да»', () => {
+  const v = judgeTask(TASK_RU_OK.replace('Включено', 'Отключено'), 'indic');
+  assert.equal(v.ok, false);
+  assert.match(v.detail, /отключена/u);
+});
+
+test('без человека: задача от имени другого пользователя, чем автовход, — «нет» с именами', () => {
+  assert.equal(judgeTask(TASK_RU_OK, 'indic').ok, true, 'firebat-t6\indic и indic — один пользователь');
+  const other = judgeTask(TASK_EN_OK.replace('Run As User:                          indic', 'Run As User:                          admin'), 'indic');
+  assert.equal(other.ok, false);
+  assert.match(other.detail, /от имени admin, а автовход — indic/u);
+  const unread = judgeTask(TASK_EN_OK.replace(/Run As User:[^\n]*\n/u, ''), 'indic');
+  assert.equal(unread.ok, false, 'не прочитал пользователя — не подтверждает');
+  assert.match(unread.detail, /не прочитан/u);
+});
+
+test('таблица: одна шапка и три строки; «нет» — с причиной в строке и лекарством ниже', () => {
+  const out = renderTable(judge({ sleep: { standby: PC_EN_0, hibernate: PC_EN_20M }, autologon: REG_ON, task: TASK_RU_OK }));
+  const rows = out.split('\n').filter((l) => l.startsWith('| '));
+  assert.equal(rows.length, 4);
+  assert.match(rows[1], /сон и гибернация выключены\s+\| НЕТ\s+\| гибернация через 1200 с/u);
+  assert.match(rows[3], /служба узла поднимется без человека\s+\| да /u);
+  assert.match(out, /что повернуть руками:\n {2}1\. сон и гибернация выключены: .*powercfg \/h off/u);
+  assert.match(out, /узел НЕ готов$/u);
 });
