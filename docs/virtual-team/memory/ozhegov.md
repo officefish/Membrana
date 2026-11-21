@@ -5,8 +5,44 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14397/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 398 (причины в op-log) -->
+Записей: 50 · бюджет 14396/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 404 (причины в op-log) -->
+
+### 2026-11-21 · позиция · device-recording-sessions-m0-order
+
+> Словарь recap: К2 — контракт с кабинета на прибор и до сервера записей; К1 — исполнитель конца; К3 — врезка start/stop; К4 — посадка выборки и GC папок. Слабая связанность: не решать в M0, один ли контур у purge буфера и у кольца. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m0-order-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · device-recording-sessions-m1-policy
+
+> Словарь. Понятие — **«политика сессии»** (слово владельца 21.11). Носитель per-device: поля на `Device` рядом с `bufferPolicy*` (`schema.prisma:183`), не смешивая mode буфера с сессией. Носитель общий: новая таблица `MembraneSessionPolicy` по лекалу `MembraneBufferPolicy` […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m1-policy-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · device-recording-sessions-m2-boundary
+
+> Лемма «сессия» в стволе на пробе отсутствует — поля сессии у `Sample` нет. Значит граница — отдельная сущность на сервере записей (запись окна: deviceId, startedAt, closedAt, status, closeReason), а пробы к окну приписываются предикатом по `createdAt`, без выдуманного […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m2-boundary-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · device-recording-sessions-m3-machine
+
+> Словарь проекта совпадает с ADR-0032: office — пусковик, media — исполнитель и журнал. П1 даёт новую дверь `POST /v1/internal/recording-sessions/tick` под `ApiTokenGuard` и флаг `RECORDING_SESSIONS_TICK_ENABLED` (новое, умолч. выкл.) — чужой cron в media не плодим. П2 явно […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m3-machine-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · device-recording-sessions-m4-ring
+
+> Словарь: `RecordingSession.folderCollectionId`, `SessionFolderEviction`, `folderEvictedAt`, `ringSkipped` — отдельные леммы, не смешивать с `ColdArchivePurgeJob` (`P:390-406`). Публичный `move`/`move-batch`/upload в `recording-session` — отказ; исполнителю — внутренний вызов […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m4-ring-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · team-evening-feedback
+
+> Ozhegov Оценка артефактов: `MAIN_DAY_ISSUE` дал чёткий размер (S для предиката, L для эпика) и путь промпта — модели было за что зацепиться. `DAILY_CODE_REVIEW` верно выделил `judgeTask(text, autologonUser)` как чистого судью и заметил фикстуру RU; `STRATEGIC_PLAN_DAY` — шум, но […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-11-21.md#reply-1`
 
 ### 2026-11-20 · позиция · team-evening-feedback
 
@@ -266,44 +302,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-07.md#reply-1`
 
-### 2026-09-06 · позиция · buffer-full-stop-m0-order
-
-> Лемма зависимости, как на library-open-api-m0 и hunt-and-canon-m0: вердикт A раньше B, если без A обсуждение B бессмысленно или дорога переделка контракта. Пять кандидатов — пять лемм. «Политика» задаёт режим отказа; «код» — публичный словарь ответа; «остановка» — поведение […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/buffer-full-stop-m0-order-2026-09-06.md#reply-1`
-
-### 2026-09-06 · позиция · buffer-full-stop-m1-policy
-
-> Лемма. «Носитель политики» ≠ «место настройки». Носитель рантайма отказа/подчинения — запись прибора на сервере записей (`bufferPolicy` или эквивалент рядом с квотой). Место настройки — кабинет. Кабинет пишет → разноска (как квота) → records.device; прибор читает records, не […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/buffer-full-stop-m1-policy-2026-09-06.md#reply-1`
-
-### 2026-09-06 · позиция · buffer-full-stop-m2-refusal-code
-
-> Лемма. «Отказ квоты» ≠ «отказ транспорта». Словарь `reason` — публичный API границы сервер↔прибор↔кабинет. Три копии списка (Nest DTO, TS enum на клиенте, magические строки на приборе) — нарушение слабой связанности и гарантированный drift. Носитель один: shared-пакет с закрытым […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/buffer-full-stop-m2-refusal-code-2026-09-06.md#reply-1`
-
-### 2026-09-06 · позиция · buffer-full-stop-m3-device-stop
-
-> Словарно разделяю четыре действия, которые сейчас путают: (1) детекция/анализ потока, (2) захват/запись в локальный артефакт, (3) **складирование/отправка пробы** на сервер, (4) жизнь сценария/плагина как рантайма. T16 прямо режет только (3). T2 — «сам прекращает отправку». […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/buffer-full-stop-m3-device-stop-2026-09-06.md#reply-1`
-
-### 2026-09-06 · позиция · buffer-full-stop-m4-life-after
-
-> Словарь. Разделим: **канал жизни узла** (health-ping → `link-state`) ≠ **канал медиа-потока** (telemetry-track) ≠ **канал квоты** (GET /quota) ≠ **канал доменного состояния** (scenario/hold + overflow). Слабая связанность: кабинет не должен выводить «узел мёртв» из молчания T. […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/buffer-full-stop-m4-life-after-2026-09-06.md#reply-1`
-
 ### 2026-09-06 · позиция · buffer-full-stop-m5-operator-window
 
 > Словарно: «носитель окна» ≠ «вход». Два входа (доска устройства, модуль микрофона) — два адаптера к одному носителю. Носитель читает `DeviceOverflowHold` + payload отказа M2 и рисует одну модалку. Плашка/статус сценария — отдельные слои того же факта, не второе окно. […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/buffer-full-stop-m5-operator-window-2026-09-06.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
-
-> Operation surface является одной закрытой таблицей. Вне неё нет скрытых CLI-команд, server endpoints или операций из примечаний; у каждой строки ровно один M3 action и ровно один authority object. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`

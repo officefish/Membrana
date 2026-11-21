@@ -5,8 +5,44 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14375/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 391 (причины в op-log) -->
+Записей: 50 · бюджет 14311/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 397 (причины в op-log) -->
+
+### 2026-11-21 · позиция · device-recording-sessions-m0-order
+
+> Q0 — граф порядка, не содержание. Четыре узла: К1 машина, К2 политика, К3 граница, К4 папка и кольцо. Ребро «A→B» значит: B берёт у принятого A конкретный вход контракта, без которого B нельзя закрыть. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m0-order-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · device-recording-sessions-m1-policy
+
+> Численно из Т2: длительность сессии, объём выборки N, один критерий из трёх существующих. Диапазон минут — [30, 600], целое. N — целое положительное; пример владельца 200 при 4 ч. Умолчание критерия уже есть в стволе: `loudness-over-floor` (`downgrade-policy.ts:20`). Не […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m1-policy-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · device-recording-sessions-m2-boundary
+
+> Часы — только серверные. Инвариант: `closedAt = startedAt + durationMinutes` по `new Date()` на сервере записей, без времени в теле от прибора. Атрибуция пробы — строго `Sample.createdAt` (`schema.prisma`, `@default(now())`); поля `receivedAt` в стволе нет — строить на нём […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m2-boundary-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · device-recording-sessions-m3-machine
+
+> Инвариант окна из данностей M2: `prevClosedAt < createdAt ≤ closedAt`. П3: помеченные (`isPinnedByHuman`, в т.ч. метка ≠ `unlabeled`) — сверх `selectionLimit`; непомеченные — `measureSampleSet` → `modeOrder` → первые N; отказ замера целиком (`executor.ts:59`) → последние N + […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m3-machine-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · device-recording-sessions-m4-ring
+
+> К4 численно: `need = Σ sizeBytes(выбранные ∪ помеченные, ещё в буфере)`; уже ушедшие частичным `moveBatch` (`S:414-418`) сидят в `usedBytes` и во второй раз не входят. `free = limitBytes − usedBytes` (`Q:267-270`). Жертвы — закрытые сессии с папкой, кроме текущей, по возрастанию […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m4-ring-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · team-evening-feedback
+
+> Dynin Оценка артефактов: `MAIN_DAY_ISSUE` — образцовая форма: критерий к вечеру — observable (september пишет), не «PR открыт». `DAILY_CODE_REVIEW` чётко отделил зону FFT/спектра (—) от строкового равенства user-match — правильно, что не приписали математическую сложность там, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-11-21.md#reply-1`
 
 ### 2026-11-20 · позиция · team-evening-feedback
 
@@ -271,39 +307,3 @@
 > Формализую. G = ({P, C, S, W, L}, E), где P — политика, C — код отказа, S — остановка на приборе, W — окно, L — жизнь после остановки. Ребро (A,B) ∈ E ⇔ вердикт A — необходимый вход постановки B. Из подсказок повестки: (P,C), (C,S), (C,W), (S,W). L независима от W; связь L с […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/buffer-full-stop-m0-order-2026-09-06.md#reply-1`
-
-### 2026-09-06 · позиция · buffer-full-stop-m1-policy
-
-> Формализую fail-closed. Пусть домен политики `P ∈ {stop, smart-cleanup}`. Функция чтения: `effective(P_stored) = stop`, если `P_stored ∈ {⊥, null, undefined, unknown, corrupt}`; иначе `P_stored`. Миграция старых приборов: отсутствие поля → `stop`, не `auto-cleanup`. Клиентский […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/buffer-full-stop-m1-policy-2026-09-06.md#reply-1`
-
-### 2026-09-06 · позиция · buffer-full-stop-m2-refusal-code
-
-> Формализую. Пусть отказ загрузки — значение `Reject = { ok: false, reason: R, … }`, где `R` — конечное множество. Минимум различимости для Q2: `device_buffer_full` ≠ `user_storage_full` ≠ прочие (место под T15, не заполняем). Числа: `buffer.usedBytes/limitBytes`, […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/buffer-full-stop-m2-refusal-code-2026-09-06.md#reply-1`
-
-### 2026-09-06 · позиция · buffer-full-stop-m3-device-stop
-
-> Формализую состояние эпизода. Пусть `E = { overflowId, reason, held: true } | ∅`. Инвариант однократности: переход `∅ → E` инициирует сигнал окна **один раз на данный overflowId**; последующие отказы с тем же id — no-op для UI. Новый запуск сценария при `held` читает E и снова […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/buffer-full-stop-m3-device-stop-2026-09-06.md#reply-1`
-
-### 2026-09-06 · позиция · buffer-full-stop-m4-life-after
-
-> Формализую каналы как четыре независимых потока: H = health-ping, T = live telemetry (`telemetry-track/v1`), Q = GET /quota, S = scenario/node state. Инвариант T16: после stop складирования H, Q, S живы; T — вопрос нормы, не факта. Ночь дала контрпример: T→0 при t=21:40:18Z, […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/buffer-full-stop-m4-life-after-2026-09-06.md#reply-1`
-
-### 2026-09-06 · позиция · buffer-full-stop-m5-operator-window
-
-> Две шкалы — два числа из M2: buffer.used/limit и userStorage.used/limit; свободно = limit − used (или то, что несёт ответ; формулу полей не изобретаем — M2 посылка). Время факта — timestamp удержания/отказа, одно значение на `overflowId`. «Что записано до остановки» — […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/buffer-full-stop-m5-operator-window-2026-09-06.md#reply-1`
-
-### 2026-09-05 · позиция · team-evening-feedback
-
-> Оценка артефактов: Входы дня корректны: запрет на детекционную магистраль (scoreboard, benchmark harmonic+cepstral+flux) соблюдён — не открывали то, что требует новых замеров. Чистота числовой картины дня хорошая: реестр и граф правды честно не двигались, без инфляции. Итоги […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`

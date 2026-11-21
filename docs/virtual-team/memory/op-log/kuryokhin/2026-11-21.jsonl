@@ -1,1 +1,14 @@
 {"ts":"2026-11-21T08:00:09.438Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-11-21T20:46:15.370Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-11-21-device-recording-sessions-m0-order","origin":"persona-extract"}
+{"ts":"2026-11-21T20:46:15.370Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-11-21-device-recording-sessions-m1-policy","origin":"persona-extract"}
+{"ts":"2026-11-21T20:46:15.370Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-11-21-device-recording-sessions-m2-boundary","origin":"persona-extract"}
+{"ts":"2026-11-21T20:46:15.370Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-11-21-device-recording-sessions-m3-machine","origin":"persona-extract"}
+{"ts":"2026-11-21T20:46:15.370Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-11-21-device-recording-sessions-m4-ring","origin":"persona-extract"}
+{"ts":"2026-11-21T20:46:15.370Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-11-21-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-11-21T20:46:15.370Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-09-06-buffer-full-stop-m1-policy","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-11-21T20:46:15.370Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-09-06-buffer-full-stop-m2-refusal-code","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-11-21T20:46:15.370Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-09-06-buffer-full-stop-m3-device-stop","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-11-21T20:46:15.370Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-09-06-buffer-full-stop-m4-life-after","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-11-21T20:46:15.370Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-09-06-buffer-full-stop-m5-operator-window","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-11-21T20:46:15.370Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-09-05-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-11-21T20:46:15.370Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:51","origin":"persona-extract"}
