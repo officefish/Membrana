@@ -5,8 +5,44 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14312/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 389 (причины в op-log) -->
+Записей: 51 · бюджет 14390/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 394 (причины в op-log) -->
+
+### 2026-11-21 · позиция · device-recording-sessions-m0-order
+
+> С UI-края кабинет задаёт политику на прибор — это лицо продукта до любой машины. Пока нет имени и полей политики, мне нечего класть в форму; корень порядка — кандидат второй. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m0-order-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · device-recording-sessions-m1-policy
+
+> В M1 UI не проектирую, но имена полей контракта = будущие label’ы в кабинете. Одно имя на поле во всех слоях: таблица вердикта, payload fanout, DoD. Синонимы `limit`/`count`/`volume` в одном протоколе — потом сломают подпись «200 записей». Жду канонические `snake`/`camel` от […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m1-policy-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · device-recording-sessions-m2-boundary
+
+> Человеку нужен честный словарь состояний, не метафора. Минимум: `idle` (сессий нет / enabled=false), `running`, `closed`, `closed_early`, `pause` (в т.ч. «ждёт освобождения»). Пауза обязана быть видимой: badge/status, без скрытого зависания. Ручной выход из паузы — кнопка/путь в […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m2-boundary-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · device-recording-sessions-m3-machine
+
+> П10 даёт человеку две двери: `GET …/recording-sessions/current` и `POST …/resolve {retry|drop_unplaced}`. Для UI это status + два явных действия, без «магического» автоснятия удержания. П7: снятие только по `sessionCleanup.seq` и `release('cleanup')` — на приборе индикатор […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m3-machine-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · device-recording-sessions-m4-ring
+
+> К7 без рук у человека К6 мёртв: нужен литерал в тип, подпись «папка сессии», вынос проб. Кабинет сейчас на любую `system` пишет «системный датасет» (`SampleLibraryMainPanel.tsx:191-192`) — это надо сузить для `recording-session`. Дверь M3 `GET …/recording-sessions/current` с […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/device-recording-sessions-m4-ring-2026-11-21.md#reply-1`
+
+### 2026-11-21 · позиция · team-evening-feedback
+
+> Rodchenko Оценка артефактов: `MAIN_DAY_ISSUE` корректно задвинул a11y/UI-долги в «санитарные» — видно, что это не главная линия, и не пытались притвориться обратным. `DAILY_CODE_REVIEW` честно сказал «полевые строки duty-ready — таблица в терминале, не JSX; DESIGN.md не задет» — […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-11-21.md#reply-1`
 
 ### 2026-11-20 · позиция · team-evening-feedback
 
@@ -272,38 +308,8 @@
 
 — источник: `docs/seanses/buffer-full-stop-m0-order-2026-09-06.md#reply-1`
 
-### 2026-09-06 · позиция · buffer-full-stop-m1-policy
+### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
 
-> Фактура UI: страницы настроек прибора нет; у мембраны — блок «Сменить тариф»; узлы — список и ключи. Значит витрина политики — страница мембраны: режим мембраны + галочка «применить ко всем» (привязка, не снимок) + при снятой галочке — построчно по узлам. Отдельную «страницу […] _(реплик в сеансе: 6)_
+> M4 назначает наблюдаемые значения и вещдоки, но не UI, цвет, текст статуса, endpoint или download flow. Любое представление этих метрик остаётся предметом M5-M6. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/buffer-full-stop-m1-policy-2026-09-06.md#reply-1`
-
-### 2026-09-06 · позиция · buffer-full-stop-m2-refusal-code
-
-> С витрины оператора ночь 05→06.09 читается так: прибор долбил одну и ту же стену ~6500 раз, а окно не собралось — не из чего. Данность T3/T4/T8: окно строится из ответа сервера, не из догадок прибора; в окне — свободное место по буферу и по коллекциям. Значит ответ обязан нести […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/buffer-full-stop-m2-refusal-code-2026-09-06.md#reply-1`
-
-### 2026-09-06 · позиция · buffer-full-stop-m3-device-stop
-
-> С витрины оператора: однократность (T9) — это не «красивый toast», а **один факт → одно окно**. Если каждый отвергнутый POST поднимает UI — спам и обход вниманием. Память «уже показали для overflowId=X» должна жить до смены эпизода/действия человека, иначе T5 (повторный запуск […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/buffer-full-stop-m3-device-stop-2026-09-06.md#reply-1`
-
-### 2026-09-06 · позиция · buffer-full-stop-m4-life-after
-
-> С витрины сейчас: нет телеметрии = «тишина», отдельного «жив, не пишет, причина» нет. Оператор читает пустоту как смерть. Конструктивизм: статус должен быть честным блоком данных — `alive + not_recording + reason=buffer_full + overflowId`, а не отсутствие сигнала. Кнопки и текст […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/buffer-full-stop-m4-life-after-2026-09-06.md#reply-1`
-
-### 2026-09-06 · позиция · buffer-full-stop-m5-operator-window
-
-> По DESIGN/конструктивизму: модалка — один акцент, данные tabular-nums, две шкалы квоты рядом, reason — человекочитаемая строка, не сырой enum без перевода. Кнопки в ряд: primary = вывоз, secondary = чистка, tertiary/ghost = тариф. Закрытие крестиком/Escape — да (T5), но не […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/buffer-full-stop-m5-operator-window-2026-09-06.md#reply-1`
-
-### 2026-09-05 · позиция · team-evening-feedback
-
-> Оценка артефактов: UI-сегмента в дне нет — `tariff self-select` вчерашней поставки не виден в diff, a11y не оценивался. Документы дня читабельны, расхождение стендап/MAIN_DAY_ISSUE подано явной таблицей — это хорошо для восприятия. Итоги дня: — (нет UI-изменений). Кабинетные […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`
