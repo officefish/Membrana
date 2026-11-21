@@ -182,6 +182,9 @@ model Device {
   /// хранится нетронутой, пока стоит привязка, — чтобы снятие ВОЗВРАЩАЛО, а не обнуляло.
   bufferPolicy         BufferPolicyMode @default(stop)
   bufferPolicyParams   Json?
+  /// ADR-0033 Р1: возобновлять сценарий доски при старте Студии, если он шёл в момент выключения
+  /// или падения. Origin — кабинет (владелец), до прибора — разноской контекста, как `bufferPolicy`.
+  scenarioAutoResume   Boolean  @default(false)
 
   @@index([mediaDeviceId])
   @@index([pairedKeyId])

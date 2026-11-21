@@ -52,6 +52,12 @@ export class DeviceMembraneContextDto {
       'Buffer overflow policy (#2308). Validated by THIS server too: smart_cleanup without full params is refused. Absent = keep stored policy.',
   })
   bufferPolicy?: BufferPolicyDto;
+
+  @ApiPropertyOptional({
+    example: false,
+    description: 'ADR-0033: resume the board scenario on Studio start if it was running at shutdown/crash. Boolean only; absent = keep stored value.',
+  })
+  scenarioAutoResume?: boolean;
 }
 
 /**
@@ -184,4 +190,10 @@ export class QuotaResponseDto {
     description: 'Effective buffer overflow policy (#2308): what the device must obey. Absent/corrupt stored value reads as stop.',
   })
   bufferPolicy!: BufferPolicyDto;
+
+  @ApiProperty({
+    example: false,
+    description: 'ADR-0033: resume the board scenario on Studio start if it was running at shutdown/crash (off by default).',
+  })
+  scenarioAutoResume!: boolean;
 }

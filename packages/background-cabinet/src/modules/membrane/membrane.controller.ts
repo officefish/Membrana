@@ -8,6 +8,7 @@ import type {
 } from './membrane.dto';
 import { MembraneBufferPolicyService } from './membrane-buffer-policy.service';
 import { MembraneService } from './membrane.service';
+import { NodeScenarioAutoResumeService } from './node-scenario-auto-resume.service';
 import { SessionGuard, type AuthenticatedRequest } from '../../common/guards/session.guard';
 
 @ApiTags('Membranes')
@@ -17,6 +18,7 @@ export class MembraneController {
   constructor(
     private readonly membraneService: MembraneService,
     private readonly bufferPolicy: MembraneBufferPolicyService,
+    private readonly scenarioAutoResume: NodeScenarioAutoResumeService,
   ) {}
 
   /**
@@ -56,6 +58,20 @@ export class MembraneController {
     @Body() body: SetBufferPolicyDto,
   ) {
     return this.bufferPolicy.setNodePolicy(req.authUser!.id, nodeId, body);
+  }
+
+  /** ADR-0033 Р1: возобновлять сценарий доски при старте Студии — признак прибора, тело `{ enabled: boolean }`. */
+  @Put('nodes/:nodeId/scenario-auto-resume')
+  @ApiOperation({
+    summary:
+      'Set whether the board scenario resumes on Studio start if it was running at shutdown/crash (off by default); fans out to this device',
+  })
+  setNodeScenarioAutoResume(
+    @Req() req: AuthenticatedRequest,
+    @Param('nodeId') nodeId: string,
+    @Body() body: { enabled?: unknown },
+  ) {
+    return this.scenarioAutoResume.setNodeAutoResume(req.authUser!.id, nodeId, body);
   }
 
   @Get('membranes/me')
