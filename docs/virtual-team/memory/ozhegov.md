@@ -6,7 +6,13 @@
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
 Записей: 50 · бюджет 14397/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 397 (причины в op-log) -->
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 398 (причины в op-log) -->
+
+### 2026-11-20 · позиция · team-evening-feedback
+
+> Оценка артефактов: `DAILY_CODE_REVIEW` дал то, что нужно структурщику: C1/C4/C7/C9 — циклов не видно, React в office/media нет, секреты в заголовке, не в логе. `MAIN_DAY_ISSUE` распределил сессии S1/S2/S3 по деревьям чисто. `DAILY_STANDUP` 18.11 устарел на два дня — но роутинг […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-11-20.md#reply-1`
 
 ### 2026-11-18 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > Словарно: «носитель окна» ≠ «вход». Два входа (доска устройства, модуль микрофона) — два адаптера к одному носителю. Носитель читает `DeviceOverflowHold` + payload отказа M2 и рисует одну модалку. Плашка/статус сценария — отдельные слои того же факта, не второе окно. […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/buffer-full-stop-m5-operator-window-2026-09-06.md#reply-1`
-
-### 2026-09-05 · позиция · team-evening-feedback
-
-> Оценка артефактов: C1/C4/C7 не применимы — циклов пакетов в видимом diff нет. Артефакты ритуала согласованы; приятно, что `morning-gates-state.json` и assertions перечеканены под owner-choice. Единственная шероховатость — реестр задач не двигался (1142 → 1142), хвосты остаются […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`
 
 ### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 

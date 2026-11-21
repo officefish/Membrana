@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14381/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 390 (причины в op-log) -->
+Записей: 50 · бюджет 14375/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 391 (причины в op-log) -->
+
+### 2026-11-20 · позиция · team-evening-feedback
+
+> Оценка артефактов: `DAILY_CODE_REVIEW` дал мат-проверку в одну строку по `pulseOf`: строго `> 2ч` — верно, ровно 2ч = ok, `null` lastSucceeded → stale, disabled игнорирует журнал; `isoOrNull` кривую форму → `unreachable`, не «ни разу» (не проглатывает NaN). Это правильная […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-11-20.md#reply-1`
 
 ### 2026-11-18 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > Оценка артефактов: Входы дня корректны: запрет на детекционную магистраль (scoreboard, benchmark harmonic+cepstral+flux) соблюдён — не открывали то, что требует новых замеров. Чистота числовой картины дня хорошая: реестр и граф правды честно не двигались, без инфляции. Итоги […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`
-
-### 2026-09-04 · позиция · team-evening-feedback
-
-> Оценка артефактов: Документы связны; доля «чистой математики» в дне — нулевая (DSP/FFT не в диффе). STRATEGY_DAY/MAIN_DAY_ISSUE не требуют математического вклада — это осознанное решение, не пробел. Итоги дня: По моей зоне — тишина, что корректно: tariff-домен не требует чистых […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-04.md#reply-1`

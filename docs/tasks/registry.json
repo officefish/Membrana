@@ -22,7 +22,7 @@
       ],
       "notes": "Продолжение #2588 (ADR-0031 п.4). План v2 docs/sprint/cut/archive-gc-journal-2588.json ратифицирован владельцем 08.10 12:49:21Z: 17 блоков ≈3410 строк (media g1a–g4, office g5a–g5b, панель g6a–g6d, кабинет g8a–g8c, приёмка g7 на september). Консилиум docs/seanses/archive-gc-journal-2026-10-08.md, шторм Т1–Т6 docs/storm/storm-archive-gc-questions-2026-10-08/REPORT.md. Боевое включение уборки — отдельное слово владельца после g7.",
       "archiveNotes": "Закрыт 20.11 словом владельца. Приёмка g7 (один круг): cron live-прогон 9c44507e удалил партию 160dba7f, база и диск чисты — docs/local-sprint/archive-gc-journal-2588/CLOSURE.md. Уборка оставлена в боевом режиме (В7). PR волны: #2668 #2671 #2674 #2675 #2684 #2688 #2691–#2695 #2697–#2699.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-11-20"
     },
     {
       "id": "ritual-reads-decisions-b5",
