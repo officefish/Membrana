@@ -6,25 +6,12 @@ import {
 
 import type { MediaSession } from '@/api/sampleLibrary';
 import { fetchMediaSession } from '@/api/sampleLibrary';
-
-const DEFAULT_MEDIA_API_URL = 'https://media.membrana.space';
+import { getApiBase } from '@/api/auth';
+import { CABINET_MEDIA_DEVICES_PATH, cabinetSessionHeaders } from '@/lib/cabinetMediaAccess';
 
 let sessionCache: MediaSession | null = null;
 let service: MediaLibraryService | null = null;
 let activeDeviceId: string | null = null;
-
-/** Media API base: env override, session URL, or prod default. */
-export function resolveCabinetMediaApiBase(urlFromSession: string): string {
-  const fromEnv = import.meta.env.VITE_MEDIA_API_URL as string | undefined;
-  if (fromEnv && fromEnv.length > 0) {
-    return fromEnv.replace(/\/$/, '');
-  }
-  const trimmed = urlFromSession.replace(/\/$/, '');
-  if (trimmed.length > 0) {
-    return trimmed;
-  }
-  return DEFAULT_MEDIA_API_URL;
-}
 
 export async function getMediaSession(force = false): Promise<MediaSession> {
   if (!force && sessionCache) return sessionCache;
@@ -41,10 +28,12 @@ export async function getCabinetMediaLibrary(deviceId: string): Promise<MediaLib
   if (service && activeDeviceId === deviceId) {
     return service;
   }
+  // Через сервер кабинета, сессией пользователя: прибор сверяется с мембраной на сервере.
   const backend = createServerStorageBackend({
-    baseUrl: resolveCabinetMediaApiBase(session.mediaApiUrl),
+    baseUrl: getApiBase(),
     deviceId,
-    mediaToken: session.mediaToken,
+    devicesPath: CABINET_MEDIA_DEVICES_PATH,
+    requestHeaders: cabinetSessionHeaders,
   });
   service = createMediaLibraryService(backend);
   activeDeviceId = deviceId;

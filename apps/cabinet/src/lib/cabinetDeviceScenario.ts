@@ -1,33 +1,23 @@
 import { parseDeviceScenarioDocument, type DeviceScenarioDocument } from '@membrana/core';
 import type { DeviceBoardPersistAdapter, DeviceScenarioRemoteRecord } from '@membrana/device-board';
 
-import { fetchMediaSession, type MediaSession } from '@/api/sampleLibrary';
-import { resolveCabinetMediaApiBase } from '@/lib/cabinetMediaLibrary';
+import { cabinetDeviceUrl, cabinetSessionHeaders } from '@/lib/cabinetMediaAccess';
 
-async function getSession(): Promise<MediaSession> {
-  return fetchMediaSession();
+/** Сценарий доски прибора — через сервер кабинета, сессией пользователя. */
+function scenarioUrl(deviceId: string): string {
+  return cabinetDeviceUrl(deviceId, '/device-scenario');
 }
 
-function scenarioUrl(session: MediaSession, deviceId: string): string {
-  const base = resolveCabinetMediaApiBase(session.mediaApiUrl);
-  return `${base}/v1/devices/${encodeURIComponent(deviceId)}/device-scenario`;
-}
-
-function mediaHeaders(session: MediaSession, deviceId: string): HeadersInit {
-  return {
-    'Content-Type': 'application/json',
-    'X-Membrana-Token': session.mediaToken,
-    'X-Membrana-Device-Id': deviceId,
-  };
+function requestHeaders(): HeadersInit {
+  return { 'Content-Type': 'application/json', ...cabinetSessionHeaders() };
 }
 
 export async function fetchDeviceScenarioRecord(
   deviceId: string,
 ): Promise<DeviceScenarioRemoteRecord | null> {
-  const session = await getSession();
-  const res = await fetch(scenarioUrl(session, deviceId), {
+  const res = await fetch(scenarioUrl(deviceId), {
     method: 'GET',
-    headers: mediaHeaders(session, deviceId),
+    headers: requestHeaders(),
   });
   if (res.status === 404) return null;
   if (!res.ok) {
@@ -45,10 +35,9 @@ export async function putDeviceScenarioRecord(
   deviceId: string,
   document: DeviceScenarioDocument,
 ): Promise<DeviceScenarioRemoteRecord> {
-  const session = await getSession();
-  const res = await fetch(scenarioUrl(session, deviceId), {
+  const res = await fetch(scenarioUrl(deviceId), {
     method: 'PUT',
-    headers: mediaHeaders(session, deviceId),
+    headers: requestHeaders(),
     body: JSON.stringify(document),
   });
   if (!res.ok) {

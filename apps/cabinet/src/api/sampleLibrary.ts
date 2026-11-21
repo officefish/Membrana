@@ -46,7 +46,6 @@ export interface MediaSessionDevice {
 
 export interface MediaSession {
   mediaApiUrl: string;
-  mediaToken: string;
   membraneId: string;
   catalogId: string;
   devices: MediaSessionDevice[];
@@ -120,9 +119,9 @@ export async function patchCatalogSample(
 /**
  * Срок ключей треков мембраны (#2271, вердикт M3).
  *
- * Ходим НАПРЯМУЮ в media, а не через кабинетный backend: настройка живёт в его базе, и
- * посредник добавил бы третью копию правды о сроке. Адрес и токен берутся из той же сессии,
- * что и остальная работа с библиотекой.
+ * Правда о сроке — в базе media; кабинет её не копирует, а только пропускает запрос через свою
+ * дверь библиотеки прибора (`/v1/media/devices/:deviceId/track-key-ttl`) сессией пользователя —
+ * как и остальная работа с библиотекой.
  *
  * ПРИБОР, А НЕ МЕМБРАНА В АДРЕСЕ. Кабинет знает прибор; мембрану media ВЫВОДИТ из него сам —
  * принять её из запроса значило бы поверить обратившемуся на слово, а это частный случай
@@ -140,15 +139,7 @@ export interface TrackKeyTtlView {
 }
 
 async function mediaFetch(deviceId: string, init: RequestInit = {}): Promise<Response> {
-  const session = await fetchMediaSession();
-  const headers = new Headers(init.headers);
-  headers.set('X-Membrana-Token', session.mediaToken);
-  if (init.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
-  const base = session.mediaApiUrl.replace(/\/+$/u, '');
-  return fetch(`${base}/v1/devices/${encodeURIComponent(deviceId)}/track-key-ttl`, {
-    ...init,
-    headers,
-  });
+  return authFetch(`/v1/media/devices/${encodeURIComponent(deviceId)}/track-key-ttl`, init);
 }
 
 export async function fetchTrackKeyTtl(deviceId: string): Promise<TrackKeyTtlView> {
