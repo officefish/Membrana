@@ -1,3 +1,5 @@
+import { ReadableStream as WebReadableStream } from 'node:stream/web';
+
 import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
 import type { AppConfig } from '../../config/env.schema';
@@ -222,6 +224,34 @@ export class MediaBridgeService {
       const msg = err instanceof Error ? err.message : 'fetch failed';
       throw new ServiceUnavailableException(`Media server unreachable: ${msg}`);
     }
+  }
+
+  /**
+   * Пересылка ручки библиотеки прибора для прокси кабинета (`media-proxy`): браузер ходит в
+   * библиотеку через кабинет, а служебный ключ остаётся здесь — в единственном выходе моста наружу.
+   *
+   * `target` — путь относительно `/v1/devices/:deviceId`, уже сверенный с закрытым списком
+   * (`media-proxy-routes.ts`); `headers` — без служебного ключа: его ставит этот метод последним,
+   * поверх любого одноимённого. Поток тела (multipart) едет как есть (`duplex: 'half'`).
+   *
+   * @returns сырой ответ media; недоступность сети — `ServiceUnavailableException` из `mediaFetch`.
+   */
+  async forwardDeviceRequest(
+    deviceId: string,
+    target: string,
+    init: { readonly method: string; readonly headers: Record<string, string>; readonly body?: NonNullable<RequestInit['body']> },
+  ): Promise<Response> {
+    const headers: Record<string, string> = {};
+    for (const [k, v] of Object.entries(init.headers)) {
+      if (k.toLowerCase() !== 'x-membrana-token') headers[k] = v;
+    }
+    headers['X-Membrana-Token'] = this.config.MEDIA_API_TOKEN;
+    const request: RequestInit & { duplex?: 'half' } = { method: init.method, headers };
+    if (init.body !== undefined) {
+      request.body = init.body;
+      if (init.body instanceof WebReadableStream) request.duplex = 'half';
+    }
+    return this.mediaFetch(`/v1/devices/${encodeURIComponent(deviceId)}${target}`, request);
   }
 
   private async assertOk(res: Response, action: string): Promise<void> {
