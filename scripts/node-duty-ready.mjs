@@ -7,7 +7,7 @@
  *   2. автовход ЕСТЬ — после перезагрузки задача «при входе пользователя» поднимет поллер
  *      (ADR-0027 b5: захват звука живёт в интерактивной сессии, службой SYSTEM не сделать);
  *   3. задача планировщика MembranaNode существует, включена, срабатывает при входе и
- *      запускает firebat-poller.mjs.
+ *      запускает firebat-poller.mjs — от имени того же пользователя, что входит автоматически.
  *
  * Скрипт ЧИТАЕТ и СУДИТ, ничего не меняет: руки владельца — только переключатели Windows.
  * Каждое «нет» несёт лекарство словами, а не кодом ошибки. Переносимость как у поллера:
@@ -75,17 +75,35 @@ export function judgeAutologon(text) {
   };
 }
 
-/** 3. Задача планировщика: есть, включена, при входе, запускает поллер. */
-export function judgeTask(text) {
+/** Имя без домена/машины, в нижнем регистре: `firebat-t6\indic` и `indic` — один пользователь. */
+const bareUser = (u) => (u ? u.split('\\').pop().trim().toLowerCase() : null);
+
+/**
+ * 3. Задача планировщика: есть, включена, при входе, запускает поллер — и запускается от имени ТОГО ЖЕ
+ * пользователя, под которым идёт автовход. Только так «при входе» означает «без человека»: служба SYSTEM
+ * не годится (dshow живёт в интерактивной сессии, ADR-0027 b5), а задача чужого пользователя после
+ * автовхода не сработает. Русская Windows пишет «Состояние назначенной задачи» (живой вывод 21.11);
+ * «запланированной» — прежняя догадка фикстуры, оставлена про запас.
+ * @param {string} text вывод `schtasks /query /tn MembranaNode /fo LIST /v`
+ * @param {string | null} autologonUser `DefaultUserName` из Winlogon (null — автовход не прочитан)
+ */
+export function judgeTask(text, autologonUser = null) {
   if (/ERROR|ОШИБКА|cannot find|не удается найти|не найден/iu.test(text) && !/firebat-poller/u.test(text)) {
     return { ok: false, detail: `задачи ${TASK_NAME} нет`, fix: 'установить узел: powershell -File firebat-service-install.ps1 … (см. docs/field/firebat-node.md)' };
   }
-  const enabled = /(Scheduled Task State|Состояние запланированной задачи)\s*:\s*(Enabled|Включено)/iu.test(text);
+  const enabled = /(Scheduled Task State|Состояние (?:назначенной|запланированной) задачи)\s*:\s*(Enabled|Включено)/iu.test(text);
   const atLogon = /(At logon time|При входе в систему|При входе)/iu.test(text);
   const poller = /firebat-poller\.mjs/u.test(text);
-  const problems = [!enabled ? 'задача отключена' : null, !atLogon ? 'триггер не «при входе»' : null, !poller ? 'действие не firebat-poller.mjs' : null].filter(Boolean);
-  if (problems.length === 0) return { ok: true, detail: `${TASK_NAME}: включена · при входе · firebat-poller.mjs`, fix: null };
-  return { ok: false, detail: problems.join(', '), fix: 'переустановить задачу тем же firebat-service-install.ps1 (обновит триггер и действие)' };
+  const runAs = bareUser(/(?:Run As User|Запуск от имени)\s*:[ \t]*(\S[^\r\n]*)/u.exec(text)?.[1] ?? null);
+  const wanted = bareUser(autologonUser);
+  const userProblem = !runAs
+    ? 'пользователь задачи не прочитан'
+    : wanted && runAs !== wanted
+      ? `задача от имени ${runAs}, а автовход — ${wanted}`
+      : null;
+  const problems = [!enabled ? 'задача отключена' : null, !atLogon ? 'триггер не «при входе»' : null, !poller ? 'действие не firebat-poller.mjs' : null, userProblem].filter(Boolean);
+  if (problems.length === 0) return { ok: true, detail: `${TASK_NAME}: включена · при входе ${runAs} · firebat-poller.mjs`, fix: null };
+  return { ok: false, detail: problems.join(', '), fix: 'переустановить задачу firebat-service-install.ps1 под пользователем автовхода (обновит триггер и действие)' };
 }
 
 export function observe() {
@@ -100,12 +118,26 @@ export function observe() {
 }
 
 export function judge(obs) {
+  const autologonUser = /DefaultUserName\s+REG_SZ\s+(\S+)/u.exec(obs.autologon)?.[1] ?? null;
   const checks = [
     { name: 'сон и гибернация выключены', ...judgeSleep(obs.sleep) },
     { name: 'автовход есть', ...judgeAutologon(obs.autologon) },
-    { name: 'служба узла стартует при входе', ...judgeTask(obs.task) },
+    { name: 'служба узла поднимется без человека', ...judgeTask(obs.task, autologonUser) },
   ];
   return { ready: checks.every((c) => c.ok), checks };
+}
+
+/** Одна таблица: проверка · ответ · причина; лекарства — пронумерованы под таблицей. */
+export function renderTable(verdict) {
+  const rows = verdict.checks.map((c) => [c.name, c.ok ? 'да' : 'НЕТ', c.detail]);
+  const head = ['проверка', 'ответ', 'причина'];
+  const width = head.map((h, i) => Math.max(h.length, ...rows.map((r) => r[i].length)));
+  const line = (cells) => `| ${cells.map((c, i) => c.padEnd(width[i])).join(' | ')} |`;
+  const out = [line(head), `|${width.map((w) => '-'.repeat(w + 2)).join('|')}|`, ...rows.map(line)];
+  const fixes = verdict.checks.filter((c) => !c.ok && c.fix);
+  if (fixes.length) out.push('', 'что повернуть руками:', ...fixes.map((c, i) => `  ${i + 1}. ${c.name}: ${c.fix}`));
+  out.push('', verdict.ready ? 'node:duty-ready — узел к дежурству готов' : 'node:duty-ready — узел НЕ готов');
+  return out.join('\n');
 }
 
 function main() {
@@ -113,11 +145,7 @@ function main() {
   if (process.argv.includes('--json')) {
     process.stdout.write(`${JSON.stringify(verdict, null, 2)}\n`);
   } else {
-    for (const c of verdict.checks) {
-      console.log(`${c.ok ? 'да ' : 'НЕТ'} · ${c.name} — ${c.detail}`);
-      if (!c.ok && c.fix) console.log(`      лекарство: ${c.fix}`);
-    }
-    console.log(verdict.ready ? 'node:duty-ready — узел к дежурству готов' : 'node:duty-ready — узел НЕ готов; выше — что переключить');
+    console.log(renderTable(verdict));
   }
   process.exit(verdict.ready ? 0 : EXIT_NOT_READY);
 }
