@@ -47,6 +47,9 @@ describe('закрытый список ручек библиотеки', () => 
     ['GET', `/samples/${S}/blob`],
     ['POST', '/collections/__buffer__/plugins/membrana.showcase.library-chart-list/request'],
     ['put', '/track-key-ttl'],
+    ['DELETE', '/collections/0b9c2d1e-3f4a-4b5c-8d6e-7f8091a2b3c4'],
+    ['GET', '/collections/__tariff_dataset__/samples'],
+    ['PATCH', '/collections/__buffer__/plugins/membrana.report.session-digest'],
   ])('%s %s — пускается', (method, path) => {
     expect(matchMediaProxyRoute(method, path)).not.toBeNull();
   });
@@ -65,6 +68,22 @@ describe('закрытый список ручек библиотеки', () => 
     ['GET', '/samples/a/b/blob'],
     ['POST', '/collections/__buffer__/plugins/some.other.plugin/request'],
     ['HEAD', '/quota'],
+    // обход через точечные и кодированные сегменты: после нормализации адреса цель уехала бы на другую ручку
+    ['PATCH', '/collections/../plugins/..'],
+    ['PATCH', '/collections/__buffer__/plugins/..'],
+    ['PATCH', '/collections/__buffer__/plugins/.'],
+    ['PATCH', '/collections/__buffer__/plugins/.hidden'],
+    ['PATCH', '/collections/__buffer__/plugins/a..b'],
+    ['GET', '/samples/%2e%2e/blob'],
+    ['GET', '/samples/%2E%2e/blob'],
+    ['GET', '/samples/./blob'],
+    ['GET', '/samples//blob'],
+    ['DELETE', '/collections/%2e%2e'],
+    ['DELETE', '/collections/a%2fb'],
+    ['DELETE', '/collections/a%5cb'],
+    ['DELETE', '/collections/a.b'],
+    ['DELETE', '/collections/'],
+    ['PATCH', '/samples/not-a-uuid'],
   ])('%s %s — вне списка → null', (method, path) => {
     expect(matchMediaProxyRoute(method, path)).toBeNull();
   });

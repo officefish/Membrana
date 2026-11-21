@@ -62,11 +62,25 @@ export const MEDIA_PROXY_ROUTES: readonly MediaProxyRoute[] = [
 /** id прибора media — uuid. */
 export const MEDIA_DEVICE_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-/** Значение параметра пути: без `/`, `\`, `%`, без «.» и «..» целиком. */
-const SEGMENT_RE = /^[A-Za-z0-9_.:-]+$/;
+/**
+ * Белая форма значения каждого параметра пути. Ни одна форма не пропускает `%` (значит, ни
+ * кодированных `.`/`..`, ни `%2f`/`%5c`), `/`, `\`, пустой сегмент и сегменты `.`/`..`: после
+ * нормализации адреса в `fetch` цель не может уехать на другую ручку внутри прибора.
+ *
+ * - `collectionId` — uuid или служебный id вида `__buffer__` / `__tariff_dataset__`;
+ * - `sampleId` — uuid (media создаёт пробы с `randomUUID`);
+ * - `pluginId` — точечный id плагина (`membrana.report.session-digest`): части из `[a-z0-9-]`,
+ *   точка только между непустыми частями.
+ */
+const PARAM_FORMS: Record<string, RegExp> = {
+  collectionId: /^[A-Za-z0-9_-]+$/,
+  sampleId: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+  pluginId: /^[a-z0-9-]+(?:\.[a-z0-9-]+)*$/,
+};
 
-function segmentOk(raw: string): boolean {
-  return SEGMENT_RE.test(raw) && raw !== '.' && raw !== '..';
+function paramOk(name: string, raw: string): boolean {
+  const form = PARAM_FORMS[name];
+  return form !== undefined && form.test(raw);
 }
 
 function matchesPattern(pattern: string, subpath: string): boolean {
@@ -75,7 +89,7 @@ function matchesPattern(pattern: string, subpath: string): boolean {
   if (want.length !== got.length) return false;
   return want.every((w, i) => {
     const g = got[i]!;
-    if (w.startsWith(':')) return segmentOk(g);
+    if (w.startsWith(':')) return paramOk(w.slice(1), g);
     return w === g;
   });
 }

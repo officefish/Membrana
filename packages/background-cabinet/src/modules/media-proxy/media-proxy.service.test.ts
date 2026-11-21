@@ -86,6 +86,28 @@ describe('принадлежность прибора', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it('id прибора не uuid → 404 раньше списка ручек и базы', async () => {
+    const { service, fetchMock, findFirst } = setup();
+    for (const deviceId of ['..', '%2e%2e', `${OWN}/..`, '']) {
+      await expect(service.forward({ ...base, deviceId, method: 'GET', pathWithQuery: '/quota' })).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
+    }
+    expect(findFirst).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('обход через точечный сегмент → 404, в media не ходим', async () => {
+    const { service, fetchMock } = setup();
+    for (const [method, path] of [
+      ['PATCH', '/collections/../plugins/..'],
+      ['GET', '/samples/%2e%2e/blob'],
+    ] as const) {
+      await expect(service.forward({ ...base, method, pathWithQuery: path })).rejects.toBeInstanceOf(NotFoundException);
+    }
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it('другой пользователь со «своим» прибором → 404', async () => {
     const { service, fetchMock } = setup();
     await expect(service.forward({ ...base, userId: 'u-2', method: 'GET', pathWithQuery: '/quota' })).rejects.toBeInstanceOf(

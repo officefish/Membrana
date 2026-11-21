@@ -65,6 +65,8 @@ export class MediaProxyService {
   }
 
   async forward(req: MediaProxyRequest): Promise<MediaProxyResponse> {
+    // Форма id прибора — первой, до списка ручек и до базы.
+    if (!MEDIA_DEVICE_ID_RE.test(req.deviceId)) throw new NotFoundException(NOT_FOUND);
     const match = matchMediaProxyRoute(req.method, req.pathWithQuery);
     if (!match) throw new NotFoundException(NOT_FOUND);
     if (!(await this.ownsDevice(req.userId, req.deviceId))) throw new NotFoundException(NOT_FOUND);
