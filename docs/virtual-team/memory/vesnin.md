@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14370/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 411 (причины в op-log) -->
+Записей: 50 · бюджет 14373/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 412 (причины в op-log) -->
+
+### 2026-11-20 · позиция · team-evening-feedback
+
+> Оценка артефактов: ADR-0032 (#2689) — образцовый документ границы: media хранит журнал, office будит и читает через дверь, панель — только GET. ADR-0031 не переписан, а получил ссылку и вынесенный жизненный цикл границы. `DAILY_CODE_REVIEW` верно фиксирует долги D1–D6 с местом […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-11-20.md#reply-1`
 
 ### 2026-11-18 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > Конструкция M5 — последний узел: C→W, S→W, L→W (только статус). Окно — презентация факта отказа, не источник политики. Источник данных окна — ответ M2 целиком: `reason`, `buffer`/`userStorage`, `overflowPolicy`, `overflowId`. Второго запроса за квотой нет. Поведение […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/buffer-full-stop-m5-operator-window-2026-09-06.md#reply-1`
-
-### 2026-09-05 · позиция · team-evening-feedback
-
-> Оценка артефактов: Граница дня задана верно: owner `sources[0]` не синтезирован из стендапа/DAY_PLAN — это чисто. Запрет fallback «БД без сетки» — правильный инвариант: он сохраняет диагностируемость дыры образа. Странно, что STRATEGY_DAY почти двухмесячной давности всё ещё […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`
 
 ### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 

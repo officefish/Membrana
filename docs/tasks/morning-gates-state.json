@@ -7,15 +7,15 @@
   "frozenDigest": "7eb5818464f711ddb642e899fed05d2e5b4073c1a57ab165330f5e1601dc3208",
   "magistral": "archive-gc-journal-2588",
   "swallow": {
-    "draftDigest": "86708ebf40d371ac659b4cb93366143952ea5f6bc9b2824171503fd51fb5fb76",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-11-20.md",
+    "draftDigest": "552e6cb9fd0844832bbd9656c8afda3272d9c2b0cf57b5405f6a830afb08e07e",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-11-20.md",
     "ownerAck": true,
     "day": "2026-11-20",
     "claimsProbe": {
       "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-11-18.md",
-      "sha": "d63a05be1996",
-      "at": "2026-11-18T15:58:39.998Z"
+      "protocol": "docs/seanses/team-evening-feedback-2026-11-20.md",
+      "sha": "242aef3d4deb",
+      "at": "2026-11-20T14:38:39.655Z"
     },
     "gate": "evening:partner-swallow"
   },

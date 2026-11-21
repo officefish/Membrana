@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14306/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 388 (причины в op-log) -->
+Записей: 50 · бюджет 14312/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 389 (причины в op-log) -->
+
+### 2026-11-20 · позиция · team-evening-feedback
+
+> Оценка артефактов: `DAILY_CODE_REVIEW` верно фиксирует «g6b–g6d (экран журнала) в этом срезе не закрыты — не выдавать "панель готова"» — и это правильное сдерживание. `MAIN_DAY_ISSUE` распределение S2 (g6a→g6b) соответствует факту: g6a, g6b, g6c, g6d — четыре PR на панель за […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-11-20.md#reply-1`
 
 ### 2026-11-18 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > Оценка артефактов: UI-сегмента в дне нет — `tariff self-select` вчерашней поставки не виден в diff, a11y не оценивался. Документы дня читабельны, расхождение стендап/MAIN_DAY_ISSUE подано явной таблицей — это хорошо для восприятия. Итоги дня: — (нет UI-изменений). Кабинетные […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`
-
-### 2026-09-04 · позиция · team-evening-feedback
-
-> Оценка артефактов: Документы согласованы; UI-часть дня (выбор тарифа на мембране) в #2286 вне обзора — вечерний code-review это честно фиксирует. Канон не даёт противоречивых указаний по интерфейсу. Итоги дня: По диффу виден `MembranePage.tsx` — селект тарифа добавлен. […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-09-04.md#reply-1`
