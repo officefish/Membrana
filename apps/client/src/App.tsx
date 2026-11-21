@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { MembranaProvider, Dashboard } from '@membrana/agenda';
 import {
   DeviceBoardModeProvider,
@@ -19,6 +19,8 @@ import { useServerFirstFieldUi } from './modules/device-board/useServerFirstBoar
 import { useDeviceLive } from './modules/device-board/useDeviceLive';
 import { useDeviceBoardUserCaseSettings } from './modules/device-board/useDeviceBoardUserCaseSettings';
 import { useNodeConnectionStore } from './stores/nodeConnectionStore';
+import { ScenarioAutoResumeNotice } from './components/ScenarioAutoResumeNotice';
+import { installRunMarkTracker, runScenarioAutoResumeOnce } from './lib/scenario-auto-resume/wireAutoResume';
 
 function AppContentInner() {
   const { isBoardMode } = useDeviceBoardMode();
@@ -35,6 +37,12 @@ function AppContentInner() {
         : null,
     [connectionMode, runtimeHost],
   );
+  // ADR-0033: под связью — след «сценарий шёл» на едином runtime и одно возобновление на запуск.
+  useEffect(() => {
+    if (externalRuntime === null) return;
+    installRunMarkTracker();
+    runScenarioAutoResumeOnce();
+  }, [externalRuntime]);
   const deviceLive = useDeviceLive();
   const { serverFirstState, showRunControls: serverFirstShowRunControls } =
     useServerFirstFieldUi(connectionMode === 'paired' ? deviceId : null);
@@ -54,6 +62,7 @@ function AppContentInner() {
       <NodeConnectionShell />
       {/* CT5: алерты захвата видимы и в дашборде, и поверх fullscreen-борда (z-60 > z-50). */}
       {connectionMode === 'paired' ? <CaptureAlertToasts /> : null}
+      {connectionMode === 'paired' ? <ScenarioAutoResumeNotice /> : null}
       {/* #2310: одно окно оператора «буфер полон» на всё приложение (z-70 — над доской и тостами). */}
       <OverflowWindowHost />
       {isBoardMode ? (
