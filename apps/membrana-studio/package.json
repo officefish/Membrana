@@ -1,6 +1,6 @@
 {
   "name": "@membrana/membrana-studio",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Membrana Studio — Electron shell for the full field client (apps/client).",
   "author": "Membrana",
