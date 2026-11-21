@@ -11,6 +11,7 @@ import { MembraneModule } from './modules/membrane/membrane.module';
 import { PairModule } from './modules/pair/pair.module';
 import { JournalModule } from './modules/journal/journal.module';
 import { SampleLibraryModule } from './modules/sample-library/sample-library.module';
+import { MediaProxyModule } from './modules/media-proxy/media-proxy.module';
 import { NodeRealtimeModule } from './modules/node-realtime/node-realtime.module';
 import { ScenarioEditLeaseModule } from './modules/scenario-edit-lease/scenario-edit-lease.module';
 import { DeviceCaptureModule } from './modules/device-capture/device-capture.module';
@@ -55,6 +56,7 @@ const testImports =
     PairModule,
     JournalModule,
     SampleLibraryModule,
+    MediaProxyModule,
     NodeRealtimeModule,
     ScenarioEditLeaseModule,
     DeviceCaptureModule,

@@ -11,6 +11,7 @@ import { RequestIdInterceptor } from './common/interceptors/request-id.intercept
 import { APP_CONFIG } from './config/config.tokens';
 import { loadDotenvFiles } from './config/load-dotenv';
 import type { AppConfig } from './config/env.schema';
+import { registerMediaProxyRawBody } from './modules/media-proxy/media-proxy-body';
 import { isSwaggerEnabled, mountSwagger } from './swagger/setup-swagger';
 
 async function bootstrap(): Promise<void> {
@@ -21,6 +22,9 @@ async function bootstrap(): Promise<void> {
     new FastifyAdapter(),
     { bufferLogs: true },
   );
+
+  // Загрузка записи в библиотеку прибора едет через кабинет потоком (media-proxy).
+  registerMediaProxyRawBody(app.getHttpAdapter().getInstance());
 
   const config = app.get<AppConfig>(APP_CONFIG);
   const corsOrigins = [...new Set([...config.CABINET_CORS_ORIGINS, ...config.CLIENT_CORS_ORIGINS])];
