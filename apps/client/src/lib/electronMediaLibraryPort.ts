@@ -1,6 +1,12 @@
 import type { IElectronMediaLibraryPort } from '@membrana/media-library-service';
 import type { IElectronJournalStoragePort } from '@membrana/telemetry-journal-service';
 
+/** Автозагрузка Студии при входе в Windows: `supported=false` — разработка или старая сборка. */
+export interface StudioLoginItemState {
+  supported: boolean;
+  openAtLogin: boolean;
+}
+
 declare global {
   interface Window {
     electronAPI?: {
@@ -25,6 +31,9 @@ declare global {
         getAppVersion?: () => Promise<string>;
         /** Текст буфера обмена (кнопка «Вставить из буфера», 20.11); старый preload — поля нет. */
         readClipboardText?: () => Promise<string>;
+        /** «Запускать Студию при входе в Windows» — состояние ОС (дежурство, 21.11); старый preload — полей нет. */
+        getOpenAtLogin?: () => Promise<StudioLoginItemState>;
+        setOpenAtLogin?: (enabled: boolean) => Promise<StudioLoginItemState>;
       };
     };
   }

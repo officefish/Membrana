@@ -12,6 +12,30 @@ import { registerJournalIpc } from './journal/register-ipc';
 import { createTrendsTemplatesFsStore } from './trends/trends-templates-fs';
 import { registerTrendsTemplatesIpc } from './trends/register-ipc';
 import { STUDIO_DEV_URL, clientDistIndexPath, preloadScriptPath } from './paths';
+import { registerLoginItemIpc } from './login-item';
+import { createWindowRecoveryLimiter } from './window-recovery';
+
+/** Один ограничитель на процесс: пересоздание окна не обнуляет счёт сбоев (дыра №5 карты дежурства). */
+const windowRecovery = createWindowRecoveryLimiter();
+
+/** Перезагрузить окно после сбоя отрисовщика или зависания — с ограничением частоты. */
+function attachWindowRecovery(win: BrowserWindow): void {
+  const recover = (cause: string): void => {
+    if (win.isDestroyed()) return;
+    const decision = windowRecovery.onFailure(Date.now());
+    if (decision.action === 'reload') {
+      writeShellLog('warn', 'main', 'window recovery: reload', { cause, attempt: decision.attempt });
+      win.webContents.reload();
+    } else if (decision.action === 'give-up') {
+      writeShellLog('error', 'main', 'window recovery: gave up', { cause, failures: decision.failures });
+    }
+  };
+  win.webContents.on('render-process-gone', (_event, details) => {
+    // clean-exit — окно закрывается штатно, это не сбой.
+    if (details.reason !== 'clean-exit') recover(`render-process-gone:${details.reason}`);
+  });
+  win.webContents.on('unresponsive', () => recover('unresponsive'));
+}
 
 /** Canonical field data root — `%APPDATA%/Membrana/` (MS2–MS3). */
 app.setPath('userData', path.join(app.getPath('appData'), 'Membrana'));
@@ -68,6 +92,7 @@ function createMainWindow(): BrowserWindow {
   }
 
   attachWindowShellLogging(win);
+  attachWindowRecovery(win);
 
   return win;
 }
@@ -120,6 +145,9 @@ if (!app.requestSingleInstanceLock()) {
 
     // b4 studio-firebat-user-pairing: канал safeStorage — провод до ADR-0028, включение позже.
     registerSecureStorageIpc();
+
+    // Дежурство прибора: «Запускать Студию при входе в Windows» — состояние из ОС.
+    registerLoginItemIpc();
 
     createMainWindow();
 
