@@ -1,6 +1,6 @@
 {
   "name": "@membrana/client",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Клиентское приложение Membrana — собирает агрегаты из core, agenda и device-board.",
   "type": "module",
