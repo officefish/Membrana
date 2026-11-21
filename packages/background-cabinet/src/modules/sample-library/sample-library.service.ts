@@ -157,7 +157,6 @@ export class SampleLibraryService {
 
     return {
       mediaApiUrl: this.config.MEDIA_PUBLIC_API_URL,
-      mediaToken: this.config.MEDIA_API_TOKEN,
       membraneId: membrane.id,
       catalogId: membrane.tariff.datasetCatalogId,
       devices,

@@ -47,9 +47,9 @@ export interface MediaSessionDeviceDto {
   deviceId: string;
 }
 
+/** Сессия библиотеки для браузера кабинета: адрес и приборы мембраны. Служебных полей нет — в библиотеку браузер ходит через сервер кабинета. */
 export interface MediaSessionDto {
   mediaApiUrl: string;
-  mediaToken: string;
   membraneId: string;
   catalogId: string;
   devices: MediaSessionDeviceDto[];

@@ -194,7 +194,11 @@ describe('SampleLibraryService', () => {
     const session = await service.getMediaSession('user-1');
     expect(session.membraneId).toBe('mem-1');
     expect(session.mediaApiUrl).toBe('http://localhost:3010');
-    expect(session.mediaToken).toBe('media-token');
+    // В ответе — ровно адрес, мембрана, каталог и приборы; служебных значений конфигурации нет.
+    expect(Object.keys(session).sort()).toEqual(['catalogId', 'devices', 'mediaApiUrl', 'membraneId']);
+    const text = JSON.stringify(session);
+    expect(text).not.toContain(CONFIG.MEDIA_API_TOKEN);
+    expect(text).not.toContain(CONFIG.API_INTERNAL_TOKEN);
     expect(session.devices).toEqual([
       { nodeId: 'node-a', nodeLabel: 'A', deviceId: 'dev-a' },
     ]);

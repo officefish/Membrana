@@ -30,11 +30,30 @@ import type {
 
 type WithoutRunId<T> = T extends unknown ? Omit<T, 'runId'> : never;
 
-export interface ServerStorageBackendConfig {
-  baseUrl: string;
-  deviceId: string;
-  mediaToken: string;
-}
+/**
+ * Два способа достучаться до библиотеки прибора:
+ *
+ * - **напрямую в media** (Студия и веб-клиент прибора): `baseUrl` — адрес media, `mediaToken` —
+ *   ключ прибора, уходит заголовком `X-Membrana-Token`, путь `/v1/devices/:deviceId/...`;
+ * - **через сервер кабинета** (браузер кабинета): `baseUrl` — адрес кабинета, `devicesPath` —
+ *   `/v1/media/devices`, `requestHeaders` — заголовки сессии пользователя (читаются на каждый
+ *   запрос: сессия может смениться). Ключа media у такого клиента нет вовсе.
+ */
+export type ServerStorageBackendConfig =
+  | {
+      baseUrl: string;
+      deviceId: string;
+      mediaToken: string;
+    }
+  | {
+      baseUrl: string;
+      deviceId: string;
+      devicesPath: string;
+      requestHeaders: () => Record<string, string>;
+    };
+
+/** Путь приборов media по умолчанию. */
+export const MEDIA_DEVICES_PATH = '/v1/devices';
 
 interface ApiCollection {
   id: string;
@@ -281,14 +300,24 @@ export class ServerStorageBackend implements IStorageBackend {
 
   private readonly deviceId: string;
 
-  private readonly mediaToken: string;
+  private readonly devicesPath: string;
+
+  /** Заголовки доступа на каждый запрос: ключ прибора (напрямую) или сессия (через кабинет). */
+  private readonly accessHeaders: () => Record<string, string>;
 
   private serverReachable = true;
 
   constructor(config: ServerStorageBackendConfig) {
     this.baseUrl = normalizeBaseUrl(config.baseUrl);
     this.deviceId = config.deviceId;
-    this.mediaToken = config.mediaToken;
+    if ('mediaToken' in config) {
+      const token = config.mediaToken;
+      this.devicesPath = MEDIA_DEVICES_PATH;
+      this.accessHeaders = () => ({ 'X-Membrana-Token': token });
+    } else {
+      this.devicesPath = config.devicesPath.replace(/\/+$/u, '');
+      this.accessHeaders = config.requestHeaders;
+    }
   }
 
   /**
@@ -320,12 +349,12 @@ export class ServerStorageBackend implements IStorageBackend {
   }
 
   private deviceUrl(path: string): string {
-    return `${this.baseUrl}/v1/devices/${this.deviceId}${path}`;
+    return `${this.baseUrl}${this.devicesPath}/${this.deviceId}${path}`;
   }
 
   private authHeaders(extra?: HeadersInit): Headers {
     const headers = new Headers(extra);
-    headers.set('X-Membrana-Token', this.mediaToken);
+    for (const [name, value] of Object.entries(this.accessHeaders())) headers.set(name, value);
     headers.set('X-Membrana-Device-Id', this.deviceId);
     const traceId = resolveMediaLibraryTraceId();
     if (traceId !== null && traceId.length > 0) {
