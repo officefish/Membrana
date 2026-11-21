@@ -100,6 +100,13 @@ const studioShell = {
   getAppVersion: () => invoke<string>('membrana:studio-shell:getAppVersion'),
   /** Текст буфера для кнопки «Вставить из буфера» (окно связки, 20.11); канал — `edit-context-menu.ts`. */
   readClipboardText: () => invoke<string>('membrana:studio-shell:readClipboardText'),
+  /**
+   * «Запускать Студию при входе в Windows» — состояние ОС; каналы — `login-item.ts` (здесь литералами:
+   * модуль main тянет `app`, которого в sandbox-preload нет).
+   */
+  getOpenAtLogin: () => invoke<{ supported: boolean; openAtLogin: boolean }>('membrana:studio-shell:getOpenAtLogin'),
+  setOpenAtLogin: (enabled: boolean) =>
+    invoke<{ supported: boolean; openAtLogin: boolean }>('membrana:studio-shell:setOpenAtLogin', enabled),
 };
 
 // Диагностический замер простоя отрисовщика на сбросе трейса (#2476). По умолчанию ВЫКЛЮЧЕН;
