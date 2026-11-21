@@ -94,6 +94,7 @@ function serializeNode(
       pairingStatus: 'paired' | 'revoked' | 'unpaired';
       bufferPolicy?: unknown;
       bufferPolicyParams?: unknown;
+      scenarioAutoResume?: unknown;
     } | null;
   },
   scope: MembranePolicyScope = {},
@@ -124,6 +125,8 @@ function serializeNode(
           // #2318: умная очистка в строке при выключенном гейте → stop + warn (один на субъект).
           bufferPolicy: serializeDevicePolicy(node.device, scope),
           effectiveBufferPolicy: serializeEffectiveDevicePolicy(node.device, scope),
+          // ADR-0033 Р1: признак возобновления сценария; всё, кроме явного true, — ВЫКЛ.
+          scenarioAutoResume: node.device.scenarioAutoResume === true,
         }
       : null,
   };

@@ -20,6 +20,8 @@ export interface MediaMembraneContext {
    * гейт параметров сервер записей проверяет ещё раз сам.
    */
   bufferPolicy?: BufferPolicy;
+  /** ADR-0033 Р1: возобновлять сценарий доски при старте Студии — признак прибора, тем же контекстом. */
+  scenarioAutoResume?: boolean;
 }
 
 /**

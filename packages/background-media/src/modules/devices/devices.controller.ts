@@ -56,6 +56,8 @@ export class DevicesController {
       maxUserWorkspaces: membrane.maxUserWorkspaces,
       // Сырым: гейт параметров проверяет сервис, а не форма DTO (#2308).
       ...(membrane.bufferPolicy !== undefined ? { bufferPolicy: membrane.bufferPolicy } : {}),
+      // ADR-0033 Р1: сырым — сервис пишет колонку только из булева.
+      ...(membrane.scenarioAutoResume !== undefined ? { scenarioAutoResume: membrane.scenarioAutoResume } : {}),
     };
   }
 

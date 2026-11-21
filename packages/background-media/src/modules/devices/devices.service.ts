@@ -40,6 +40,8 @@ export interface DeviceQuotaDto {
    * отдельного опроса ради политики нет. Уже пропущена через `effectiveBufferPolicy`.
    */
   bufferPolicy: BufferPolicy;
+  /** ADR-0033 Р1: возобновлять сценарий доски при старте Студии (копия признака кабинета). */
+  scenarioAutoResume: boolean;
 }
 
 export interface DeviceMembraneContext {
@@ -55,6 +57,16 @@ export interface DeviceMembraneContext {
    * И сервер записей при разноске»). Отсутствие поля — старый кабинет: политика не трогается.
    */
   bufferPolicy?: unknown;
+  /**
+   * ADR-0033 Р1: признак «возобновлять сценарий при старте». Пишется только булевым; отсутствие
+   * поля (старый кабинет) или иной тип — колонка не трогается.
+   */
+  scenarioAutoResume?: unknown;
+}
+
+/** Колонка признака возобновления — только из булева; иначе пусто (колонка остаётся как была). */
+export function scenarioAutoResumeColumns(raw: unknown): { scenarioAutoResume?: boolean } {
+  return typeof raw === 'boolean' ? { scenarioAutoResume: raw } : {};
 }
 
 /** Исход разноски контекста: доменный отказ по гейту параметров — не исключение (12.08). */
@@ -139,6 +151,7 @@ export class DevicesService {
                 ? { maxUserWorkspaces: membraneContext.maxUserWorkspaces }
                 : {}),
               ...policyColumns,
+              ...scenarioAutoResumeColumns(membraneContext.scenarioAutoResume),
             }
           : {}),
       },
@@ -206,6 +219,7 @@ export class DevicesService {
           ? { maxUserWorkspaces: membraneContext.maxUserWorkspaces }
           : {}),
         ...policyColumns,
+        ...scenarioAutoResumeColumns(membraneContext.scenarioAutoResume),
       },
     });
     return { ok: true, device, bufferPolicy: this.effectivePolicyOf(device) };
@@ -284,6 +298,8 @@ export class DevicesService {
         backend: 'server',
       },
       bufferPolicy: this.effectivePolicyOf(device),
+      // Всё, кроме явного true, — ВЫКЛ: строка до миграции или порча не включают возобновление.
+      scenarioAutoResume: device.scenarioAutoResume === true,
     };
   }
 }

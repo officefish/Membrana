@@ -63,6 +63,8 @@ interface DeviceForContext {
   readonly nodeId: string;
   readonly bufferPolicy?: unknown;
   readonly bufferPolicyParams?: unknown;
+  /** ADR-0033 Р1: признак возобновления сценария — PER-DEVICE, у мембраны его нет. */
+  readonly scenarioAutoResume?: unknown;
 }
 
 /**
@@ -77,7 +79,7 @@ export function membraneContextForDevice(
   membrane: MembraneForContext,
   device:
     | (Pick<DeviceForContext, 'bufferPolicy' | 'bufferPolicyParams'> &
-        Partial<Pick<DeviceForContext, 'mediaDeviceId' | 'nodeId'>>)
+        Partial<Pick<DeviceForContext, 'mediaDeviceId' | 'nodeId' | 'scenarioAutoResume'>>)
     | null,
 ): MediaMembraneContext {
   const explained = explainDevicePolicy({
@@ -101,6 +103,8 @@ export function membraneContextForDevice(
     datasetCatalogId: membrane.tariff.datasetCatalogId,
     maxUserWorkspaces: membrane.tariff.maxUserWorkspaces,
     bufferPolicy: explained.policy,
+    // ADR-0033 Р1: новый прибор (device = null) и всё, кроме явного true, — ВЫКЛ.
+    scenarioAutoResume: device?.scenarioAutoResume === true,
   };
 }
 
@@ -154,7 +158,7 @@ export class MembraneContextFanoutService {
         node: { membraneId: membrane.id },
         ...(onlyNodeId ? { nodeId: onlyNodeId } : {}),
       },
-      select: { mediaDeviceId: true, nodeId: true, bufferPolicy: true, bufferPolicyParams: true },
+      select: { mediaDeviceId: true, nodeId: true, bufferPolicy: true, bufferPolicyParams: true, scenarioAutoResume: true },
     });
     if (devices.length === 0) return { updated: 0, failed: 0 };
 
