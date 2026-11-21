@@ -1,41 +1,39 @@
-<!-- Сгенерировано: 2026-11-20T14:32:53.262Z (yarn code-review; daily, llm-xai) -->
+<!-- Сгенерировано: 2026-11-21T20:30:45.048Z (yarn code-review; daily, llm-xai) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: cec5096a41b104442247b55e296729b5eb4cabfc^..242aef3d4deb5665fb7491dfe5ba440a45e558ae (16 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 0b987186 #2696 (407), 242aef3d (567)
+> Период: 3bffbd37994245fdae69354ae58d4a3c57035c9b^..9022db5a5a09b84e010182918f75a8eefb73ee76 (18 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 3bffbd37 #2706 (427), 041d423a #2713 (831), d7b938c0 #2717 (459), e6e6483c #2730 (3911), 9022db5a (599)
 
 ---
 
-Tier: T2
+Tier: T1
 
-[Teamlead / vesnin]: День закрывает шов g5b и g6a эпика #2632 по канону ADR-0032: media владеет журналом и пишет, office — метроном и чтение через дверь, панель — только GET. Верно пофикшено #2690/#2694: пульс считает только `trigger=cron`, иначе превью панели маскировало бы мёртвый cron (анти-B6). Oversized вне развёртки: `0b987186` #2696 (~407) и `242aef3d` (~567) — утром отдельный проход, не «зелёные по умолчанию». Живые состояния: #2632/#2588 OPEN; g7 (приёмка september + live словом владельца) и D1 (замок при репликах) — не в стволе как закрытые. Вердикт дня: **пропуск в main по влитому** при зелёном CI на затронутых пакетах; **не** LGTM на боевой `DRY_RUN=false`. Утро: прочитать этот файл; не `yarn code-review`.
+**[vesnin]:** Ведущий. День = смена магистрали `archive-gc-journal-2588` → `node-permanent-duty` (ручная чеканка) + живой зуб `#2049`/`node:duty-ready` + карта шторма. По бестиарию: B6 на первом `ritual-day` (fail → r2 pass после mint) закрыт честно; B9 на карте дежурства не ловлю — явно «есть = ствол, не live»; B3 риск есть, если DoD шторма сведём к «PR открыт» без «september пишет». **P1:** oversized без развёртки — `#2706` (427), `#2713` (831), `#2717` (459), **`e6e6483c`/#2730 (~3911)**, `9022db5a` (599) — не «зелёные по умолчанию». Живые факты: `#2632` CLOSED, `#2704` MERGED, `#2588`/`#2587` OPEN, `#2049` CLOSED (влито как `#2709`). Вердикт дня: **условно LGTM на ритуал+duty-ready+карту**; **BLOCK-внимание** на неразвёрнутый `#2730` и хвост oversized до merge-доверия.
 
-[Архитектор]: ADR-0032 фиксирует уже ратифицированную границу, не плодит новый контракт core; ссылка из ADR-0031 — одна строка, жизненный цикл границы отделён. Открытые долги D1–D6 названы с местом закрытия — хорошо. Шов trigger/snapshot (g5b-stitch3) закрывает Н20; `orphan_blob` и manual-live остаются словами, не молчаливой реализацией.
+[Teamlead]: Сводка: утро починило ложный фокус 07.10 → owner-choice `node-permanent-duty`; `#2049` усилил «без человека» = тот же user, что автовход; карта дежурства честно дырявит Студию/TTL 7d/молчание/оповещения. Риски на завтра: не подменить шторм кодом в обход нарезки; не включить cold-archive live (`#2588` OPEN) из инерции; развернуть `#2730`. Утро: прочитать этот review и `MAIN_DAY_ISSUE` (node-permanent-duty); `yarn turbo run test --filter=@membrana/scripts` либо точечно `node --test scripts/node-duty-ready.test.mjs`; `yarn node:duty-ready` на узле (read-only); diff-pass `git show e6e6483c --stat` и критические hunks `#2730`/`#2713`/`#2717`.
 
-[Структурщик]: Границы пакетов соблюдены: journal store/runner только media; office client не пишет в БД media; panel `coldArchiveApi` — read-only, без POST delete. `ColdArchivePulseController` под `@OwnerAdmin` + `PanelAuthGuard`; media purge — `ApiTokenGuard`. Зубы на 0 вызовов media при disabled, на invalid_trigger/snapshot, на «нет путей в JSON» — на месте. C1/C4/C7/C9: циклов не видно; React в office/media нет; секреты в заголовке, не в логе.
+[Архитектор]: Граница ADR-0027 b5 (dshow → интерактивная сессия) в duty-ready соблюдена: не SYSTEM-служба, а logon+same user. Карта дежурства правильно отделяет поллер / Студию / cabinet session TTL — это вход шторма, не скрытый ADR. Не плодить «режим сессий прибора» в коде до развилки шторма. Следить, чтобы `#2730` не втащил немой носитель (B8) или дрейф media/office без двери.
 
-[Математик]: `pulseOf`: порог **строго >** 2 ч, ровно 2 ч = ok; `null` lastSucceeded → stale; disabled игнорирует журнал. `isoOrNull` кривую форму → unreachable, не «ни разу». Correctness edge paths покрыты unit-зубами; NaN дат не проглатывается.
+[Структурщик]: `judgeTask(text, autologonUser)` + `bareUser` — слабая связанность ок, чистые судьи экспортированы, observe/main тонкие. Фикстура RU с «Состояние **назначенной** задачи» и `firebat-t6\indic` чинит ложно-зелёный на живой Windows — хорошо. Тесты: other user / unread user / disabled / renderTable — критичные ветки рядом. C8: `console.log` только в CLI main — допустимо для field-скрипта. Циклов пакетов нет (scripts ↔ docs).
 
-[Музыкант]: Web Audio / audio-engine / DSP-путь не затронуты (C2 —). Уборка cold-archive вне runtime-захвата — ок.
+[Математик]: — (нет FFT/спектра). Логика порогов сна через `acIndexOf`/powercfg без изменений по смыслу; новый user-match — строковое равенство после normalize, не численный край. Замечание: ровно 2ч `pulseOf` cold-archive в диффе дня не закрыт — санитарный долг вчера, не блокер новой магистрали.
 
-[Верстальщик]: g6a — клиент и типы без UI-кнопок удаления; человеческие фразы ошибок без имён env. g6b–g6d (экран журнала) в этом срезе не закрыты — не выдавать «панель готова». a11y экрана — follow-up при вёрстке списка прогонов.
+[Музыкант]: Захват/dshow не трогали кодом аудио-графа; инвариант «только интерактивная сессия» в доке и судье усилен — ок. Автозапуск Студии и удержание буфера (`stop` only) — дыры карты, не регрессии Web Audio. Не чинить overflow-hold в обход слова владельца.
 
-Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-11-20, контур #2632 / ADR-0032 / g5b+g6a)
+[Верстальщик]: UI пакетов в развёрнутом диффе нет; a11y cold-archive g6 — вне фокуса. Полевые строки duty-ready — таблица в терминале, не JSX; DESIGN.md не задет.
 
-Definition of Done (утро):
-```bash
-yarn turbo run lint typecheck test --filter=@membrana/background-media --filter=@membrana/background-office --filter=@membrana/panel
-# точечно, если есть скрипты пакетов:
-yarn turbo run test --filter=@membrana/background-office -- cold-archive
-yarn turbo run test --filter=@membrana/background-media -- purge
-# oversized отдельно (не сливать вниманием с T0):
-# git show 0b987186 --stat; git show 242aef3d --stat
-```
+Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-11-21)  
+Definition of Done (утро):  
+1. `node --test scripts/node-duty-ready.test.mjs` (или turbo test scripts) — зелёный  
+2. Прочитать `MAIN_DAY_ISSUE` = `node-permanent-duty`; не возвращать archive-gc как primary  
+3. Diff-pass минимум `e6e6483c`/#2730 + stat `#2713`/`#2717`/`#2706` — запись pass/fail  
+4. На узле: `yarn node:duty-ready` (ожидание: таблица 3 проверок; exit 0 или 26 + лекарства)  
+5. Шторм/нарезка — по DoD MAIN_DAY, без live `COLD_ARCHIVE_SWEEP_DRY_RUN=false`  
 
-Риски:
-- **P1** — oversized #2696 / `242aef3d` без развёрнутого diff в вечернем прогоне → утренний human/diff pass
-- **P1** — D1: вторая реплика media + live = ложный abandoned / параллельные proгоны; live только при одной реплике
-- **P1** — g7 не принят: **BLOCK** на `COLD_ARCHIVE_SWEEP_DRY_RUN=false` до CLOSURE/verify на september
-- **P2** — g6 UI, orphan_blob, manual trigger rights, панель «прогонов не было ≠ всё чисто» ещё в плане
+Риски:  
+- **P1** — `#2730` ~3911 строк и прочие oversized без развёртки (молчаливый merge-доверие)  
+- **P1** — B3: «PR #2049 есть» ≠ прибор сутки пишет (нет Студии at-login, TTL 7d, нет alert «замолчал»)  
+- **P2** — `#2588` OPEN / D1 multi-replica; a11y g6; долг `pulseOf` @ ровно 2ч  
+- **P2** — assertions/gate freshness уже починены ручной чеканкой; не откатить generator-only магистраль 07.10
